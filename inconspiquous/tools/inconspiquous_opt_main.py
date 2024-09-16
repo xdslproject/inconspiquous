@@ -1,5 +1,6 @@
 from xdsl.xdsl_opt_main import xDSLOptMain
 
+
 class OptMain(xDSLOptMain):
     def register_all_dialects(self):
         super().register_all_dialects()
