@@ -5,12 +5,12 @@ description = "A testing ground for quantum computing compilation ideas in xdsl"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "ruff>=0.6.5",
     "xdsl>=0.22.0",
 ]
 
 [project.optional-dependencies]
 dev = [
+  "ruff>=0.6.5",
   "pyright>=1.1.380",
   "pytest>=8.3.3",
   "lit<16.0.0",
