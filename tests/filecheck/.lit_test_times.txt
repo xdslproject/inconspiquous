@@ -1,1 +1,1 @@
-2.660625e-01 dialects/quantum.mlir
+2.690780e-01 dialects/quantum.mlir

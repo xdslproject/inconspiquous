@@ -23,7 +23,7 @@ dev-dependencies = [
 xdsl = { git = "https://github.com/xdslproject/xdsl" }
 
 [project.scripts]
-quopt = "inconspiquous.tools.inconspiquous_opt_main:main"
+quopt = "inconspiquous.tools.quopt_main:main"
 
 [build-system]
 requires = ["setuptools>=61", "wheel"]

@@ -2,7 +2,7 @@ from inconspiquous.dialects import get_all_dialects
 from xdsl.xdsl_opt_main import xDSLOptMain
 
 
-class OptMain(xDSLOptMain):
+class QuoptMain(xDSLOptMain):
     def register_all_dialects(self):
         for name, dialect in get_all_dialects().items():
             self.ctx.register_dialect(name, dialect)
@@ -15,7 +15,7 @@ class OptMain(xDSLOptMain):
 
 
 def main():
-    quopt_main = OptMain()
+    quopt_main = QuoptMain()
     quopt_main.run()
 
 
