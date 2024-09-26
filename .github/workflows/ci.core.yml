@@ -32,6 +32,10 @@ jobs:
       with:
         uv-venv: "venv"
 
+    - name: Sync
+      run: |
+        uv sync --dev
+
     - name: Test with pytest
       run: |
         pytest -W error
