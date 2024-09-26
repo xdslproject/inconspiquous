@@ -92,7 +92,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "xdsl", specifier = ">=0.22.0" }]
+requires-dist = [{ name = "xdsl", git = "https://github.com/xdslproject/xdsl" }]
 
 [package.metadata.requires-dev]
 dev = [
@@ -313,14 +313,10 @@ wheels = [
 
 [[package]]
 name = "xdsl"
-version = "0.22.0"
-source = { registry = "https://pypi.org/simple" }
+version = "0.22.0+55.g2916539d"
+source = { git = "https://github.com/xdslproject/xdsl#2916539ddf06e204ff115755bab749771ce0dd69" }
 dependencies = [
     { name = "immutabledict" },
     { name = "ordered-set" },
     { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/db/60/923bd89cb6f518c412d80a848449303cc4971432b3d8c1a21e9e3059df2b/xdsl-0.22.0.tar.gz", hash = "sha256:fadf0b89cfdf9bbbbb3cd110b3d0ed4b0a159c38c18ddcb8ddfeb6aad9333ccb", size = 654437 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d9/b5/a784285eb614866f293e8852d7423f80677df6ef800e99688dfb6dae68db/xdsl-0.22.0-py3-none-any.whl", hash = "sha256:03d3596d540a7e652d659f32f318784c644d175188ddc076994d9b7dc98a7615", size = 721871 },
 ]
