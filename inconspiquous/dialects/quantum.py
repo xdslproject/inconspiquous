@@ -33,30 +33,29 @@ class AngleAttr(ParametrizedAttribute):
     @classmethod
     def parse_parameters(cls, parser: AttrParser) -> tuple[FloatAttr[Float64Type]]:
         with parser.in_angle_brackets():
-            is_negative = parser.parse_optional_punctuation('-') is not None
+            is_negative = parser.parse_optional_punctuation("-") is not None
             f = parser.parse_optional_number()
             if f is None:
                 f = 1.0
             if isinstance(f, int):
                 f = float(f)
             if f == 0.0:
-                parser.parse_optional_keyword('pi')
+                parser.parse_optional_keyword("pi")
             else:
-                parser.parse_keyword('pi')
+                parser.parse_keyword("pi")
             if is_negative:
                 f = -f
             return (FloatAttr(f % 2, 64),)
-
 
     def print_parameters(self, printer: Printer) -> None:
         with printer.in_angle_brackets():
             f = self.as_float_raw
             if f == 0.0:
-                printer.print_string('0')
+                printer.print_string("0")
             elif f == 1.0:
-                printer.print_string('pi')
+                printer.print_string("pi")
             else:
-                printer.print_string(f'{f}pi')
+                printer.print_string(f"{f}pi")
 
     def __add__(self, other: AngleAttr) -> AngleAttr:
         return AngleAttr(self.data.value.data + other.data.value.data)
