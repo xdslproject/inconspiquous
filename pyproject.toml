@@ -17,3 +17,14 @@ dev = [
   "filecheck==0.0.23",
   "pre-commit==3.3.1",
 ]
+
+[project.scripts]
+quopt = "inconspiquous.tools.inconspiquous_opt_main:main"
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pyright]
+typeCheckingMode = "strict"
+include = ["inconspiquous"]

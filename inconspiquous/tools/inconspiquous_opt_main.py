@@ -1,17 +1,22 @@
+from inconspiquous.dialect import get_all_dialects
 from xdsl.xdsl_opt_main import xDSLOptMain
 
 
 class OptMain(xDSLOptMain):
     def register_all_dialects(self):
-        super().register_all_dialects()
-        ## Add custom dialects
-        # FIXME: override upstream qref dialect. Remove this after upstreaming full downstream qref dialect.
-        self.ctx._registered_dialects.pop("qref", None)  # pyright: ignore
+        for name, dialect in get_all_dialects().items():
+            self.ctx.register_dialect(name, dialect)
+
+    def register_all_passes(self):
+        super().register_all_passes()
+
+    def register_all_targets(self):
+        super().register_all_targets()
 
 
 def main():
-    xdsl_main = OptMain()
-    xdsl_main.run()
+    quopt_main = OptMain()
+    quopt_main.run()
 
 
 if "__main__" == __name__:
