@@ -1,4 +1,4 @@
-from inconspiquous.dialect import get_all_dialects
+from inconspiquous.dialects import get_all_dialects
 from xdsl.xdsl_opt_main import xDSLOptMain
 
 
