@@ -132,3 +132,6 @@ dmypy.json
 # Direnv
 .envrc
 .direnv
+
+# Filecheck
+.lit_test_times
