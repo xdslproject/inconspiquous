@@ -8,7 +8,16 @@ uv sync
 ```
 The cli tool can be run by `uv run quopt` or by entering the generated virtual environment.
 
+```bash
+source .venv\bin\activate
+```
+
 For tests to work the dev dependencies should be installed:
 ```bash
 uv sync --dev
+```
+
+To run tests:
+```bash
+make tests
 ```
