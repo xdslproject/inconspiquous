@@ -7,6 +7,8 @@ from xdsl.irdl import ParameterDef, irdl_attr_definition
 from xdsl.parser import AttrParser
 from xdsl.printer import Printer
 
+from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
+
 
 @irdl_attr_definition
 class AngleAttr(ParametrizedAttribute):
@@ -67,8 +69,71 @@ class AngleAttr(ParametrizedAttribute):
         return AngleAttr(-self.data.value.data)
 
 
+class HadamardGate(SingleQubitGate):
+    name = "quantum.h"
+
+
+class XGate(SingleQubitGate):
+    name = "quantum.x"
+
+
+class YGate(SingleQubitGate):
+    name = "quantum.y"
+
+
+class ZGate(SingleQubitGate):
+    name = "quantum.y"
+
+
+class PhaseGate(SingleQubitGate):
+    name = "quantum.s"
+
+
+class TGate(SingleQubitGate):
+    name = "quantum.t"
+
+
+class RZGate(SingleQubitGate):
+    name = "quantum.rz"
+
+    angle: ParameterDef[AngleAttr]
+
+    def __init__(self, angle: float | AngleAttr):
+        if not isinstance(angle, AngleAttr):
+            angle = AngleAttr(angle)
+
+        super().__init__((angle,))
+
+
+class CNotGate(TwoQubitGate):
+    name = "quantum.cnot"
+
+
+class CZGate(TwoQubitGate):
+    name = "quantum.cz"
+
+
+class ToffoliGate(GateAttr):
+    name = "quantum.toffoli"
+
+    def num_qubits(self) -> int:
+        return 3
+
+
 Quantum = Dialect(
     "quantum",
     [],
-    [AngleAttr],
+    [
+        AngleAttr,
+        HadamardGate,
+        XGate,
+        YGate,
+        ZGate,
+        PhaseGate,
+        TGate,
+        RZGate,
+        CNotGate,
+        CZGate,
+        ToffoliGate,
+    ],
 )
