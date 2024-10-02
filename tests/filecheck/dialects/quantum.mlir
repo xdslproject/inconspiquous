@@ -31,3 +31,11 @@
 "test.op"() {"angle" = #quantum.angle<-pi>} : () -> ()
 
 // CHECK-NEXT: "test.op"() {"angle" = #quantum.angle<pi>} : () -> ()
+
+"test.op"() {"gate" = #quantum.h} : () -> ()
+
+// CHECK-NEXT: "test.op"() {"gate" = #quantum.h} : () -> ()
+
+"test.op"() {"gate" = #quantum.rz<pi>} : () -> ()
+
+// CHECK-NEXT: "test.op"() {"gate" = #quantum.rz<pi>} : () -> ()

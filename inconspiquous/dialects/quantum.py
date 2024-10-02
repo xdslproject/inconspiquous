@@ -69,30 +69,37 @@ class AngleAttr(ParametrizedAttribute):
         return AngleAttr(-self.data.value.data)
 
 
+@irdl_attr_definition
 class HadamardGate(SingleQubitGate):
     name = "quantum.h"
 
 
+@irdl_attr_definition
 class XGate(SingleQubitGate):
     name = "quantum.x"
 
 
+@irdl_attr_definition
 class YGate(SingleQubitGate):
     name = "quantum.y"
 
 
+@irdl_attr_definition
 class ZGate(SingleQubitGate):
-    name = "quantum.y"
+    name = "quantum.z"
 
 
+@irdl_attr_definition
 class PhaseGate(SingleQubitGate):
     name = "quantum.s"
 
 
+@irdl_attr_definition
 class TGate(SingleQubitGate):
     name = "quantum.t"
 
 
+@irdl_attr_definition
 class RZGate(SingleQubitGate):
     name = "quantum.rz"
 
@@ -104,15 +111,25 @@ class RZGate(SingleQubitGate):
 
         super().__init__((angle,))
 
+    @classmethod
+    def parse_parameters(cls, parser: AttrParser) -> tuple[AngleAttr]:
+        return (AngleAttr.new(AngleAttr.parse_parameters(parser)),)
 
+    def print_parameters(self, printer: Printer) -> None:
+        return self.angle.print_parameters(printer)
+
+
+@irdl_attr_definition
 class CNotGate(TwoQubitGate):
     name = "quantum.cnot"
 
 
+@irdl_attr_definition
 class CZGate(TwoQubitGate):
     name = "quantum.cz"
 
 
+@irdl_attr_definition
 class ToffoliGate(GateAttr):
     name = "quantum.toffoli"
 
