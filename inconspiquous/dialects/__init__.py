@@ -31,6 +31,11 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return Linalg
 
+    def get_qssa():
+        from inconspiquous.dialects.qssa import Qssa
+
+        return Qssa
+
     def get_quantum():
         from inconspiquous.dialects.quantum import Quantum
 
@@ -62,6 +67,7 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "cf": get_cf,
         "func": get_func,
         "linalg": get_linalg,
+        "qssa": get_qssa,
         "quantum": get_quantum,
         "scf": get_scf,
         "stim": get_stim,
