@@ -17,7 +17,7 @@ class AngleAttr(ParametrizedAttribute):
     [0, 2) and implicitly multiplying by pi
     """
 
-    name = "quantum.angle"
+    name = "gate.angle"
     data: ParameterDef[FloatAttr[Float64Type]]
 
     def __init__(self, f: float):
@@ -71,37 +71,37 @@ class AngleAttr(ParametrizedAttribute):
 
 @irdl_attr_definition
 class HadamardGate(SingleQubitGate):
-    name = "quantum.h"
+    name = "gate.h"
 
 
 @irdl_attr_definition
 class XGate(SingleQubitGate):
-    name = "quantum.x"
+    name = "gate.x"
 
 
 @irdl_attr_definition
 class YGate(SingleQubitGate):
-    name = "quantum.y"
+    name = "gate.y"
 
 
 @irdl_attr_definition
 class ZGate(SingleQubitGate):
-    name = "quantum.z"
+    name = "gate.z"
 
 
 @irdl_attr_definition
 class PhaseGate(SingleQubitGate):
-    name = "quantum.s"
+    name = "gate.s"
 
 
 @irdl_attr_definition
 class TGate(SingleQubitGate):
-    name = "quantum.t"
+    name = "gate.t"
 
 
 @irdl_attr_definition
 class RZGate(SingleQubitGate):
-    name = "quantum.rz"
+    name = "gate.rz"
 
     angle: ParameterDef[AngleAttr]
 
@@ -121,24 +121,24 @@ class RZGate(SingleQubitGate):
 
 @irdl_attr_definition
 class CNotGate(TwoQubitGate):
-    name = "quantum.cnot"
+    name = "gate.cnot"
 
 
 @irdl_attr_definition
 class CZGate(TwoQubitGate):
-    name = "quantum.cz"
+    name = "gate.cz"
 
 
 @irdl_attr_definition
 class ToffoliGate(GateAttr):
-    name = "quantum.toffoli"
+    name = "gate.toffoli"
 
     def num_qubits(self) -> int:
         return 3
 
 
-Quantum = Dialect(
-    "quantum",
+Gate = Dialect(
+    "gate",
     [],
     [
         AngleAttr,
