@@ -93,7 +93,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "xdsl", git = "https://github.com/xdslproject/xdsl" }]
+requires-dist = [{ name = "xdsl", git = "https://github.com/xdslproject/xdsl?branch=alexarice%2Frange-variable-sequence" }]
 
 [package.metadata.requires-dev]
 dev = [
@@ -332,8 +332,8 @@ wheels = [
 
 [[package]]
 name = "xdsl"
-version = "0.23.0+15.gbd80c21c"
-source = { git = "https://github.com/xdslproject/xdsl#bd80c21c3d1320bbeb8733576f1df5d31448ae57" }
+version = "0.23.0+16.gbb6c122a"
+source = { git = "https://github.com/xdslproject/xdsl?branch=alexarice%2Frange-variable-sequence#bb6c122a31f4bf7a95b901e44a912cac57e07b73" }
 dependencies = [
     { name = "immutabledict" },
     { name = "ordered-set" },

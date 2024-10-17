@@ -11,6 +11,7 @@ class GateAttr(ParametrizedAttribute, ABC):
     may actually be better done via an attribute that can be attached to a gate operation.
     """
 
+    @property
     def num_qubits(self) -> int: ...
 
     # Some other possible things:
@@ -23,10 +24,12 @@ class GateAttr(ParametrizedAttribute, ABC):
 
 # Helper classes
 class SingleQubitGate(GateAttr):
+    @property
     def num_qubits(self) -> int:
         return 1
 
 
 class TwoQubitGate(GateAttr):
+    @property
     def num_qubits(self) -> int:
         return 2

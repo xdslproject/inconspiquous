@@ -5,7 +5,7 @@ description = "A testing ground for quantum computing compilation ideas in xdsl"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "xdsl>=0.22.0",
+    "xdsl>=0.23.0",
 ]
 
 [tool.uv]
@@ -20,7 +20,7 @@ dev-dependencies = [
 ]
 
 [tool.uv.sources]
-xdsl = { git = "https://github.com/xdslproject/xdsl" }
+xdsl = { git = "https://github.com/xdslproject/xdsl", branch = "alexarice/range-variable-sequence" }
 
 [project.scripts]
 quopt = "inconspiquous.tools.quopt_main:main"

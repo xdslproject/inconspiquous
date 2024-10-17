@@ -133,6 +133,7 @@ class CZGate(TwoQubitGate):
 class ToffoliGate(GateAttr):
     name = "gate.toffoli"
 
+    @property
     def num_qubits(self) -> int:
         return 3
 
