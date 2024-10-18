@@ -1,6 +1,8 @@
 from abc import ABC
-from xdsl.ir import ParametrizedAttribute
+from typing import Sequence
+from xdsl.ir import Attribute, ParametrizedAttribute
+from xdsl.irdl import WithRangeType
 
 
-class AllocAttr(ParametrizedAttribute, ABC):
-    pass
+class AllocAttr(ParametrizedAttribute, WithRangeType, ABC):
+    def get_types(self) -> Sequence[Attribute]: ...

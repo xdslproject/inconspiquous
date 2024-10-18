@@ -1,10 +1,17 @@
-from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute
+from typing import ClassVar, Sequence
+from xdsl.ir import Attribute, Dialect, ParametrizedAttribute, TypeAttribute
 from xdsl.irdl import (
+    AnyAttr,
+    BaseAttr,
     IRDLOperation,
+    RangeConstraint,
+    RangeOf,
+    RangeVarConstraint,
+    WithRangeTypeConstraint,
     irdl_attr_definition,
     irdl_op_definition,
     prop_def,
-    result_def,
+    var_result_def,
 )
 
 from inconspiquous.alloc import AllocAttr
@@ -27,14 +34,21 @@ class AllocZeroAttr(AllocAttr):
 
     name = "qubit.zero"
 
+    def get_types(self) -> Sequence[Attribute]:
+        return (BitType(),)
+
 
 @irdl_op_definition
 class AllocOp(IRDLOperation):
     name = "qubit.alloc"
 
-    alloc = prop_def(AllocAttr, default_value=AllocZeroAttr())
+    _T: ClassVar[RangeConstraint] = RangeVarConstraint("T", RangeOf(AnyAttr()))
 
-    outs = result_def(BitType())
+    alloc = prop_def(
+        WithRangeTypeConstraint(BaseAttr(AllocAttr), _T), default_value=AllocZeroAttr()
+    )
+
+    outs = var_result_def(_T)
 
     assembly_format = "(`` `<` $alloc^ `>`)? attr-dict"
 
@@ -43,7 +57,7 @@ class AllocOp(IRDLOperation):
             properties={
                 "alloc": alloc,
             },
-            result_types=[BitType()],
+            result_types=[alloc.get_types()],
         )
 
 

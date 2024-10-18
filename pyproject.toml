@@ -20,7 +20,7 @@ dev-dependencies = [
 ]
 
 [tool.uv.sources]
-xdsl = { git = "https://github.com/xdslproject/xdsl", branch = "alexarice/range-variable-sequence" }
+xdsl = { git = "https://github.com/xdslproject/xdsl", branch = "alexarice/constraint-branch" }
 
 [project.scripts]
 quopt = "inconspiquous.tools.quopt_main:main"

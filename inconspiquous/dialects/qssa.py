@@ -1,6 +1,6 @@
 from typing import ClassVar
 from xdsl.dialects.builtin import i1
-from xdsl.ir import Dialect, Operation, SSAValue, VerifyException
+from xdsl.ir import Dialect, Operation, SSAValue
 from xdsl.irdl import (
     EqAttrConstraint,
     IRDLOperation,
@@ -15,7 +15,7 @@ from xdsl.irdl import (
     var_result_def,
 )
 
-from inconspiquous.gates import GateAttr
+from inconspiquous.gates import GateAttr, GateConstraint
 from inconspiquous.dialects.qubit import BitType
 
 
@@ -23,15 +23,15 @@ from inconspiquous.dialects.qubit import BitType
 class GateOp(IRDLOperation):
     name = "qssa.gate"
 
-    gate = prop_def(GateAttr)
-
-    _T: ClassVar[RangeConstraint] = RangeVarConstraint(
-        "T", RangeOf(EqAttrConstraint(BitType()))
+    _Q: ClassVar[RangeConstraint] = RangeVarConstraint(
+        "Q", RangeOf(EqAttrConstraint(BitType()))
     )
 
-    ins = var_operand_def(_T)
+    gate = prop_def(GateConstraint(_Q))
 
-    outs = var_result_def(_T)
+    ins = var_operand_def(_Q)
+
+    outs = var_result_def(_Q)
 
     assembly_format = "`<` $gate `>` $ins attr-dict `:` type($ins)"
 
@@ -43,12 +43,6 @@ class GateOp(IRDLOperation):
             },
             result_types=tuple(BitType() for _ in ins),
         )
-
-    def verify_(self) -> None:
-        if len(self.ins) != self.gate.num_qubits:
-            raise VerifyException(
-                f"Gate {self.gate} expected {self.gate.num_qubits} input qubits but got {len(self.ins)}."
-            )
 
 
 @irdl_op_definition
