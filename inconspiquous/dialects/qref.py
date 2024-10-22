@@ -54,6 +54,7 @@ class MeasureOp(IRDLOperation):
     def __init__(self, in_qubit: SSAValue | Operation):
         super().__init__(
             operands=(in_qubit,),
+            result_types=(i1,),
         )
 
 
