@@ -26,15 +26,20 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return Func
 
+    def get_gate():
+        from inconspiquous.dialects.gate import Gate
+
+        return Gate
+
     def get_linalg():
         from xdsl.dialects.linalg import Linalg
 
         return Linalg
 
-    def get_gate():
-        from inconspiquous.dialects.gate import Gate
+    def get_prob():
+        from inconspiquous.dialects.prob import Prob
 
-        return Gate
+        return Prob
 
     def get_qref():
         from inconspiquous.dialects.qref import Qref
@@ -78,6 +83,7 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "func": get_func,
         "gate": get_gate,
         "linalg": get_linalg,
+        "prob": get_prob,
         "qref": get_qref,
         "qubit": get_qubit,
         "qssa": get_qssa,
