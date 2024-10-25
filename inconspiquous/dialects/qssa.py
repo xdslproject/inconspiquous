@@ -14,6 +14,8 @@ from xdsl.irdl import (
     var_operand_def,
     var_result_def,
 )
+from xdsl.pattern_rewriter import RewritePattern
+from xdsl.traits import HasCanonicalizationPatternsTrait
 
 from inconspiquous.gates import GateAttr
 from inconspiquous.gates.constraints import DynGateConstraint, GateConstraint
@@ -46,6 +48,14 @@ class GateOp(IRDLOperation):
         )
 
 
+class DynGateOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.qssa import DynGateConst
+
+        return (DynGateConst(),)
+
+
 @irdl_op_definition
 class DynGateOp(IRDLOperation):
     name = "qssa.dyn_gate"
@@ -62,6 +72,8 @@ class DynGateOp(IRDLOperation):
     outs = var_result_def(_Q)
 
     assembly_format = "`<` $gate `>` $ins attr-dict `:` type($ins)"
+
+    traits = frozenset((DynGateOpHasCanonicalizationPatterns(),))
 
     def __init__(self, gate: SSAValue | Operation, *ins: SSAValue | Operation):
         super().__init__(

@@ -18,6 +18,7 @@ from xdsl.irdl import (
 )
 from xdsl.parser import AttrParser, IndexType, IntegerAttr
 from xdsl.printer import Printer
+from xdsl.traits import ConstantLike, Pure
 
 from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
 
@@ -196,6 +197,8 @@ class ConstantGateOp(IRDLOperation):
     out = result_def(_T)
 
     assembly_format = "$gate attr-dict"
+
+    traits = frozenset((ConstantLike(), Pure()))
 
     def __init__(self, gate: GateAttr):
         super().__init__(
