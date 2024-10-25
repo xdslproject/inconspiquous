@@ -1,10 +1,22 @@
 from __future__ import annotations
 import math
+from typing import ClassVar
 
 from xdsl.dialects.builtin import FloatAttr, Float64Type
-from xdsl.ir import Dialect, ParametrizedAttribute
-from xdsl.irdl import ParameterDef, irdl_attr_definition
-from xdsl.parser import AttrParser
+from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute
+from xdsl.irdl import (
+    AttrConstraint,
+    IRDLOperation,
+    ParameterDef,
+    VarConstraint,
+    WithTypeConstraint,
+    base,
+    irdl_attr_definition,
+    irdl_op_definition,
+    prop_def,
+    result_def,
+)
+from xdsl.parser import AttrParser, IndexType, IntegerAttr
 from xdsl.printer import Printer
 
 from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
@@ -138,9 +150,67 @@ class ToffoliGate(GateAttr):
         return 3
 
 
+@irdl_attr_definition
+class IdentityGate(SingleQubitGate):
+    name = "gate.id"
+
+
+@irdl_attr_definition
+class GateType(ParametrizedAttribute, TypeAttribute):
+    """
+    Type for dynamic gate operations
+    """
+
+    name = "gate.type"
+
+    num_qubits: ParameterDef[IntegerAttr[IndexType]]
+
+    def __init__(self, num_qubits: int | IntegerAttr[IndexType]):
+        if isinstance(num_qubits, int):
+            num_qubits = IntegerAttr.from_index_int_value(num_qubits)
+        super().__init__((num_qubits,))
+
+    @classmethod
+    def parse_parameters(cls, parser: AttrParser) -> tuple[IntegerAttr[IndexType]]:
+        with parser.in_angle_brackets():
+            i = parser.parse_integer(allow_boolean=False, allow_negative=False)
+            return (IntegerAttr.from_index_int_value(i),)
+
+    def print_parameters(self, printer: Printer) -> None:
+        with printer.in_angle_brackets():
+            printer.print_string(str(self.num_qubits.value.data))
+
+
+@irdl_op_definition
+class ConstantGateOp(IRDLOperation):
+    """
+    Constant-like operation for producing gates
+    """
+
+    _T: ClassVar[AttrConstraint] = VarConstraint("T", base(GateType))
+
+    name = "gate.constant"
+
+    gate = prop_def(WithTypeConstraint(base(GateAttr), _T))
+
+    out = result_def(_T)
+
+    assembly_format = "$gate attr-dict"
+
+    def __init__(self, gate: GateAttr):
+        super().__init__(
+            properties={
+                "gate": gate,
+            },
+            result_types=(gate.get_type(),),
+        )
+
+
 Gate = Dialect(
     "gate",
-    [],
+    [
+        ConstantGateOp,
+    ],
     [
         AngleAttr,
         HadamardGate,
@@ -153,5 +223,7 @@ Gate = Dialect(
         CNotGate,
         CZGate,
         ToffoliGate,
+        IdentityGate,
+        GateType,
     ],
 )

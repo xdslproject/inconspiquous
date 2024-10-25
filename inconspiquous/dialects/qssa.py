@@ -15,7 +15,8 @@ from xdsl.irdl import (
     var_result_def,
 )
 
-from inconspiquous.gates import GateAttr, GateConstraint
+from inconspiquous.gates import GateAttr
+from inconspiquous.gates.constraints import DynGateConstraint, GateConstraint
 from inconspiquous.dialects.qubit import BitType
 
 
@@ -46,6 +47,30 @@ class GateOp(IRDLOperation):
 
 
 @irdl_op_definition
+class DynGateOp(IRDLOperation):
+    name = "qssa.dyn_gate"
+
+    _Q: ClassVar[RangeConstraint] = RangeVarConstraint(
+        "Q", RangeOf(EqAttrConstraint(BitType()))
+    )
+
+    ins = var_operand_def(_Q)
+
+    # Operands must be in this order for verification
+    gate = operand_def(DynGateConstraint(_Q))
+
+    outs = var_result_def(_Q)
+
+    assembly_format = "`<` $gate `>` $ins attr-dict `:` type($ins)"
+
+    def __init__(self, gate: SSAValue | Operation, *ins: SSAValue | Operation):
+        super().__init__(
+            operands=[ins, gate],
+            result_types=tuple(BitType() for _ in ins),
+        )
+
+
+@irdl_op_definition
 class MeasureOp(IRDLOperation):
     name = "qssa.measure"
 
@@ -68,6 +93,7 @@ Qssa = Dialect(
     "qssa",
     [
         GateOp,
+        DynGateOp,
         MeasureOp,
     ],
     [],
