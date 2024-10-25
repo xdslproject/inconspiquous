@@ -7,6 +7,16 @@ from xdsl.irdl import (
     result_def,
 )
 from xdsl.parser import Float64Type, FloatAttr, IndexType, IntegerType
+from xdsl.pattern_rewriter import RewritePattern
+from xdsl.traits import HasCanonicalizationPatternsTrait
+
+
+class BernoulliOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.prob import BernoulliConst
+
+        return (BernoulliConst(),)
 
 
 @irdl_op_definition
@@ -18,6 +28,8 @@ class BernoulliOp(IRDLOperation):
     out = result_def(i1)
 
     assembly_format = "$prob attr-dict"
+
+    traits = frozenset((BernoulliOpHasCanonicalizationPatterns(),))
 
     def __init__(self, prob: float | FloatAttr[Float64Type]):
         if isinstance(prob, float):
