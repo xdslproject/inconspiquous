@@ -1,4 +1,5 @@
 // RUN: QUOPT_ROUNDTRIP
+// RUN: QUOPT_GENERIC_ROUNDTRIP
 
 "test.op"() {"angle" = #gate.angle<0>} : () -> ()
 
@@ -39,3 +40,13 @@
 "test.op"() {"gate" = #gate.rz<pi>} : () -> ()
 
 // CHECK-NEXT: "test.op"() {"gate" = #gate.rz<pi>} : () -> ()
+
+%0 = gate.constant #gate.h
+
+// CHECK-NEXT: %{{.*}} = gate.constant #gate.h
+// CHECK-GENERIC: %{{.*}} = "gate.constant"() <{"gate" = #gate.h}> : () -> !gate.type<1>
+
+%1 = gate.constant #gate.cz
+
+// CHECK-NEXT: %{{.*}} = gate.constant #gate.cz
+// CHECK-GENERIC-NEXT: %{{.*}} = "gate.constant"() <{"gate" = #gate.cz}> : () -> !gate.type<2>

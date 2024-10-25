@@ -19,7 +19,17 @@ class ConvertQssaGateToQrefGate(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qssa.GateOp, rewriter: PatternRewriter):
-        rewriter.replace_matched_op(qref.GateOp(op.gate, *op.operands), op.operands)
+        rewriter.replace_matched_op(qref.GateOp(op.gate, *op.ins), op.operands)
+
+
+class ConvertQssaDynGateToQrefDynGate(RewritePattern):
+    """
+    Replaces a qssa dyn_gate operation by its qref counterpart.
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: qssa.DynGateOp, rewriter: PatternRewriter):
+        rewriter.replace_matched_op(qref.DynGateOp(op.gate, *op.ins), op.ins)
 
 
 class ConvertQssaMeasureToQrefMeasure(RewritePattern):
@@ -46,6 +56,7 @@ class ConvertQssaToQref(ModulePass):
             GreedyRewritePatternApplier(
                 [
                     ConvertQssaGateToQrefGate(),
+                    ConvertQssaDynGateToQrefDynGate(),
                     ConvertQssaMeasureToQrefMeasure(),
                 ]
             ),
