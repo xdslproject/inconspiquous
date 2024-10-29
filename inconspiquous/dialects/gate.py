@@ -3,7 +3,7 @@ import math
 from typing import ClassVar
 
 from xdsl.dialects.builtin import FloatAttr, Float64Type
-from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute
+from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     AttrConstraint,
     IRDLOperation,
@@ -13,10 +13,11 @@ from xdsl.irdl import (
     base,
     irdl_attr_definition,
     irdl_op_definition,
+    operand_def,
     prop_def,
     result_def,
 )
-from xdsl.parser import AttrParser, IndexType, IntegerAttr
+from xdsl.parser import AnyFloatConstr, AttrParser, IndexType, IntegerAttr, IntegerType
 from xdsl.printer import Printer
 from xdsl.traits import ConstantLike, Pure
 
@@ -209,10 +210,49 @@ class ConstantGateOp(IRDLOperation):
         )
 
 
+@irdl_op_definition
+class QuaternionGateOp(IRDLOperation):
+    """
+    A gate described by a quaternion.
+
+    The action of the gate on the Bloch sphere is given by the rotation generated
+    by conjugating by the quaternion.
+    """
+
+    _T: ClassVar = VarConstraint("T", base(IntegerType) | AnyFloatConstr)
+
+    name = "gate.quaternion"
+
+    real = operand_def(_T)
+    i = operand_def(_T)
+    j = operand_def(_T)
+    k = operand_def(_T)
+
+    out = result_def(GateType(1))
+
+    assembly_format = (
+        "`<` type($real) `>` $real `+` $i `i` `+` $j `j` `+` $k `k` attr-dict"
+    )
+
+    def __init__(
+        self,
+        real: Operation | SSAValue,
+        i: Operation | SSAValue,
+        j: Operation | SSAValue,
+        k: Operation | SSAValue,
+    ):
+        real = SSAValue.get(real)
+        super().__init__(
+            operands=(real, i, j, k),
+            result_types=(real.type,),
+        )
+
+
 Gate = Dialect(
     "gate",
     [
         ConstantGateOp,
+        QuaternionGateOp,
     ],
     [
         AngleAttr,

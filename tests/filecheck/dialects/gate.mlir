@@ -50,3 +50,10 @@
 
 // CHECK-NEXT: %{{.*}} = gate.constant #gate.cz
 // CHECK-GENERIC-NEXT: %{{.*}} = "gate.constant"() <{"gate" = #gate.cz}> : () -> !gate.type<2>
+
+%zero = arith.constant 0 : i64
+%one = arith.constant 1 : i64
+
+// CHECK: %{{.*}} = gate.quaternion<i64> %zero + %one i + %zero j + %zero k
+// CHECK-GENERIC: %{{.*}} = "gate.quaternion"(%zero, %one, %zero, %zero) : (i64, i64, i64, i64) -> !gate.type<1>
+%2 = gate.quaternion<i64> %zero + %one i + %zero j + %zero k
