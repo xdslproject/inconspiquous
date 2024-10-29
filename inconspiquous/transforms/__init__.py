@@ -36,6 +36,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return merge.MergeXSGates
 
+    def get_randomized_comp():
+        from inconspiquous.transforms import randomized_comp
+
+        return randomized_comp.RandomizedComp
+
     def get_xs_select():
         from inconspiquous.transforms.xs import select
 
@@ -48,5 +53,6 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "convert-to-xs": get_convert_to_xs,
         "cse": get_cse,
         "merge-xs": get_merge_xs,
+        "randomized-comp": get_randomized_comp,
         "xs-select": get_xs_select,
     }
