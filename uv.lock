@@ -332,8 +332,8 @@ wheels = [
 
 [[package]]
 name = "xdsl"
-version = "0.23.0+52.g8f440b52"
-source = { git = "https://github.com/xdslproject/xdsl?branch=alexarice%2Fconstraint-branch#8f440b52c2d4d45528d1e33d172516db525a0f4b" }
+version = "0.23.0+53.g0623558f"
+source = { git = "https://github.com/xdslproject/xdsl?branch=alexarice%2Fconstraint-branch#0623558f108220076fe279d25caa7d7690849c21" }
 dependencies = [
     { name = "immutabledict" },
     { name = "ordered-set" },
