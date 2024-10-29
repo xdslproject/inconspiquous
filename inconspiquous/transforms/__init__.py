@@ -21,8 +21,20 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return convert_scf_to_cf.ConvertScfToCf
 
+    def get_cse():
+        from xdsl.transforms import common_subexpression_elimination
+
+        return common_subexpression_elimination.CommonSubexpressionElimination
+
+    def get_randomized_comp():
+        from inconspiquous.transforms import randomized_comp
+
+        return randomized_comp.RandomizedComp
+
     return {
         "canonicalize": get_canonicalize,
         "convert-qssa-to-qref": get_convert_qssa_to_qref,
         "convert-scf-to-cf": get_convert_scf_to_cf,
+        "cse": get_cse,
+        "randomized-comp": get_randomized_comp,
     }

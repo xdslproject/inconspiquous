@@ -3,7 +3,7 @@ import math
 from typing import ClassVar
 
 from xdsl.dialects.builtin import FloatAttr, Float64Type
-from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute
+from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     AttrConstraint,
     IRDLOperation,
@@ -13,6 +13,7 @@ from xdsl.irdl import (
     base,
     irdl_attr_definition,
     irdl_op_definition,
+    operand_def,
     prop_def,
     result_def,
 )
@@ -209,10 +210,33 @@ class ConstantGateOp(IRDLOperation):
         )
 
 
+@irdl_op_definition
+class ComposeGateOp(IRDLOperation):
+    """
+    Compose two gates in sequence. Uses diagrammatic order.
+    """
+
+    _T: ClassVar[AttrConstraint] = VarConstraint("T", base(GateType))
+
+    name = "gate.compose"
+
+    lhs = operand_def(_T)
+    rhs = operand_def(_T)
+
+    out = result_def(_T)
+
+    assembly_format = "$lhs `,` $rhs attr-dict `:` type($out)"
+
+    def __init__(self, lhs: Operation | SSAValue, rhs: Operation | SSAValue):
+        lhs = SSAValue.get(lhs)
+        super().__init__(operands=[lhs, rhs], result_types=[lhs.type])
+
+
 Gate = Dialect(
     "gate",
     [
         ConstantGateOp,
+        ComposeGateOp,
     ],
     [
         AngleAttr,
