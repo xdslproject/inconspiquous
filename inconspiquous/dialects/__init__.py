@@ -76,6 +76,11 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return Test
 
+    def get_varith():
+        from xdsl.dialects.varith import Varith
+
+        return Varith
+
     return {
         "arith": get_arith,
         "builtin": get_builtin,
@@ -91,4 +96,5 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "stim": get_stim,
         "tensor": get_tensor,
         "test": get_test,
+        "varith": get_varith,
     }

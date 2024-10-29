@@ -1,5 +1,40 @@
 // RUN: QUOPT_ROUNDTRIP
 
+// CHECK:      func.func @depolarising_dyn(%q : !qubit.bit) -> !qubit.bit {
+// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01 : f64
+// CHECK-NEXT:   %id = gate.constant #gate.id
+// CHECK-NEXT:   %p2 = prob.uniform : i2
+// CHECK-NEXT:   %x = gate.constant #gate.x
+// CHECK-NEXT:   %y = gate.constant #gate.y
+// CHECK-NEXT:   %z = gate.constant #gate.z
+// CHECK-NEXT:   %choice = varith.switch %p2 : i2 -> !gate.type<1>, [
+// CHECK-NEXT:     default: %id,
+// CHECK-NEXT:     1: %x,
+// CHECK-NEXT:     2: %y,
+// CHECK-NEXT:     3: %z
+// CHECK-NEXT:   ]
+// CHECK-NEXT:   %g = arith.select %p, %choice, %id : !gate.type<1>
+// CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q : !qubit.bit
+// CHECK-NEXT:   func.return %q1 : !qubit.bit
+// CHECK-NEXT: }
+func.func @depolarising_dyn(%q : !qubit.bit) -> !qubit.bit {
+  %p = prob.bernoulli 0.1
+  %id = gate.constant #gate.id
+  %p2 = prob.uniform : i2
+  %x = gate.constant #gate.x
+  %y = gate.constant #gate.y
+  %z = gate.constant #gate.z
+  %choice = varith.switch %p2 : i2 -> !gate.type<1>, [
+    default: %id,
+    1: %x,
+    2: %y,
+    3: %z
+  ]
+  %g = arith.select %p, %choice, %id : !gate.type<1>
+  %q1 = qssa.dyn_gate<%g> %q : !qubit.bit
+  func.return %q1 : !qubit.bit
+}
+
 // CHECK:      func.func @depolarising_scf(%q : !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01 : f64
 // CHECK-NEXT:   %q3 = scf.if %p -> (!qubit.bit) {
