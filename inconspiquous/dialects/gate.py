@@ -241,10 +241,9 @@ class QuaternionGateOp(IRDLOperation):
         j: Operation | SSAValue,
         k: Operation | SSAValue,
     ):
-        real = SSAValue.get(real)
         super().__init__(
             operands=(real, i, j, k),
-            result_types=(real.type,),
+            result_types=(GateType(1),),
         )
 
 

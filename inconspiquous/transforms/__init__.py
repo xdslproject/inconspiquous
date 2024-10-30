@@ -21,8 +21,20 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return convert_scf_to_cf.ConvertScfToCf
 
+    def get_cse():
+        from xdsl.transforms import common_subexpression_elimination
+
+        return common_subexpression_elimination.CommonSubexpressionElimination
+
+    def get_lower_to_quaternion():
+        from inconspiquous.transforms.quaternions import lower
+
+        return lower.LowerToQuaternion
+
     return {
         "canonicalize": get_canonicalize,
         "convert-qssa-to-qref": get_convert_qssa_to_qref,
         "convert-scf-to-cf": get_convert_scf_to_cf,
+        "cse": get_cse,
+        "lower-to-quaternion": get_lower_to_quaternion,
     }
