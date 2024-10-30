@@ -21,8 +21,32 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return convert_scf_to_cf.ConvertScfToCf
 
+    def get_convert_to_xs():
+        from inconspiquous.transforms.xs import convert_to_xs
+
+        return convert_to_xs.ConvertToXS
+
+    def get_cse():
+        from xdsl.transforms import common_subexpression_elimination
+
+        return common_subexpression_elimination.CommonSubexpressionElimination
+
+    def get_merge_xs():
+        from inconspiquous.transforms.xs import merge
+
+        return merge.MergeXSGates
+
+    def get_xs_select():
+        from inconspiquous.transforms.xs import select
+
+        return select.XSSelect
+
     return {
         "canonicalize": get_canonicalize,
         "convert-qssa-to-qref": get_convert_qssa_to_qref,
         "convert-scf-to-cf": get_convert_scf_to_cf,
+        "convert-to-xs": get_convert_to_xs,
+        "cse": get_cse,
+        "merge-xs": get_merge_xs,
+        "xs-select": get_xs_select,
     }

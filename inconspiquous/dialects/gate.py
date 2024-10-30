@@ -248,11 +248,35 @@ class QuaternionGateOp(IRDLOperation):
         )
 
 
+@irdl_op_definition
+class XSGateOp(IRDLOperation):
+    """
+    A gate for describing combinations of X and (pi/2) phase gates.
+    The final gate is given by:
+    X^(x >> 1) . S^phase
+
+    Passing in a value of 0 or 2 for x is undefined behaviour
+    """
+
+    name = "gate.xs"
+
+    x = operand_def(IntegerType(2))
+    phase = operand_def(IntegerType(2))
+
+    out = result_def(GateType(1))
+
+    assembly_format = "%x `,` %phase"
+
+    def __init__(self, x: Operation | SSAValue, phase: Operation | SSAValue):
+        super().__init__(operands=(x, phase), result_types=(GateType(1),))
+
+
 Gate = Dialect(
     "gate",
     [
         ConstantGateOp,
         QuaternionGateOp,
+        XSGateOp,
     ],
     [
         AngleAttr,
