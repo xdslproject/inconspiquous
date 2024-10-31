@@ -8,6 +8,7 @@ from xdsl.pattern_rewriter import (
     RewritePattern,
     op_type_rewrite_pattern,
 )
+from xdsl.rewriter import InsertPoint
 
 from inconspiquous.dialects.gate import XSGateOp
 
@@ -19,13 +20,20 @@ class XSSelectPattern(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: Select, rewriter: PatternRewriter):
-        if not isinstance(op.lhs, XSGateOp) or not isinstance(op.rhs, XSGateOp):
+        lhs = op.lhs.owner
+        rhs = op.rhs.owner
+        if not isinstance(lhs, XSGateOp) or not isinstance(rhs, XSGateOp):
             return
+
+        sel_x = Select(op.cond, lhs.x, rhs.x)
+        sel_phase = Select(op.cond, lhs.phase, rhs.phase)
+
+        rewriter.insert_op((sel_x, sel_phase), InsertPoint.before(op))
 
         rewriter.replace_matched_op(
             XSGateOp(
-                Select(op.cond, op.lhs.x, op.rhs.x),
-                Select(op.cond, op.lhs.phase, op.rhs.phase),
+                sel_x,
+                sel_phase,
             )
         )
 

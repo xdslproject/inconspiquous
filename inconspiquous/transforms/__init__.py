@@ -31,6 +31,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return common_subexpression_elimination.CommonSubexpressionElimination
 
+    def get_dce():
+        from xdsl.transforms import dead_code_elimination
+
+        return dead_code_elimination.DeadCodeElimination
+
     def get_merge_xs():
         from inconspiquous.transforms.xs import merge
 
@@ -52,6 +57,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "convert-scf-to-cf": get_convert_scf_to_cf,
         "convert-to-xs": get_convert_to_xs,
         "cse": get_cse,
+        "dce": get_dce,
         "merge-xs": get_merge_xs,
         "randomized-comp": get_randomized_comp,
         "xs-select": get_xs_select,

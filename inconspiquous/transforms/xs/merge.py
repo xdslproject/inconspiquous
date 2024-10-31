@@ -42,7 +42,7 @@ class MergeXSGatesPattern(RewritePattern):
         rewriter.insert_op(
             (new_x, new_phase_mul, new_phase, new_gate), InsertPoint.before(op)
         )
-        rewriter.replace_matched_op(DynGateOp(new_gate))
+        rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.ins))
         rewriter.erase_op(predecessor)
 
 
@@ -51,7 +51,7 @@ class MergeXSGates(ModulePass):
     Merge consecutive XS gates and push arith.select inwards
     """
 
-    name = "merge-xs-gates"
+    name = "merge-xs"
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(MergeXSGatesPattern()).rewrite_op(op)

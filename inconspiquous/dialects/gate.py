@@ -234,6 +234,8 @@ class QuaternionGateOp(IRDLOperation):
         "`<` type($real) `>` $real `+` $i `i` `+` $j `j` `+` $k `k` attr-dict"
     )
 
+    traits = frozenset([Pure()])
+
     def __init__(
         self,
         real: Operation | SSAValue,
@@ -265,7 +267,9 @@ class XSGateOp(IRDLOperation):
 
     out = result_def(GateType(1))
 
-    assembly_format = "%x `,` %phase"
+    assembly_format = "$x `,` $phase attr-dict"
+
+    traits = frozenset([Pure()])
 
     def __init__(self, x: Operation | SSAValue, phase: Operation | SSAValue):
         super().__init__(operands=(x, phase), result_types=(GateType(1),))
