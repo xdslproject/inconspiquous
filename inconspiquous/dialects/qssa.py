@@ -23,6 +23,14 @@ from inconspiquous.gates.constraints import DynGateConstraint, GateConstraint
 from inconspiquous.dialects.qubit import BitType
 
 
+class GateOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.qssa import GateIdentity
+
+        return (GateIdentity(),)
+
+
 @irdl_op_definition
 class GateOp(IRDLOperation):
     name = "qssa.gate"
@@ -38,6 +46,8 @@ class GateOp(IRDLOperation):
     outs = var_result_def(_Q)
 
     assembly_format = "`<` $gate `>` $ins attr-dict `:` type($ins)"
+
+    traits = traits_def(GateOpHasCanonicalizationPatterns())
 
     def __init__(self, gate: GateAttr, *ins: SSAValue | Operation):
         super().__init__(

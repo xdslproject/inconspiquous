@@ -4,7 +4,7 @@ from xdsl.pattern_rewriter import (
     op_type_rewrite_pattern,
 )
 
-from inconspiquous.dialects.gate import ComposeGateOp, ConstantGateOp
+from inconspiquous.dialects.gate import ComposeGateOp, ConstantGateOp, IdentityGate
 from inconspiquous.dialects.qssa import GateOp
 from inconspiquous.dialects.qssa import DynGateOp
 
@@ -31,3 +31,14 @@ class DynGateCompose(RewritePattern):
             dyn_gate_lhs = DynGateOp(gate.lhs, *op.ins)
             dyn_gate_rhs = DynGateOp(gate.rhs, dyn_gate_lhs)
             rewriter.replace_matched_op((dyn_gate_lhs, dyn_gate_rhs))
+
+
+class GateIdentity(RewritePattern):
+    """
+    Remove an identity gate
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
+        if isinstance(op.gate, IdentityGate):
+            rewriter.replace_matched_op((), op.ins)
