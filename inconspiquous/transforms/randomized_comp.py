@@ -192,7 +192,9 @@ class PadCNotGate(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op((post_x_q1, post_x_q2_2))
+        rewriter.replace_matched_op(
+            (post_x_q1, post_x_q2_2), (post_x_q1.outs[0], post_x_q2_2.outs[0])
+        )
 
 
 class RandomizedComp(ModulePass):

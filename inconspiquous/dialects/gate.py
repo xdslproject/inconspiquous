@@ -16,6 +16,7 @@ from xdsl.irdl import (
     operand_def,
     prop_def,
     result_def,
+    traits_def,
 )
 from xdsl.parser import AnyFloatConstr, AttrParser, IndexType, IntegerAttr, IntegerType
 from xdsl.printer import Printer
@@ -199,7 +200,10 @@ class ConstantGateOp(IRDLOperation):
 
     assembly_format = "$gate attr-dict"
 
-    traits = frozenset((ConstantLike(), Pure()))
+    traits = traits_def(
+        ConstantLike(),
+        Pure(),
+    )
 
     def __init__(self, gate: GateAttr):
         super().__init__(
@@ -234,7 +238,7 @@ class QuaternionGateOp(IRDLOperation):
         "`<` type($real) `>` $real `+` $i `i` `+` $j `j` `+` $k `k` attr-dict"
     )
 
-    traits = frozenset([Pure()])
+    traits = traits_def(Pure())
 
     def __init__(
         self,
@@ -248,6 +252,26 @@ class QuaternionGateOp(IRDLOperation):
             operands=(real, i, j, k),
             result_types=(real.type,),
         )
+
+
+@irdl_op_definition
+class ComposeGateOp(IRDLOperation):
+    name = "gate.compose"
+
+    _T: ClassVar = VarConstraint("T", base(GateType))
+
+    lhs = operand_def(_T)
+    rhs = operand_def(_T)
+
+    out = result_def(_T)
+
+    assembly_format = "$lhs `,` $rhs attr-dict `:` type($out)"
+
+    traits = traits_def(Pure())
+
+    def __init__(self, lhs: SSAValue | Operation, rhs: SSAValue | Operation):
+        lhs = SSAValue.get(lhs)
+        super().__init__(operands=(lhs, rhs), result_types=(lhs.type,))
 
 
 @irdl_op_definition
@@ -269,7 +293,7 @@ class XSGateOp(IRDLOperation):
 
     assembly_format = "$x `,` $phase attr-dict"
 
-    traits = frozenset([Pure()])
+    traits = traits_def(Pure())
 
     def __init__(self, x: Operation | SSAValue, phase: Operation | SSAValue):
         super().__init__(operands=(x, phase), result_types=(GateType(1),))
@@ -280,6 +304,7 @@ Gate = Dialect(
     [
         ConstantGateOp,
         QuaternionGateOp,
+        ComposeGateOp,
         XSGateOp,
     ],
     [

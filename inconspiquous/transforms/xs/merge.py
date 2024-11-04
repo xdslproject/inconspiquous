@@ -30,7 +30,7 @@ class MergeXSGatesPattern(RewritePattern):
         if not isinstance(predecessor, DynGateOp):
             return
 
-        gate1 = op.gate.owner
+        gate1 = predecessor.gate.owner
         if not isinstance(gate1, XSGateOp):
             return
 

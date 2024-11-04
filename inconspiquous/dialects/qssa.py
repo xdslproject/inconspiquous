@@ -11,6 +11,7 @@ from xdsl.irdl import (
     operand_def,
     prop_def,
     result_def,
+    traits_def,
     var_operand_def,
     var_result_def,
 )
@@ -44,16 +45,19 @@ class GateOp(IRDLOperation):
             properties={
                 "gate": gate,
             },
-            result_types=tuple(BitType() for _ in ins),
+            result_types=(tuple(BitType() for _ in ins),),
         )
 
 
 class DynGateOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization.qssa import DynGateConst
+        from inconspiquous.transforms.canonicalization.qssa import (
+            DynGateConst,
+            DynGateCompose,
+        )
 
-        return (DynGateConst(),)
+        return (DynGateConst(), DynGateCompose())
 
 
 @irdl_op_definition
@@ -73,12 +77,12 @@ class DynGateOp(IRDLOperation):
 
     assembly_format = "`<` $gate `>` $ins attr-dict `:` type($ins)"
 
-    traits = frozenset((DynGateOpHasCanonicalizationPatterns(),))
+    traits = traits_def(DynGateOpHasCanonicalizationPatterns())
 
     def __init__(self, gate: SSAValue | Operation, *ins: SSAValue | Operation):
         super().__init__(
             operands=[ins, gate],
-            result_types=tuple(BitType() for _ in ins),
+            result_types=(tuple(BitType() for _ in ins),),
         )
 
 
