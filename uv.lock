@@ -39,11 +39,11 @@ wheels = [
 
 [[package]]
 name = "filecheck"
-version = "0.0.23"
+version = "1.0.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c3/fe/9f11b6dff466ec57a9f49902858ef1f4a90993998ac6fdd6cf579d5fbd95/filecheck-0.0.23.tar.gz", hash = "sha256:1c5db511fb7b5a32e1e24736479cfe754ea27c9ae0d5b6d52c0af132c8db3e7d", size = 12804 }
+sdist = { url = "https://files.pythonhosted.org/packages/93/d2/7e8bf9acf2ccb522fef4845d940b7db14782e6a36929da0ca5a4791bc2b6/filecheck-1.0.1.tar.gz", hash = "sha256:bbc3c49c190bd3af2445426a193ff0b54e1fad5a81ea7c2116c4dc36f36614f2", size = 20480 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/6a/a864c347dcffa6ac6b97f3770b5f4642b26cb3acf04a5b5bc2b14a04149b/filecheck-0.0.23-py3-none-any.whl", hash = "sha256:cc1dc3fc2fc682ccd059b0d535606d32235613a32c018211d93aa6a99047ceb2", size = 13217 },
+    { url = "https://files.pythonhosted.org/packages/c7/29/827b9f240e03c2cc6a2fd534ac980a12b3c7e8d8aa71c2f1039a5f91e932/filecheck-1.0.1-py3-none-any.whl", hash = "sha256:2d1a0e8784b723a4b04a655cff3af09dd159a31f4e39d477186f5547553124ab", size = 23702 },
 ]
 
 [[package]]
@@ -97,9 +97,9 @@ requires-dist = [{ name = "xdsl", extras = ["gui"], git = "https://github.com/xd
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "filecheck", specifier = "==0.0.23" },
-    { name = "lit", specifier = "<16.0.0" },
-    { name = "pre-commit", specifier = "==3.3.1" },
+    { name = "filecheck", specifier = "==1.0.1" },
+    { name = "lit", specifier = "<19.0.0" },
+    { name = "pre-commit", specifier = "==4.0.1" },
     { name = "psutil", specifier = ">=6.0.0" },
     { name = "pyright", specifier = ">=1.1.380" },
     { name = "pytest", specifier = ">=8.3.3" },
@@ -227,7 +227,7 @@ wheels = [
 
 [[package]]
 name = "pre-commit"
-version = "3.3.1"
+version = "4.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cfgv" },
@@ -236,9 +236,9 @@ dependencies = [
     { name = "pyyaml" },
     { name = "virtualenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f6/f9/fd40593d83357bb03733c0e77e71a08f2f5f523595d0a10401d7e5c22f16/pre_commit-3.3.1.tar.gz", hash = "sha256:733f78c9a056cdd169baa6cd4272d51ecfda95346ef8a89bf93712706021b907", size = 176605 }
+sdist = { url = "https://files.pythonhosted.org/packages/2e/c8/e22c292035f1bac8b9f5237a2622305bc0304e776080b246f3df57c4ff9f/pre_commit-4.0.1.tar.gz", hash = "sha256:80905ac375958c0444c65e9cebebd948b3cdb518f335a091a670a89d652139d2", size = 191678 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/39/86e07f4e9671ee9311fa4bafc41c66d6a907192707160e3f45272e78be38/pre_commit-3.3.1-py2.py3-none-any.whl", hash = "sha256:218e9e3f7f7f3271ebc355a15598a4d3893ad9fc7b57fe446db75644543323b9", size = 202528 },
+    { url = "https://files.pythonhosted.org/packages/16/8f/496e10d51edd6671ebe0432e33ff800aa86775d2d147ce7d43389324a525/pre_commit-4.0.1-py2.py3-none-any.whl", hash = "sha256:efde913840816312445dc98787724647c65473daefe420785f885e8ed9a06878", size = 218713 },
 ]
 
 [[package]]

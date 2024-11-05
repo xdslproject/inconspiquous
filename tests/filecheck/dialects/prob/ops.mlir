@@ -8,3 +8,15 @@
 // CHECK: %{{.*}} = prob.uniform : i32
 // CHECK-GENERIC: %{{.*}} = "prob.uniform"() : () -> i32
 %1 = prob.uniform : i32
+
+%2, %3, %4 = "test.op"() : () -> (i64, i64, i64)
+
+// CHECK: %{{.*}} = prob.fin_supp [ 0.1 of %{{.*}}, 0.2 of %{{.*}}, else %{{.*}} ] : i64
+%5 = prob.fin_supp [
+  0.1 of %2,
+  0.2 of %3,
+  else %4
+] : i64
+
+// CHECK: %{{.*}} = prob.fin_supp [ %{{.*}} ] : i64
+%6 = prob.fin_supp [ %4 ] : i64
