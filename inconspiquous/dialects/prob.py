@@ -1,4 +1,6 @@
-from typing import ClassVar, Self, Sequence
+from typing import ClassVar, Sequence
+from typing_extensions import Self
+
 from xdsl.dialects.builtin import IntegerAttrTypeConstr, i1
 from xdsl.ir import (
     Attribute,
