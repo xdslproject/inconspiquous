@@ -11,6 +11,7 @@ from xdsl.irdl import (
     operand_def,
     prop_def,
     result_def,
+    traits_def,
     var_operand_def,
 )
 from xdsl.pattern_rewriter import RewritePattern
@@ -67,7 +68,7 @@ class DynGateOp(IRDLOperation):
 
     assembly_format = "`<` $gate `>` $ins attr-dict `:` type($ins)"
 
-    traits = frozenset((DynGateOpHasCanonicalizationPatterns(),))
+    traits = traits_def(DynGateOpHasCanonicalizationPatterns())
 
     def __init__(self, gate: SSAValue | Operation, *ins: SSAValue | Operation):
         super().__init__(

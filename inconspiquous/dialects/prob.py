@@ -5,6 +5,7 @@ from xdsl.irdl import (
     irdl_op_definition,
     prop_def,
     result_def,
+    traits_def,
 )
 from xdsl.parser import Float64Type, FloatAttr, IndexType, IntegerType
 from xdsl.pattern_rewriter import RewritePattern
@@ -29,7 +30,7 @@ class BernoulliOp(IRDLOperation):
 
     assembly_format = "$prob attr-dict"
 
-    traits = frozenset((BernoulliOpHasCanonicalizationPatterns(),))
+    traits = traits_def(BernoulliOpHasCanonicalizationPatterns())
 
     def __init__(self, prob: float | FloatAttr[Float64Type]):
         if isinstance(prob, float):
