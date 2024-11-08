@@ -41,6 +41,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return lower_dyn_gate_to_scf.LowerDynGateToScf
 
+    def get_lower_to_fin_supp():
+        from inconspiquous.transforms import lower_to_fin_supp
+
+        return lower_to_fin_supp.LowerToFinSupp
+
     def get_lower_xs_to_select():
         from inconspiquous.transforms.xs import lower
 
@@ -74,6 +79,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "cse": get_cse,
         "dce": get_dce,
         "lower-dyn-gate-to-scf": get_lower_dyn_gate_to_scf,
+        "lower-to-fin-supp": get_lower_to_fin_supp,
         "lower-xs-to-select": get_lower_xs_to_select,
         "merge-xs": get_merge_xs,
         "mlir-opt": get_mlir_opt,

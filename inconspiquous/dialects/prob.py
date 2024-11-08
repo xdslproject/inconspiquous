@@ -121,7 +121,7 @@ class FinSuppOp(IRDLOperation):
     def __init__(
         self,
         probabilities: Sequence[float] | DenseArrayBase,
-        default_value: SSAValue,
+        default_value: SSAValue | Operation,
         *ins: SSAValue | Operation,
         attr_dict: dict[str, Attribute] | None = None,
     ):
