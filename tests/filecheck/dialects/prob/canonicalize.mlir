@@ -17,8 +17,8 @@
 
 // CHECK: %[[#first:]], %[[#second:]], %[[#third:]] = "test.op"() : () -> (i32, i32, i32)
 %4, %5, %6 = "test.op"() : () -> (i32, i32, i32)
-// CHECK-NEXT: %{{.*}} = prob.fin_supp [ 0.30000000000000004 of %[[#first]], else %[[#second]] ] : i32
-%7 = prob.fin_supp [ 0.1 of %4, 0.2 of %4, else %5 ] : i32
+// CHECK-NEXT: %{{.*}} = prob.fin_supp [ 0.375 of %[[#first]], else %[[#second]] ] : i32
+%7 = prob.fin_supp [ 0.125 of %4, 0.25 of %4, else %5 ] : i32
 
 // CHECK-NEXT: %{{.*}} = prob.fin_supp [ 0.1 of %[[#first]], else %[[#third]] ] : i32
 %8 = prob.fin_supp [ 0.1 of %4, 0.0 of %5, else %6 ] : i32
