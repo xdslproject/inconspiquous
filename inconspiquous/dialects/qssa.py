@@ -45,7 +45,7 @@ class GateOp(IRDLOperation):
 
     outs = var_result_def(_Q)
 
-    assembly_format = "`<` $gate `>` $ins attr-dict `:` type($ins)"
+    assembly_format = "`<` $gate `>` $ins attr-dict `:` type($outs)"
 
     traits = traits_def(GateOpHasCanonicalizationPatterns())
 

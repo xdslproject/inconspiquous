@@ -46,4 +46,4 @@ class XSSelect(ModulePass):
     name = "xs-select"
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
-        PatternRewriteWalker(XSSelectPattern()).rewrite_op(op)
+        PatternRewriteWalker(XSSelectPattern()).rewrite_module(op)

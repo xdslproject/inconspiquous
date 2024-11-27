@@ -1,12 +1,12 @@
 // RUN: QUOPT_ROUNDTRIP
 
 // CHECK:      func.func @double_phase(%q : !qubit.bit) -> !qubit.bit {
-// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01 : f64
+// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   %id = gate.constant #gate.id
 // CHECK-NEXT:   %z = gate.constant #gate.z
 // CHECK-NEXT:   %g = arith.select %p, %z, %id : !gate.type<1>
 // CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q : !qubit.bit
-// CHECK-NEXT:   %p2 = prob.bernoulli 1.000000e-01 : f64
+// CHECK-NEXT:   %p2 = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   %id2 = gate.constant #gate.id
 // CHECK-NEXT:   %z2 = gate.constant #gate.z
 // CHECK-NEXT:   %g2 = arith.select %p2, %z2, %id2 : !gate.type<1>

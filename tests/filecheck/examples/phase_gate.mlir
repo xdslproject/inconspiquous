@@ -1,7 +1,7 @@
 // RUN: QUOPT_ROUNDTRIP
 
 // CHECK:      func.func @phase_dyn(%q : !qubit.bit) -> !qubit.bit {
-// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01 : f64
+// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   %id = gate.constant #gate.id
 // CHECK-NEXT:   %z = gate.constant #gate.z
 // CHECK-NEXT:   %g = arith.select %p, %z, %id : !gate.type<1>
@@ -18,7 +18,7 @@ func.func @phase_dyn(%q : !qubit.bit) -> !qubit.bit {
 }
 
 // CHECK:      func.func @phase_scf(%q : !qubit.bit) -> !qubit.bit {
-// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01 : f64
+// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   %q2 = scf.if %p -> (!qubit.bit) {
 // CHECK-NEXT:     %q1 = qssa.gate<#gate.z> %q : !qubit.bit
 // CHECK-NEXT:     scf.yield %q1 : !qubit.bit
@@ -39,7 +39,7 @@ func.func @phase_scf(%q : !qubit.bit) -> !qubit.bit {
 }
 
 // CHECK:       func.func @phase_cf(%q : !qubit.bit) -> !qubit.bit {
-// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01 : f64
+// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   cf.cond_br %p, ^0, ^1(%q : !qubit.bit)
 // CHECK-NEXT: ^0:
 // CHECK-NEXT:   %q1 = qssa.gate<#gate.z> %q : !qubit.bit

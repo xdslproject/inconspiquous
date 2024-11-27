@@ -208,4 +208,4 @@ class RandomizedComp(ModulePass):
         PatternRewriteWalker(
             GreedyRewritePatternApplier([PadTGate(), PadHadamardGate(), PadCNotGate()]),
             apply_recursively=False,  # Do not reapply
-        ).rewrite_op(op)
+        ).rewrite_module(op)

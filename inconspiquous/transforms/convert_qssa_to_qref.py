@@ -61,4 +61,4 @@ class ConvertQssaToQref(ModulePass):
                 ]
             ),
             apply_recursively=False,
-        ).rewrite_op(op)
+        ).rewrite_module(op)

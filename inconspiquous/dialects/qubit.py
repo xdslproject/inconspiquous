@@ -2,19 +2,17 @@ from typing import ClassVar, Sequence
 from xdsl.ir import Attribute, Dialect, ParametrizedAttribute, TypeAttribute
 from xdsl.irdl import (
     AnyAttr,
-    BaseAttr,
     IRDLOperation,
     RangeConstraint,
     RangeOf,
     RangeVarConstraint,
-    WithRangeTypeConstraint,
     irdl_attr_definition,
     irdl_op_definition,
     prop_def,
     var_result_def,
 )
 
-from inconspiquous.alloc import AllocAttr
+from inconspiquous.alloc import AllocAttr, AllocConstraint
 
 
 @irdl_attr_definition
@@ -44,9 +42,7 @@ class AllocOp(IRDLOperation):
 
     _T: ClassVar[RangeConstraint] = RangeVarConstraint("T", RangeOf(AnyAttr()))
 
-    alloc = prop_def(
-        WithRangeTypeConstraint(BaseAttr(AllocAttr), _T), default_value=AllocZeroAttr()
-    )
+    alloc = prop_def(AllocConstraint(_T), default_value=AllocZeroAttr())
 
     outs = var_result_def(_T)
 
