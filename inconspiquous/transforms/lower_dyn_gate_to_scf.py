@@ -68,4 +68,4 @@ class LowerDynGateToScf(ModulePass):
     name = "lower-dyn-gate-to-scf"
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
-        PatternRewriteWalker(LowerDynGateToScfPattern()).rewrite_op(op)
+        PatternRewriteWalker(LowerDynGateToScfPattern()).rewrite_module(op)

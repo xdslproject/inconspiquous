@@ -54,4 +54,4 @@ class MergeXSGates(ModulePass):
     name = "merge-xs"
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
-        PatternRewriteWalker(MergeXSGatesPattern()).rewrite_op(op)
+        PatternRewriteWalker(MergeXSGatesPattern()).rewrite_module(op)

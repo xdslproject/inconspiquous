@@ -17,7 +17,7 @@
 
 %q0 = qubit.alloc
 
-// CHECK: Gate #gate.cnot expected 2 qubits but got 1
+// CHECK: attributes ('!qubit.bit',) expected from range variable 'Q', but got ('!qubit.bit', '!qubit.bit')
 %q1 = "qssa.gate"(%q0) <{"gate" = #gate.cnot}> : (!qubit.bit) -> !qubit.bit
 
 // -----
@@ -25,5 +25,5 @@
 %g = "test.op"() : () -> !gate.type<2>
 %q0 = qubit.alloc
 
-// CHECK: Gate input expected 2 qubits but got 1
+// CHECK: attributes ('!qubit.bit',) expected from range variable 'Q', but got ('!qubit.bit', '!qubit.bit')
 %q1 = "qssa.dyn_gate"(%q0, %g) : (!qubit.bit, !gate.type<2>) -> !qubit.bit

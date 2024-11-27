@@ -1,7 +1,7 @@
 // RUN: QUOPT_ROUNDTRIP
 
 // CHECK:      func.func @depolarising_dyn(%q : !qubit.bit) -> !qubit.bit {
-// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01 : f64
+// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   %id = gate.constant #gate.id
 // CHECK-NEXT:   %p2 = prob.uniform : i2
 // CHECK-NEXT:   %x = gate.constant #gate.x
@@ -36,7 +36,7 @@ func.func @depolarising_dyn(%q : !qubit.bit) -> !qubit.bit {
 }
 
 // CHECK:      func.func @depolarising_scf(%q : !qubit.bit) -> !qubit.bit {
-// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01 : f64
+// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   %q3 = scf.if %p -> (!qubit.bit) {
 // CHECK-NEXT:     %p2 = prob.uniform : i4
 // CHECK-NEXT:     %p3 = arith.index_cast %p2 : i4 to index
@@ -91,7 +91,7 @@ func.func @depolarising_scf(%q : !qubit.bit) -> !qubit.bit {
 }
 
 // CHECK:      func.func @depolarising_cf(%q : !qubit.bit) -> !qubit.bit {
-// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01 : f64
+// CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   cf.cond_br %p, ^0, ^1(%q : !qubit.bit)
 // CHECK-NEXT: ^0:
 // CHECK-NEXT:   %p2 = prob.uniform : i4

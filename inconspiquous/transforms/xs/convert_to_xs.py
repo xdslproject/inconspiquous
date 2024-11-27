@@ -89,4 +89,4 @@ class ConvertToXS(ModulePass):
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
             GreedyRewritePatternApplier([ToDynGate(), ToXSGate()])
-        ).rewrite_op(op)
+        ).rewrite_module(op)

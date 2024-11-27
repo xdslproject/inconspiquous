@@ -62,4 +62,4 @@ class LowerToFinSupp(ModulePass):
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
             GreedyRewritePatternApplier([LowerBernoulli(), LowerUniform(self.max_size)])
-        ).rewrite_op(op)
+        ).rewrite_module(op)

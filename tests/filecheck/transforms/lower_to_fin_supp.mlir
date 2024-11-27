@@ -3,7 +3,7 @@
 // CHECK:    %0 = arith.constant false
 // CHECK-NEXT:    %1 = arith.constant true
 // CHECK-NEXT:    %2 = prob.fin_supp [ 0.1 of %1, else %0 ] : i1
-%0 = prob.bernoulli 0.1 : f64
+%0 = prob.bernoulli 0.1
 
 // CHECK-NEXT:    %3 = arith.constant true
 // CHECK-NEXT:    %4 = arith.constant false

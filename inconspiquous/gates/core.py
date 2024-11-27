@@ -4,12 +4,9 @@ from xdsl.ir import (
     Attribute,
     ParametrizedAttribute,
 )
-from xdsl.irdl import (
-    WithType,
-)
 
 
-class GateAttr(ParametrizedAttribute, WithType, ABC):
+class GateAttr(ParametrizedAttribute, ABC):
     """
     In general most gate operations are not operationally different, so differentiating between them
     may actually be better done via an attribute that can be attached to a gate operation.

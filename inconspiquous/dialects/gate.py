@@ -1,15 +1,27 @@
 from __future__ import annotations
 import math
 from typing import ClassVar
+from dataclasses import dataclass
 
 from xdsl.dialects.builtin import FloatAttr, Float64Type
-from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
+from xdsl.ir import (
+    Dialect,
+    Operation,
+    ParametrizedAttribute,
+    SSAValue,
+    TypeAttribute,
+    VerifyException,
+    Attribute,
+)
 from xdsl.irdl import (
     AttrConstraint,
+    ConstraintContext,
+    ConstraintVariableType,
+    GenericAttrConstraint,
     IRDLOperation,
     ParameterDef,
     VarConstraint,
-    WithTypeConstraint,
+    VarExtractor,
     base,
     irdl_attr_definition,
     irdl_op_definition,
@@ -184,6 +196,33 @@ class GateType(ParametrizedAttribute, TypeAttribute):
             printer.print_string(str(self.num_qubits.value.data))
 
 
+@dataclass(frozen=True)
+class GateTypeConstraint(GenericAttrConstraint[GateAttr]):
+    """
+    Put a constraint on the gate type of a gate.
+    """
+
+    type_constraint: GenericAttrConstraint[GateType]
+
+    def verify(self, attr: Attribute, constraint_context: ConstraintContext) -> None:
+        if not isinstance(attr, GateAttr):
+            raise VerifyException(f"attribute {attr} expected to be a gate")
+        self.type_constraint.verify(GateType(attr.num_qubits), constraint_context)
+
+    @dataclass(frozen=True)
+    class _Extractor(VarExtractor[GateAttr]):
+        inner: VarExtractor[GateType]
+
+        def extract_var(self, a: GateAttr) -> ConstraintVariableType:
+            return self.inner.extract_var(GateType(a.num_qubits))
+
+    def get_variable_extractors(self) -> dict[str, VarExtractor[GateAttr]]:
+        return {
+            v: self._Extractor(r)
+            for v, r in self.type_constraint.get_variable_extractors().items()
+        }
+
+
 @irdl_op_definition
 class ConstantGateOp(IRDLOperation):
     """
@@ -194,7 +233,7 @@ class ConstantGateOp(IRDLOperation):
 
     name = "gate.constant"
 
-    gate = prop_def(WithTypeConstraint(base(GateAttr), _T))
+    gate = prop_def(GateTypeConstraint(_T))
 
     out = result_def(_T)
 

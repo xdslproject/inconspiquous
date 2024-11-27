@@ -68,4 +68,4 @@ class LowerXSToSelect(ModulePass):
     name = "lower-xs-to-select"
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
-        PatternRewriteWalker(LowerXSToSelectPattern()).rewrite_op(op)
+        PatternRewriteWalker(LowerXSToSelectPattern()).rewrite_module(op)
