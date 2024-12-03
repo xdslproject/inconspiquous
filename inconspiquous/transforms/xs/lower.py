@@ -42,8 +42,8 @@ class LowerXSToSelectPattern(RewritePattern):
         one_case = VarithSwitchOp(op.phase, case_values, identity, s, z, zs)
         three_case = VarithSwitchOp(op.phase, case_values, x, xs, y, sx)
 
-        one = arith.Constant.from_int_and_width(1, 2)
-        cmpi = arith.Cmpi(op.x, one, "eq")
+        one = arith.ConstantOp.from_int_and_width(1, 2)
+        cmpi = arith.CmpiOp(op.x, one, "eq")
 
         rewriter.replace_matched_op(
             (
@@ -59,7 +59,7 @@ class LowerXSToSelectPattern(RewritePattern):
                 three_case,
                 one,
                 cmpi,
-                arith.Select(cmpi, one_case, three_case),
+                arith.SelectOp(cmpi, one_case, three_case),
             )
         )
 

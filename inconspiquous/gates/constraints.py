@@ -49,7 +49,5 @@ class DynGateConstraint(GenericAttrConstraint[GateType]):
         return self.range_constraint.name in var_constraint_names
 
     def infer(self, context: InferenceContext) -> GateType:
-        range_type = self.range_constraint.infer(
-            0, context
-        )  # We know a range constraint does not use the input length
+        range_type = self.range_constraint.infer(context, length=None)
         return GateType(len(range_type))

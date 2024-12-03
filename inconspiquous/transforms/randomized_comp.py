@@ -1,6 +1,6 @@
 from xdsl.context import MLContext
 from xdsl.dialects import builtin
-from xdsl.dialects.arith import Select
+from xdsl.dialects.arith import SelectOp
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -41,18 +41,18 @@ class PadTGate(RewritePattern):
         x_gate = ConstantGateOp(XGate())
         z_gate = ConstantGateOp(ZGate())
         phase_gate = ConstantGateOp(PhaseGate())
-        pre_x_sel = Select(x_rand, x_gate, id_gate)
+        pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
         pre_x = DynGateOp(pre_x_sel, *op.ins)
-        pre_z_sel = Select(z_rand, z_gate, id_gate)
+        pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
         pre_z = DynGateOp(pre_z_sel, pre_x)
 
         new_t = GateOp(op.gate, pre_z)
 
-        post_z_sel = Select(z_rand, z_gate, id_gate)
+        post_z_sel = SelectOp(z_rand, z_gate, id_gate)
         post_z = DynGateOp(post_z_sel, new_t)
 
         post_x_1 = DynGateOp(pre_x_sel, post_z)
-        post_x_sel_2 = Select(x_rand, phase_gate, id_gate)
+        post_x_sel_2 = SelectOp(x_rand, phase_gate, id_gate)
         post_x_2 = DynGateOp(post_x_sel_2, post_x_1)
 
         rewriter.insert_op(
@@ -93,16 +93,16 @@ class PadHadamardGate(RewritePattern):
         id_gate = ConstantGateOp(IdentityGate())
         x_gate = ConstantGateOp(XGate())
         z_gate = ConstantGateOp(ZGate())
-        pre_x_sel = Select(x_rand, x_gate, id_gate)
+        pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
         pre_x = DynGateOp(pre_x_sel, *op.ins)
-        pre_z_sel = Select(z_rand, z_gate, id_gate)
+        pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
         pre_z = DynGateOp(pre_z_sel, pre_x)
 
         new_hadamard = GateOp(HadamardGate(), pre_z)
 
-        post_z_sel = Select(z_rand, x_gate, id_gate)
+        post_z_sel = SelectOp(z_rand, x_gate, id_gate)
         post_z = DynGateOp(post_z_sel, new_hadamard)
-        post_x_sel = Select(x_rand, z_gate, id_gate)
+        post_x_sel = SelectOp(x_rand, z_gate, id_gate)
         post_x = DynGateOp(post_x_sel, post_z)
 
         rewriter.insert_op(
@@ -145,11 +145,11 @@ class PadCNotGate(RewritePattern):
         x_gate = ConstantGateOp(XGate())
         z_gate = ConstantGateOp(ZGate())
 
-        x_sel_q1 = Select(x_rand_q1, x_gate, id_gate)
-        x_sel_q2 = Select(x_rand_q2, x_gate, id_gate)
+        x_sel_q1 = SelectOp(x_rand_q1, x_gate, id_gate)
+        x_sel_q2 = SelectOp(x_rand_q2, x_gate, id_gate)
 
-        z_sel_q1 = Select(z_rand_q1, z_gate, id_gate)
-        z_sel_q2 = Select(z_rand_q2, z_gate, id_gate)
+        z_sel_q1 = SelectOp(z_rand_q1, z_gate, id_gate)
+        z_sel_q2 = SelectOp(z_rand_q2, z_gate, id_gate)
 
         pre_x_q1 = DynGateOp(x_sel_q1, op.ins[0])
         pre_z_q1 = DynGateOp(z_sel_q1, pre_x_q1)
