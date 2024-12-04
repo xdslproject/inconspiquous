@@ -1,5 +1,5 @@
 from xdsl.dialects import builtin
-from xdsl.dialects.arith import Addi, Muli
+from xdsl.dialects.arith import AddiOp, MuliOp
 from xdsl.parser import MLContext
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
@@ -34,9 +34,9 @@ class MergeXSGatesPattern(RewritePattern):
         if not isinstance(gate1, XSGateOp):
             return
 
-        new_x = Muli(gate1.x, gate2.x)
-        new_phase_mul = Muli(gate1.phase, gate2.x)
-        new_phase = Addi(new_phase_mul, gate2.phase)
+        new_x = MuliOp(gate1.x, gate2.x)
+        new_phase_mul = MuliOp(gate1.phase, gate2.x)
+        new_phase = AddiOp(new_phase_mul, gate2.phase)
         new_gate = XSGateOp(new_x, new_phase)
 
         rewriter.insert_op(

@@ -20,7 +20,7 @@ dev-dependencies = [
 ]
 
 [tool.uv.sources]
-xdsl = { git = "https://github.com/xdslproject/xdsl", branch = "alexarice/quantum-branch" }
+xdsl = { git = "https://github.com/xdslproject/xdsl" }
 
 [project.scripts]
 quopt = "inconspiquous.tools.quopt_main:main"

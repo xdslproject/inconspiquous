@@ -1,4 +1,4 @@
-from xdsl.dialects.arith import Constant
+from xdsl.dialects.arith import ConstantOp
 from xdsl.dialects.builtin import BoolAttr
 from xdsl.ir import SSAValue
 from xdsl.pattern_rewriter import (
@@ -20,10 +20,10 @@ class BernoulliConst(RewritePattern):
     def match_and_rewrite(self, op: BernoulliOp, rewriter: PatternRewriter):
         prob = op.prob.value.data
         if prob == 1.0:
-            rewriter.replace_matched_op(Constant(BoolAttr.from_bool(True)))
+            rewriter.replace_matched_op(ConstantOp(BoolAttr.from_bool(True)))
 
         if prob == 0.0:
-            rewriter.replace_matched_op(Constant(BoolAttr.from_bool(False)))
+            rewriter.replace_matched_op(ConstantOp(BoolAttr.from_bool(False)))
 
 
 class FinSuppTrivial(RewritePattern):
@@ -44,7 +44,7 @@ class FinSuppRemoveCase(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: FinSuppOp, rewriter: PatternRewriter):
-        probs = op.probabilities.as_tuple()
+        probs = op.probabilities.get_values()
         if not any(
             p == 0.0 or c == op.default_value
             for p, c in zip(probs, op.ins, strict=True)
@@ -79,7 +79,7 @@ class FinSuppDuplicate(RewritePattern):
         new_probs: list[float] = []
         new_ins: list[SSAValue] = []
 
-        for p, c in zip(op.probabilities.as_tuple(), op.ins, strict=True):
+        for p, c in zip(op.probabilities.get_values(), op.ins, strict=True):
             if c not in seen:
                 seen[c] = len(new_probs)
                 new_probs.append(p)

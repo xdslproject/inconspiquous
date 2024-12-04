@@ -176,7 +176,7 @@ class FinSuppOp(IRDLOperation):
     def print(self, printer: Printer):
         printer.print_string(" [ ")
         printer.print_list(
-            zip(self.ins, self.probabilities.as_tuple()),
+            zip(self.ins, self.probabilities.get_values()),
             lambda c: self.print_case(c, printer),
         )
         if self.ins:

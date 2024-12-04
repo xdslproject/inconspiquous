@@ -1,5 +1,5 @@
 from xdsl.dialects import builtin
-from xdsl.dialects.arith import Constant
+from xdsl.dialects.arith import ConstantOp
 from xdsl.parser import MLContext
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
@@ -46,8 +46,8 @@ class ToXSGate(RewritePattern):
     """
 
     @staticmethod
-    def get_const(i: int, rewriter: PatternRewriter) -> Constant:
-        n = Constant.from_int_and_width(i, 2)
+    def get_const(i: int, rewriter: PatternRewriter) -> ConstantOp:
+        n = ConstantOp.from_int_and_width(i, 2)
         n.result.name_hint = f"c{i}"
         rewriter.insert_op(n, InsertPoint.before(rewriter.current_operation))
         return n

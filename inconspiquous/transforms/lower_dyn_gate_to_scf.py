@@ -30,17 +30,17 @@ class LowerDynGateToScfPattern(RewritePattern):
         region = Region(Block())
         with ImplicitBuilder(region):
             dyn_gate = DynGateOp(gate, *op.ins)
-            scf.Yield(dyn_gate)
+            scf.YieldOp(dyn_gate)
         return region
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter):
         gate = op.gate.owner
-        if isinstance(gate, arith.Select):
+        if isinstance(gate, arith.SelectOp):
             then_region = self.make_region_from_arg(op, gate.lhs, rewriter)
             else_region = self.make_region_from_arg(op, gate.rhs, rewriter)
             rewriter.replace_matched_op(
-                scf.If(gate.cond, op.result_types, then_region, else_region)
+                scf.IfOp(gate.cond, op.result_types, then_region, else_region)
             )
         elif isinstance(gate, varith.VarithSwitchOp):
             flag = arith.IndexCastOp(gate.flag, IndexType())

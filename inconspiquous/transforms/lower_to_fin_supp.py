@@ -18,8 +18,8 @@ from inconspiquous.dialects.prob import BernoulliOp, FinSuppOp, UniformOp
 class LowerBernoulli(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: BernoulliOp, rewriter: PatternRewriter):
-        zero = arith.Constant(BoolAttr.from_bool(False))
-        one = arith.Constant(BoolAttr.from_bool(True))
+        zero = arith.ConstantOp(BoolAttr.from_bool(False))
+        one = arith.ConstantOp(BoolAttr.from_bool(True))
         rewriter.replace_matched_op(
             (zero, one, FinSuppOp((op.prob.value.data,), zero, one))
         )
@@ -38,10 +38,10 @@ class LowerUniform(RewritePattern):
         if ty.bitwidth > self.max_size:
             return
 
-        zero = arith.Constant.from_int_and_width(0, ty.bitwidth)
+        zero = arith.ConstantOp.from_int_and_width(0, ty.bitwidth)
         ops: list[Operation] = []
         for i in range(1, 2**ty.bitwidth):
-            ops.append(arith.Constant.from_int_and_width(i, ty.bitwidth))
+            ops.append(arith.ConstantOp.from_int_and_width(i, ty.bitwidth))
 
         fin_supp = FinSuppOp(
             tuple(1.0 / (2**ty.bitwidth) for _ in range(1, 2**ty.bitwidth)), zero, *ops
