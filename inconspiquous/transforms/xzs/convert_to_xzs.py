@@ -16,7 +16,7 @@ from inconspiquous.dialects.gate import (
     IdentityGate,
     PhaseGate,
     XGate,
-    XSGateOp,
+    XZSOp,
     YGate,
     ZGate,
 )
@@ -40,15 +40,15 @@ class ToDynGate(RewritePattern):
         rewriter.replace_matched_op(DynGateOp(constant, *op.ins))
 
 
-class ToXSGate(RewritePattern):
+class ToXZSGate(RewritePattern):
     """
-    Rewrite a constant Identity/X/Y/Z/Phase gate to an xs gate
+    Rewrite a constant Identity/X/Y/Z/Phase gate to an xzs gadget
     """
 
     @staticmethod
-    def get_const(i: int, rewriter: PatternRewriter) -> ConstantOp:
-        n = ConstantOp.from_int_and_width(i, 2)
-        n.result.name_hint = f"c{i}"
+    def get_const(b: bool, rewriter: PatternRewriter) -> ConstantOp:
+        n = ConstantOp(builtin.BoolAttr.from_bool(b))
+        n.result.name_hint = f"c{b}"
         rewriter.insert_op(n, InsertPoint.before(rewriter.current_operation))
         return n
 
@@ -56,37 +56,36 @@ class ToXSGate(RewritePattern):
     def match_and_rewrite(self, op: ConstantGateOp, rewriter: PatternRewriter):
         match op.gate:
             case IdentityGate():
-                rewriter.replace_matched_op(
-                    XSGateOp(self.get_const(1, rewriter), self.get_const(0, rewriter))
-                )
+                false = self.get_const(False, rewriter)
+                rewriter.replace_matched_op(XZSOp(false, false, false))
             case XGate():
-                rewriter.replace_matched_op(
-                    XSGateOp(self.get_const(3, rewriter), self.get_const(0, rewriter))
-                )
+                false = self.get_const(False, rewriter)
+                true = self.get_const(True, rewriter)
+                rewriter.replace_matched_op(XZSOp(true, false, false))
             case YGate():
-                rewriter.replace_matched_op(
-                    XSGateOp(self.get_const(3, rewriter), self.get_const(2, rewriter))
-                )
+                false = self.get_const(False, rewriter)
+                true = self.get_const(True, rewriter)
+                rewriter.replace_matched_op(XZSOp(true, true, false))
             case ZGate():
-                rewriter.replace_matched_op(
-                    XSGateOp(self.get_const(1, rewriter), self.get_const(2, rewriter))
-                )
+                false = self.get_const(False, rewriter)
+                true = self.get_const(True, rewriter)
+                rewriter.replace_matched_op(XZSOp(false, true, false))
             case PhaseGate():
-                rewriter.replace_matched_op(
-                    XSGateOp(self.get_const(1, rewriter), self.get_const(1, rewriter))
-                )
+                false = self.get_const(False, rewriter)
+                true = self.get_const(True, rewriter)
+                rewriter.replace_matched_op(XZSOp(false, false, true))
             case _:
                 return
 
 
-class ConvertToXS(ModulePass):
+class ConvertToXZS(ModulePass):
     """
-    Convert all Identity/X/Y/Z/Phase gates to xs gates
+    Convert all Identity/X/Y/Z/Phase gates to xzs gadgets
     """
 
-    name = "convert-to-xs"
+    name = "convert-to-xzs"
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
-            GreedyRewritePatternApplier([ToDynGate(), ToXSGate()])
+            GreedyRewritePatternApplier([ToDynGate(), ToXZSGate()])
         ).rewrite_module(op)

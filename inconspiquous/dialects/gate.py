@@ -3,7 +3,15 @@ import math
 from typing import ClassVar
 from dataclasses import dataclass
 
-from xdsl.dialects.builtin import FloatAttr, Float64Type
+from xdsl.dialects.builtin import (
+    FloatAttr,
+    Float64Type,
+    IndexType,
+    IntegerAttr,
+    AnyFloatConstr,
+    i1,
+    IntegerType,
+)
 from xdsl.ir import (
     Dialect,
     Operation,
@@ -30,7 +38,7 @@ from xdsl.irdl import (
     result_def,
     traits_def,
 )
-from xdsl.parser import AnyFloatConstr, AttrParser, IndexType, IntegerAttr, IntegerType
+from xdsl.parser import AttrParser
 from xdsl.printer import Printer
 from xdsl.traits import ConstantLike, Pure
 
@@ -314,28 +322,30 @@ class ComposeGateOp(IRDLOperation):
 
 
 @irdl_op_definition
-class XSGateOp(IRDLOperation):
+class XZSOp(IRDLOperation):
     """
-    A gate for describing combinations of X and (pi/2) phase gates.
-    The final gate is given by:
-    X^(x >> 1) . S^phase
-
-    Passing in a value of 0 or 2 for x is undefined behaviour
+    A gadget for describing combinations of X, Z, and (pi/2) phase gates.
     """
 
-    name = "gate.xs"
+    name = "gate.xzs"
 
-    x = operand_def(IntegerType(2))
-    phase = operand_def(IntegerType(2))
+    x = operand_def(i1)
+    z = operand_def(i1)
+    phase = operand_def(i1)
 
     out = result_def(GateType(1))
 
-    assembly_format = "$x `,` $phase attr-dict"
+    assembly_format = "$x `,` $z `,` $phase attr-dict"
 
     traits = traits_def(Pure())
 
-    def __init__(self, x: Operation | SSAValue, phase: Operation | SSAValue):
-        super().__init__(operands=(x, phase), result_types=(GateType(1),))
+    def __init__(
+        self,
+        x: Operation | SSAValue,
+        z: Operation | SSAValue,
+        phase: Operation | SSAValue,
+    ):
+        super().__init__(operands=(x, z, phase), result_types=(GateType(1),))
 
 
 Gate = Dialect(
@@ -344,7 +354,7 @@ Gate = Dialect(
         ConstantGateOp,
         QuaternionGateOp,
         ComposeGateOp,
-        XSGateOp,
+        XZSOp,
     ],
     [
         AngleAttr,
