@@ -15,6 +15,7 @@ from inconspiquous.dialects.gate import (
     XGate,
     XZSOp,
     ConstantGateOp,
+    YGate,
     ZGate,
 )
 
@@ -27,26 +28,27 @@ class LowerXZSToSelectPattern(RewritePattern):
         identity = ConstantGateOp(IdentityGate())
         s = ConstantGateOp(PhaseGate())
         z = ConstantGateOp(ZGate())
+        y = ConstantGateOp(YGate())
         x = ConstantGateOp(XGate())
 
-        x_sel_op = arith.SelectOp(op.x, x, identity)
-        z_sel_op = arith.SelectOp(op.z, z, identity)
+        z_no_x_sel_op = arith.SelectOp(op.z, z, identity)
+        z_x_sel_op = arith.SelectOp(op.z, y, x)
+        x_sel_op = arith.SelectOp(op.x, z_x_sel_op, z_no_x_sel_op)
         phase_sel_op = arith.SelectOp(op.phase, s, identity)
-
-        comp_1 = ComposeGateOp(x_sel_op, z_sel_op)
-        comp_2 = ComposeGateOp(comp_1, phase_sel_op)
+        comp = ComposeGateOp(x_sel_op, phase_sel_op)
 
         rewriter.replace_matched_op(
             (
                 identity,
                 s,
                 z,
+                y,
                 x,
+                z_no_x_sel_op,
+                z_x_sel_op,
                 x_sel_op,
-                z_sel_op,
                 phase_sel_op,
-                comp_1,
-                comp_2,
+                comp,
             )
         )
 
