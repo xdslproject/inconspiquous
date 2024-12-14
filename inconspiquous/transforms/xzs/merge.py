@@ -8,6 +8,7 @@ from xdsl.pattern_rewriter import (
     RewritePattern,
     op_type_rewrite_pattern,
 )
+from xdsl.rewriter import InsertPoint
 from inconspiquous.dialects.gate import XZSOp
 from inconspiquous.dialects.qssa import DynGateOp
 
@@ -39,7 +40,9 @@ class MergeXZSGatesPattern(RewritePattern):
         new_phase = AddiOp(gate1.phase, gate2.phase)
         new_gate = XZSOp(new_x, new_z, new_phase)
 
-        rewriter.replace_matched_op(
+        new_gate.out.name_hint = gate1.out.name_hint
+
+        rewriter.insert_op(
             (
                 new_x,
                 new_z_and,
@@ -47,9 +50,11 @@ class MergeXZSGatesPattern(RewritePattern):
                 new_z,
                 new_phase,
                 new_gate,
-                DynGateOp(new_gate, *predecessor.ins),
-            )
+            ),
+            InsertPoint.after(gate2),
         )
+
+        rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.ins))
         rewriter.erase_op(predecessor)
 
 
