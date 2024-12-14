@@ -11,8 +11,8 @@
 %1 = prob.uniform : i1
 
 // CHECK-NEXT:    %6 = arith.constant 1 : i2
-// CHECK-NEXT:    %7 = arith.constant 2 : i2
-// CHECK-NEXT:    %8 = arith.constant 3 : i2
+// CHECK-NEXT:    %7 = arith.constant -2 : i2
+// CHECK-NEXT:    %8 = arith.constant -1 : i2
 // CHECK-NEXT:    %9 = arith.constant 0 : i2
 // CHECK-NEXT:    %10 = prob.fin_supp [ 0.25 of %6, 0.25 of %7, 0.25 of %8, else %9 ] : i2
 %2 = prob.uniform : i2
