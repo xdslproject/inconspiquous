@@ -10,8 +10,8 @@
 // CHECK-NEXT:   %choice = varith.switch %p2 : i2 -> !gate.type<1>, [
 // CHECK-NEXT:     default: %id,
 // CHECK-NEXT:     1: %x,
-// CHECK-NEXT:     2: %y,
-// CHECK-NEXT:     3: %z
+// CHECK-NEXT:     -2: %y,
+// CHECK-NEXT:     -1: %z
 // CHECK-NEXT:   ]
 // CHECK-NEXT:   %g = arith.select %p, %choice, %id : !gate.type<1>
 // CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q : !qubit.bit

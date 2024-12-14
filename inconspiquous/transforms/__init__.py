@@ -21,10 +21,10 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return convert_scf_to_cf.ConvertScfToCf
 
-    def get_convert_to_xs():
-        from inconspiquous.transforms.xs import convert_to_xs
+    def get_convert_to_xzs():
+        from inconspiquous.transforms.xzs import convert_to_xzs
 
-        return convert_to_xs.ConvertToXS
+        return convert_to_xzs.ConvertToXZS
 
     def get_cse():
         from xdsl.transforms import common_subexpression_elimination
@@ -46,15 +46,15 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return lower_to_fin_supp.LowerToFinSupp
 
-    def get_lower_xs_to_select():
-        from inconspiquous.transforms.xs import lower
+    def get_lower_xzs_to_select():
+        from inconspiquous.transforms.xzs import lower
 
-        return lower.LowerXSToSelect
+        return lower.LowerXZSToSelect
 
-    def get_merge_xs():
-        from inconspiquous.transforms.xs import merge
+    def get_merge_xzs():
+        from inconspiquous.transforms.xzs import merge
 
-        return merge.MergeXSGates
+        return merge.MergeXZSGates
 
     def get_mlir_opt():
         from xdsl.transforms import mlir_opt
@@ -66,23 +66,23 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return randomized_comp.RandomizedComp
 
-    def get_xs_select():
-        from inconspiquous.transforms.xs import select
+    def get_xzs_select():
+        from inconspiquous.transforms.xzs import select
 
-        return select.XSSelect
+        return select.XZSSelect
 
     return {
         "canonicalize": get_canonicalize,
         "convert-qssa-to-qref": get_convert_qssa_to_qref,
         "convert-scf-to-cf": get_convert_scf_to_cf,
-        "convert-to-xs": get_convert_to_xs,
+        "convert-to-xzs": get_convert_to_xzs,
         "cse": get_cse,
         "dce": get_dce,
         "lower-dyn-gate-to-scf": get_lower_dyn_gate_to_scf,
         "lower-to-fin-supp": get_lower_to_fin_supp,
-        "lower-xs-to-select": get_lower_xs_to_select,
-        "merge-xs": get_merge_xs,
+        "lower-xzs-to-select": get_lower_xzs_to_select,
+        "merge-xzs": get_merge_xzs,
         "mlir-opt": get_mlir_opt,
         "randomized-comp": get_randomized_comp,
-        "xs-select": get_xs_select,
+        "xzs-select": get_xzs_select,
     }

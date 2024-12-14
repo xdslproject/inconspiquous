@@ -8,42 +8,46 @@ from xdsl.pattern_rewriter import (
     RewritePattern,
     op_type_rewrite_pattern,
 )
-from xdsl.rewriter import InsertPoint
 
-from inconspiquous.dialects.gate import XSGateOp
+from inconspiquous.dialects.gate import XZSOp
 
 
-class XSSelectPattern(RewritePattern):
+class XZSSelectPattern(RewritePattern):
     """
-    Rewrite an `arith.select` on two XS gates into a single gate
+    Rewrite an `arith.select` on two XZS gadgets into a single gadget
     """
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: SelectOp, rewriter: PatternRewriter):
         lhs = op.lhs.owner
         rhs = op.rhs.owner
-        if not isinstance(lhs, XSGateOp) or not isinstance(rhs, XSGateOp):
+        if not isinstance(lhs, XZSOp) or not isinstance(rhs, XZSOp):
             return
 
         sel_x = SelectOp(op.cond, lhs.x, rhs.x)
+        sel_z = SelectOp(op.cond, lhs.z, rhs.z)
         sel_phase = SelectOp(op.cond, lhs.phase, rhs.phase)
 
-        rewriter.insert_op((sel_x, sel_phase), InsertPoint.before(op))
-
         rewriter.replace_matched_op(
-            XSGateOp(
+            (
                 sel_x,
+                sel_z,
                 sel_phase,
+                XZSOp(
+                    sel_x,
+                    sel_z,
+                    sel_phase,
+                ),
             )
         )
 
 
-class XSSelect(ModulePass):
+class XZSSelect(ModulePass):
     """
-    Push `arith.select`s inwards past XS-gate operations
+    Push `arith.select`s inwards past XZS-gadget operations
     """
 
-    name = "xs-select"
+    name = "xzs-select"
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
-        PatternRewriteWalker(XSSelectPattern()).rewrite_module(op)
+        PatternRewriteWalker(XZSSelectPattern()).rewrite_module(op)
