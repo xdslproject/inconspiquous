@@ -32,5 +32,3 @@ Contributions should be submitted by github pull requests. Code must be formatte
 
 ## Discussion
 For any discussion or help, feel free to create a topic/send a message on the [xdsl zulip](https://xdsl.zulipchat.com/).
-
-
