@@ -8,5 +8,5 @@
 
 // CHECK:       builtin.module {
 // CHECK-NEXT:    %q1 = qubit.alloc
-// CHECK-NEXT:    %q2 = qssa.gate<#gate.h> %q1 : !qubit.bit
+// CHECK-NEXT:    %q2 = qssa.gate<#gate.h> %q1
 // CHECK-NEXT:  }

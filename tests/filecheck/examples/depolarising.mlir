@@ -42,15 +42,15 @@ func.func @depolarising_dyn(%q : !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:     %p3 = arith.index_cast %p2 : i4 to index
 // CHECK-NEXT:     %q2 = scf.index_switch %p3 -> !qubit.bit
 // CHECK-NEXT:     case 1 {
-// CHECK-NEXT:       %q1 = qssa.gate<#gate.x> %q : !qubit.bit
+// CHECK-NEXT:       %q1 = qssa.gate<#gate.x> %q
 // CHECK-NEXT:       scf.yield %q1 : !qubit.bit
 // CHECK-NEXT:     }
 // CHECK-NEXT:     case 2 {
-// CHECK-NEXT:       %q1_1 = qssa.gate<#gate.y> %q : !qubit.bit
+// CHECK-NEXT:       %q1_1 = qssa.gate<#gate.y> %q
 // CHECK-NEXT:       scf.yield %q1_1 : !qubit.bit
 // CHECK-NEXT:     }
 // CHECK-NEXT:     case 3 {
-// CHECK-NEXT:       %q1_2 = qssa.gate<#gate.z> %q : !qubit.bit
+// CHECK-NEXT:       %q1_2 = qssa.gate<#gate.z> %q
 // CHECK-NEXT:       scf.yield %q1_2 : !qubit.bit
 // CHECK-NEXT:     }
 // CHECK-NEXT:     default {
@@ -69,15 +69,15 @@ func.func @depolarising_scf(%q : !qubit.bit) -> !qubit.bit {
     %p3 = arith.index_cast %p2 : i4 to index
     %q2 = scf.index_switch %p3 -> !qubit.bit
     case 1 {
-      %q1 = qssa.gate<#gate.x> %q : !qubit.bit
+      %q1 = qssa.gate<#gate.x> %q
       scf.yield %q1 : !qubit.bit
     }
     case 2 {
-      %q1 = qssa.gate<#gate.y> %q : !qubit.bit
+      %q1 = qssa.gate<#gate.y> %q
       scf.yield %q1 : !qubit.bit
     }
     case 3 {
-      %q1 = qssa.gate<#gate.z> %q : !qubit.bit
+      %q1 = qssa.gate<#gate.z> %q
       scf.yield %q1 : !qubit.bit
     }
     default {
@@ -102,13 +102,13 @@ func.func @depolarising_scf(%q : !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:     3: ^4
 // CHECK-NEXT:   ]
 // CHECK-NEXT: ^1:
-// CHECK-NEXT:   %q1 = qssa.gate<#gate.x> %q : !qubit.bit
+// CHECK-NEXT:   %q1 = qssa.gate<#gate.x> %q
 // CHECK-NEXT:   cf.br ^2(%q1 : !qubit.bit)
 // CHECK-NEXT: ^3:
-// CHECK-NEXT:   %q2 = qssa.gate<#gate.y> %q : !qubit.bit
+// CHECK-NEXT:   %q2 = qssa.gate<#gate.y> %q
 // CHECK-NEXT:   cf.br ^2(%q2 : !qubit.bit)
 // CHECK-NEXT: ^4:
-// CHECK-NEXT:   %q3 = qssa.gate<#gate.z> %q : !qubit.bit
+// CHECK-NEXT:   %q3 = qssa.gate<#gate.z> %q
 // CHECK-NEXT:   cf.br ^2(%q3 : !qubit.bit)
 // CHECK-NEXT: ^2(%q4 : !qubit.bit):
 // CHECK-NEXT:   func.return %q4 : !qubit.bit
@@ -125,13 +125,13 @@ func.func @depolarising_cf(%q : !qubit.bit) -> !qubit.bit {
     3: ^3
   ]
 ^1:
-  %q1 = qssa.gate<#gate.x> %q : !qubit.bit
+  %q1 = qssa.gate<#gate.x> %q
   cf.br ^4(%q1: !qubit.bit)
 ^2:
-  %q2 = qssa.gate<#gate.y> %q : !qubit.bit
+  %q2 = qssa.gate<#gate.y> %q
   cf.br ^4(%q2: !qubit.bit)
 ^3:
-  %q3 = qssa.gate<#gate.z> %q : !qubit.bit
+  %q3 = qssa.gate<#gate.z> %q
   cf.br ^4(%q3: !qubit.bit)
 ^4(%q4 : !qubit.bit):
   func.return %q4 : !qubit.bit

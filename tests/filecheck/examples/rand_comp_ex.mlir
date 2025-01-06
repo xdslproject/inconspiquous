@@ -12,7 +12,7 @@
 // CHECK-NEXT: %6 = qssa.dyn_gate<%5> %q0 : !qubit.bit
 // CHECK-NEXT: %7 = arith.select %1, %4, %2 : !gate.type<1>
 // CHECK-NEXT: %8 = qssa.dyn_gate<%7> %6 : !qubit.bit
-// CHECK-NEXT: %9 = qssa.gate<#gate.h> %8 : !qubit.bit
+// CHECK-NEXT: %9 = qssa.gate<#gate.h> %8
 // CHECK-NEXT: %10 = arith.select %1, %3, %2 : !gate.type<1>
 // CHECK-NEXT: %11 = qssa.dyn_gate<%10> %9 : !qubit.bit
 // CHECK-NEXT: %12 = arith.select %0, %4, %2 : !gate.type<1>
@@ -32,7 +32,7 @@
 // CHECK-NEXT: %25 = qssa.dyn_gate<%22> %24 : !qubit.bit
 // CHECK-NEXT: %26 = qssa.dyn_gate<%21> %q1 : !qubit.bit
 // CHECK-NEXT: %27 = qssa.dyn_gate<%23> %26 : !qubit.bit
-// CHECK-NEXT: %28, %29 = qssa.gate<#gate.cnot> %25, %27 : !qubit.bit, !qubit.bit
+// CHECK-NEXT: %28, %29 = qssa.gate<#gate.cnot> %25, %27
 // CHECK-NEXT: %30 = qssa.dyn_gate<%22> %28 : !qubit.bit
 // CHECK-NEXT: %31 = qssa.dyn_gate<%23> %30 : !qubit.bit
 // CHECK-NEXT: %32 = qssa.dyn_gate<%23> %29 : !qubit.bit
@@ -54,7 +54,7 @@
 // CHECK-NEXT: %46 = qssa.dyn_gate<%43> %45 : !qubit.bit
 // CHECK-NEXT: %47 = qssa.dyn_gate<%42> %q2 : !qubit.bit
 // CHECK-NEXT: %48 = qssa.dyn_gate<%44> %47 : !qubit.bit
-// CHECK-NEXT: %49, %50 = qssa.gate<#gate.cnot> %46, %48 : !qubit.bit, !qubit.bit
+// CHECK-NEXT: %49, %50 = qssa.gate<#gate.cnot> %46, %48
 // CHECK-NEXT: %51 = qssa.dyn_gate<%43> %49 : !qubit.bit
 // CHECK-NEXT: %52 = qssa.dyn_gate<%44> %51 : !qubit.bit
 // CHECK-NEXT: %53 = qssa.dyn_gate<%44> %50 : !qubit.bit
@@ -66,6 +66,6 @@
 %q1 = qubit.alloc
 %q2 = qubit.alloc
 
-%q0_1 = qssa.gate<#gate.h> %q0 : !qubit.bit
-%q0_2, %q1_2 = qssa.gate<#gate.cnot> %q0_1, %q1 : !qubit.bit, !qubit.bit
-%q0_3, %q2_3 = qssa.gate<#gate.cnot> %q0_2, %q2 : !qubit.bit, !qubit.bit
+%q0_1 = qssa.gate<#gate.h> %q0
+%q0_2, %q1_2 = qssa.gate<#gate.cnot> %q0_1, %q1
+%q0_3, %q2_3 = qssa.gate<#gate.cnot> %q0_2, %q2

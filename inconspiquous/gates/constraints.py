@@ -1,12 +1,15 @@
 from collections.abc import Set
 from dataclasses import dataclass
+from typing import Sequence
 from xdsl.ir import Attribute, VerifyException
 from xdsl.irdl import (
     ConstraintContext,
+    ConstraintVariableType,
     GenericAttrConstraint,
     GenericRangeConstraint,
     InferenceContext,
     RangeVarConstraint,
+    VarExtractor,
 )
 
 from inconspiquous.dialects import qubit
@@ -28,6 +31,19 @@ class GateConstraint(GenericAttrConstraint[GateAttr]):
         self.range_constraint.verify(
             (qubit.BitType(),) * attr.num_qubits, constraint_context
         )
+
+    @dataclass(frozen=True)
+    class _Extractor(VarExtractor[GateAttr]):
+        inner: VarExtractor[Sequence[qubit.BitType]]
+
+        def extract_var(self, a: GateAttr) -> ConstraintVariableType:
+            return self.inner.extract_var((qubit.BitType(),) * a.num_qubits)
+
+    def get_variable_extractors(self) -> dict[str, VarExtractor[GateAttr]]:
+        return {
+            v: self._Extractor(x)
+            for v, x in self.range_constraint.get_variable_extractors().items()
+        }
 
 
 @dataclass(frozen=True)

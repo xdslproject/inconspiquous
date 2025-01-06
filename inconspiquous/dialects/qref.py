@@ -34,7 +34,7 @@ class GateOp(IRDLOperation):
 
     ins = var_operand_def(_Q)
 
-    assembly_format = "`<` $gate `>` $ins attr-dict `:` type($ins)"
+    assembly_format = "`<` $gate `>` $ins attr-dict"
 
     def __init__(self, gate: GateAttr, *ins: SSAValue | Operation):
         super().__init__(
