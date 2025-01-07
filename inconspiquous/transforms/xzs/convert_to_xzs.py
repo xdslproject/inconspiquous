@@ -31,7 +31,9 @@ class ToDynGate(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
-        if not isinstance(op.gate, IdentityGate | XGate | YGate | ZGate | PhaseGate):
+        if not isinstance(
+            op.gate, IdentityGate | XGate | YGate | ZGate | PhaseGate | PhaseDaggerGate
+        ):
             return
 
         constant = ConstantGateOp(op.gate)
