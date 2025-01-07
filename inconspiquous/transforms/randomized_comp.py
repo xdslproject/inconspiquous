@@ -261,6 +261,8 @@ class RandomizedComp(ModulePass):
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
-            GreedyRewritePatternApplier([PadTGate(), PadHadamardGate(), PadCNotGate()]),
+            GreedyRewritePatternApplier(
+                [PadTGate(), PadTDaggerGate(), PadHadamardGate(), PadCNotGate()]
+            ),
             apply_recursively=False,  # Do not reapply
         ).rewrite_module(op)
