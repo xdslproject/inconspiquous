@@ -130,8 +130,18 @@ class PhaseGate(SingleQubitGate):
 
 
 @irdl_attr_definition
+class PhaseDaggerGate(SingleQubitGate):
+    name = "gate.s_dagger"
+
+
+@irdl_attr_definition
 class TGate(SingleQubitGate):
     name = "gate.t"
+
+
+@irdl_attr_definition
+class TDaggerGate(SingleQubitGate):
+    name = "gate.t_dagger"
 
 
 @irdl_attr_definition
@@ -363,7 +373,9 @@ Gate = Dialect(
         YGate,
         ZGate,
         PhaseGate,
+        PhaseDaggerGate,
         TGate,
+        TDaggerGate,
         RZGate,
         CNotGate,
         CZGate,

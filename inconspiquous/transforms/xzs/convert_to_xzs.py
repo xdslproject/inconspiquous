@@ -14,6 +14,7 @@ from xdsl.rewriter import InsertPoint
 from inconspiquous.dialects.gate import (
     ConstantGateOp,
     IdentityGate,
+    PhaseDaggerGate,
     PhaseGate,
     XGate,
     XZSOp,
@@ -74,6 +75,10 @@ class ToXZSGate(RewritePattern):
                 false = self.get_const(False, rewriter)
                 true = self.get_const(True, rewriter)
                 rewriter.replace_matched_op(XZSOp(false, false, true))
+            case PhaseDaggerGate():
+                false = self.get_const(False, rewriter)
+                true = self.get_const(True, rewriter)
+                rewriter.replace_matched_op(XZSOp(false, true, true))
             case _:
                 return
 
