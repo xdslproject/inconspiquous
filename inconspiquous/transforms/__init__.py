@@ -11,6 +11,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return canonicalize.CanonicalizePass
 
+    def get_convert_qref_to_qssa():
+        from inconspiquous.transforms import convert_qref_to_qssa
+
+        return convert_qref_to_qssa.ConvertQrefToQssa
+
     def get_convert_qssa_to_qref():
         from inconspiquous.transforms import convert_qssa_to_qref
 
@@ -73,6 +78,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
     return {
         "canonicalize": get_canonicalize,
+        "convert-qref-to-qssa": get_convert_qref_to_qssa,
         "convert-qssa-to-qref": get_convert_qssa_to_qref,
         "convert-scf-to-cf": get_convert_scf_to_cf,
         "convert-to-xzs": get_convert_to_xzs,
