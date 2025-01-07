@@ -17,7 +17,9 @@ from inconspiquous.dialects.gate import (
     ConstantGateOp,
     HadamardGate,
     IdentityGate,
+    PhaseDaggerGate,
     PhaseGate,
+    TDaggerGate,
     TGate,
     XGate,
     ZGate,
@@ -63,6 +65,59 @@ class PadTGate(RewritePattern):
                 x_gate,
                 z_gate,
                 phase_gate,
+                pre_x_sel,
+                pre_x,
+                pre_z_sel,
+                pre_z,
+                new_t,
+                post_z_sel,
+                post_z,
+                post_x_1,
+                post_x_sel_2,
+            ),
+            InsertPoint.before(op),
+        )
+
+        rewriter.replace_matched_op(post_x_2)
+
+
+class PadTDaggerGate(RewritePattern):
+    """
+    Places randomized dynamic pauli gates before and after a TDagger gate.
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
+        if not isinstance(op.gate, TDaggerGate):
+            return
+        x_rand = UniformOp(i1)
+        z_rand = UniformOp(i1)
+        id_gate = ConstantGateOp(IdentityGate())
+        x_gate = ConstantGateOp(XGate())
+        z_gate = ConstantGateOp(ZGate())
+        phase_dagger_gate = ConstantGateOp(PhaseDaggerGate())
+        pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
+        pre_x = DynGateOp(pre_x_sel, *op.ins)
+        pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
+        pre_z = DynGateOp(pre_z_sel, pre_x)
+
+        new_t = GateOp(op.gate, pre_z)
+
+        post_z_sel = SelectOp(z_rand, z_gate, id_gate)
+        post_z = DynGateOp(post_z_sel, new_t)
+
+        post_x_1 = DynGateOp(pre_x_sel, post_z)
+        post_x_sel_2 = SelectOp(x_rand, phase_dagger_gate, id_gate)
+        post_x_2 = DynGateOp(post_x_sel_2, post_x_1)
+
+        rewriter.insert_op(
+            (
+                x_rand,
+                z_rand,
+                id_gate,
+                x_gate,
+                z_gate,
+                phase_dagger_gate,
                 pre_x_sel,
                 pre_x,
                 pre_z_sel,
