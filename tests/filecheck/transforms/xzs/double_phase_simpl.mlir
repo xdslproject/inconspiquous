@@ -1,4 +1,5 @@
 // RUN: QUOPT_ROUNDTRIP
+// RUN: quopt %s -p xzs-simpl | filecheck %s --check-prefix CHECK-SIMPL
 
 // CHECK:      func.func @double_phase(%q : !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
@@ -13,6 +14,17 @@
 // CHECK-NEXT:   %q2 = qssa.dyn_gate<%g2> %q1 : !qubit.bit
 // CHECK-NEXT:   func.return %q2 : !qubit.bit
 // CHECK-NEXT: }
+
+// CHECK-SIMPL:      func.func @double_phase(%q : !qubit.bit) -> !qubit.bit {
+// CHECK-SIMPL-NEXT:   %p = prob.bernoulli 1.000000e-01
+// CHECK-SIMPL-NEXT:   %id = gate.constant #gate.id
+// CHECK-SIMPL-NEXT:   %id_1 = gate.constant #gate.z
+// CHECK-SIMPL-NEXT:   %p2 = prob.bernoulli 1.000000e-01
+// CHECK-SIMPL-NEXT:   %0 = arith.addi %p, %p2 : i1
+// CHECK-SIMPL-NEXT:   %g = arith.select %0, %id_1, %id : !gate.type<1>
+// CHECK-SIMPL-NEXT:   %q2 = qssa.dyn_gate<%g> %q : !qubit.bit
+// CHECK-SIMPL-NEXT:   func.return %q2 : !qubit.bit
+// CHECK-SIMPL-NEXT: }
 
 func.func @double_phase(%q : !qubit.bit) -> !qubit.bit {
   %p = prob.bernoulli 0.1

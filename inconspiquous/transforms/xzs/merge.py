@@ -61,7 +61,7 @@ class MergeXZSGatesPattern(RewritePattern):
         rewriter.erase_op(predecessor)
 
 
-class MergeXZSGates(ModulePass):
+class MergeXZS(ModulePass):
     """
     Merge consecutive XZS gadgets
     """
