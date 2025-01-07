@@ -24,6 +24,9 @@ class MergeXZSGatesPattern(RewritePattern):
         if not isinstance(gate2, XZSOp):
             return
 
+        if len(op.ins[0].uses) != 1:
+            return
+
         predecessor = op.ins[0].owner
 
         if not isinstance(predecessor, DynGateOp):
@@ -60,7 +63,7 @@ class MergeXZSGatesPattern(RewritePattern):
 
 class MergeXZSGates(ModulePass):
     """
-    Merge consecutive XZS gadgets and push arith.select inwards
+    Merge consecutive XZS gadgets
     """
 
     name = "merge-xzs"
