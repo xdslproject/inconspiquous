@@ -54,7 +54,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
     def get_merge_xzs():
         from inconspiquous.transforms.xzs import merge
 
-        return merge.MergeXZSGates
+        return merge.MergeXZS
 
     def get_mlir_opt():
         from xdsl.transforms import mlir_opt
@@ -71,6 +71,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return select.XZSSelect
 
+    def get_xzs_simpl():
+        from inconspiquous.transforms.xzs import pipeline
+
+        return pipeline.XZSSimpl
+
     return {
         "canonicalize": get_canonicalize,
         "convert-qssa-to-qref": get_convert_qssa_to_qref,
@@ -85,4 +90,5 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "mlir-opt": get_mlir_opt,
         "randomized-comp": get_randomized_comp,
         "xzs-select": get_xzs_select,
+        "xzs-simpl": get_xzs_simpl,
     }
