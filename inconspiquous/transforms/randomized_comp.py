@@ -1,6 +1,6 @@
 from xdsl.context import MLContext
 from xdsl.dialects import builtin
-from xdsl.dialects.arith import SelectOp
+from xdsl.dialects.arith import AddiOp, SelectOp
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -24,7 +24,7 @@ from inconspiquous.dialects.gate import (
     XGate,
     ZGate,
 )
-from inconspiquous.dialects.qssa import DynGateOp, GateOp
+from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
 from inconspiquous.dialects.prob import UniformOp
 
 
@@ -252,6 +252,50 @@ class PadCNotGate(RewritePattern):
         )
 
 
+class PadMeasure(RewritePattern):
+    """
+    Places randomized dynamic pauli gates before a measurement.
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: MeasureOp, rewriter: PatternRewriter):
+        x_rand = UniformOp(i1)
+        z_rand = UniformOp(i1)
+
+        id_gate = ConstantGateOp(IdentityGate())
+        x_gate = ConstantGateOp(XGate())
+        z_gate = ConstantGateOp(ZGate())
+
+        pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
+        pre_x = DynGateOp(pre_x_sel, op.in_qubit)
+        pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
+        pre_z = DynGateOp(pre_z_sel, pre_x)
+
+        new_measure = MeasureOp(pre_z)
+
+        corrected_measure = AddiOp(x_rand, new_measure.out)
+
+        rewriter.insert_op(
+            (
+                x_rand,
+                z_rand,
+                id_gate,
+                x_gate,
+                z_gate,
+                pre_x_sel,
+                pre_x,
+                pre_z_sel,
+                pre_z,
+            ),
+            InsertPoint.before(op),
+        )
+
+        rewriter.replace_matched_op(
+            (new_measure, corrected_measure),
+            (corrected_measure.result, new_measure.out_qubit),
+        )
+
+
 class RandomizedComp(ModulePass):
     """
     Pads all "difficult" gates in a circuit.
@@ -262,7 +306,13 @@ class RandomizedComp(ModulePass):
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
             GreedyRewritePatternApplier(
-                [PadTGate(), PadTDaggerGate(), PadHadamardGate(), PadCNotGate()]
+                [
+                    PadTGate(),
+                    PadTDaggerGate(),
+                    PadHadamardGate(),
+                    PadCNotGate(),
+                    PadMeasure(),
+                ]
             ),
             apply_recursively=False,  # Do not reapply
         ).rewrite_module(op)
