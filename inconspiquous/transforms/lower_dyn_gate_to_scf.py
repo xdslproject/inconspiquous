@@ -46,7 +46,7 @@ class LowerDynGateToScfPattern(RewritePattern):
             flag = arith.IndexCastOp(gate.flag, IndexType())
             cases = DenseArrayBase.from_list(
                 IntegerType(64),
-                tuple(cast(int, x.value.data) for x in gate.case_values.data),
+                tuple(cast(int, x) for x in gate.case_values.iter_values()),
             )
 
             default_region = self.make_region_from_arg(op, gate.default_arg, rewriter)
