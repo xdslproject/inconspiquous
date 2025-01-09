@@ -9,8 +9,8 @@
 // Stop them being dead code eliminated
 "test.op"(%0, %1) : (i1, i1) -> ()
 
-// CHECK: %[[#x1:]] = "test.op"() {"fin_supp_test"} : () -> i64
-%2 = "test.op"() {"fin_supp_test"} : () -> i64
+// CHECK: %[[#x1:]] = "test.op"() {fin_supp_test} : () -> i64
+%2 = "test.op"() {fin_supp_test} : () -> i64
 %3 = prob.fin_supp [ %2 ] : i64
 // CHECK-NEXT: "test.op"(%[[#x1]]) : (i64) -> ()
 "test.op"(%3) : (i64) -> ()
