@@ -103,7 +103,7 @@ dev = [
     { name = "psutil", specifier = ">=6.0.0" },
     { name = "pyright", specifier = ">=1.1.380" },
     { name = "pytest", specifier = ">=8.3.3" },
-    { name = "ruff", specifier = ">=0.6.5" },
+    { name = "ruff", specifier = ">=0.9.0" },
 ]
 
 [[package]]
