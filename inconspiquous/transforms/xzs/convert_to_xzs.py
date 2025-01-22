@@ -17,6 +17,7 @@ from inconspiquous.dialects.gate import (
     PhaseDaggerGate,
     PhaseGate,
     XGate,
+    XZOp,
     XZSOp,
     YGate,
     ZGate,
@@ -60,19 +61,18 @@ class ToXZSGate(RewritePattern):
         match op.gate:
             case IdentityGate():
                 false = self.get_const(False, rewriter)
-                rewriter.replace_matched_op(XZSOp(false, false, false))
+                rewriter.replace_matched_op(XZOp(false, false))
             case XGate():
                 false = self.get_const(False, rewriter)
                 true = self.get_const(True, rewriter)
-                rewriter.replace_matched_op(XZSOp(true, false, false))
+                rewriter.replace_matched_op(XZOp(true, false))
             case YGate():
-                false = self.get_const(False, rewriter)
                 true = self.get_const(True, rewriter)
-                rewriter.replace_matched_op(XZSOp(true, true, false))
+                rewriter.replace_matched_op(XZOp(true, true))
             case ZGate():
                 false = self.get_const(False, rewriter)
                 true = self.get_const(True, rewriter)
-                rewriter.replace_matched_op(XZSOp(false, true, false))
+                rewriter.replace_matched_op(XZOp(false, true))
             case PhaseGate():
                 false = self.get_const(False, rewriter)
                 true = self.get_const(True, rewriter)

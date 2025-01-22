@@ -39,8 +39,9 @@ from xdsl.irdl import (
     traits_def,
 )
 from xdsl.parser import AttrParser
+from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
-from xdsl.traits import ConstantLike, Pure
+from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
 
 from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
 
@@ -331,6 +332,14 @@ class ComposeGateOp(IRDLOperation):
         super().__init__(operands=(lhs, rhs), result_types=(lhs.type,))
 
 
+class XZSOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.gate import XZSToXZPattern
+
+        return (XZSToXZPattern(),)
+
+
 @irdl_op_definition
 class XZSOp(IRDLOperation):
     """
@@ -347,7 +356,7 @@ class XZSOp(IRDLOperation):
 
     assembly_format = "$x `,` $z `,` $phase attr-dict"
 
-    traits = traits_def(Pure())
+    traits = traits_def(Pure(), XZSOpHasCanonicalizationPatterns())
 
     def __init__(
         self,
@@ -358,14 +367,34 @@ class XZSOp(IRDLOperation):
         super().__init__(operands=(x, z, phase), result_types=(GateType(1),))
 
 
+@irdl_op_definition
+class XZOp(IRDLOperation):
+    """
+    A gadget for describing combinations of X and Z gates.
+    """
+
+    name = "gate.xz"
+
+    x = operand_def(i1)
+    z = operand_def(i1)
+
+    out = result_def(GateType(1))
+
+    assembly_format = "$x `,` $z attr-dict"
+
+    traits = traits_def(Pure())
+
+    def __init__(
+        self,
+        x: Operation | SSAValue,
+        z: Operation | SSAValue,
+    ):
+        super().__init__(operands=(x, z), result_types=(GateType(1),))
+
+
 Gate = Dialect(
     "gate",
-    [
-        ConstantGateOp,
-        QuaternionGateOp,
-        ComposeGateOp,
-        XZSOp,
-    ],
+    [ConstantGateOp, QuaternionGateOp, ComposeGateOp, XZSOp, XZOp],
     [
         AngleAttr,
         HadamardGate,

@@ -2,6 +2,7 @@ from xdsl.dialects import arith, builtin
 from xdsl.context import MLContext
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
+    GreedyRewritePatternApplier,
     PatternRewriteWalker,
     PatternRewriter,
     RewritePattern,
@@ -13,11 +14,39 @@ from inconspiquous.dialects.gate import (
     IdentityGate,
     PhaseGate,
     XGate,
+    XZOp,
     XZSOp,
     ConstantGateOp,
     YGate,
     ZGate,
 )
+
+
+class LowerXZToSelectPattern(RewritePattern):
+    """Replace an XZ gadget by a selection between X/Z gates"""
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: XZOp, rewriter: PatternRewriter):
+        identity = ConstantGateOp(IdentityGate())
+        z = ConstantGateOp(ZGate())
+        y = ConstantGateOp(YGate())
+        x = ConstantGateOp(XGate())
+
+        z_no_x_sel_op = arith.SelectOp(op.z, z, identity)
+        z_x_sel_op = arith.SelectOp(op.z, y, x)
+        x_sel_op = arith.SelectOp(op.x, z_x_sel_op, z_no_x_sel_op)
+
+        rewriter.replace_matched_op(
+            (
+                identity,
+                z,
+                y,
+                x,
+                z_no_x_sel_op,
+                z_x_sel_op,
+                x_sel_op,
+            )
+        )
 
 
 class LowerXZSToSelectPattern(RewritePattern):
@@ -59,4 +88,8 @@ class LowerXZSToSelect(ModulePass):
     name = "lower-xzs-to-select"
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
-        PatternRewriteWalker(LowerXZSToSelectPattern()).rewrite_module(op)
+        PatternRewriteWalker(
+            GreedyRewritePatternApplier(
+                [LowerXZToSelectPattern(), LowerXZSToSelectPattern()]
+            )
+        ).rewrite_module(op)
