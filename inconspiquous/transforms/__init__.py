@@ -66,6 +66,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return randomized_comp.RandomizedComp
 
+    def get_qec_inline():
+        from inconspiquous.transforms.qec import inline
+
+        return inline.QECInlinerPass
+
     def get_xz_commute():
         from inconspiquous.transforms.xzs import commute
 
@@ -94,6 +99,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "convert-to-xzs": get_convert_to_xzs,
         "cse": get_cse,
         "dce": get_dce,
+        "qec-inline": get_qec_inline,
         "lower-dyn-gate-to-scf": get_lower_dyn_gate_to_scf,
         "lower-to-fin-supp": get_lower_to_fin_supp,
         "lower-xzs-to-select": get_lower_xzs_to_select,
