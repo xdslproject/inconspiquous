@@ -50,7 +50,7 @@ class MergeXZGatesPattern(RewritePattern):
                 new_z,
                 new_gate,
             ),
-            InsertPoint.after(gate2),
+            InsertPoint.before(op),
         )
 
         rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.ins))
@@ -113,19 +113,19 @@ class MergeXZSGatesPattern(RewritePattern):
                 new_phase,
                 new_gate,
             ),
-            InsertPoint.after(gate2),
+            InsertPoint.before(op),
         )
 
         rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.ins))
         rewriter.erase_op(predecessor)
 
 
-class MergeXZS(ModulePass):
+class XZSMerge(ModulePass):
     """
-    Merge consecutive XZS gadgets
+    Merge consecutive XZS gadgets.
     """
 
-    name = "merge-xzs"
+    name = "xzs-merge"
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(

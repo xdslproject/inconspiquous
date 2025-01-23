@@ -56,11 +56,6 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return lower.LowerXZSToSelect
 
-    def get_merge_xzs():
-        from inconspiquous.transforms.xzs import merge
-
-        return merge.MergeXZS
-
     def get_mlir_opt():
         from xdsl.transforms import mlir_opt
 
@@ -70,6 +65,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         from inconspiquous.transforms import randomized_comp
 
         return randomized_comp.RandomizedComp
+
+    def get_xzs_merge():
+        from inconspiquous.transforms.xzs import merge
+
+        return merge.XZSMerge
 
     def get_xzs_select():
         from inconspiquous.transforms.xzs import select
@@ -92,9 +92,9 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "lower-dyn-gate-to-scf": get_lower_dyn_gate_to_scf,
         "lower-to-fin-supp": get_lower_to_fin_supp,
         "lower-xzs-to-select": get_lower_xzs_to_select,
-        "merge-xzs": get_merge_xzs,
         "mlir-opt": get_mlir_opt,
         "randomized-comp": get_randomized_comp,
+        "xzs-merge": get_xzs_merge,
         "xzs-select": get_xzs_select,
         "xzs-simpl": get_xzs_simpl,
     }
