@@ -20,7 +20,7 @@
 // CHECK-SIMPL-NEXT:   %id = gate.constant #gate.id
 // CHECK-SIMPL-NEXT:   %id_1 = gate.constant #gate.z
 // CHECK-SIMPL-NEXT:   %p2 = prob.bernoulli 1.000000e-01
-// CHECK-SIMPL-NEXT:   %0 = arith.addi %p, %p2 : i1
+// CHECK-SIMPL-NEXT:   %0 = arith.xori %p, %p2 : i1
 // CHECK-SIMPL-NEXT:   %g = arith.select %0, %id_1, %id : !gate.type<1>
 // CHECK-SIMPL-NEXT:   %q2 = qssa.dyn_gate<%g> %q : !qubit.bit
 // CHECK-SIMPL-NEXT:   func.return %q2 : !qubit.bit

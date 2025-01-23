@@ -1,6 +1,6 @@
 from xdsl.dialects import builtin
 from xdsl.dialects import arith
-from xdsl.dialects.arith import AddiOp, AndIOp
+from xdsl.dialects.arith import AndIOp, XOrIOp
 from xdsl.parser import MLContext
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
@@ -38,8 +38,8 @@ class MergeXZGatesPattern(RewritePattern):
         if not isinstance(gate1, XZOp):
             return
 
-        new_x = AddiOp(gate1.x, gate2.x)
-        new_z = AddiOp(gate1.z, gate2.z)
+        new_x = XOrIOp(gate1.x, gate2.x)
+        new_z = XOrIOp(gate1.z, gate2.z)
         new_gate = XZOp(new_x, new_z)
 
         new_gate.out.name_hint = gate1.out.name_hint
@@ -94,11 +94,11 @@ class MergeXZSGatesPattern(RewritePattern):
                 c0 = arith.ConstantOp.from_int_and_width(0, 1)
             gate2_phase = c0
 
-        new_x = AddiOp(gate1.x, gate2.x)
+        new_x = XOrIOp(gate1.x, gate2.x)
         new_z_and = AndIOp(gate2.x, gate1_phase)
-        new_z_add = AddiOp(gate1.z, gate2.z)
-        new_z = AddiOp(new_z_and, new_z_add)
-        new_phase = AddiOp(gate1_phase, gate2_phase)
+        new_z_add = XOrIOp(gate1.z, gate2.z)
+        new_z = XOrIOp(new_z_and, new_z_add)
+        new_phase = XOrIOp(gate1_phase, gate2_phase)
         new_gate = XZSOp(new_x, new_z, new_phase)
 
         new_gate.out.name_hint = gate1.out.name_hint
