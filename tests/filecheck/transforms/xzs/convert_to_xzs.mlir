@@ -2,7 +2,7 @@
 
 // CHECK:      func.func @id(%q : !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:   %cFalse = arith.constant false
-// CHECK-NEXT:   %g = gate.xzs %cFalse, %cFalse, %cFalse
+// CHECK-NEXT:   %g = gate.xz %cFalse, %cFalse
 // CHECK-NEXT:   %q_1 = qssa.dyn_gate<%g> %q : !qubit.bit
 // CHECK-NEXT:   %q_2 = qssa.dyn_gate<%g> %q_1 : !qubit.bit
 // CHECK-NEXT:   func.return %q_2 : !qubit.bit
@@ -17,7 +17,7 @@ func.func @id(%q: !qubit.bit) -> !qubit.bit {
 // CHECK:      func.func @x(%q : !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:   %cFalse = arith.constant false
 // CHECK-NEXT:   %cTrue = arith.constant true
-// CHECK-NEXT:   %g = gate.xzs %cTrue, %cFalse, %cFalse
+// CHECK-NEXT:   %g = gate.xz %cTrue, %cFalse
 // CHECK-NEXT:   %q_1 = qssa.dyn_gate<%g> %q : !qubit.bit
 // CHECK-NEXT:   %q_2 = qssa.dyn_gate<%g> %q_1 : !qubit.bit
 // CHECK-NEXT:   func.return %q_2 : !qubit.bit
@@ -30,9 +30,8 @@ func.func @x(%q: !qubit.bit) -> !qubit.bit {
 }
 
 // CHECK:      func.func @y(%q : !qubit.bit) -> !qubit.bit {
-// CHECK-NEXT:   %cFalse = arith.constant false
 // CHECK-NEXT:   %cTrue = arith.constant true
-// CHECK-NEXT:   %g = gate.xzs %cTrue, %cTrue, %cFalse
+// CHECK-NEXT:   %g = gate.xz %cTrue, %cTrue
 // CHECK-NEXT:   %q_1 = qssa.dyn_gate<%g> %q : !qubit.bit
 // CHECK-NEXT:   %q_2 = qssa.dyn_gate<%g> %q_1 : !qubit.bit
 // CHECK-NEXT:   func.return %q_2 : !qubit.bit
@@ -47,7 +46,7 @@ func.func @y(%q: !qubit.bit) -> !qubit.bit {
 // CHECK:      func.func @z(%q : !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:   %cFalse = arith.constant false
 // CHECK-NEXT:   %cTrue = arith.constant true
-// CHECK-NEXT:   %g = gate.xzs %cFalse, %cTrue, %cFalse
+// CHECK-NEXT:   %g = gate.xz %cFalse, %cTrue
 // CHECK-NEXT:   %q_1 = qssa.dyn_gate<%g> %q : !qubit.bit
 // CHECK-NEXT:   %q_2 = qssa.dyn_gate<%g> %q_1 : !qubit.bit
 // CHECK-NEXT:   func.return %q_2 : !qubit.bit
