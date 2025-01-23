@@ -110,11 +110,11 @@ func.func @cnot_gate(%q1: !qubit.bit, %q2: !qubit.bit) -> (!qubit.bit, !qubit.bi
 // CHECK-NEXT:   %6 = qssa.dyn_gate<%5> %q : !qubit.bit
 // CHECK-NEXT:   %7 = arith.select %1, %4, %2 : !gate.type<1>
 // CHECK-NEXT:   %8 = qssa.dyn_gate<%7> %6 : !qubit.bit
-// CHECK-NEXT:   %9, %q_1 = qssa.measure %8
+// CHECK-NEXT:   %9 = qssa.measure %8
 // CHECK-NEXT:   %10 = arith.addi %0, %9 : i1
 // CHECK-NEXT:   func.return %10 : i1
 // CHECK-NEXT: }
 func.func @measure(%q: !qubit.bit) -> i1 {
-  %0, %q_1 = qssa.measure %q
+  %0 = qssa.measure %q
   func.return %0 : i1
 }

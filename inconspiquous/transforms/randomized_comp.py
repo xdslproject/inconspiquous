@@ -292,7 +292,6 @@ class PadMeasure(RewritePattern):
 
         rewriter.replace_matched_op(
             (new_measure, corrected_measure),
-            (corrected_measure.result, new_measure.out_qubit),
         )
 
 

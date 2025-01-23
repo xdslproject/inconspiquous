@@ -104,14 +104,12 @@ class MeasureOp(IRDLOperation):
 
     out = result_def(i1)
 
-    out_qubit = result_def(BitType())
-
     assembly_format = "$in_qubit attr-dict"
 
     def __init__(self, in_qubit: SSAValue | Operation):
         super().__init__(
             operands=(in_qubit,),
-            result_types=(i1, BitType()),
+            result_types=(i1,),
         )
 
 
