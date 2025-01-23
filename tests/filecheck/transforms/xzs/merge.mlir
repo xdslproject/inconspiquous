@@ -1,11 +1,11 @@
 // RUN: quopt %s -p xzs-merge,dce | filecheck %s
 
 // CHECK:      func.func @merge(%q : !qubit.bit, %x1 : i1, %x2 : i1, %z1 : i1, %z2 : i1, %s1 : i1, %s2 : i1) -> !qubit.bit {
-// CHECK-NEXT:   %0 = arith.addi %x1, %x2 : i1
+// CHECK-NEXT:   %0 = arith.xori %x1, %x2 : i1
 // CHECK-NEXT:   %1 = arith.andi %x2, %s1 : i1
-// CHECK-NEXT:   %2 = arith.addi %z1, %z2 : i1
-// CHECK-NEXT:   %3 = arith.addi %1, %2 : i1
-// CHECK-NEXT:   %4 = arith.addi %s1, %s2 : i1
+// CHECK-NEXT:   %2 = arith.xori %z1, %z2 : i1
+// CHECK-NEXT:   %3 = arith.xori %1, %2 : i1
+// CHECK-NEXT:   %4 = arith.xori %s1, %s2 : i1
 // CHECK-NEXT:   %g1 = gate.xzs %0, %3, %4
 // CHECK-NEXT:   %q_1 = qssa.dyn_gate<%g1> %q : !qubit.bit
 // CHECK-NEXT:   func.return %q_1 : !qubit.bit
