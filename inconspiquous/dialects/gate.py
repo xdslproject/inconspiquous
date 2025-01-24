@@ -223,7 +223,7 @@ class GateType(ParametrizedAttribute, TypeAttribute):
 @dataclass(frozen=True)
 class GateTypeSizeConstraint(GenericAttrConstraint[GateType]):
     """
-    Constrains the value of an IntAttr by an integer constraint.
+    Constrains the size of a GateType attribute.
     """
 
     int_constraint: IntConstraint
