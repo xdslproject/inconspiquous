@@ -15,17 +15,17 @@ func.func @h_commute(%q : !qubit.bit, %x : i1, %z : i1) {
 }
 
 // CHECK:      func.func @cz_commute(%q1 : !qubit.bit, %q2 : !qubit.bit, %x1 : i1, %z1 : i1, %x2 : i1, %z2 : i1) {
-// CHECK-NEXT:   %0 = arith.addi %1, %x1 : i1
-// CHECK-NEXT:   %2 = arith.addi %x2, %z1 : i1
-// CHECK-NEXT:   %3 = gate.xz %0, %2
-// CHECK-NEXT:   %4 = arith.constant false
+// CHECK-NEXT:   %0 = arith.constant false
 // CHECK-NEXT:   %1 = arith.constant false
-// CHECK-NEXT:   %5, %6 = qssa.gate<#gate.cz> %q1, %q2
-// CHECK-NEXT:   %q1_1 = qssa.dyn_gate<%3> %5 : !qubit.bit
-// CHECK-NEXT:   %7 = arith.addi %x2, %4 : i1
-// CHECK-NEXT:   %8 = arith.addi %z2, %x1 : i1
+// CHECK-NEXT:   %2, %3 = qssa.gate<#gate.cz> %q1, %q2
+// CHECK-NEXT:   %4 = arith.xori %1, %x1 : i1
+// CHECK-NEXT:   %5 = arith.xori %x2, %z1 : i1
+// CHECK-NEXT:   %6 = gate.xz %4, %5
+// CHECK-NEXT:   %q1_1 = qssa.dyn_gate<%6> %2 : !qubit.bit
+// CHECK-NEXT:   %7 = arith.xori %x2, %0 : i1
+// CHECK-NEXT:   %8 = arith.xori %z2, %x1 : i1
 // CHECK-NEXT:   %g2 = gate.xz %7, %8
-// CHECK-NEXT:   %q2_1 = qssa.dyn_gate<%g2> %6 : !qubit.bit
+// CHECK-NEXT:   %q2_1 = qssa.dyn_gate<%g2> %3 : !qubit.bit
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @cz_commute(%q1 : !qubit.bit, %q2 : !qubit.bit, %x1 : i1, %z1 : i1, %x2 : i1, %z2 : i1) {
@@ -38,17 +38,17 @@ func.func @cz_commute(%q1 : !qubit.bit, %q2 : !qubit.bit, %x1 : i1, %z1 : i1, %x
 }
 
 // CHECK:      func.func @cnot_commute(%q1 : !qubit.bit, %q2 : !qubit.bit, %x1 : i1, %z1 : i1, %x2 : i1, %z2 : i1) {
-// CHECK-NEXT:   %0 = arith.addi %1, %x1 : i1
-// CHECK-NEXT:   %2 = arith.addi %z2, %z1 : i1
-// CHECK-NEXT:   %3 = gate.xz %0, %2
-// CHECK-NEXT:   %4 = arith.constant false
+// CHECK-NEXT:   %0 = arith.constant false
 // CHECK-NEXT:   %1 = arith.constant false
-// CHECK-NEXT:   %5, %6 = qssa.gate<#gate.cnot> %q1, %q2
-// CHECK-NEXT:   %q1_1 = qssa.dyn_gate<%3> %5 : !qubit.bit
-// CHECK-NEXT:   %7 = arith.addi %x2, %x1 : i1
-// CHECK-NEXT:   %8 = arith.addi %z2, %4 : i1
+// CHECK-NEXT:   %2, %3 = qssa.gate<#gate.cnot> %q1, %q2
+// CHECK-NEXT:   %4 = arith.xori %1, %x1 : i1
+// CHECK-NEXT:   %5 = arith.xori %z2, %z1 : i1
+// CHECK-NEXT:   %6 = gate.xz %4, %5
+// CHECK-NEXT:   %q1_1 = qssa.dyn_gate<%6> %2 : !qubit.bit
+// CHECK-NEXT:   %7 = arith.xori %x2, %x1 : i1
+// CHECK-NEXT:   %8 = arith.xori %z2, %0 : i1
 // CHECK-NEXT:   %g2 = gate.xz %7, %8
-// CHECK-NEXT:   %q2_1 = qssa.dyn_gate<%g2> %6 : !qubit.bit
+// CHECK-NEXT:   %q2_1 = qssa.dyn_gate<%g2> %3 : !qubit.bit
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @cnot_commute(%q1 : !qubit.bit, %q2 : !qubit.bit, %x1 : i1, %z1 : i1, %x2 : i1, %z2 : i1) {
