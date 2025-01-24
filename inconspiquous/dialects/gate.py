@@ -22,14 +22,16 @@ from xdsl.ir import (
     Attribute,
 )
 from xdsl.irdl import (
-    AttrConstraint,
+    AnyInt,
     ConstraintContext,
-    ConstraintVariableType,
     GenericAttrConstraint,
     IRDLOperation,
+    InferenceContext,
+    IntConstraint,
+    IntVarConstraint,
     ParameterDef,
+    Set,
     VarConstraint,
-    VarExtractor,
     base,
     irdl_attr_definition,
     irdl_op_definition,
@@ -44,6 +46,9 @@ from xdsl.printer import Printer
 from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
 
 from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
+from inconspiquous.gates.constraints import (
+    GateAttrSizeConstraint,
+)
 
 
 @irdl_attr_definition
@@ -216,30 +221,24 @@ class GateType(ParametrizedAttribute, TypeAttribute):
 
 
 @dataclass(frozen=True)
-class GateTypeConstraint(GenericAttrConstraint[GateAttr]):
+class GateTypeSizeConstraint(GenericAttrConstraint[GateType]):
     """
-    Put a constraint on the gate type of a gate.
+    Constrains the value of an IntAttr by an integer constraint.
     """
 
-    type_constraint: GenericAttrConstraint[GateType]
+    int_constraint: IntConstraint
 
     def verify(self, attr: Attribute, constraint_context: ConstraintContext) -> None:
-        if not isinstance(attr, GateAttr):
-            raise VerifyException(f"attribute {attr} expected to be a gate")
-        self.type_constraint.verify(GateType(attr.num_qubits), constraint_context)
+        if not isinstance(attr, GateType):
+            raise VerifyException(f"attribute {attr} expected to be a GateType")
+        self.int_constraint.verify(attr.num_qubits.value.data, constraint_context)
 
-    @dataclass(frozen=True)
-    class _Extractor(VarExtractor[GateAttr]):
-        inner: VarExtractor[GateType]
+    def can_infer(self, var_constraint_names: Set[str]) -> bool:
+        return self.int_constraint.can_infer(var_constraint_names)
 
-        def extract_var(self, a: GateAttr) -> ConstraintVariableType:
-            return self.inner.extract_var(GateType(a.num_qubits))
-
-    def get_variable_extractors(self) -> dict[str, VarExtractor[GateAttr]]:
-        return {
-            v: self._Extractor(r)
-            for v, r in self.type_constraint.get_variable_extractors().items()
-        }
+    def infer(self, context: InferenceContext) -> GateType:
+        i = self.int_constraint.infer(context)
+        return GateType(i)
 
 
 @irdl_op_definition
@@ -248,13 +247,13 @@ class ConstantGateOp(IRDLOperation):
     Constant-like operation for producing gates
     """
 
-    _T: ClassVar[AttrConstraint] = VarConstraint("T", base(GateType))
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
 
     name = "gate.constant"
 
-    gate = prop_def(GateTypeConstraint(_T))
+    gate = prop_def(GateAttrSizeConstraint(_I))
 
-    out = result_def(_T)
+    out = result_def(GateTypeSizeConstraint(_I))
 
     assembly_format = "$gate attr-dict"
 

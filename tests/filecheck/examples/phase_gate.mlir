@@ -5,7 +5,7 @@
 // CHECK-NEXT:   %id = gate.constant #gate.id
 // CHECK-NEXT:   %z = gate.constant #gate.z
 // CHECK-NEXT:   %g = arith.select %p, %z, %id : !gate.type<1>
-// CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q : !qubit.bit
+// CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q
 // CHECK-NEXT:   func.return %q1 : !qubit.bit
 // CHECK-NEXT: }
 func.func @phase_dyn(%q : !qubit.bit) -> !qubit.bit {
@@ -13,7 +13,7 @@ func.func @phase_dyn(%q : !qubit.bit) -> !qubit.bit {
   %id = gate.constant #gate.id
   %z = gate.constant #gate.z
   %g = arith.select %p, %z, %id : !gate.type<1>
-  %q1 = qssa.dyn_gate<%g> %q : !qubit.bit
+  %q1 = qssa.dyn_gate<%g> %q
   func.return %q1 : !qubit.bit
 }
 

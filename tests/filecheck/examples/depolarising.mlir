@@ -14,7 +14,7 @@
 // CHECK-NEXT:     -1: %z
 // CHECK-NEXT:   ]
 // CHECK-NEXT:   %g = arith.select %p, %choice, %id : !gate.type<1>
-// CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q : !qubit.bit
+// CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q
 // CHECK-NEXT:   func.return %q1 : !qubit.bit
 // CHECK-NEXT: }
 func.func @depolarising_dyn(%q : !qubit.bit) -> !qubit.bit {
@@ -31,7 +31,7 @@ func.func @depolarising_dyn(%q : !qubit.bit) -> !qubit.bit {
     3: %z
   ]
   %g = arith.select %p, %choice, %id : !gate.type<1>
-  %q1 = qssa.dyn_gate<%g> %q : !qubit.bit
+  %q1 = qssa.dyn_gate<%g> %q
   func.return %q1 : !qubit.bit
 }
 

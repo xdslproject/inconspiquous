@@ -4,7 +4,7 @@
 
 %q1 = qubit.alloc
 
-%q2 = "qssa.dyn_gate"(%q1, %g) : (!qubit.bit, !gate.type<1>) -> !qubit.bit
+%q2 = "qssa.dyn_gate"(%g, %q1) : (!gate.type<1>, !qubit.bit) -> !qubit.bit
 
 // CHECK:       builtin.module {
 // CHECK-NEXT:    %q1 = qubit.alloc
