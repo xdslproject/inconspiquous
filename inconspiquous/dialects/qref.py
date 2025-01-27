@@ -2,23 +2,26 @@ from typing import ClassVar
 from xdsl.dialects.builtin import i1
 from xdsl.ir import Dialect, Operation, SSAValue
 from xdsl.irdl import (
-    EqAttrConstraint,
+    AnyInt,
     IRDLOperation,
-    RangeConstraint,
+    IntVarConstraint,
     RangeOf,
-    RangeVarConstraint,
     irdl_op_definition,
     operand_def,
     prop_def,
     result_def,
     traits_def,
     var_operand_def,
+    eq,
 )
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.traits import HasCanonicalizationPatternsTrait
 
+from inconspiquous.dialects.gate import GateTypeSizeConstraint
 from inconspiquous.gates import GateAttr
-from inconspiquous.gates.constraints import DynGateConstraint, GateConstraint
+from inconspiquous.gates.constraints import (
+    GateAttrSizeConstraint,
+)
 from inconspiquous.dialects.qubit import BitType
 
 
@@ -26,13 +29,11 @@ from inconspiquous.dialects.qubit import BitType
 class GateOp(IRDLOperation):
     name = "qref.gate"
 
-    _Q: ClassVar[RangeConstraint] = RangeVarConstraint(
-        "Q", RangeOf(EqAttrConstraint(BitType()))
-    )
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    gate = prop_def(GateConstraint(_Q))
+    gate = prop_def(GateAttrSizeConstraint(_I))
 
-    ins = var_operand_def(_Q)
+    ins = var_operand_def(RangeOf(eq(BitType()), length=_I))
 
     assembly_format = "`<` $gate `>` $ins attr-dict"
 
@@ -57,22 +58,19 @@ class DynGateOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
 class DynGateOp(IRDLOperation):
     name = "qref.dyn_gate"
 
-    _Q: ClassVar[RangeConstraint] = RangeVarConstraint(
-        "Q", RangeOf(EqAttrConstraint(BitType()))
-    )
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    ins = var_operand_def(_Q)
+    gate = operand_def(GateTypeSizeConstraint(_I))
 
-    # Operands must be in this order for verification
-    gate = operand_def(DynGateConstraint(_Q))
+    ins = var_operand_def(RangeOf(eq(BitType()), length=_I))
 
-    assembly_format = "`<` $gate `>` $ins attr-dict `:` type($ins)"
+    assembly_format = "`<` $gate `>` $ins attr-dict"
 
     traits = traits_def(DynGateOpHasCanonicalizationPatterns())
 
     def __init__(self, gate: SSAValue | Operation, *ins: SSAValue | Operation):
         super().__init__(
-            operands=[ins, gate],
+            operands=[gate, ins],
         )
 
 

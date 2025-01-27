@@ -23,9 +23,9 @@
 
 %g1 = "test.op"() : () -> !gate.type<1>
 
-// CHECK: %q6 = qssa.dyn_gate<%g1> %q5 : !qubit.bit
-// CHECK-GENERIC: %q6 = "qssa.dyn_gate"(%q5, %g1) : (!qubit.bit, !gate.type<1>) -> !qubit.bit
-%q6 = qssa.dyn_gate<%g1> %q5 : !qubit.bit
+// CHECK: %q6 = qssa.dyn_gate<%g1> %q5
+// CHECK-GENERIC: %q6 = "qssa.dyn_gate"(%g1, %q5) : (!gate.type<1>, !qubit.bit) -> !qubit.bit
+%q6 = qssa.dyn_gate<%g1> %q5
 
 // CHECK: %{{.*}} = qssa.measure %q4
 // CHECK-GENERIC: %{{.*}} = "qssa.measure"(%q4) : (!qubit.bit) -> i1
