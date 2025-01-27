@@ -17,12 +17,10 @@ from xdsl.irdl import (
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.traits import HasCanonicalizationPatternsTrait
 
-from inconspiquous.dialects.gate import GateTypeSizeConstraint
+from inconspiquous.dialects.gate import GateType
 from inconspiquous.gates import GateAttr
-from inconspiquous.gates.constraints import (
-    GateAttrSizeConstraint,
-)
 from inconspiquous.dialects.qubit import BitType
+from inconspiquous.constraints import SizedAttributeConstraint
 
 
 @irdl_op_definition
@@ -31,7 +29,7 @@ class GateOp(IRDLOperation):
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    gate = prop_def(GateAttrSizeConstraint(_I))
+    gate = prop_def(SizedAttributeConstraint(GateAttr, _I))
 
     ins = var_operand_def(RangeOf(eq(BitType()), length=_I))
 
@@ -60,7 +58,7 @@ class DynGateOp(IRDLOperation):
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    gate = operand_def(GateTypeSizeConstraint(_I))
+    gate = operand_def(GateType.constr(_I))
 
     ins = var_operand_def(RangeOf(eq(BitType()), length=_I))
 
