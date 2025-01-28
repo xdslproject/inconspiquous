@@ -1,7 +1,6 @@
 from __future__ import annotations
 import math
 from typing import ClassVar
-from dataclasses import dataclass
 
 from xdsl.dialects.builtin import (
     FloatAttr,
@@ -18,19 +17,15 @@ from xdsl.ir import (
     ParametrizedAttribute,
     SSAValue,
     TypeAttribute,
-    VerifyException,
-    Attribute,
 )
 from xdsl.irdl import (
     AnyInt,
-    ConstraintContext,
     GenericAttrConstraint,
     IRDLOperation,
-    InferenceContext,
     IntConstraint,
     IntVarConstraint,
+    ParamAttrConstraint,
     ParameterDef,
-    Set,
     VarConstraint,
     base,
     irdl_attr_definition,
@@ -39,6 +34,7 @@ from xdsl.irdl import (
     prop_def,
     result_def,
     traits_def,
+    eq,
 )
 from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
@@ -46,9 +42,7 @@ from xdsl.printer import Printer
 from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
 
 from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
-from inconspiquous.gates.constraints import (
-    GateAttrSizeConstraint,
-)
+from inconspiquous.constraints import IntAttrConstraint, SizedAttributeConstraint
 
 
 @irdl_attr_definition
@@ -239,26 +233,16 @@ class GateType(ParametrizedAttribute, TypeAttribute):
         with printer.in_angle_brackets():
             printer.print_string(str(self.num_qubits.value.data))
 
-
-@dataclass(frozen=True)
-class GateTypeSizeConstraint(GenericAttrConstraint[GateType]):
-    """
-    Constrains the size of a GateType attribute.
-    """
-
-    int_constraint: IntConstraint
-
-    def verify(self, attr: Attribute, constraint_context: ConstraintContext) -> None:
-        if not isinstance(attr, GateType):
-            raise VerifyException(f"attribute {attr} expected to be a GateType")
-        self.int_constraint.verify(attr.num_qubits.value.data, constraint_context)
-
-    def can_infer(self, var_constraint_names: Set[str]) -> bool:
-        return self.int_constraint.can_infer(var_constraint_names)
-
-    def infer(self, context: InferenceContext) -> GateType:
-        i = self.int_constraint.infer(context)
-        return GateType(i)
+    @staticmethod
+    def constr(int_constraint: IntConstraint) -> GenericAttrConstraint[GateType]:
+        return ParamAttrConstraint(
+            GateType,
+            (
+                IntegerAttr.constr(
+                    value=IntAttrConstraint(int_constraint), type=eq(IndexType())
+                ),
+            ),
+        )
 
 
 @irdl_op_definition
@@ -271,9 +255,9 @@ class ConstantGateOp(IRDLOperation):
 
     name = "gate.constant"
 
-    gate = prop_def(GateAttrSizeConstraint(_I))
+    gate = prop_def(SizedAttributeConstraint(GateAttr, _I))
 
-    out = result_def(GateTypeSizeConstraint(_I))
+    out = result_def(GateType.constr(_I))
 
     assembly_format = "$gate attr-dict"
 
@@ -287,7 +271,7 @@ class ConstantGateOp(IRDLOperation):
             properties={
                 "gate": gate,
             },
-            result_types=(gate.get_type(),),
+            result_types=(GateType(gate.num_qubits),),
         )
 
 

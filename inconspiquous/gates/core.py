@@ -1,25 +1,25 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from xdsl.ir import (
-    Attribute,
     ParametrizedAttribute,
 )
 
+from inconspiquous.constraints import SizedAttribute
 
-class GateAttr(ParametrizedAttribute, ABC):
+
+class GateAttr(ParametrizedAttribute, SizedAttribute, ABC):
     """
     In general most gate operations are not operationally different, so differentiating between them
     may actually be better done via an attribute that can be attached to a gate operation.
     """
 
     @property
+    @abstractmethod
     def num_qubits(self) -> int: ...
 
-    def get_type(self) -> Attribute:
-        # avoid import loop
-        from inconspiquous.dialects.gate import GateType
-
-        return GateType(self.num_qubits)
+    @property
+    def size(self) -> int:
+        return self.num_qubits
 
     # Some other possible things:
     # get_matrix
