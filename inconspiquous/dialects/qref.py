@@ -9,18 +9,20 @@ from xdsl.irdl import (
     irdl_op_definition,
     operand_def,
     prop_def,
-    result_def,
     traits_def,
     var_operand_def,
     eq,
+    var_result_def,
 )
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.traits import HasCanonicalizationPatternsTrait
 
 from inconspiquous.dialects.gate import GateType
+from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
 from inconspiquous.gates import GateAttr
 from inconspiquous.dialects.qubit import BitType
 from inconspiquous.constraints import SizedAttributeConstraint
+from inconspiquous.measurement import MeasurementAttr
 
 
 @irdl_op_definition
@@ -76,16 +78,30 @@ class DynGateOp(IRDLOperation):
 class MeasureOp(IRDLOperation):
     name = "qref.measure"
 
-    in_qubit = operand_def(BitType())
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    out = result_def(i1)
+    measurement = prop_def(
+        SizedAttributeConstraint(MeasurementAttr, _I),
+        default_value=CompBasisMeasurementAttr(),
+    )
 
-    assembly_format = "$in_qubit attr-dict"
+    in_qubits = var_operand_def(RangeOf(eq(BitType()), length=_I))
 
-    def __init__(self, in_qubit: SSAValue | Operation):
+    out = var_result_def(RangeOf(eq(i1), length=_I))
+
+    assembly_format = "(`` `<` $measurement^ `>`)? $in_qubits attr-dict"
+
+    def __init__(
+        self,
+        *in_qubits: SSAValue | Operation,
+        measurement: MeasurementAttr = CompBasisMeasurementAttr(),
+    ):
         super().__init__(
-            operands=(in_qubit,),
-            result_types=(i1,),
+            properties={
+                "measurement": measurement,
+            },
+            operands=(in_qubits,),
+            result_types=((i1,) * len(in_qubits)),
         )
 
 

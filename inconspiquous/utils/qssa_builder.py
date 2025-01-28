@@ -47,6 +47,6 @@ class QSSABuilder(Builder):
         if ImplicitBuilder.get() is None:
             self.insert(new_op)
         ref.qubit = None
-        out = new_op.out
+        out = new_op.out[0]
         out.name_hint = name_hint
         return out

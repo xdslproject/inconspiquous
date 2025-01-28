@@ -14,6 +14,7 @@ from inconspiquous.dialects.gate import (
     HadamardGate,
     XZOp,
 )
+from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
 from inconspiquous.transforms.xzs.merge import MergeXZGatesPattern
 from inconspiquous.utils.linear_walker import LinearWalker
 
@@ -34,8 +35,10 @@ class XZCommutePattern(RewritePattern):
         op2 = use.operation
 
         if isinstance(op2, qssa.MeasureOp):
+            if not isinstance(op2.measurement, CompBasisMeasurementAttr):
+                return
             new_op2 = qssa.MeasureOp(op1.ins[0])
-            new_op1 = arith.AddiOp(new_op2.out, gate.x)
+            new_op1 = arith.AddiOp(new_op2.out[0], gate.x)
 
             rewriter.replace_op(op2, (new_op2, new_op1))
             rewriter.erase_op(op1)

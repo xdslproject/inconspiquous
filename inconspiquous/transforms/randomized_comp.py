@@ -24,6 +24,7 @@ from inconspiquous.dialects.gate import (
     XGate,
     ZGate,
 )
+from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
 from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
 from inconspiquous.dialects.prob import UniformOp
 
@@ -259,6 +260,9 @@ class PadMeasure(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: MeasureOp, rewriter: PatternRewriter):
+        if op.measurement != CompBasisMeasurementAttr():
+            # Only try to pad computation basis measurements
+            return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
 
@@ -267,13 +271,13 @@ class PadMeasure(RewritePattern):
         z_gate = ConstantGateOp(ZGate())
 
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
-        pre_x = DynGateOp(pre_x_sel, op.in_qubit)
+        pre_x = DynGateOp(pre_x_sel, *op.in_qubits)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
         pre_z = DynGateOp(pre_z_sel, pre_x)
 
         new_measure = MeasureOp(pre_z)
 
-        corrected_measure = AddiOp(x_rand, new_measure.out)
+        corrected_measure = AddiOp(x_rand, new_measure.out[0])
 
         rewriter.insert_op(
             (
