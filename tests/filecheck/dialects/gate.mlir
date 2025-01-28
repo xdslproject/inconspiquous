@@ -51,6 +51,10 @@
 // CHECK-NEXT: %{{.*}} = gate.constant #gate.cz
 // CHECK-GENERIC-NEXT: %{{.*}} = "gate.constant"() <{gate = #gate.cz}> : () -> !gate.type<2>
 
+// CHECK-NEXT: %{{.*}} = gate.constant_angle<pi>
+// CHECK-GENERIC-NEXT: %{{.*}} = "gate.constant_angle"() <{angle = #gate.angle<pi>}> : () -> !gate.angle_type
+%a = gate.constant_angle<pi>
+
 %zero = arith.constant 0 : i64
 %one = arith.constant 1 : i64
 
