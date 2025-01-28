@@ -5,8 +5,8 @@ from xdsl.pattern_rewriter import (
 )
 
 from inconspiquous.dialects.gate import ComposeGateOp, ConstantGateOp, IdentityGate
-from inconspiquous.dialects.qssa import GateOp
-from inconspiquous.dialects.qssa import DynGateOp
+from inconspiquous.dialects.measurement import ConstantMeasurmentOp
+from inconspiquous.dialects.qssa import DynMeasureOp, GateOp, MeasureOp, DynGateOp
 
 
 class DynGateConst(RewritePattern):
@@ -42,3 +42,16 @@ class GateIdentity(RewritePattern):
     def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
         if isinstance(op.gate, IdentityGate):
             rewriter.replace_matched_op((), op.ins)
+
+
+class DynMeasureConst(RewritePattern):
+    """
+    Simplifies a dynamic measurement with constant measurement to a regular measurement
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: DynMeasureOp, rewriter: PatternRewriter):
+        if isinstance(owner := op.measurement.owner, ConstantMeasurmentOp):
+            rewriter.replace_matched_op(
+                MeasureOp(*op.in_qubits, measurement=owner.measurement)
+            )

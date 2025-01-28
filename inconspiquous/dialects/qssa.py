@@ -18,7 +18,7 @@ from xdsl.pattern_rewriter import RewritePattern
 from xdsl.traits import HasCanonicalizationPatternsTrait
 
 from inconspiquous.dialects.gate import GateType
-from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
+from inconspiquous.dialects.measurement import CompBasisMeasurementAttr, MeasurementType
 from inconspiquous.gates import GateAttr
 from inconspiquous.dialects.qubit import BitType
 from inconspiquous.constraints import SizedAttributeConstraint
@@ -124,12 +124,48 @@ class MeasureOp(IRDLOperation):
         )
 
 
+class DynMeasureOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.qssa import (
+            DynMeasureConst,
+        )
+
+        return (DynMeasureConst(),)
+
+
+@irdl_op_definition
+class DynMeasureOp(IRDLOperation):
+    name = "qssa.dyn_measure"
+
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
+
+    measurement = operand_def(MeasurementType.constr(_I))
+
+    in_qubits = var_operand_def(RangeOf(eq(BitType()), length=_I))
+
+    outs = var_result_def(RangeOf(eq(i1), length=_I))
+
+    assembly_format = "`<` $measurement `>` $in_qubits attr-dict"
+
+    traits = traits_def(DynMeasureOpHasCanonicalizationPatterns())
+
+    def __init__(
+        self, measurement: SSAValue | Operation, *in_qubits: SSAValue | Operation
+    ):
+        super().__init__(
+            operands=[measurement, in_qubits],
+            result_types=(tuple(i1 for _ in in_qubits),),
+        )
+
+
 Qssa = Dialect(
     "qssa",
     [
         GateOp,
         DynGateOp,
         MeasureOp,
+        DynMeasureOp,
     ],
     [],
 )
