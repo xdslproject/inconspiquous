@@ -38,6 +38,19 @@ class AllocZeroAttr(AllocAttr):
         return 1
 
 
+@irdl_attr_definition
+class AllocPlusAttr(AllocAttr):
+    """
+    Allocate a qubit in the plus state.
+    """
+
+    name = "qubit.plus"
+
+    @property
+    def num_qubits(self) -> int:
+        return 1
+
+
 @irdl_op_definition
 class AllocOp(IRDLOperation):
     name = "qubit.alloc"
@@ -66,5 +79,5 @@ Qubit = Dialect(
     [
         AllocOp,
     ],
-    [BitType, AllocZeroAttr],
+    [BitType, AllocZeroAttr, AllocPlusAttr],
 )
