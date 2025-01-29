@@ -6,6 +6,11 @@ from xdsl.ir import Dialect
 def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
     """Returns all available dialects."""
 
+    def get_angle():
+        from inconspiquous.dialects.angle import Angle
+
+        return Angle
+
     def get_arith():
         from xdsl.dialects.arith import Arith
 
@@ -92,6 +97,7 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         return Varith
 
     return {
+        "angle": get_angle,
         "arith": get_arith,
         "builtin": get_builtin,
         "cf": get_cf,

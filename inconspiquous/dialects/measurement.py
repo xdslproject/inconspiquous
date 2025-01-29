@@ -21,12 +21,11 @@ from xdsl.irdl import (
 from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
-from inconspiquous.dialects.gate import AngleAttr
 from inconspiquous.measurement import MeasurementAttr
 from xdsl.dialects.builtin import IndexType, IntAttrConstraint, IntegerAttr
 from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
 from inconspiquous.constraints import SizedAttributeConstraint
-from inconspiquous.dialects.gate import AngleType
+from inconspiquous.dialects.angle import AngleAttr, AngleType
 
 
 @irdl_attr_definition
