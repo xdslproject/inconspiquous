@@ -121,6 +121,7 @@ class CondNegateAngleOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTr
         from inconspiquous.transforms.canonicalization import angle
 
         return (
+            angle.CondNegateAngleOpZeroPiPattern(),
             angle.CondNegateAngleOpFoldPattern(),
             angle.CondNegateAngleOpAssocPattern(),
         )
