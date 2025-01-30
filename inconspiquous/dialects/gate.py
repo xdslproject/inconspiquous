@@ -40,9 +40,10 @@ from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
 from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
+from xdsl.dialects.builtin import IntAttrConstraint
 
 from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
-from inconspiquous.constraints import IntAttrConstraint, SizedAttributeConstraint
+from inconspiquous.constraints import SizedAttributeConstraint
 
 
 @irdl_attr_definition
