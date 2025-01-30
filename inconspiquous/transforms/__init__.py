@@ -66,6 +66,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return lower.LowerXZSToSelect
 
+    def get_mbqc_legalize():
+        from inconspiquous.transforms import mbqc_legalize
+
+        return mbqc_legalize.MBQCLegalize
+
     def get_mlir_opt():
         from xdsl.transforms import mlir_opt
 
@@ -115,6 +120,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "lower-dyn-gate-to-scf": get_lower_dyn_gate_to_scf,
         "lower-to-fin-supp": get_lower_to_fin_supp,
         "lower-xzs-to-select": get_lower_xzs_to_select,
+        "mbqc-legalize": get_mbqc_legalize,
         "mlir-opt": get_mlir_opt,
         "randomized-comp": get_randomized_comp,
         "xz-commute": get_xz_commute,
