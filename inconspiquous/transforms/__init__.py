@@ -36,6 +36,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return convert_to_cz_j.ToCZJPass
 
+    def get_convert_to_mbqc():
+        from inconspiquous.transforms import convert_to_mbqc
+
+        return convert_to_mbqc.ToMBQC
+
     def get_convert_to_xzs():
         from inconspiquous.transforms.xzs import convert_to_xzs
 
@@ -113,6 +118,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "convert-scf-to-cf": get_convert_scf_to_cf,
         "convert-to-cme": get_convert_to_cme,
         "convert-to-cz-j": get_convert_to_cz_j,
+        "convert-to-mbqc": get_convert_to_mbqc,
         "convert-to-xzs": get_convert_to_xzs,
         "cse": get_cse,
         "dce": get_dce,

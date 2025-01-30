@@ -1,0 +1,28 @@
+from xdsl.dialects import builtin
+from xdsl.context import MLContext
+from xdsl.passes import ModulePass
+from xdsl.transforms.canonicalize import CanonicalizePass
+from xdsl.transforms.common_subexpression_elimination import (
+    CommonSubexpressionElimination,
+)
+
+from inconspiquous.transforms.convert_to_cme import ToCMEPass
+from inconspiquous.transforms.xzs.convert_to_xzs import ConvertToXZS
+from inconspiquous.transforms.xzs.commute import XZCommute
+from inconspiquous.transforms.xzs.select import XZSSelect
+
+
+class ToMBQC(ModulePass):
+    name = "convert-to-mbqc"
+
+    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+        for p in (
+            ToCMEPass(),
+            CommonSubexpressionElimination(),
+            ConvertToXZS(),
+            XZSSelect(),
+            XZCommute(),
+            CommonSubexpressionElimination(),
+            CanonicalizePass(),
+        ):
+            p.apply(ctx, op)
