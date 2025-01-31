@@ -410,6 +410,7 @@ Gate = Dialect(
         TGate,
         TDaggerGate,
         RZGate,
+        JGate,
         CNotGate,
         CZGate,
         ToffoliGate,
