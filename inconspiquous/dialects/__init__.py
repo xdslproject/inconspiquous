@@ -41,6 +41,11 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return Prob
 
+    def get_qec():
+        from inconspiquous.dialects.qec import QEC
+
+        return QEC
+
     def get_qref():
         from inconspiquous.dialects.qref import Qref
 
@@ -89,6 +94,7 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "gate": get_gate,
         "linalg": get_linalg,
         "prob": get_prob,
+        "qec": get_qec,
         "qref": get_qref,
         "qubit": get_qubit,
         "qssa": get_qssa,
