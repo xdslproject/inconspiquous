@@ -11,8 +11,8 @@
 // CHECK-GENERIC: %m = "measurement.constant"() <{measurement = #measurement.comp_basis}> : () -> !measurement.type<1>
 %m = measurement.constant #measurement.comp_basis
 
-%a = "test.op"() : () -> !gate.angle_type
+%a = "test.op"() : () -> !angle.type
 
 // CHECK: %m2 = measurement.dyn_xy<%a>
-// CHECK-GENERIC: %m2 = "measurement.dyn_xy"(%a) : (!gate.angle_type) -> !measurement.type<1>
+// CHECK-GENERIC: %m2 = "measurement.dyn_xy"(%a) : (!angle.type) -> !measurement.type<1>
 %m2 = measurement.dyn_xy<%a>

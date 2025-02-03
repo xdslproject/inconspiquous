@@ -1,6 +1,6 @@
 // RUN: quopt -p canonicalize %s | filecheck %s
 
-%a = gate.constant_angle<0>
+%a = angle.constant<0>
 
 %m = measurement.dyn_xy<%a>
 

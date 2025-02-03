@@ -4,7 +4,7 @@ from xdsl.pattern_rewriter import (
     op_type_rewrite_pattern,
 )
 
-from inconspiquous.dialects.gate import ConstantAngleOp
+from inconspiquous.dialects.angle import ConstantAngleOp
 from inconspiquous.dialects.measurement import (
     ConstantMeasurmentOp,
     XYDynMeasurementOp,
