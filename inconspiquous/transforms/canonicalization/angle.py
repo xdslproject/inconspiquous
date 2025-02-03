@@ -11,7 +11,7 @@ from inconspiquous.dialects.angle import CondNegateAngleOp, ConstantAngleOp
 
 class CondNegateAngleOpZeroPiPattern(RewritePattern):
     """
-    Negating a zero angle on pi angle has no effect.
+    Negating a zero angle or pi angle has no effect.
     """
 
     @op_type_rewrite_pattern
