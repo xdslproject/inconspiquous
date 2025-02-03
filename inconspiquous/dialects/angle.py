@@ -1,20 +1,22 @@
 from __future__ import annotations
 
 import math
-from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute
+from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
     ParameterDef,
     irdl_attr_definition,
     irdl_op_definition,
+    operand_def,
     prop_def,
     result_def,
     traits_def,
 )
-from xdsl.dialects.builtin import Float64Type, FloatAttr
+from xdsl.dialects.builtin import Float64Type, FloatAttr, i1
 from xdsl.parser import AttrParser
+from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
-from xdsl.traits import ConstantLike, Pure
+from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
 
 
 @irdl_attr_definition
@@ -113,4 +115,37 @@ class ConstantAngleOp(IRDLOperation):
         )
 
 
-Angle = Dialect("angle", [ConstantAngleOp], [AngleAttr, AngleType])
+class CondNegateAngleOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import angle
+
+        return (
+            angle.CondNegateAngleOpFoldPattern(),
+            angle.CondNegateAngleOpAssocPattern(),
+        )
+
+
+@irdl_op_definition
+class CondNegateAngleOp(IRDLOperation):
+    """
+    Negates an angle if input condition is true.
+    """
+
+    name = "angle.cond_negate"
+
+    cond = operand_def(i1)
+
+    angle = operand_def(AngleType)
+
+    out = result_def(AngleType)
+
+    traits = traits_def(CondNegateAngleOpHasCanonicalizationPatterns(), Pure())
+
+    assembly_format = "$cond `,` $angle attr-dict"
+
+    def __init__(self, cond: SSAValue | Operation, angle: SSAValue | Operation):
+        super().__init__(operands=(cond, angle), result_types=(AngleType(),))
+
+
+Angle = Dialect("angle", [ConstantAngleOp, CondNegateAngleOp], [AngleAttr, AngleType])
