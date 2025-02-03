@@ -26,3 +26,12 @@
 // CHECK: [[assoc:%.*]] = angle.cond_negate [[xor]], %a
 // CHECK: "test.op"([[assoc]]) : (!angle.type) -> ()
 "test.op"(%f) : (!angle.type) -> ()
+
+%g = angle.constant<pi>
+%h = angle.cond_negate %x, %g
+
+%i = angle.constant<0>
+%j = angle.cond_negate %y, %i
+
+// CHECK: "test.op"(%g, %i) {pi_or_zero} : (!angle.type, !angle.type) -> ()
+"test.op"(%h, %j) {pi_or_zero} : (!angle.type, !angle.type) -> ()
