@@ -50,17 +50,18 @@ class ConvertQrefMeasureToQssaMeasure(RewritePattern):
         # Don't rewrite if uses live in different blocks
         if op.parent_block() is None:
             return
-        for use in op.in_qubit.uses:
-            if use.operation.parent_block() != op.parent_block():
-                return
+        for operand in op.in_qubits:
+            for use in operand.uses:
+                if use.operation.parent_block() != op.parent_block():
+                    return
 
-        # Don't rewrite if there are further uses of the measured qubit
-        if len(op.in_qubit.uses) != 1:
-            return
+                # Don't rewrite if there are further uses of the measured qubit
+                if len(operand.uses) != 1:
+                    return
 
-        new_op = qssa.MeasureOp(op.in_qubit)
+        new_op = qssa.MeasureOp(*op.in_qubits, measurement=op.measurement)
 
-        rewriter.replace_matched_op(new_op, (new_op.out,))
+        rewriter.replace_matched_op(new_op, new_op.out)
 
 
 class ConvertQrefToQssa(ModulePass):

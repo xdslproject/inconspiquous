@@ -28,5 +28,5 @@ qref.gate<#gate.cnot> %q0, %q1
 qref.dyn_gate<%g1> %q1
 
 // CHECK: %{{.*}} = qref.measure %q0
-// CHECK-GENERIC: %{{.*}} = "qref.measure"(%q0) : (!qubit.bit) -> i1
+// CHECK-GENERIC: %{{.*}} = "qref.measure"(%q0) <{measurement = #measurement.comp_basis}> : (!qubit.bit) -> i1
 %0 = qref.measure %q0

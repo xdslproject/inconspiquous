@@ -28,5 +28,9 @@
 %q6 = qssa.dyn_gate<%g1> %q5
 
 // CHECK: %{{.*}} = qssa.measure %q4
-// CHECK-GENERIC: %{{.*}} = "qssa.measure"(%q4) : (!qubit.bit) -> i1
+// CHECK-GENERIC: %{{.*}} = "qssa.measure"(%q4) <{measurement = #measurement.comp_basis}> : (!qubit.bit) -> i1
 %0 = qssa.measure %q4
+
+// CHECK: %{{.*}} = qssa.measure<#measurement.xy<0.5pi>> %q6
+// CHECK-GENERIC: %{{.*}} = "qssa.measure"(%q6) <{measurement = #measurement.xy<0.5pi>}> : (!qubit.bit) -> i1
+%1 = qssa.measure<#measurement.xy<0.5pi>> %q6

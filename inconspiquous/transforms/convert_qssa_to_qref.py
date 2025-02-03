@@ -39,7 +39,7 @@ class ConvertQssaMeasureToQrefMeasure(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qssa.MeasureOp, rewriter: PatternRewriter):
-        new_measure = qref.MeasureOp(op.in_qubit)
+        new_measure = qref.MeasureOp(*op.in_qubits, measurement=op.measurement)
         rewriter.replace_matched_op(new_measure)
 
 
