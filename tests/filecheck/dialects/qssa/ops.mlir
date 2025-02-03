@@ -34,3 +34,11 @@
 // CHECK: %{{.*}} = qssa.measure<#measurement.xy<0.5pi>> %q6
 // CHECK-GENERIC: %{{.*}} = "qssa.measure"(%q6) <{measurement = #measurement.xy<0.5pi>}> : (!qubit.bit) -> i1
 %1 = qssa.measure<#measurement.xy<0.5pi>> %q6
+
+%q7 = qubit.alloc
+
+%m = "test.op"() : () -> !measurement.type<1>
+
+// CHECK: %{{.*}} = qssa.dyn_measure<%m> %q7
+// CHECK-GENERIC: %{{.*}} = "qssa.dyn_measure"(%m, %q7) : (!measurement.type<1>, !qubit.bit) -> i1
+%2 = qssa.dyn_measure<%m> %q7

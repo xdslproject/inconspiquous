@@ -106,6 +106,43 @@ class AngleAttr(ParametrizedAttribute):
 
 
 @irdl_attr_definition
+class AngleType(ParametrizedAttribute, TypeAttribute):
+    """
+    A type for runtime angle values.
+    """
+
+    name = "gate.angle_type"
+
+
+@irdl_op_definition
+class ConstantAngleOp(IRDLOperation):
+    """
+    Constant-like operation for producing angles
+    """
+
+    name = "gate.constant_angle"
+
+    angle = prop_def(AngleAttr)
+
+    out = result_def(AngleType)
+
+    assembly_format = "`` $angle attr-dict"
+
+    traits = traits_def(
+        ConstantLike(),
+        Pure(),
+    )
+
+    def __init__(self, angle: AngleAttr):
+        super().__init__(
+            properties={
+                "angle": angle,
+            },
+            result_types=(AngleType(),),
+        )
+
+
+@irdl_attr_definition
 class HadamardGate(SingleQubitGate):
     name = "gate.h"
 
@@ -398,9 +435,10 @@ class XZOp(IRDLOperation):
 
 Gate = Dialect(
     "gate",
-    [ConstantGateOp, QuaternionGateOp, ComposeGateOp, XZSOp, XZOp],
+    [ConstantAngleOp, ConstantGateOp, QuaternionGateOp, ComposeGateOp, XZSOp, XZOp],
     [
         AngleAttr,
+        AngleType,
         HadamardGate,
         XGate,
         YGate,
