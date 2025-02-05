@@ -17,7 +17,11 @@ from inconspiquous.dialects.gate import (
     JGate,
     XGate,
 )
+"""
+CME is a normal form for MBQC patterns, see https://en.wikipedia.org/wiki/One-way_quantum_computer#CME_pattern which uses only entanglement operations, measurement, and classical controlled correction. This pass rewrites operations to be of this form.
 
+As CZ gates are legal in CME, this pass only rewrites J gates into CME form. 
+"""
 
 class ToCMEPattern(RewritePattern):
     """
