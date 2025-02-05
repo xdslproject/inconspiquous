@@ -59,11 +59,11 @@ class XZCommutePattern(RewritePattern):
                 angle_op = ()
 
             negate = CondNegateAngleOp(gate.x, angle)
-            new_measure = XYDynMeasurementOp(negate)
-            new_op2 = qssa.DynMeasureOp(new_measure, op1.ins[0])
+            new_measurement = XYDynMeasurementOp(negate)
+            new_op2 = qssa.DynMeasureOp(new_measurement, op1.ins[0])
             new_op1 = arith.AddiOp(new_op2.outs[0], gate.z)
 
-            rewriter.replace_op(op2, (*angle_op, negate, new_measure, new_op2, new_op1))
+            rewriter.replace_op(op2, (*angle_op, negate, new_measurement, new_op2, new_op1))
             rewriter.erase_op(op1)
 
         if isinstance(op2, qssa.MeasureOp):
