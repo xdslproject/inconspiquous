@@ -111,7 +111,7 @@ class MeasurementType(ParametrizedAttribute, TypeAttribute):
 
 
 @irdl_op_definition
-class ConstantMeasurmentOp(IRDLOperation):
+class ConstantMeasurementOp(IRDLOperation):
     """
     Constant-like operation for producing measurement types from measurement attributes.
     """
@@ -171,7 +171,7 @@ class XYDynMeasurementOp(IRDLOperation):
 Measurement = Dialect(
     "measurement",
     [
-        ConstantMeasurmentOp,
+        ConstantMeasurementOp,
         XYDynMeasurementOp,
     ],
     [

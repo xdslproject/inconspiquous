@@ -5,7 +5,7 @@ from xdsl.pattern_rewriter import (
 )
 
 from inconspiquous.dialects.gate import ConstantGateOp
-from inconspiquous.dialects.measurement import ConstantMeasurmentOp
+from inconspiquous.dialects.measurement import ConstantMeasurementOp
 from inconspiquous.dialects.qref import DynMeasureOp, GateOp, DynGateOp, MeasureOp
 
 
@@ -28,7 +28,7 @@ class DynMeasureConst(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: DynMeasureOp, rewriter: PatternRewriter):
-        if isinstance(owner := op.measurement.owner, ConstantMeasurmentOp):
+        if isinstance(owner := op.measurement.owner, ConstantMeasurementOp):
             rewriter.replace_matched_op(
                 MeasureOp(*op.in_qubits, measurement=owner.measurement)
             )
