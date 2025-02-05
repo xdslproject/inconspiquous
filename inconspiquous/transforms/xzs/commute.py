@@ -8,13 +8,18 @@ from xdsl.pattern_rewriter import (
     op_type_rewrite_pattern,
 )
 from inconspiquous.dialects import qssa
+from inconspiquous.dialects.angle import AngleAttr, CondNegateAngleOp, ConstantAngleOp
 from inconspiquous.dialects.gate import (
     CNotGate,
     CZGate,
     HadamardGate,
     XZOp,
 )
-from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
+from inconspiquous.dialects.measurement import (
+    CompBasisMeasurementAttr,
+    XYDynMeasurementOp,
+    XYMeasurementAttr,
+)
 from inconspiquous.transforms.xzs.merge import MergeXZGatesPattern
 from inconspiquous.utils.linear_walker import LinearWalker
 
@@ -33,6 +38,35 @@ class XZCommutePattern(RewritePattern):
         (use,) = op1.outs[0].uses
 
         op2 = use.operation
+
+        # Check for XY measurement
+        angle = None
+        if isinstance(op2, qssa.DynMeasureOp) and isinstance(
+            op2.measurement.owner, XYDynMeasurementOp
+        ):
+            angle = op2.measurement.owner.angle
+
+        if isinstance(op2, qssa.MeasureOp) and isinstance(
+            op2.measurement, XYMeasurementAttr
+        ):
+            angle = op2.measurement.angle
+
+        if angle is not None:
+            if isinstance(angle, AngleAttr):
+                angle_op = (ConstantAngleOp(angle),)
+                angle = angle_op[0].out
+            else:
+                angle_op = ()
+
+            negate = CondNegateAngleOp(gate.x, angle)
+            new_measurement = XYDynMeasurementOp(negate)
+            new_op2 = qssa.DynMeasureOp(new_measurement, op1.ins[0])
+            new_op1 = arith.AddiOp(new_op2.outs[0], gate.z)
+
+            rewriter.replace_op(
+                op2, (*angle_op, negate, new_measurement, new_op2, new_op1)
+            )
+            rewriter.erase_op(op1)
 
         if isinstance(op2, qssa.MeasureOp):
             if not isinstance(op2.measurement, CompBasisMeasurementAttr):
