@@ -94,8 +94,12 @@ class MeasurementType(ParametrizedAttribute, TypeAttribute):
         with printer.in_angle_brackets():
             printer.print_string(str(self.num_qubits.value.data))
 
-    @staticmethod
-    def constr(int_constraint: IntConstraint) -> GenericAttrConstraint[MeasurementType]:
+    @classmethod
+    def constr(
+        cls, int_constraint: IntConstraint | None = None
+    ) -> GenericAttrConstraint[MeasurementType]:
+        if int_constraint is None:
+            return super().constr()
         return ParamAttrConstraint(
             MeasurementType,
             (
