@@ -7,12 +7,19 @@ from xdsl.transforms.common_subexpression_elimination import (
 )
 
 from inconspiquous.transforms.convert_to_cme import ToCMEPass
+from inconspiquous.transforms.mbqc_legalize import MBQCLegalize
 from inconspiquous.transforms.xzs.convert_to_xzs import ConvertToXZS
 from inconspiquous.transforms.xzs.commute import XZCommute
 from inconspiquous.transforms.xzs.select import XZSSelect
 
 
 class ToMBQC(ModulePass):
+    """
+    Converts a circuit to mbqc.
+
+    Assumes that the circuit only contains J and CZ gates.
+    """
+
     name = "convert-to-mbqc"
 
     def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
@@ -24,5 +31,6 @@ class ToMBQC(ModulePass):
             XZCommute(),
             CommonSubexpressionElimination(),
             CanonicalizePass(),
+            MBQCLegalize(),
         ):
             p.apply(ctx, op)
