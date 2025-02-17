@@ -1,5 +1,5 @@
 from xdsl.dialects import arith, builtin
-from xdsl.context import MLContext
+from xdsl.context import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -87,7 +87,7 @@ class LowerXZSToSelect(ModulePass):
 
     name = "lower-xzs-to-select"
 
-    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
             GreedyRewritePatternApplier(
                 [LowerXZToSelectPattern(), LowerXZSToSelectPattern()]

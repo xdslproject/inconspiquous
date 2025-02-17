@@ -1,5 +1,5 @@
 from xdsl.dialects import builtin
-from xdsl.context import MLContext
+from xdsl.context import Context
 from xdsl.passes import ModulePass
 from xdsl.transforms.canonicalize import CanonicalizePass
 from xdsl.transforms.common_subexpression_elimination import (
@@ -15,7 +15,7 @@ from inconspiquous.transforms.xzs.select import XZSSelect
 class XZSSimpl(ModulePass):
     name = "xzs-simpl"
 
-    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         for p in (
             ConvertToXZS(),
             XZSSelect(),

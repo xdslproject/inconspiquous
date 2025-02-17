@@ -1,5 +1,5 @@
 from xdsl.dialects import arith, builtin
-from xdsl.parser import MLContext
+from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     PatternRewriteWalker,
@@ -21,7 +21,7 @@ from inconspiquous.dialects.gate import (
 """
 CME is a normal form for MBQC patterns, see https://en.wikipedia.org/wiki/One-way_quantum_computer#CME_pattern which uses only entanglement operations, measurement, and classical controlled correction. This pass rewrites operations to be of this form.
 
-As CZ gates are legal in CME, this pass only rewrites J gates into CME form. 
+As CZ gates are legal in CME, this pass only rewrites J gates into CME form.
 """
 
 
@@ -56,5 +56,5 @@ class ToCMEPattern(RewritePattern):
 class ToCMEPass(ModulePass):
     name = "convert-to-cme"
 
-    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(ToCMEPattern()).rewrite_module(op)

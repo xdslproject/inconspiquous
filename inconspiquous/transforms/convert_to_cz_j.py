@@ -1,5 +1,5 @@
 from xdsl.dialects import builtin
-from xdsl.parser import MLContext
+from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     PatternRewriteWalker,
@@ -65,5 +65,5 @@ class ToCZJPattern(RewritePattern):
 class ToCZJPass(ModulePass):
     name = "convert-to-cz-j"
 
-    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(ToCZJPattern()).rewrite_module(op)

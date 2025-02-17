@@ -1,6 +1,6 @@
 from xdsl.dialects import builtin
 from xdsl.dialects.arith import SelectOp, ConstantOp
-from xdsl.parser import MLContext
+from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -91,7 +91,7 @@ class XZSSelect(ModulePass):
 
     name = "xzs-select"
 
-    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
             GreedyRewritePatternApplier([XZSelectPattern(), XZSSelectPattern()])
         ).rewrite_module(op)
