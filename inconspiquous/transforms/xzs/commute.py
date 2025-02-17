@@ -20,7 +20,7 @@ from inconspiquous.dialects.measurement import (
     XYDynMeasurementOp,
     XYMeasurementAttr,
 )
-from inconspiquous.transforms.xzs.merge import MergeXZGatesPattern
+from inconspiquous.transforms.xzs.fusion import FuseXZGatesPattern
 from inconspiquous.utils.linear_walker import LinearWalker
 
 
@@ -144,5 +144,5 @@ class XZCommute(ModulePass):
 
     def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         LinearWalker(
-            GreedyRewritePatternApplier([MergeXZGatesPattern(), XZCommutePattern()])
+            GreedyRewritePatternApplier([FuseXZGatesPattern(), XZCommutePattern()])
         ).rewrite_module(op)

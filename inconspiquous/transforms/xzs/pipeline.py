@@ -8,7 +8,7 @@ from xdsl.transforms.common_subexpression_elimination import (
 
 from inconspiquous.transforms.xzs.convert_to_xzs import ConvertToXZS
 from inconspiquous.transforms.xzs.lower import LowerXZSToSelect
-from inconspiquous.transforms.xzs.merge import XZSMerge
+from inconspiquous.transforms.xzs.fusion import XZSFusion
 from inconspiquous.transforms.xzs.select import XZSSelect
 
 
@@ -19,7 +19,7 @@ class XZSSimpl(ModulePass):
         for p in (
             ConvertToXZS(),
             XZSSelect(),
-            XZSMerge(),
+            XZSFusion(),
             LowerXZSToSelect(),
             CommonSubexpressionElimination(),
             CanonicalizePass(),
