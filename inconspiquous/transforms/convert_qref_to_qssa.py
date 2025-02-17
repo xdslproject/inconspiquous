@@ -1,5 +1,5 @@
 from xdsl.dialects import builtin
-from xdsl.parser import MLContext
+from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -72,7 +72,7 @@ class ConvertQrefToQssa(ModulePass):
 
     name = "convert-qref-to-qssa"
 
-    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
             GreedyRewritePatternApplier(
                 [

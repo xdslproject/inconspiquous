@@ -1,7 +1,7 @@
 from xdsl.builder import ImplicitBuilder
 from xdsl.dialects import builtin
 from xdsl.dialects.arith import AndIOp, ConstantOp, OrIOp, SelectOp, XOrIOp
-from xdsl.parser import MLContext
+from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     PatternRewriteWalker,
@@ -155,7 +155,7 @@ class PerfectCode5QubitInliner(RewritePattern):
 class QECInlinerPass(ModulePass):
     name = "qec-inline"
 
-    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
             PerfectCode5QubitInliner(), apply_recursively=False
         ).rewrite_module(op)

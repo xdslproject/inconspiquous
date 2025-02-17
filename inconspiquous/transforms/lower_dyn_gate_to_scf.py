@@ -4,7 +4,7 @@ from xdsl.dialects import arith, scf, varith
 from xdsl.dialects import builtin
 from xdsl.ir import Block, Region, SSAValue
 from xdsl.dialects.builtin import IndexType
-from xdsl.parser import DenseArrayBase, IntegerType, MLContext
+from xdsl.parser import DenseArrayBase, IntegerType, Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     PatternRewriteWalker,
@@ -67,5 +67,5 @@ class LowerDynGateToScfPattern(RewritePattern):
 class LowerDynGateToScf(ModulePass):
     name = "lower-dyn-gate-to-scf"
 
-    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(LowerDynGateToScfPattern()).rewrite_module(op)

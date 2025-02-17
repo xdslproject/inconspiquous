@@ -1,6 +1,6 @@
 from xdsl.dialects import builtin
 from xdsl.dialects.arith import ConstantOp
-from xdsl.parser import MLContext
+from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -92,7 +92,7 @@ class ConvertToXZS(ModulePass):
 
     name = "convert-to-xzs"
 
-    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
             GreedyRewritePatternApplier([ToDynGate(), ToXZSGate()])
         ).rewrite_module(op)

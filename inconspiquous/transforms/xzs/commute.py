@@ -1,5 +1,5 @@
 from xdsl.dialects import arith, builtin
-from xdsl.parser import MLContext
+from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -142,7 +142,7 @@ class XZCommutePattern(RewritePattern):
 class XZCommute(ModulePass):
     name = "xz-commute"
 
-    def apply(self, ctx: MLContext, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         LinearWalker(
             GreedyRewritePatternApplier([MergeXZGatesPattern(), XZCommutePattern()])
         ).rewrite_module(op)
