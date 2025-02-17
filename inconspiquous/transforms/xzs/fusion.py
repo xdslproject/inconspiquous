@@ -15,9 +15,9 @@ from inconspiquous.dialects.gate import XZOp, XZSOp
 from inconspiquous.dialects.qssa import DynGateOp
 
 
-class MergeXZGatesPattern(RewritePattern):
+class FuseXZGatesPattern(RewritePattern):
     """
-    Merge two consecutive XZ gadgets
+    Fuse two consecutive XZ gadgets
     """
 
     @op_type_rewrite_pattern
@@ -57,9 +57,9 @@ class MergeXZGatesPattern(RewritePattern):
         rewriter.erase_op(predecessor)
 
 
-class MergeXZSGatesPattern(RewritePattern):
+class FuseXZSGatesPattern(RewritePattern):
     """
-    Merge two consecutive XZS gadgets
+    Fuse two consecutive XZS gadgets
     """
 
     @op_type_rewrite_pattern
@@ -120,14 +120,14 @@ class MergeXZSGatesPattern(RewritePattern):
         rewriter.erase_op(predecessor)
 
 
-class XZSMerge(ModulePass):
+class XZSFusion(ModulePass):
     """
-    Merge consecutive XZS gadgets.
+    Fuse consecutive XZS gadgets.
     """
 
-    name = "xzs-merge"
+    name = "xzs-fusion"
 
     def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
-            GreedyRewritePatternApplier([MergeXZGatesPattern(), MergeXZSGatesPattern()])
+            GreedyRewritePatternApplier([FuseXZGatesPattern(), FuseXZSGatesPattern()])
         ).rewrite_module(op)
