@@ -10,7 +10,7 @@ from xdsl.pattern_rewriter import (
 
 from inconspiquous.dialects import qssa
 from inconspiquous.dialects.gate import (
-    CNotGate,
+    CXGate,
     CZGate,
     HadamardGate,
     JGate,
@@ -27,7 +27,7 @@ class ToCZJPattern(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qssa.GateOp, rewriter: PatternRewriter):
         match op.gate:
-            case CNotGate():
+            case CXGate():
                 j1 = qssa.GateOp(JGate(0), op.ins[1])
                 cz = qssa.GateOp(CZGate(), op.ins[0], j1)
                 j2 = qssa.GateOp(JGate(0), cz.outs[1])

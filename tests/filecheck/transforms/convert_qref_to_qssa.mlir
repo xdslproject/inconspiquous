@@ -5,7 +5,7 @@
 %q1 = qubit.alloc
 qref.gate<#gate.h> %q0
 qref.gate<#gate.rz<0.5pi>> %q1
-qref.gate<#gate.cnot> %q0, %q1
+qref.gate<#gate.cx> %q0, %q1
 %0 = qref.measure %q0
 %g = gate.constant #gate.h
 qref.dyn_gate<%g> %q1
@@ -15,7 +15,7 @@ qref.dyn_gate<%g> %q1
 // CHECK-NEXT: %q1 = qubit.alloc
 // CHECK-NEXT: %q0_1 = qssa.gate<#gate.h> %q0
 // CHECK-NEXT: %q1_1 = qssa.gate<#gate.rz<0.5pi>> %q1
-// CHECK-NEXT: %q0_2, %q1_2 = qssa.gate<#gate.cnot> %q0_1, %q1_1
+// CHECK-NEXT: %q0_2, %q1_2 = qssa.gate<#gate.cx> %q0_1, %q1_1
 // CHECK-NEXT: %{{.*}} = qssa.measure %q0_2
 // CHECK-NEXT: %g = gate.constant #gate.h
 // CHECK-NEXT: %q1_3 = qssa.dyn_gate<%g> %q1_2
@@ -25,7 +25,7 @@ qref.dyn_gate<%g> %q1
 // CHECK-ROUNDTRIP-NEXT: %q1 = qubit.alloc
 // CHECK-ROUNDTRIP-NEXT: qref.gate<#gate.h> %q0
 // CHECK-ROUNDTRIP-NEXT: qref.gate<#gate.rz<0.5pi>> %q1
-// CHECK-ROUNDTRIP-NEXT: qref.gate<#gate.cnot> %q0, %q1
+// CHECK-ROUNDTRIP-NEXT: qref.gate<#gate.cx> %q0, %q1
 // CHECK-ROUNDTRIP-NEXT: %{{.*}} = qref.measure %q0
 // CHECK-ROUNDTRIP-NEXT: %g = gate.constant #gate.h
 // CHECK-ROUNDTRIP-NEXT: qref.dyn_gate<%g> %q1

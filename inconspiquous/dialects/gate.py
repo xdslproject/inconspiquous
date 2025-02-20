@@ -126,8 +126,8 @@ class JGate(SingleQubitGate):
 
 
 @irdl_attr_definition
-class CNotGate(TwoQubitGate):
-    name = "gate.cnot"
+class CXGate(TwoQubitGate):
+    name = "gate.cx"
 
 
 @irdl_attr_definition
@@ -354,7 +354,7 @@ Gate = Dialect(
         TDaggerGate,
         RZGate,
         JGate,
-        CNotGate,
+        CXGate,
         CZGate,
         ToffoliGate,
         IdentityGate,

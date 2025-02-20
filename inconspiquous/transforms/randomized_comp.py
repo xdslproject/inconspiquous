@@ -13,7 +13,7 @@ from xdsl.dialects.builtin import i1
 from xdsl.rewriter import InsertPoint
 
 from inconspiquous.dialects.gate import (
-    CNotGate,
+    CXGate,
     ConstantGateOp,
     HadamardGate,
     IdentityGate,
@@ -183,14 +183,14 @@ class PadHadamardGate(RewritePattern):
         rewriter.replace_matched_op(post_x)
 
 
-class PadCNotGate(RewritePattern):
+class PadCXGate(RewritePattern):
     """
-    Places randomized dynamic pauli gates before and after a cnot gate.
+    Places randomized dynamic pauli gates before and after a cx gate.
     """
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
-        if not isinstance(op.gate, CNotGate):
+        if not isinstance(op.gate, CXGate):
             return
         x_rand_q1 = UniformOp(i1)
         x_rand_q2 = UniformOp(i1)
@@ -212,13 +212,13 @@ class PadCNotGate(RewritePattern):
         pre_x_q2 = DynGateOp(x_sel_q2, op.ins[1])
         pre_z_q2 = DynGateOp(z_sel_q2, pre_x_q2)
 
-        new_cnot = GateOp(CNotGate(), pre_z_q1, pre_z_q2)
+        new_cx = GateOp(CXGate(), pre_z_q1, pre_z_q2)
 
-        post_z_q1_1 = DynGateOp(z_sel_q1, new_cnot.outs[0])
+        post_z_q1_1 = DynGateOp(z_sel_q1, new_cx.outs[0])
         post_z_q1_2 = DynGateOp(z_sel_q2, post_z_q1_1)
         post_x_q1 = DynGateOp(x_sel_q1, post_z_q1_2)
 
-        post_z_q2 = DynGateOp(z_sel_q2, new_cnot.outs[1])
+        post_z_q2 = DynGateOp(z_sel_q2, new_cx.outs[1])
         post_x_q2_1 = DynGateOp(x_sel_q1, post_z_q2)
         post_x_q2_2 = DynGateOp(x_sel_q2, post_x_q2_1)
 
@@ -239,7 +239,7 @@ class PadCNotGate(RewritePattern):
                 pre_z_q1,
                 pre_x_q2,
                 pre_z_q2,
-                new_cnot,
+                new_cx,
                 post_z_q1_1,
                 post_z_q1_2,
                 post_z_q2,
@@ -313,7 +313,7 @@ class RandomizedComp(ModulePass):
                     PadTGate(),
                     PadTDaggerGate(),
                     PadHadamardGate(),
-                    PadCNotGate(),
+                    PadCXGate(),
                     PadMeasure(),
                 ]
             ),

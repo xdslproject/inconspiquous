@@ -17,9 +17,9 @@ qref.gate<#gate.h> %q0
 // CHECK-GENERIC: "qref.gate"(%q1) <{gate = #gate.rz<0.5pi>}> : (!qubit.bit) -> ()
 qref.gate<#gate.rz<0.5pi>> %q1
 
-// CHECK: qref.gate<#gate.cnot> %q0, %q1
-// CHECK-GENERIC: "qref.gate"(%q0, %q1) <{gate = #gate.cnot}> : (!qubit.bit, !qubit.bit)
-qref.gate<#gate.cnot> %q0, %q1
+// CHECK: qref.gate<#gate.cx> %q0, %q1
+// CHECK-GENERIC: "qref.gate"(%q0, %q1) <{gate = #gate.cx}> : (!qubit.bit, !qubit.bit)
+qref.gate<#gate.cx> %q0, %q1
 
 %g1 = "test.op"() : () -> !gate.type<1>
 

@@ -32,7 +32,7 @@
 // CHECK-NEXT: %25 = qssa.dyn_gate<%22> %24
 // CHECK-NEXT: %26 = qssa.dyn_gate<%21> %q1
 // CHECK-NEXT: %27 = qssa.dyn_gate<%23> %26
-// CHECK-NEXT: %28, %29 = qssa.gate<#gate.cnot> %25, %27
+// CHECK-NEXT: %28, %29 = qssa.gate<#gate.cx> %25, %27
 // CHECK-NEXT: %30 = qssa.dyn_gate<%22> %28
 // CHECK-NEXT: %31 = qssa.dyn_gate<%23> %30
 // CHECK-NEXT: %32 = qssa.dyn_gate<%23> %29
@@ -54,7 +54,7 @@
 // CHECK-NEXT: %46 = qssa.dyn_gate<%43> %45
 // CHECK-NEXT: %47 = qssa.dyn_gate<%42> %q2
 // CHECK-NEXT: %48 = qssa.dyn_gate<%44> %47
-// CHECK-NEXT: %49, %50 = qssa.gate<#gate.cnot> %46, %48
+// CHECK-NEXT: %49, %50 = qssa.gate<#gate.cx> %46, %48
 // CHECK-NEXT: %51 = qssa.dyn_gate<%43> %49
 // CHECK-NEXT: %52 = qssa.dyn_gate<%44> %51
 // CHECK-NEXT: %53 = qssa.dyn_gate<%44> %50
@@ -67,5 +67,5 @@
 %q2 = qubit.alloc
 
 %q0_1 = qssa.gate<#gate.h> %q0
-%q0_2, %q1_2 = qssa.gate<#gate.cnot> %q0_1, %q1
-%q0_3, %q2_3 = qssa.gate<#gate.cnot> %q0_2, %q2
+%q0_2, %q1_2 = qssa.gate<#gate.cx> %q0_1, %q1
+%q0_3, %q2_3 = qssa.gate<#gate.cx> %q0_2, %q2

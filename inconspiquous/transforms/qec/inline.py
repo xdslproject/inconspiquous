@@ -12,7 +12,7 @@ from xdsl.pattern_rewriter import (
 from xdsl.rewriter import InsertPoint
 
 from inconspiquous.dialects.gate import (
-    CNotGate,
+    CXGate,
     CZGate,
     ConstantGateOp,
     HadamardGate,
@@ -42,26 +42,26 @@ class PerfectCode5QubitInliner(RewritePattern):
         with ImplicitBuilder(builder):
             a1 = builder.alloc(name_hint="a1")
             builder.gate(HadamardGate(), a1)
-            builder.gate(CNotGate(), a1, q1)
+            builder.gate(CXGate(), a1, q1)
             builder.gate(CZGate(), a1, q2)
             builder.gate(CZGate(), a1, q3)
-            builder.gate(CNotGate(), a1, q4)
+            builder.gate(CXGate(), a1, q4)
             builder.gate(HadamardGate(), a1)
             s1 = builder.measure(a1, name_hint="s1")
 
             a2 = builder.alloc(name_hint="a2")
             builder.gate(HadamardGate(), a2)
-            builder.gate(CNotGate(), a2, q2)
+            builder.gate(CXGate(), a2, q2)
             builder.gate(CZGate(), a2, q3)
             builder.gate(CZGate(), a2, q4)
-            builder.gate(CNotGate(), a2, q5)
+            builder.gate(CXGate(), a2, q5)
             builder.gate(HadamardGate(), a2)
             s2 = builder.measure(a2, name_hint="s2")
 
             a3 = builder.alloc(name_hint="a3")
             builder.gate(HadamardGate(), a3)
-            builder.gate(CNotGate(), a3, q1)
-            builder.gate(CNotGate(), a3, q3)
+            builder.gate(CXGate(), a3, q1)
+            builder.gate(CXGate(), a3, q3)
             builder.gate(CZGate(), a3, q4)
             builder.gate(CZGate(), a3, q5)
             builder.gate(HadamardGate(), a3)
@@ -70,8 +70,8 @@ class PerfectCode5QubitInliner(RewritePattern):
             a4 = builder.alloc(name_hint="a4")
             builder.gate(HadamardGate(), a4)
             builder.gate(CZGate(), a4, q1)
-            builder.gate(CNotGate(), a4, q2)
-            builder.gate(CNotGate(), a4, q4)
+            builder.gate(CXGate(), a4, q2)
+            builder.gate(CXGate(), a4, q4)
             builder.gate(CZGate(), a4, q5)
             builder.gate(HadamardGate(), a4)
             s4 = builder.measure(a4, name_hint="s4")

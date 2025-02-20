@@ -10,7 +10,7 @@ from xdsl.pattern_rewriter import (
 from inconspiquous.dialects import qssa
 from inconspiquous.dialects.angle import AngleAttr, CondNegateAngleOp, ConstantAngleOp
 from inconspiquous.dialects.gate import (
-    CNotGate,
+    CXGate,
     CZGate,
     HadamardGate,
     XZOp,
@@ -25,7 +25,7 @@ from inconspiquous.utils.linear_walker import LinearWalker
 
 
 class XZCommutePattern(RewritePattern):
-    """Commute an XZ gadget past a Hadamard/CNot/CZ gate, or MeasureOp."""
+    """Commute an XZ gadget past a Hadamard/CX/CZ gate, or MeasureOp."""
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op1: qssa.DynGateOp, rewriter: PatternRewriter):
@@ -88,10 +88,10 @@ class XZCommutePattern(RewritePattern):
             rewriter.replace_op(op2, (new_op2, new_gate, new_op1))
             rewriter.erase_op(op1)
 
-        if isinstance(op2.gate, CNotGate):
+        if isinstance(op2.gate, CXGate):
             c0 = arith.ConstantOp.from_int_and_width(0, 1)
             if use.index == 0:
-                new_op2 = qssa.GateOp(CNotGate(), *(op1.ins[0], op2.ins[1]))
+                new_op2 = qssa.GateOp(CXGate(), *(op1.ins[0], op2.ins[1]))
                 new_op1_left = qssa.DynGateOp(gate, new_op2.outs[0])
                 new_gate_right = XZOp(gate.x, c0)
                 new_op1_right = qssa.DynGateOp(new_gate_right, new_op2.outs[1])
@@ -102,7 +102,7 @@ class XZCommutePattern(RewritePattern):
                 )
                 rewriter.erase_op(op1)
             elif use.index == 1:
-                new_op2 = qssa.GateOp(CNotGate(), *(op2.ins[0], op1.ins[0]))
+                new_op2 = qssa.GateOp(CXGate(), *(op2.ins[0], op1.ins[0]))
                 new_gate_left = XZOp(c0, gate.z)
                 new_op1_left = qssa.DynGateOp(new_gate_left, new_op2.outs[0])
                 new_op1_right = qssa.DynGateOp(gate, new_op2.outs[1])
