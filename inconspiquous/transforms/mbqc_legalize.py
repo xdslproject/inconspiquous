@@ -35,6 +35,8 @@ class MBQCLegalize(ModulePass):
     Also moves allocations and CZ gates to the start of the program,
     and any dynamic gates to the end, leaving measurements in the middle.
 
+    This pass only reorders operations, leaving dataflow unchanged.
+
     Throws an exception if legalization is not possible.
     """
 
