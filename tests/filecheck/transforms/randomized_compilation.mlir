@@ -70,7 +70,7 @@ func.func @h_gate(%q: !qubit.bit) -> !qubit.bit {
   func.return %q_1 : !qubit.bit
 }
 
-// CHECK:      func.func @cnot_gate(%q1 : !qubit.bit, %q2 : !qubit.bit) -> (!qubit.bit, !qubit.bit) {
+// CHECK:      func.func @cx_gate(%q1 : !qubit.bit, %q2 : !qubit.bit) -> (!qubit.bit, !qubit.bit) {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = prob.uniform : i1
@@ -86,7 +86,7 @@ func.func @h_gate(%q: !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:   %12 = qssa.dyn_gate<%9> %11
 // CHECK-NEXT:   %13 = qssa.dyn_gate<%8> %q2
 // CHECK-NEXT:   %14 = qssa.dyn_gate<%10> %13
-// CHECK-NEXT:   %15, %16 = qssa.gate<#gate.cnot> %12, %14
+// CHECK-NEXT:   %15, %16 = qssa.gate<#gate.cx> %12, %14
 // CHECK-NEXT:   %17 = qssa.dyn_gate<%9> %15
 // CHECK-NEXT:   %18 = qssa.dyn_gate<%10> %17
 // CHECK-NEXT:   %19 = qssa.dyn_gate<%10> %16
@@ -95,8 +95,8 @@ func.func @h_gate(%q: !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:   %q2_1 = qssa.dyn_gate<%8> %20
 // CHECK-NEXT:   func.return %q1_1, %q2_1 : !qubit.bit, !qubit.bit
 // CHECK-NEXT: }
-func.func @cnot_gate(%q1: !qubit.bit, %q2: !qubit.bit) -> (!qubit.bit, !qubit.bit) {
-  %q1_1, %q2_1 = qssa.gate<#gate.cnot> %q1, %q2
+func.func @cx_gate(%q1: !qubit.bit, %q2: !qubit.bit) -> (!qubit.bit, !qubit.bit) {
+  %q1_1, %q2_1 = qssa.gate<#gate.cx> %q1, %q2
   func.return %q1_1, %q2_1 : !qubit.bit, !qubit.bit
 }
 

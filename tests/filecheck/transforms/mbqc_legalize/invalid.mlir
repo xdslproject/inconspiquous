@@ -11,8 +11,8 @@
 
 %q0 = qubit.alloc
 %q1 = qubit.alloc
-// CHECK: Expected only CZ or Pauli gates, found #gate.cnot
-%q0_1, %q1_1 = qssa.gate<#gate.cnot> %q0, %q1
+// CHECK: Expected only CZ or Pauli gates, found #gate.cx
+%q0_1, %q1_1 = qssa.gate<#gate.cx> %q0, %q1
 
 // -----
 

@@ -1,13 +1,13 @@
 // RUN: quopt %s -p convert-to-cz-j
 
-// CHECK:      func.func @cnot(%q1 : !qubit.bit, %q2 : !qubit.bit) {
+// CHECK:      func.func @cx(%q1 : !qubit.bit, %q2 : !qubit.bit) {
 // CHECK-NEXT:   %0 = qssa.gate<#gate.j<0>> %q2
 // CHECK-NEXT:   %1, %2 = qssa.gate<#gate.cz> %q1, %0
 // CHECK-NEXT:   %3 = qssa.gate<#gate.j<0>> %2
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
-func.func @cnot(%q1: !qubit.bit, %q2: !qubit.bit) {
-    qssa.gate<#gate.cnot> %q1, %q2
+func.func @cx(%q1: !qubit.bit, %q2: !qubit.bit) {
+    qssa.gate<#gate.cx> %q1, %q2
     func.return
 }
 
