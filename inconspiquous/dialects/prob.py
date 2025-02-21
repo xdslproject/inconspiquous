@@ -1,7 +1,7 @@
 from typing import ClassVar, Sequence
 from typing_extensions import Self
 
-from xdsl.dialects.builtin import IntegerAttrTypeConstr, i1
+from xdsl.dialects.builtin import i1
 from xdsl.ir import (
     Attribute,
     Dialect,
@@ -24,7 +24,6 @@ from xdsl.parser import (
     DenseArrayBase,
     Float64Type,
     FloatAttr,
-    IndexType,
     IntegerType,
     UnresolvedOperand,
 )
@@ -80,11 +79,11 @@ class BernoulliOp(IRDLOperation):
 class UniformOp(IRDLOperation):
     name = "prob.uniform"
 
-    out = result_def(IntegerAttrTypeConstr)
+    out = result_def(IntegerType)
 
     assembly_format = "attr-dict `:` type($out)"
 
-    def __init__(self, out_type: IntegerType | IndexType):
+    def __init__(self, out_type: IntegerType):
         super().__init__(
             result_types=(out_type,),
         )
