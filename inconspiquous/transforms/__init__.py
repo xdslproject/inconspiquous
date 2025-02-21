@@ -54,7 +54,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
     def get_flip_coins():
         from inconspiquous.transforms import flip_coins
 
-        return flip_coins.FlipCoins
+        return flip_coins.FlipCoinsPass
 
     def get_lower_dyn_gate_to_scf():
         from inconspiquous.transforms import lower_dyn_gate_to_scf
