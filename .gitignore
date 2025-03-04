@@ -135,3 +135,5 @@ dmypy.json
 
 # Filecheck
 .lit_test_times.txt
+
+awful_printing/
