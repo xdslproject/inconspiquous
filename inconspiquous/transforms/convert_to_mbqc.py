@@ -25,7 +25,6 @@ class ToMBQC(ModulePass):
     def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         for p in (
             ToCMEPass(),
-            CommonSubexpressionElimination(),
             ConvertToXZS(),
             XZSSelect(),
             XZCommute(),
