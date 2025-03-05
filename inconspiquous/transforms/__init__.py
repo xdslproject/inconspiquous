@@ -56,6 +56,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return dead_code_elimination.DeadCodeElimination
 
+    def get_flip_coins():
+        from inconspiquous.transforms import flip_coins
+
+        return flip_coins.FlipCoinsPass
+
     def get_lower_dyn_gate_to_scf():
         from inconspiquous.transforms import lower_dyn_gate_to_scf
 
@@ -122,6 +127,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "convert-to-xzs": get_convert_to_xzs,
         "cse": get_cse,
         "dce": get_dce,
+        "flip-coins": get_flip_coins,
         "qec-inline": get_qec_inline,
         "lower-dyn-gate-to-scf": get_lower_dyn_gate_to_scf,
         "lower-to-fin-supp": get_lower_to_fin_supp,
