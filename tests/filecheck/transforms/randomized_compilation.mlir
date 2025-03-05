@@ -111,7 +111,7 @@ func.func @cx_gate(%q1: !qubit.bit, %q2: !qubit.bit) -> (!qubit.bit, !qubit.bit)
 // CHECK-NEXT:   %7 = arith.select %1, %4, %2 : !gate.type<1>
 // CHECK-NEXT:   %8 = qssa.dyn_gate<%7> %6
 // CHECK-NEXT:   %9 = qssa.measure %8
-// CHECK-NEXT:   %10 = arith.addi %0, %9 : i1
+// CHECK-NEXT:   %10 = arith.xori %0, %9 : i1
 // CHECK-NEXT:   func.return %10 : i1
 // CHECK-NEXT: }
 func.func @measure(%q: !qubit.bit) -> i1 {
