@@ -19,12 +19,12 @@
 // CHECK-NEXT:   %q1_13 = angle.cond_negate %q1_12, %theta
 // CHECK-NEXT:   %q1_14 = measurement.dyn_xy<%q1_13>
 // CHECK-NEXT:   %q1_15 = qssa.dyn_measure<%q1_14> %2
-// CHECK-NEXT:   %q1_16 = arith.addi %q1_15, %q1_7 : i1
+// CHECK-NEXT:   %q1_16 = arith.xori %q1_15, %q1_7 : i1
 // CHECK-NEXT:   %q1_17 = arith.xori %q1_16, %cTrue : i1
 // CHECK-NEXT:   %q1_18 = angle.cond_negate %q1_17, %phi
 // CHECK-NEXT:   %q1_19 = measurement.dyn_xy<%q1_18>
 // CHECK-NEXT:   %q1_20 = qssa.dyn_measure<%q1_19> %4
-// CHECK-NEXT:   %q1_21 = arith.addi %q1_20, %q1_11 : i1
+// CHECK-NEXT:   %q1_21 = arith.xori %q1_20, %q1_11 : i1
 // CHECK-NEXT:   %6 = gate.xz %q1_21, %q1_16
 // CHECK-NEXT:   %q1_22 = qssa.dyn_gate<%6> %5
 // CHECK-NEXT:   func.return %q1_22 : !qubit.bit
