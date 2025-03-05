@@ -46,7 +46,7 @@ class nthrootGate(TwoQubitGate, Latexable):
     nthroot: ParameterDef[IntAttr]
 
     @property
-    def nthroot(self) -> int:
+    def nth_root(self) -> int:
         return self.nthroot.data
 
     def __init__(self, nthroot: int | IntAttr):
@@ -75,11 +75,11 @@ class nthrootGate(TwoQubitGate, Latexable):
 class QFTAttr(GateAttr):
     name = "qft.n"
 
-    num_qubits: ParameterDef[IntAttr]
+    num_qubits_param: ParameterDef[IntAttr]
 
     @property
     def num_qubits(self) -> int:
-        return self.num_qubits.data
+        return self.num_qubits_param.data
 
     def __init__(self, num_qubits: int | IntAttr):
         if not isinstance(num_qubits, IntAttr):
@@ -94,7 +94,7 @@ class QFTAttr(GateAttr):
         return (IntAttr.new(num_qubits),)
 
     def print_parameters(self, printer: Printer) -> None:
-        return self.num_qubits.print_parameter(printer)
+        return self.num_qubits_param.print_parameter(printer)
 
 
 QFT = Dialect(

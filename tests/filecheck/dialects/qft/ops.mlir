@@ -9,3 +9,6 @@
 
 // CHECK: qref.gate<#qft.h> %q0
 qref.gate<#qft.h> %q0
+
+// CHECK: qref.gate<#qft.n<1>> %q0
+qref.gate<#qft.n<1>> %q0
