@@ -32,3 +32,9 @@
 // CHECK: %{{.*}} = gate.xzs %cTrue, %cFalse, %cTrue
 // CHECK-GENERIC: %{{.*}} = "gate.xzs"(%cTrue, %cFalse, %cTrue) : (i1, i1, i1) -> !gate.type<1>
 %3 = gate.xzs %cTrue, %cFalse, %cTrue
+
+%phi = "test.op"() : () -> !angle.type
+
+// CHECK: %{{.*}} = gate.dyn_j<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_j"(%phi) : (!angle.type) -> !gate.type<1>
+%4 = gate.dyn_j<%phi>

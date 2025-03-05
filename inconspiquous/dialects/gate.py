@@ -40,9 +40,80 @@ from xdsl.printer import Printer
 from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
 from xdsl.dialects.builtin import IntAttrConstraint
 
-from inconspiquous.dialects.angle import AngleAttr
+from inconspiquous.dialects.angle import AngleAttr, AngleType
 from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
 from inconspiquous.constraints import SizedAttributeConstraint
+
+
+@irdl_attr_definition
+class GateType(ParametrizedAttribute, TypeAttribute):
+    """
+    Type for dynamic gate operations
+    """
+
+    name = "gate.type"
+
+    num_qubits: ParameterDef[IntegerAttr[IndexType]]
+
+    def __init__(self, num_qubits: int | IntegerAttr[IndexType]):
+        if isinstance(num_qubits, int):
+            num_qubits = IntegerAttr.from_index_int_value(num_qubits)
+        super().__init__((num_qubits,))
+
+    @classmethod
+    def parse_parameters(cls, parser: AttrParser) -> tuple[IntegerAttr[IndexType]]:
+        with parser.in_angle_brackets():
+            i = parser.parse_integer(allow_boolean=False, allow_negative=False)
+            return (IntegerAttr.from_index_int_value(i),)
+
+    def print_parameters(self, printer: Printer) -> None:
+        with printer.in_angle_brackets():
+            printer.print_string(str(self.num_qubits.value.data))
+
+    @classmethod
+    def constr(
+        cls, int_constraint: IntConstraint | None = None
+    ) -> GenericAttrConstraint[GateType]:
+        if int_constraint is None:
+            return BaseAttr(GateType)
+        return ParamAttrConstraint(
+            GateType,
+            (
+                IntegerAttr.constr(
+                    value=IntAttrConstraint(int_constraint), type=eq(IndexType())
+                ),
+            ),
+        )
+
+
+@irdl_op_definition
+class ConstantGateOp(IRDLOperation):
+    """
+    Constant-like operation for producing gates
+    """
+
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
+
+    name = "gate.constant"
+
+    gate = prop_def(SizedAttributeConstraint(GateAttr, _I))
+
+    out = result_def(GateType.constr(_I))
+
+    assembly_format = "$gate attr-dict"
+
+    traits = traits_def(
+        ConstantLike(),
+        Pure(),
+    )
+
+    def __init__(self, gate: GateAttr):
+        super().__init__(
+            properties={
+                "gate": gate,
+            },
+            result_types=(GateType(gate.num_qubits),),
+        )
 
 
 @irdl_attr_definition
@@ -125,6 +196,30 @@ class JGate(SingleQubitGate):
         return self.angle.print_parameters(printer)
 
 
+class DynJGateHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import gate
+
+        return (gate.DynJGateToJPattern(),)
+
+
+@irdl_op_definition
+class DynJGate(IRDLOperation):
+    name = "gate.dyn_j"
+
+    angle = operand_def(AngleType)
+
+    out = result_def(GateType(1))
+
+    traits = traits_def(Pure(), DynJGateHasCanonicalizationPatterns())
+
+    assembly_format = "`` `<` $angle `>` attr-dict"
+
+    def __init__(self, angle: SSAValue | Operation):
+        super().__init__(operands=(angle,), result_types=(GateType(1),))
+
+
 @irdl_attr_definition
 class CXGate(TwoQubitGate):
     name = "gate.cx"
@@ -147,77 +242,6 @@ class ToffoliGate(GateAttr):
 @irdl_attr_definition
 class IdentityGate(SingleQubitGate):
     name = "gate.id"
-
-
-@irdl_attr_definition
-class GateType(ParametrizedAttribute, TypeAttribute):
-    """
-    Type for dynamic gate operations
-    """
-
-    name = "gate.type"
-
-    num_qubits: ParameterDef[IntegerAttr[IndexType]]
-
-    def __init__(self, num_qubits: int | IntegerAttr[IndexType]):
-        if isinstance(num_qubits, int):
-            num_qubits = IntegerAttr.from_index_int_value(num_qubits)
-        super().__init__((num_qubits,))
-
-    @classmethod
-    def parse_parameters(cls, parser: AttrParser) -> tuple[IntegerAttr[IndexType]]:
-        with parser.in_angle_brackets():
-            i = parser.parse_integer(allow_boolean=False, allow_negative=False)
-            return (IntegerAttr.from_index_int_value(i),)
-
-    def print_parameters(self, printer: Printer) -> None:
-        with printer.in_angle_brackets():
-            printer.print_string(str(self.num_qubits.value.data))
-
-    @classmethod
-    def constr(
-        cls, int_constraint: IntConstraint | None = None
-    ) -> GenericAttrConstraint[GateType]:
-        if int_constraint is None:
-            return BaseAttr(GateType)
-        return ParamAttrConstraint(
-            GateType,
-            (
-                IntegerAttr.constr(
-                    value=IntAttrConstraint(int_constraint), type=eq(IndexType())
-                ),
-            ),
-        )
-
-
-@irdl_op_definition
-class ConstantGateOp(IRDLOperation):
-    """
-    Constant-like operation for producing gates
-    """
-
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
-
-    name = "gate.constant"
-
-    gate = prop_def(SizedAttributeConstraint(GateAttr, _I))
-
-    out = result_def(GateType.constr(_I))
-
-    assembly_format = "$gate attr-dict"
-
-    traits = traits_def(
-        ConstantLike(),
-        Pure(),
-    )
-
-    def __init__(self, gate: GateAttr):
-        super().__init__(
-            properties={
-                "gate": gate,
-            },
-            result_types=(GateType(gate.num_qubits),),
-        )
 
 
 @irdl_op_definition
@@ -342,7 +366,7 @@ class XZOp(IRDLOperation):
 
 Gate = Dialect(
     "gate",
-    [ConstantGateOp, QuaternionGateOp, ComposeGateOp, XZSOp, XZOp],
+    [ConstantGateOp, QuaternionGateOp, ComposeGateOp, XZSOp, XZOp, DynJGate],
     [
         HadamardGate,
         XGate,
