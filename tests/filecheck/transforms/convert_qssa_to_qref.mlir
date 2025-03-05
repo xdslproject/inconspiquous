@@ -9,7 +9,8 @@
 %0 = qssa.measure %q4
 %g = gate.constant #gate.h
 %q6 = qssa.dyn_gate<%g> %q5
-%1 = qssa.measure %q6
+%m = measurement.constant #measurement.comp_basis
+%1 = qssa.dyn_measure<%m> %q6
 
 // CHECK:      %q0 = qubit.alloc
 // CHECK-NEXT: %q1 = qubit.alloc
@@ -19,7 +20,8 @@
 // CHECK-NEXT: %{{.*}} = qref.measure %q0
 // CHECK-NEXT: %g = gate.constant #gate.h
 // CHECK-NEXT: qref.dyn_gate<%g> %q1
-// CHECK-NEXT: %{{.*}} = qref.measure %q1
+// CHECK-NEXT: %m = measurement.constant #measurement.comp_basis
+// CHECK-NEXT: %{{.*}} = qref.dyn_measure<%m> %q1
 
 // CHECK-ROUNDTRIP:      %q0 = qubit.alloc
 // CHECK-ROUNDTRIP-NEXT: %q1 = qubit.alloc
@@ -29,4 +31,5 @@
 // CHECK-ROUNDTRIP-NEXT: %{{.*}} = qssa.measure %q0_2
 // CHECK-ROUNDTRIP-NEXT: %g = gate.constant #gate.h
 // CHECK-ROUNDTRIP-NEXT: %q1_3 = qssa.dyn_gate<%g> %q1_2
-// CHECK-ROUNDTRIP-NEXT: %{{.*}} = qssa.measure %q1_3
+// CHECK-ROUNDTRIP-NEXT: %m = measurement.constant #measurement.comp_basis
+// CHECK-ROUNDTRIP-NEXT: %{{.*}} = qssa.dyn_measure<%m> %q1_3
