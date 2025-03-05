@@ -5,6 +5,7 @@ from xdsl.pattern_rewriter import (
 )
 from xdsl.transforms.canonicalization_patterns.utils import const_evaluate_operand
 from inconspiquous.dialects import gate
+from inconspiquous.dialects.angle import ConstantAngleOp
 
 
 class XZSToXZPattern(RewritePattern):
@@ -16,3 +17,16 @@ class XZSToXZPattern(RewritePattern):
     def match_and_rewrite(self, op: gate.XZSOp, rewriter: PatternRewriter):
         if const_evaluate_operand(op.phase) == 0:
             rewriter.replace_matched_op(gate.XZOp(op.x, op.z))
+
+
+class DynJGateToJPattern(RewritePattern):
+    """
+    Convert a dynamic J gate with a constant angle to a J gate.
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: gate.DynJGate, rewriter: PatternRewriter, /):
+        if isinstance(op.angle.owner, ConstantAngleOp):
+            rewriter.replace_matched_op(
+                gate.ConstantGateOp(gate.JGate(op.angle.owner.angle))
+            )
