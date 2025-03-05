@@ -106,7 +106,7 @@ class MeasureOp(IRDLOperation):
 
     in_qubits = var_operand_def(RangeOf(eq(BitType()), length=_I))
 
-    out = var_result_def(RangeOf(eq(i1), length=_I))
+    outs = var_result_def(RangeOf(eq(i1), length=_I))
 
     assembly_format = "(`` `<` $measurement^ `>`)? $in_qubits attr-dict"
 
@@ -151,7 +151,9 @@ class DynMeasureOp(IRDLOperation):
     traits = traits_def(DynMeasureOpHasCanonicalizationPatterns())
 
     def __init__(
-        self, measurement: SSAValue | Operation, *in_qubits: SSAValue | Operation
+        self,
+        *in_qubits: SSAValue | Operation,
+        measurement: SSAValue | Operation,
     ):
         super().__init__(
             operands=[measurement, in_qubits],

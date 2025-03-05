@@ -19,7 +19,7 @@ class ConvertQssaGateToQrefGate(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qssa.GateOp, rewriter: PatternRewriter):
-        rewriter.replace_matched_op(qref.GateOp(op.gate, *op.ins), op.operands)
+        rewriter.replace_matched_op(qref.GateOp(op.gate, *op.ins), op.ins)
 
 
 class ConvertQssaDynGateToQrefDynGate(RewritePattern):
@@ -43,6 +43,17 @@ class ConvertQssaMeasureToQrefMeasure(RewritePattern):
         rewriter.replace_matched_op(new_measure)
 
 
+class ConvertQssaDynMeasureToQrefDynMeasure(RewritePattern):
+    """
+    Replaces a qssa measurement by its qref counterpart.
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: qssa.DynMeasureOp, rewriter: PatternRewriter):
+        new_measure = qref.DynMeasureOp(*op.in_qubits, measurement=op.measurement)
+        rewriter.replace_matched_op(new_measure)
+
+
 class ConvertQssaToQref(ModulePass):
     """
     Converts uses of the qssa dialect to the qref dialect in a module.
@@ -58,6 +69,7 @@ class ConvertQssaToQref(ModulePass):
                     ConvertQssaGateToQrefGate(),
                     ConvertQssaDynGateToQrefDynGate(),
                     ConvertQssaMeasureToQrefMeasure(),
+                    ConvertQssaDynMeasureToQrefDynMeasure(),
                 ]
             ),
             apply_recursively=False,

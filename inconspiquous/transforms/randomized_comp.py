@@ -277,7 +277,7 @@ class PadMeasure(RewritePattern):
 
         new_measure = MeasureOp(pre_z)
 
-        corrected_measure = AddiOp(x_rand, new_measure.out[0])
+        corrected_measure = AddiOp(x_rand, new_measure.outs[0])
 
         rewriter.insert_op(
             (

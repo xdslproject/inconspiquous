@@ -46,7 +46,9 @@ class ConvertQrefMeasureToQssaMeasure(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qref.MeasureOp, rewriter: PatternRewriter):
+    def match_and_rewrite(
+        self, op: qref.MeasureOp | qref.DynMeasureOp, rewriter: PatternRewriter
+    ):
         # Don't rewrite if uses live in different blocks
         if op.parent_block() is None:
             return
@@ -59,9 +61,12 @@ class ConvertQrefMeasureToQssaMeasure(RewritePattern):
                 if len(operand.uses) != 1:
                     return
 
-        new_op = qssa.MeasureOp(*op.in_qubits, measurement=op.measurement)
+        if isinstance(op, qref.MeasureOp):
+            new_op = qssa.MeasureOp(*op.in_qubits, measurement=op.measurement)
+        else:
+            new_op = qssa.DynMeasureOp(*op.in_qubits, measurement=op.measurement)
 
-        rewriter.replace_matched_op(new_op, new_op.out)
+        rewriter.replace_matched_op(new_op, new_op.outs)
 
 
 class ConvertQrefToQssa(ModulePass):

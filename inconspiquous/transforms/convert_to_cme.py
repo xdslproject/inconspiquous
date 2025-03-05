@@ -46,7 +46,7 @@ class ToCMEPattern(RewritePattern):
         x = ConstantGateOp(XGate())
         i = ConstantGateOp(IdentityGate())
 
-        x_sel = arith.SelectOp(m.out[0], x, i)
+        x_sel = arith.SelectOp(m.outs[0], x, i)
 
         x_gate = qssa.DynGateOp(x_sel, cz.outs[1])
 
