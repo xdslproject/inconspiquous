@@ -62,7 +62,7 @@ func.func @cx_commute(%q1 : !qubit.bit, %q2 : !qubit.bit, %x1 : i1, %z1 : i1, %x
 
 // CHECK:      func.func @measure_commute(%q : !qubit.bit, %x : i1, %z : i1) -> i1 {
 // CHECK-NEXT:   %0 = qssa.measure %q
-// CHECK-NEXT:   %1 = arith.addi %0, %x : i1
+// CHECK-NEXT:   %1 = arith.xori %0, %x : i1
 // CHECK-NEXT:   func.return %1 : i1
 // CHECK-NEXT: }
 func.func @measure_commute(%q : !qubit.bit, %x : i1, %z : i1) -> i1 {
@@ -77,7 +77,7 @@ func.func @measure_commute(%q : !qubit.bit, %x : i1, %z : i1) -> i1 {
 // CHECK-NEXT:   %1 = angle.cond_negate %x, %0
 // CHECK-NEXT:   %2 = measurement.dyn_xy<%1>
 // CHECK-NEXT:   %3 = qssa.dyn_measure<%2> %q
-// CHECK-NEXT:   %4 = arith.addi %3, %z : i1
+// CHECK-NEXT:   %4 = arith.xori %3, %z : i1
 // CHECK-NEXT:   func.return %4 : i1
 // CHECK-NEXT: }
 func.func @xy_measure_commute(%q : !qubit.bit, %x : i1, %z : i1) -> i1 {
@@ -91,7 +91,7 @@ func.func @xy_measure_commute(%q : !qubit.bit, %x : i1, %z : i1) -> i1 {
 // CHECK-NEXT:   %0 = angle.cond_negate %x, %a
 // CHECK-NEXT:   %1 = measurement.dyn_xy<%0>
 // CHECK-NEXT:   %2 = qssa.dyn_measure<%1> %q
-// CHECK-NEXT:   %3 = arith.addi %2, %z : i1
+// CHECK-NEXT:   %3 = arith.xori %2, %z : i1
 // CHECK-NEXT:   func.return %3 : i1
 // CHECK-NEXT: }
 func.func @dyn_xy_measure_commute(%q : !qubit.bit, %x : i1, %z : i1, %a : !angle.type) -> i1 {

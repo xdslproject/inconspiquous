@@ -1,6 +1,6 @@
 from xdsl.context import Context
 from xdsl.dialects import builtin
-from xdsl.dialects.arith import AddiOp, SelectOp
+from xdsl.dialects.arith import SelectOp, XOrIOp
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -277,7 +277,7 @@ class PadMeasure(RewritePattern):
 
         new_measure = MeasureOp(pre_z)
 
-        corrected_measure = AddiOp(x_rand, new_measure.outs[0])
+        corrected_measure = XOrIOp(x_rand, new_measure.outs[0])
 
         rewriter.insert_op(
             (
