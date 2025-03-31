@@ -2,7 +2,6 @@ from xdsl.context import Context
 from xdsl.dialects import builtin
 from xdsl.dialects.builtin import BoolAttr
 from xdsl.ir import Operation, dataclass
-from xdsl.parser import IntegerType
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
     PatternRewriteWalker,
@@ -32,8 +31,6 @@ class LowerUniform(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: UniformOp, rewriter: PatternRewriter):
         ty = op.out.type
-        if not isinstance(ty, IntegerType):
-            return
 
         if ty.bitwidth > self.max_size:
             return
