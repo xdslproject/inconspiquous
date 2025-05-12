@@ -9,6 +9,7 @@ from xdsl.irdl import (
     IntConstraint,
     VarExtractor,
 )
+from xdsl.utils.exceptions import PyRDLError
 
 
 class SizedAttribute(Attribute, ABC):
@@ -38,13 +39,15 @@ class SizedAttributeConstraint(GenericAttrConstraint[SizedAttributeCovT]):
         self.size_constraint.verify(attr.size, constraint_context)
 
     @dataclass(frozen=True)
-    class _Extractor(VarExtractor[SizedAttributeT]):
+    class _Extractor(VarExtractor[Attribute]):
         inner: VarExtractor[int]
 
-        def extract_var(self, a: SizedAttributeT) -> ConstraintVariableType:
+        def extract_var(self, a: Attribute) -> ConstraintVariableType:
+            if not isinstance(a, SizedAttribute):
+                raise PyRDLError(f"Inference expected {a} to be a SizedAttribute")
             return self.inner.extract_var(a.size)
 
-    def get_variable_extractors(self) -> dict[str, VarExtractor[SizedAttributeCovT]]:
+    def get_variable_extractors(self) -> dict[str, VarExtractor[Attribute]]:
         return {
             k: self._Extractor(v)
             for k, v in self.size_constraint.get_length_extractors().items()
