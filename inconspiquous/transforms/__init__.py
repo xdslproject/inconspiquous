@@ -86,6 +86,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return mlir_opt.MLIROptPass
 
+    def get_pauli_fusion():
+        from inconspiquous.transforms import pauli_fusion
+
+        return pauli_fusion.PauliFusionPass
+
     def get_randomized_comp():
         from inconspiquous.transforms import randomized_comp
 
@@ -134,6 +139,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "lower-xzs-to-select": get_lower_xzs_to_select,
         "mbqc-legalize": get_mbqc_legalize,
         "mlir-opt": get_mlir_opt,
+        "pauli-fusion": get_pauli_fusion,
         "randomized-comp": get_randomized_comp,
         "xz-commute": get_xz_commute,
         "xzs-fusion": get_xzs_fusion,
