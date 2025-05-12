@@ -1,6 +1,6 @@
 // RUN: QUOPT_ROUNDTRIP
 
-// CHECK:      func.func @toffoli(%q1 : !qubit.bit, %q2 : !qubit.bit, %q3 : !qubit.bit) -> (!qubit.bit, !qubit.bit, !qubit.bit) {
+// CHECK:      func.func @toffoli(%q1 : !qu.bit, %q2 : !qu.bit, %q3 : !qu.bit) -> (!qu.bit, !qu.bit, !qu.bit) {
 // CHECK-NEXT:   qref.gate<#gate.h> %q3
 // CHECK-NEXT:   qref.gate<#gate.cx> %q2, %q3
 // CHECK-NEXT:   qref.gate<#gate.t_dagger> %q3
@@ -17,9 +17,9 @@
 // CHECK-NEXT:   qref.gate<#gate.cx> %q1, %q2
 // CHECK-NEXT:   qref.gate<#gate.s> %q2
 // CHECK-NEXT:   qref.gate<#gate.h> %q3
-// CHECK-NEXT:   func.return %q1, %q2, %q3 : !qubit.bit, !qubit.bit, !qubit.bit
+// CHECK-NEXT:   func.return %q1, %q2, %q3 : !qu.bit, !qu.bit, !qu.bit
 // CHECK-NEXT: }
-func.func @toffoli(%q1 : !qubit.bit, %q2 : !qubit.bit, %q3 : !qubit.bit) -> (!qubit.bit, !qubit.bit, !qubit.bit) {
+func.func @toffoli(%q1 : !qu.bit, %q2 : !qu.bit, %q3 : !qu.bit) -> (!qu.bit, !qu.bit, !qu.bit) {
   qref.gate<#gate.h> %q3
   qref.gate<#gate.cx> %q2, %q3
   qref.gate<#gate.t_dagger> %q3
@@ -36,5 +36,5 @@ func.func @toffoli(%q1 : !qubit.bit, %q2 : !qubit.bit, %q3 : !qubit.bit) -> (!qu
   qref.gate<#gate.cx> %q1, %q2
   qref.gate<#gate.s> %q2
   qref.gate<#gate.h> %q3
-  func.return %q1, %q2, %q3 : !qubit.bit, !qubit.bit, !qubit.bit
+  func.return %q1, %q2, %q3 : !qu.bit, !qu.bit, !qu.bit
 }

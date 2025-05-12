@@ -22,7 +22,7 @@ class BitType(ParametrizedAttribute, TypeAttribute):
     Type for a single qubit
     """
 
-    name = "qubit.bit"
+    name = "qu.bit"
 
 
 @irdl_attr_definition
@@ -31,7 +31,7 @@ class AllocZeroAttr(AllocAttr):
     Allocate a qubit in the zero computational basis state
     """
 
-    name = "qubit.zero"
+    name = "qu.zero"
 
     @property
     def num_qubits(self) -> int:
@@ -44,7 +44,7 @@ class AllocPlusAttr(AllocAttr):
     Allocate a qubit in the plus state.
     """
 
-    name = "qubit.plus"
+    name = "qu.plus"
 
     @property
     def num_qubits(self) -> int:
@@ -53,7 +53,7 @@ class AllocPlusAttr(AllocAttr):
 
 @irdl_op_definition
 class AllocOp(IRDLOperation):
-    name = "qubit.alloc"
+    name = "qu.alloc"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
@@ -74,8 +74,8 @@ class AllocOp(IRDLOperation):
         )
 
 
-Qubit = Dialect(
-    "qubit",
+Qu = Dialect(
+    "qu",
     [
         AllocOp,
     ],

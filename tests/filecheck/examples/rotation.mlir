@@ -1,10 +1,10 @@
 // RUN: QUOPT_ROUNDTRIP
 
-// CHECK:      func.func @rotation(%phi : !angle.type, %theta : !angle.type, %lambda : !angle.type, %q1 : !qubit.bit) -> !qubit.bit {
-// CHECK-NEXT:   %q2 = qubit.alloc<#qubit.plus>
-// CHECK-NEXT:   %q3 = qubit.alloc<#qubit.plus>
-// CHECK-NEXT:   %q4 = qubit.alloc<#qubit.plus>
-// CHECK-NEXT:   %q5 = qubit.alloc<#qubit.plus>
+// CHECK:      func.func @rotation(%phi : !angle.type, %theta : !angle.type, %lambda : !angle.type, %q1 : !qu.bit) -> !qu.bit {
+// CHECK-NEXT:   %q2 = qu.alloc<#qu.plus>
+// CHECK-NEXT:   %q3 = qu.alloc<#qu.plus>
+// CHECK-NEXT:   %q4 = qu.alloc<#qu.plus>
+// CHECK-NEXT:   %q5 = qu.alloc<#qu.plus>
 // CHECK-NEXT:   qref.gate<#gate.cz> %q1, %q2
 // CHECK-NEXT:   qref.gate<#gate.cz> %q2, %q3
 // CHECK-NEXT:   qref.gate<#gate.cz> %q3, %q4
@@ -23,13 +23,13 @@
 // CHECK-NEXT:   %x = arith.xori %1, %3 : i1
 // CHECK-NEXT:   %g = gate.xz %x, %z
 // CHECK-NEXT:   qref.dyn_gate<%g> %q5
-// CHECK-NEXT:   func.return %q5 : !qubit.bit
+// CHECK-NEXT:   func.return %q5 : !qu.bit
 // CHECK-NEXT: }
-func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type, %q1: !qubit.bit) -> !qubit.bit {
-  %q2 = qubit.alloc<#qubit.plus>
-  %q3 = qubit.alloc<#qubit.plus>
-  %q4 = qubit.alloc<#qubit.plus>
-  %q5 = qubit.alloc<#qubit.plus>
+func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type, %q1: !qu.bit) -> !qu.bit {
+  %q2 = qu.alloc<#qu.plus>
+  %q3 = qu.alloc<#qu.plus>
+  %q4 = qu.alloc<#qu.plus>
+  %q5 = qu.alloc<#qu.plus>
   qref.gate<#gate.cz> %q1, %q2
   qref.gate<#gate.cz> %q2, %q3
   qref.gate<#gate.cz> %q3, %q4
@@ -48,5 +48,5 @@ func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type
   %x = arith.xori %2, %4 : i1
   %g = gate.xz %x, %z
   qref.dyn_gate<%g> %q5
-  func.return %q5 : !qubit.bit
+  func.return %q5 : !qu.bit
 }

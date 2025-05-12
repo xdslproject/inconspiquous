@@ -3,7 +3,7 @@ from xdsl.ir import Operation, SSAValue
 from dataclasses import dataclass
 
 from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
-from inconspiquous.dialects.qubit import AllocOp
+from inconspiquous.dialects.qu import AllocOp
 from inconspiquous.gates.core import GateAttr
 
 

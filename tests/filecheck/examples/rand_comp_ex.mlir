@@ -1,8 +1,8 @@
 // RUN: quopt -p randomized-comp %s | filecheck %s
 
-// CHECK:      %q0 = qubit.alloc
-// CHECK-NEXT: %q1 = qubit.alloc
-// CHECK-NEXT: %q2 = qubit.alloc
+// CHECK:      %q0 = qu.alloc
+// CHECK-NEXT: %q1 = qu.alloc
+// CHECK-NEXT: %q2 = qu.alloc
 // CHECK-NEXT: %0 = prob.uniform : i1
 // CHECK-NEXT: %1 = prob.uniform : i1
 // CHECK-NEXT: %2 = gate.constant #gate.id
@@ -62,9 +62,9 @@
 // CHECK-NEXT: %q0_3 = qssa.dyn_gate<%41> %52
 // CHECK-NEXT: %q2_1 = qssa.dyn_gate<%42> %54
 
-%q0 = qubit.alloc
-%q1 = qubit.alloc
-%q2 = qubit.alloc
+%q0 = qu.alloc
+%q1 = qu.alloc
+%q2 = qu.alloc
 
 %q0_1 = qssa.gate<#gate.h> %q0
 %q0_2, %q1_2 = qssa.gate<#gate.cx> %q0_1, %q1

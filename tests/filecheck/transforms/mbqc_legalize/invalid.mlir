@@ -1,7 +1,7 @@
 // RUN: quopt %s -p mbqc-legalize --verify-diagnostics --split-input-file | filecheck %s
 
-%q0 = qubit.alloc
-%q1 = qubit.alloc
+%q0 = qu.alloc
+%q1 = qu.alloc
 
 %q0_1 = qssa.gate<#gate.x> %q0
 // CHECK: A CZ gate can only follow allocations and CZ gates in a valid mbqc program
@@ -9,26 +9,26 @@
 
 // -----
 
-%q0 = qubit.alloc
-%q1 = qubit.alloc
+%q0 = qu.alloc
+%q1 = qu.alloc
 // CHECK: Expected only CZ or Pauli gates, found #gate.cx
 %q0_1, %q1_1 = qssa.gate<#gate.cx> %q0, %q1
 
 // -----
 
-%q0 = qubit.alloc
+%q0 = qu.alloc
 // CHECK: Expected only XY measurements, found #measurement.comp_basis
 %0 = qssa.measure %q0
 
 // -----
 
-%q0 = qubit.alloc
+%q0 = qu.alloc
 %q0_1 = qssa.gate<#gate.x> %q0
 // CHECK: A measurement can only follow allocations and CZ gates in a valid mbqc program.
 %0 = qssa.measure<#measurement.xy<0>> %q0_1
 
 // -----
-%q0 = qubit.alloc
+%q0 = qu.alloc
 %q0_1 = qssa.gate<#gate.x> %q0
 %a = angle.constant<0>
 %m = measurement.dyn_xy<%a>
@@ -42,6 +42,6 @@
 
 // -----
 
-%q0 = qubit.alloc
+%q0 = qu.alloc
 // CHECK: Unexpected operation qref.gate
 qref.gate<#gate.x> %q0

@@ -1,6 +1,6 @@
 // RUN: quopt %s -p randomized-comp | filecheck %s
 
-// CHECK:      func.func @t_gate(%q : !qubit.bit) -> !qubit.bit {
+// CHECK:      func.func @t_gate(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = gate.constant #gate.id
@@ -17,14 +17,14 @@
 // CHECK-NEXT:   %13 = qssa.dyn_gate<%6> %12
 // CHECK-NEXT:   %14 = arith.select %0, %5, %2 : !gate.type<1>
 // CHECK-NEXT:   %q_1 = qssa.dyn_gate<%14> %13
-// CHECK-NEXT:   func.return %q_1 : !qubit.bit
+// CHECK-NEXT:   func.return %q_1 : !qu.bit
 // CHECK-NEXT: }
-func.func @t_gate(%q: !qubit.bit) -> !qubit.bit {
+func.func @t_gate(%q: !qu.bit) -> !qu.bit {
   %q_1 = qssa.gate<#gate.t> %q
-  func.return %q_1 : !qubit.bit
+  func.return %q_1 : !qu.bit
 }
 
-// CHECK:     func.func @t_dagger_gate(%q : !qubit.bit) -> !qubit.bit {
+// CHECK:     func.func @t_dagger_gate(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = gate.constant #gate.id
@@ -41,14 +41,14 @@ func.func @t_gate(%q: !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:   %13 = qssa.dyn_gate<%6> %12
 // CHECK-NEXT:   %14 = arith.select %0, %5, %2 : !gate.type<1>
 // CHECK-NEXT:   %q_1 = qssa.dyn_gate<%14> %13
-// CHECK-NEXT:   func.return %q_1 : !qubit.bit
+// CHECK-NEXT:   func.return %q_1 : !qu.bit
 // CHECK-NEXT: }
-func.func @t_dagger_gate(%q: !qubit.bit) -> !qubit.bit {
+func.func @t_dagger_gate(%q: !qu.bit) -> !qu.bit {
   %q_1 = qssa.gate<#gate.t_dagger> %q
-  func.return %q_1 : !qubit.bit
+  func.return %q_1 : !qu.bit
 }
 
-// CHECK:      func.func @h_gate(%q : !qubit.bit) -> !qubit.bit {
+// CHECK:      func.func @h_gate(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = gate.constant #gate.id
@@ -63,14 +63,14 @@ func.func @t_dagger_gate(%q: !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:   %11 = qssa.dyn_gate<%10> %9
 // CHECK-NEXT:   %12 = arith.select %0, %4, %2 : !gate.type<1>
 // CHECK-NEXT:   %q_1 = qssa.dyn_gate<%12> %11
-// CHECK-NEXT:   func.return %q_1 : !qubit.bit
+// CHECK-NEXT:   func.return %q_1 : !qu.bit
 // CHECK-NEXT: }
-func.func @h_gate(%q: !qubit.bit) -> !qubit.bit {
+func.func @h_gate(%q: !qu.bit) -> !qu.bit {
   %q_1 = qssa.gate<#gate.h> %q
-  func.return %q_1 : !qubit.bit
+  func.return %q_1 : !qu.bit
 }
 
-// CHECK:      func.func @cx_gate(%q1 : !qubit.bit, %q2 : !qubit.bit) -> (!qubit.bit, !qubit.bit) {
+// CHECK:      func.func @cx_gate(%q1 : !qu.bit, %q2 : !qu.bit) -> (!qu.bit, !qu.bit) {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = prob.uniform : i1
@@ -93,14 +93,14 @@ func.func @h_gate(%q: !qubit.bit) -> !qubit.bit {
 // CHECK-NEXT:   %20 = qssa.dyn_gate<%7> %19
 // CHECK-NEXT:   %q1_1 = qssa.dyn_gate<%7> %18
 // CHECK-NEXT:   %q2_1 = qssa.dyn_gate<%8> %20
-// CHECK-NEXT:   func.return %q1_1, %q2_1 : !qubit.bit, !qubit.bit
+// CHECK-NEXT:   func.return %q1_1, %q2_1 : !qu.bit, !qu.bit
 // CHECK-NEXT: }
-func.func @cx_gate(%q1: !qubit.bit, %q2: !qubit.bit) -> (!qubit.bit, !qubit.bit) {
+func.func @cx_gate(%q1: !qu.bit, %q2: !qu.bit) -> (!qu.bit, !qu.bit) {
   %q1_1, %q2_1 = qssa.gate<#gate.cx> %q1, %q2
-  func.return %q1_1, %q2_1 : !qubit.bit, !qubit.bit
+  func.return %q1_1, %q2_1 : !qu.bit, !qu.bit
 }
 
-// CHECK:      func.func @measure(%q : !qubit.bit) -> i1 {
+// CHECK:      func.func @measure(%q : !qu.bit) -> i1 {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = gate.constant #gate.id
@@ -114,7 +114,7 @@ func.func @cx_gate(%q1: !qubit.bit, %q2: !qubit.bit) -> (!qubit.bit, !qubit.bit)
 // CHECK-NEXT:   %10 = arith.xori %0, %9 : i1
 // CHECK-NEXT:   func.return %10 : i1
 // CHECK-NEXT: }
-func.func @measure(%q: !qubit.bit) -> i1 {
+func.func @measure(%q: !qu.bit) -> i1 {
   %0 = qssa.measure %q
   func.return %0 : i1
 }
