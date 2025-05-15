@@ -10,7 +10,7 @@ from xdsl.pattern_rewriter import (
 )
 
 from inconspiquous.dialects import angle, measurement
-from inconspiquous.dialects import qssa, qubit
+from inconspiquous.dialects import qssa, qu
 from inconspiquous.dialects.gate import (
     CZGate,
     ConstantGateOp,
@@ -38,7 +38,7 @@ class ToCMEPattern(RewritePattern):
             return
 
         q1 = op.ins[0]
-        q2 = qubit.AllocOp(qubit.AllocPlusAttr())
+        q2 = qu.AllocOp(qu.AllocPlusAttr())
         cz = qssa.GateOp(CZGate(), q1, q2)
 
         m = qssa.MeasureOp(
@@ -66,7 +66,7 @@ class DynToCMEPattern(RewritePattern):
             return
 
         q1 = op.ins[0]
-        q2 = qubit.AllocOp(qubit.AllocPlusAttr())
+        q2 = qu.AllocOp(qu.AllocPlusAttr())
         cz = qssa.GateOp(CZGate(), q1, q2)
         ctrue = arith.ConstantOp(BoolAttr.from_bool(True))
         a = angle.CondNegateAngleOp(ctrue, op.gate.owner.angle)

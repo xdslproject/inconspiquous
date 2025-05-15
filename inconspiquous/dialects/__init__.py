@@ -61,10 +61,10 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return Qref
 
-    def get_qubit():
-        from inconspiquous.dialects.qubit import Qubit
+    def get_qu():
+        from inconspiquous.dialects.qu import Qu
 
-        return Qubit
+        return Qu
 
     def get_qssa():
         from inconspiquous.dialects.qssa import Qssa
@@ -108,7 +108,7 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "prob": get_prob,
         "qec": get_qec,
         "qref": get_qref,
-        "qubit": get_qubit,
+        "qu": get_qu,
         "qssa": get_qssa,
         "scf": get_scf,
         "stim": get_stim,

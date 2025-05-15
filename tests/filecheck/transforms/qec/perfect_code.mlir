@@ -1,7 +1,7 @@
 // RUN: quopt %s -p convert-qref-to-qssa,qec-inline | filecheck %s
 
-// CHECK:      func.func @perfect_code(%q1 : !qubit.bit, %q2 : !qubit.bit, %q3 : !qubit.bit, %q4 : !qubit.bit, %q5 : !qubit.bit) {
-// CHECK-NEXT:   %a1 = qubit.alloc
+// CHECK:      func.func @perfect_code(%q1 : !qu.bit, %q2 : !qu.bit, %q3 : !qu.bit, %q4 : !qu.bit, %q5 : !qu.bit) {
+// CHECK-NEXT:   %a1 = qu.alloc
 // CHECK-NEXT:   %a1_1 = qssa.gate<#gate.h> %a1
 // CHECK-NEXT:   %a1_2, %q1_1 = qssa.gate<#gate.cx> %a1_1, %q1
 // CHECK-NEXT:   %a1_3, %q2_1 = qssa.gate<#gate.cz> %a1_2, %q2
@@ -9,7 +9,7 @@
 // CHECK-NEXT:   %a1_5, %q4_1 = qssa.gate<#gate.cx> %a1_4, %q4
 // CHECK-NEXT:   %a1_6 = qssa.gate<#gate.h> %a1_5
 // CHECK-NEXT:   %s1 = qssa.measure %a1_6
-// CHECK-NEXT:   %a2 = qubit.alloc
+// CHECK-NEXT:   %a2 = qu.alloc
 // CHECK-NEXT:   %a2_1 = qssa.gate<#gate.h> %a2
 // CHECK-NEXT:   %a2_2, %q2_2 = qssa.gate<#gate.cx> %a2_1, %q2_1
 // CHECK-NEXT:   %a2_3, %q3_2 = qssa.gate<#gate.cz> %a2_2, %q3_1
@@ -17,7 +17,7 @@
 // CHECK-NEXT:   %a2_5, %q5_1 = qssa.gate<#gate.cx> %a2_4, %q5
 // CHECK-NEXT:   %a2_6 = qssa.gate<#gate.h> %a2_5
 // CHECK-NEXT:   %s2 = qssa.measure %a2_6
-// CHECK-NEXT:   %a3 = qubit.alloc
+// CHECK-NEXT:   %a3 = qu.alloc
 // CHECK-NEXT:   %a3_1 = qssa.gate<#gate.h> %a3
 // CHECK-NEXT:   %a3_2, %q1_2 = qssa.gate<#gate.cx> %a3_1, %q1_1
 // CHECK-NEXT:   %a3_3, %q3_3 = qssa.gate<#gate.cx> %a3_2, %q3_2
@@ -25,7 +25,7 @@
 // CHECK-NEXT:   %a3_5, %q5_2 = qssa.gate<#gate.cz> %a3_4, %q5_1
 // CHECK-NEXT:   %a3_6 = qssa.gate<#gate.h> %a3_5
 // CHECK-NEXT:   %s3 = qssa.measure %a3_6
-// CHECK-NEXT:   %a4 = qubit.alloc
+// CHECK-NEXT:   %a4 = qu.alloc
 // CHECK-NEXT:   %a4_1 = qssa.gate<#gate.h> %a4
 // CHECK-NEXT:   %a4_2, %q1_3 = qssa.gate<#gate.cz> %a4_1, %q1_2
 // CHECK-NEXT:   %a4_3, %q2_3 = qssa.gate<#gate.cx> %a4_2, %q2_2
@@ -83,7 +83,7 @@
 // CHECK-NEXT:   %35 = arith.andi %32, %s2 : i1
 // CHECK-NEXT:   %36 = arith.select %35, %z, %id : !gate.type<1>
 // CHECK-NEXT:   %q5_5 = qssa.dyn_gate<%36> %q5_4
-// CHECK-NEXT:   %a1_7 = qubit.alloc
+// CHECK-NEXT:   %a1_7 = qu.alloc
 // CHECK-NEXT:   %a1_8 = qssa.gate<#gate.h> %a1_7
 // CHECK-NEXT:   %a1_9, %q1_6 = qssa.gate<#gate.cx> %a1_8, %q1_5
 // CHECK-NEXT:   %a1_10, %q2_6 = qssa.gate<#gate.cz> %a1_9, %q2_5
@@ -91,7 +91,7 @@
 // CHECK-NEXT:   %a1_12, %q4_7 = qssa.gate<#gate.cx> %a1_11, %q4_6
 // CHECK-NEXT:   %a1_13 = qssa.gate<#gate.h> %a1_12
 // CHECK-NEXT:   %s1_1 = qssa.measure %a1_13
-// CHECK-NEXT:   %a2_7 = qubit.alloc
+// CHECK-NEXT:   %a2_7 = qu.alloc
 // CHECK-NEXT:   %a2_8 = qssa.gate<#gate.h> %a2_7
 // CHECK-NEXT:   %a2_9, %q2_7 = qssa.gate<#gate.cx> %a2_8, %q2_6
 // CHECK-NEXT:   %a2_10, %q3_7 = qssa.gate<#gate.cz> %a2_9, %q3_6
@@ -99,7 +99,7 @@
 // CHECK-NEXT:   %a2_12, %q5_6 = qssa.gate<#gate.cx> %a2_11, %q5_5
 // CHECK-NEXT:   %a2_13 = qssa.gate<#gate.h> %a2_12
 // CHECK-NEXT:   %s2_1 = qssa.measure %a2_13
-// CHECK-NEXT:   %a3_7 = qubit.alloc
+// CHECK-NEXT:   %a3_7 = qu.alloc
 // CHECK-NEXT:   %a3_8 = qssa.gate<#gate.h> %a3_7
 // CHECK-NEXT:   %a3_9, %q1_7 = qssa.gate<#gate.cx> %a3_8, %q1_6
 // CHECK-NEXT:   %a3_10, %q3_8 = qssa.gate<#gate.cx> %a3_9, %q3_7
@@ -107,7 +107,7 @@
 // CHECK-NEXT:   %a3_12, %q5_7 = qssa.gate<#gate.cz> %a3_11, %q5_6
 // CHECK-NEXT:   %a3_13 = qssa.gate<#gate.h> %a3_12
 // CHECK-NEXT:   %s3_1 = qssa.measure %a3_13
-// CHECK-NEXT:   %a4_7 = qubit.alloc
+// CHECK-NEXT:   %a4_7 = qu.alloc
 // CHECK-NEXT:   %a4_8 = qssa.gate<#gate.h> %a4_7
 // CHECK-NEXT:   %a4_9, %q1_8 = qssa.gate<#gate.cz> %a4_8, %q1_7
 // CHECK-NEXT:   %a4_10, %q2_8 = qssa.gate<#gate.cx> %a4_9, %q2_7
@@ -167,7 +167,7 @@
 // CHECK-NEXT:   %q5_10 = qssa.dyn_gate<%73> %q5_9
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
-func.func @perfect_code(%q1: !qubit.bit, %q2: !qubit.bit, %q3: !qubit.bit, %q4: !qubit.bit, %q5: !qubit.bit) {
+func.func @perfect_code(%q1: !qu.bit, %q2: !qu.bit, %q3: !qu.bit, %q4: !qu.bit, %q5: !qu.bit) {
   qref.gate<#qec.perfect> %q1, %q2, %q3, %q4, %q5
   qref.gate<#qec.perfect> %q1, %q2, %q3, %q4, %q5
   func.return

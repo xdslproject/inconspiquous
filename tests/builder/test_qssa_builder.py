@@ -1,6 +1,6 @@
 from xdsl.ir import Block
 from xdsl.rewriter import InsertPoint
-from inconspiquous.dialects import qssa, qubit, gate
+from inconspiquous.dialects import qssa, qu, gate
 from inconspiquous.dialects.gate import HadamardGate
 from inconspiquous.utils.qssa_builder import QSSABuilder
 
@@ -12,11 +12,11 @@ def test_qssa_builder_alloc():
     builder = QSSABuilder(InsertPoint.at_start(block))
 
     no_hint = builder.alloc()
-    assert isinstance(no_hint.get().owner, qubit.AllocOp)
+    assert isinstance(no_hint.get().owner, qu.AllocOp)
     assert no_hint.get().name_hint is None
 
     hint = builder.alloc(name_hint="test")
-    assert isinstance(hint.get().owner, qubit.AllocOp)
+    assert isinstance(hint.get().owner, qu.AllocOp)
     assert hint.get().name_hint == "test"
 
 

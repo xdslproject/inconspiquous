@@ -19,7 +19,7 @@ from inconspiquous.dialects.gate import (
     ZGate,
     XZOp,
 )
-from inconspiquous.dialects.qubit import AllocOp
+from inconspiquous.dialects.qu import AllocOp
 
 
 class MBQCLegalize(ModulePass):

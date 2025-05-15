@@ -1,7 +1,7 @@
 // RUN: QUOPT_ROUNDTRIP
 
-// CHECK:      func.func @perfect_code(%q1 : !qubit.bit, %q2 : !qubit.bit, %q3 : !qubit.bit, %q4 : !qubit.bit, %q5 : !qubit.bit) {
-// CHECK-NEXT:   %a1 = qubit.alloc
+// CHECK:      func.func @perfect_code(%q1 : !qu.bit, %q2 : !qu.bit, %q3 : !qu.bit, %q4 : !qu.bit, %q5 : !qu.bit) {
+// CHECK-NEXT:   %a1 = qu.alloc
 // CHECK-NEXT:   qref.gate<#gate.h> %a1
 // CHECK-NEXT:   qref.gate<#gate.cx> %a1, %q1
 // CHECK-NEXT:   qref.gate<#gate.cz> %a1, %q2
@@ -9,7 +9,7 @@
 // CHECK-NEXT:   qref.gate<#gate.cx> %a1, %q4
 // CHECK-NEXT:   qref.gate<#gate.h> %a1
 // CHECK-NEXT:   %s1 = qref.measure %a1
-// CHECK-NEXT:   %a2 = qubit.alloc
+// CHECK-NEXT:   %a2 = qu.alloc
 // CHECK-NEXT:   qref.gate<#gate.h> %a2
 // CHECK-NEXT:   qref.gate<#gate.cx> %a2, %q2
 // CHECK-NEXT:   qref.gate<#gate.cz> %a2, %q3
@@ -17,7 +17,7 @@
 // CHECK-NEXT:   qref.gate<#gate.cx> %a2, %q5
 // CHECK-NEXT:   qref.gate<#gate.h> %a2
 // CHECK-NEXT:   %s2 = qref.measure %a2
-// CHECK-NEXT:   %a3 = qubit.alloc
+// CHECK-NEXT:   %a3 = qu.alloc
 // CHECK-NEXT:   qref.gate<#gate.h> %a3
 // CHECK-NEXT:   qref.gate<#gate.cx> %a3, %q1
 // CHECK-NEXT:   qref.gate<#gate.cx> %a3, %q3
@@ -25,7 +25,7 @@
 // CHECK-NEXT:   qref.gate<#gate.cz> %a3, %q5
 // CHECK-NEXT:   qref.gate<#gate.h> %a3
 // CHECK-NEXT:   %s3 = qref.measure %a3
-// CHECK-NEXT:   %a4 = qubit.alloc
+// CHECK-NEXT:   %a4 = qu.alloc
 // CHECK-NEXT:   qref.gate<#gate.h> %a4
 // CHECK-NEXT:   qref.gate<#gate.cz> %a4, %q1
 // CHECK-NEXT:   qref.gate<#gate.cx> %a4, %q2
@@ -83,7 +83,7 @@
 // CHECK-NEXT:   %cor5z = arith.andi %cor5, %s2 : i1
 // CHECK-NEXT:   %cor5z_sel = arith.select %cor5z, %z, %id : !gate.type<1>
 // CHECK-NEXT:   qref.dyn_gate<%cor5z_sel> %q5
-// CHECK-NEXT:   %a1_1 = qubit.alloc
+// CHECK-NEXT:   %a1_1 = qu.alloc
 // CHECK-NEXT:   qref.gate<#gate.h> %a1_1
 // CHECK-NEXT:   qref.gate<#gate.cx> %a1_1, %q1
 // CHECK-NEXT:   qref.gate<#gate.cz> %a1_1, %q2
@@ -91,7 +91,7 @@
 // CHECK-NEXT:   qref.gate<#gate.cx> %a1_1, %q4
 // CHECK-NEXT:   qref.gate<#gate.h> %a1_1
 // CHECK-NEXT:   %s1_1 = qref.measure %a1_1
-// CHECK-NEXT:   %a2_1 = qubit.alloc
+// CHECK-NEXT:   %a2_1 = qu.alloc
 // CHECK-NEXT:   qref.gate<#gate.h> %a2_1
 // CHECK-NEXT:   qref.gate<#gate.cx> %a2_1, %q2
 // CHECK-NEXT:   qref.gate<#gate.cz> %a2_1, %q3
@@ -99,7 +99,7 @@
 // CHECK-NEXT:   qref.gate<#gate.cx> %a2_1, %q5
 // CHECK-NEXT:   qref.gate<#gate.h> %a2_1
 // CHECK-NEXT:   %s2_1 = qref.measure %a2_1
-// CHECK-NEXT:   %a3_1 = qubit.alloc
+// CHECK-NEXT:   %a3_1 = qu.alloc
 // CHECK-NEXT:   qref.gate<#gate.h> %a3_1
 // CHECK-NEXT:   qref.gate<#gate.cx> %a3_1, %q1
 // CHECK-NEXT:   qref.gate<#gate.cx> %a3_1, %q3
@@ -107,7 +107,7 @@
 // CHECK-NEXT:   qref.gate<#gate.cz> %a3_1, %q5
 // CHECK-NEXT:   qref.gate<#gate.h> %a3_1
 // CHECK-NEXT:   %s3_1 = qref.measure %a3_1
-// CHECK-NEXT:   %a4_1 = qubit.alloc
+// CHECK-NEXT:   %a4_1 = qu.alloc
 // CHECK-NEXT:   qref.gate<#gate.h> %a4_1
 // CHECK-NEXT:   qref.gate<#gate.cz> %a4_1, %q1
 // CHECK-NEXT:   qref.gate<#gate.cx> %a4_1, %q2
@@ -163,8 +163,8 @@
 // CHECK-NEXT:   qref.dyn_gate<%cor5z_sel_1> %q5
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
-func.func @perfect_code(%q1: !qubit.bit, %q2: !qubit.bit, %q3: !qubit.bit, %q4: !qubit.bit, %q5: !qubit.bit) {
-  %a1 = qubit.alloc
+func.func @perfect_code(%q1: !qu.bit, %q2: !qu.bit, %q3: !qu.bit, %q4: !qu.bit, %q5: !qu.bit) {
+  %a1 = qu.alloc
   qref.gate<#gate.h> %a1
   qref.gate<#gate.cx> %a1, %q1
   qref.gate<#gate.cz> %a1, %q2
@@ -173,7 +173,7 @@ func.func @perfect_code(%q1: !qubit.bit, %q2: !qubit.bit, %q3: !qubit.bit, %q4: 
   qref.gate<#gate.h> %a1
   %s1 = qref.measure %a1
 
-  %a2 = qubit.alloc
+  %a2 = qu.alloc
   qref.gate<#gate.h> %a2
   qref.gate<#gate.cx> %a2, %q2
   qref.gate<#gate.cz> %a2, %q3
@@ -182,7 +182,7 @@ func.func @perfect_code(%q1: !qubit.bit, %q2: !qubit.bit, %q3: !qubit.bit, %q4: 
   qref.gate<#gate.h> %a2
   %s2 = qref.measure %a2
 
-  %a3 = qubit.alloc
+  %a3 = qu.alloc
   qref.gate<#gate.h> %a3
   qref.gate<#gate.cx> %a3, %q1
   qref.gate<#gate.cx> %a3, %q3
@@ -191,7 +191,7 @@ func.func @perfect_code(%q1: !qubit.bit, %q2: !qubit.bit, %q3: !qubit.bit, %q4: 
   qref.gate<#gate.h> %a3
   %s3 = qref.measure %a3
 
-  %a4 = qubit.alloc
+  %a4 = qu.alloc
   qref.gate<#gate.h> %a4
   qref.gate<#gate.cz> %a4, %q1
   qref.gate<#gate.cx> %a4, %q2
@@ -272,7 +272,7 @@ func.func @perfect_code(%q1: !qubit.bit, %q2: !qubit.bit, %q3: !qubit.bit, %q4: 
 
 
 
-  %a1_1 = qubit.alloc
+  %a1_1 = qu.alloc
   qref.gate<#gate.h> %a1_1
   qref.gate<#gate.cx> %a1_1, %q1
   qref.gate<#gate.cz> %a1_1, %q2
@@ -281,7 +281,7 @@ func.func @perfect_code(%q1: !qubit.bit, %q2: !qubit.bit, %q3: !qubit.bit, %q4: 
   qref.gate<#gate.h> %a1_1
   %s1_1 = qref.measure %a1_1
 
-  %a2_1 = qubit.alloc
+  %a2_1 = qu.alloc
   qref.gate<#gate.h> %a2_1
   qref.gate<#gate.cx> %a2_1, %q2
   qref.gate<#gate.cz> %a2_1, %q3
@@ -290,7 +290,7 @@ func.func @perfect_code(%q1: !qubit.bit, %q2: !qubit.bit, %q3: !qubit.bit, %q4: 
   qref.gate<#gate.h> %a2_1
   %s2_1 = qref.measure %a2_1
 
-  %a3_1 = qubit.alloc
+  %a3_1 = qu.alloc
   qref.gate<#gate.h> %a3_1
   qref.gate<#gate.cx> %a3_1, %q1
   qref.gate<#gate.cx> %a3_1, %q3
@@ -299,7 +299,7 @@ func.func @perfect_code(%q1: !qubit.bit, %q2: !qubit.bit, %q3: !qubit.bit, %q4: 
   qref.gate<#gate.h> %a3_1
   %s3_1 = qref.measure %a3_1
 
-  %a4_1 = qubit.alloc
+  %a4_1 = qu.alloc
   qref.gate<#gate.h> %a4_1
   qref.gate<#gate.cz> %a4_1, %q1
   qref.gate<#gate.cx> %a4_1, %q2

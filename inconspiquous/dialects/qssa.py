@@ -20,7 +20,7 @@ from xdsl.traits import HasCanonicalizationPatternsTrait
 from inconspiquous.dialects.gate import GateType
 from inconspiquous.dialects.measurement import CompBasisMeasurementAttr, MeasurementType
 from inconspiquous.gates import GateAttr
-from inconspiquous.dialects.qubit import BitType
+from inconspiquous.dialects.qu import BitType
 from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.measurement import MeasurementAttr
 
