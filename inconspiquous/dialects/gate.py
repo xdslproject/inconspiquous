@@ -45,6 +45,7 @@ from inconspiquous.dialects.angle import AngleAttr, AngleType
 from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
 from inconspiquous.constraints import SizedAttributeConstraint
 
+
 class CliffordGateAttr(GateAttr, ABC):
     """
     Abstract base class for Clifford gates that defines how Pauli operators
@@ -52,7 +53,9 @@ class CliffordGateAttr(GateAttr, ABC):
     """
 
     @abstractmethod
-    def pauli_prop(self, input_index: int, pauli_type: str) -> tuple[tuple[bool, bool], ...]:
+    def pauli_prop(
+        self, input_index: int, pauli_type: str
+    ) -> tuple[tuple[bool, bool], ...]:
         """
         Determines how a Pauli operator propagates through this gate.
 
@@ -62,13 +65,14 @@ class CliffordGateAttr(GateAttr, ABC):
 
         Returns:
             A tuple of tuples. Each inner tuple (bool, bool) represents the
-            (X_component, Z_component) of the Pauli operator on the corresponding 
+            (X_component, Z_component) of the Pauli operator on the corresponding
             output qubit.
 
-            Example: ((True, False), (False, True)) means X on the first output 
+            Example: ((True, False), (False, True)) means X on the first output
             qubit and Z on the second output qubit.
         """
         pass
+
 
 @irdl_attr_definition
 class GateType(ParametrizedAttribute, TypeAttribute):
@@ -145,9 +149,13 @@ class ConstantGateOp(IRDLOperation):
 class HadamardGate(SingleQubitGate, CliffordGateAttr):
     name = "gate.h"
 
-    def pauli_prop(self, input_index: int, pauli_type: str) -> tuple[tuple[bool, bool], ...]:
+    def pauli_prop(
+        self, input_index: int, pauli_type: str
+    ) -> tuple[tuple[bool, bool], ...]:
         if input_index != 0:
-            raise ValueError("HadamardGate is a single-qubit gate, input_index must be 0.")
+            raise ValueError(
+                "HadamardGate is a single-qubit gate, input_index must be 0."
+            )
 
         if pauli_type == "X":
             # X gate transforms to Z: X→H = H→Z
@@ -262,7 +270,9 @@ class DynJGate(IRDLOperation):
 class CXGate(TwoQubitGate, CliffordGateAttr):
     name = "gate.cx"
 
-    def pauli_prop(self, input_index: int, pauli_type: str) -> tuple[tuple[bool, bool], ...]:
+    def pauli_prop(
+        self, input_index: int, pauli_type: str
+    ) -> tuple[tuple[bool, bool], ...]:
         if input_index not in (0, 1):
             raise ValueError("CXGate is a two-qubit gate, input_index must be 0 or 1.")
 
@@ -283,11 +293,14 @@ class CXGate(TwoQubitGate, CliffordGateAttr):
         else:
             raise ValueError(f"pauli_type must be 'X' or 'Z', got {pauli_type}")
 
+
 @irdl_attr_definition
 class CZGate(TwoQubitGate, CliffordGateAttr):
     name = "gate.cz"
 
-    def pauli_prop(self, input_index: int, pauli_type: str) -> tuple[tuple[bool, bool], ...]:
+    def pauli_prop(
+        self, input_index: int, pauli_type: str
+    ) -> tuple[tuple[bool, bool], ...]:
         if input_index not in (0, 1):
             raise ValueError("CZGate is a two-qubit gate, input_index must be 0 or 1.")
 
@@ -307,6 +320,7 @@ class CZGate(TwoQubitGate, CliffordGateAttr):
                 return ((False, False), (False, True))
         else:
             raise ValueError(f"pauli_type must be 'X' or 'Z', got {pauli_type}")
+
 
 @irdl_attr_definition
 class ToffoliGate(GateAttr):
