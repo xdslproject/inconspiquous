@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import ClassVar
+from abc import ABC, abstractmethod
 
 from xdsl.dialects.builtin import (
     IndexType,
@@ -44,6 +45,30 @@ from inconspiquous.dialects.angle import AngleAttr, AngleType
 from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
 from inconspiquous.constraints import SizedAttributeConstraint
 
+class CliffordGateAttr(GateAttr, ABC):
+    """
+    Abstract base class for Clifford gates that defines how Pauli operators
+    propagate through the gate.
+    """
+
+    @abstractmethod
+    def pauli_prop(self, input_index: int, pauli_type: str) -> tuple[tuple[bool, bool], ...]:
+        """
+        Determines how a Pauli operator propagates through this gate.
+
+        Args:
+            input_index: The index of the input qubit where the Pauli gate is applied.
+            pauli_type: Either "X" or "Z", the type of Pauli gate.
+
+        Returns:
+            A tuple of tuples. Each inner tuple (bool, bool) represents the
+            (X_component, Z_component) of the Pauli operator on the corresponding 
+            output qubit.
+
+            Example: ((True, False), (False, True)) means X on the first output 
+            qubit and Z on the second output qubit.
+        """
+        pass
 
 @irdl_attr_definition
 class GateType(ParametrizedAttribute, TypeAttribute):
@@ -117,8 +142,21 @@ class ConstantGateOp(IRDLOperation):
 
 
 @irdl_attr_definition
-class HadamardGate(SingleQubitGate):
+class HadamardGate(SingleQubitGate, CliffordGateAttr):
     name = "gate.h"
+
+    def pauli_prop(self, input_index: int, pauli_type: str) -> tuple[tuple[bool, bool], ...]:
+        if input_index != 0:
+            raise ValueError("HadamardGate is a single-qubit gate, input_index must be 0.")
+
+        if pauli_type == "X":
+            # X gate transforms to Z: X→H = H→Z
+            return ((False, True),)
+        elif pauli_type == "Z":
+            # Z gate transforms to X: Z→H = H→X
+            return ((True, False),)
+        else:
+            raise ValueError(f"pauli_type must be 'X' or 'Z', got {pauli_type}")
 
 
 @irdl_attr_definition
@@ -221,14 +259,54 @@ class DynJGate(IRDLOperation):
 
 
 @irdl_attr_definition
-class CXGate(TwoQubitGate):
+class CXGate(TwoQubitGate, CliffordGateAttr):
     name = "gate.cx"
 
+    def pauli_prop(self, input_index: int, pauli_type: str) -> tuple[tuple[bool, bool], ...]:
+        if input_index not in (0, 1):
+            raise ValueError("CXGate is a two-qubit gate, input_index must be 0 or 1.")
+
+        if pauli_type == "X":
+            if input_index == 0:
+                # X on control propagates to X on both outputs
+                return ((True, False), (True, False))
+            else:  # input_index == 1
+                # X on target propagates to X only on target output
+                return ((False, False), (True, False))
+        elif pauli_type == "Z":
+            if input_index == 0:
+                # Z on control propagates to Z only on control output
+                return ((False, True), (False, False))
+            else:  # input_index == 1
+                # Z on target propagates to Z on both outputs
+                return ((False, True), (False, True))
+        else:
+            raise ValueError(f"pauli_type must be 'X' or 'Z', got {pauli_type}")
 
 @irdl_attr_definition
-class CZGate(TwoQubitGate):
+class CZGate(TwoQubitGate, CliffordGateAttr):
     name = "gate.cz"
 
+    def pauli_prop(self, input_index: int, pauli_type: str) -> tuple[tuple[bool, bool], ...]:
+        if input_index not in (0, 1):
+            raise ValueError("CZGate is a two-qubit gate, input_index must be 0 or 1.")
+
+        if pauli_type == "X":
+            if input_index == 0:
+                # X on first qubit propagates to X on first, Z on second
+                return ((True, False), (False, True))
+            else:  # input_index == 1
+                # X on second qubit propagates to Z on first, X on second
+                return ((False, True), (True, False))
+        elif pauli_type == "Z":
+            if input_index == 0:
+                # Z on first qubit propagates to Z on first only
+                return ((False, True), (False, False))
+            else:  # input_index == 1
+                # Z on second qubit propagates to Z on second only
+                return ((False, False), (False, True))
+        else:
+            raise ValueError(f"pauli_type must be 'X' or 'Z', got {pauli_type}")
 
 @irdl_attr_definition
 class ToffoliGate(GateAttr):
