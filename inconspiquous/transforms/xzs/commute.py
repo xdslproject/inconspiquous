@@ -11,9 +11,6 @@ from xdsl.pattern_rewriter import (
 from inconspiquous.dialects import qssa
 from inconspiquous.dialects.angle import AngleAttr, CondNegateAngleOp, ConstantAngleOp
 from inconspiquous.dialects.gate import (
-    CXGate,
-    CZGate,
-    HadamardGate,
     XZOp,
     CliffordGateAttr,
 )
@@ -25,13 +22,15 @@ from inconspiquous.dialects.measurement import (
 from inconspiquous.transforms.xzs.fusion import FuseXZGatesPattern
 from inconspiquous.utils.linear_walker import LinearWalker
 
+
 def _create_constant_bool(rewriter: PatternRewriter, value: bool) -> arith.ConstantOp:
     """Helper to create an i1 constant (boolean) value."""
     return rewriter.create_op(
-        arith.ConstantOp, 
-        properties={"value": IntegerAttr(1 if value else 0, i1)}, 
-        result_types=[i1]
+        arith.ConstantOp,
+        properties={"value": IntegerAttr(1 if value else 0, i1)},
+        result_types=[i1],
     )
+
 
 class XZCommutePattern(RewritePattern):
     """Commute an XZ gadget past a Hadamard/CX/CZ gate, or MeasureOp."""
@@ -103,7 +102,7 @@ class XZCommutePattern(RewritePattern):
                 qssa.GateOp,
                 properties={"gate": clifford},
                 operands=new_operands,
-                result_types=[out.type for out in op2.outs]
+                result_types=[out.type for out in op2.outs],
             )
             # Get propagation rules for X and Z inputs
             x_prop_rules = clifford.pauli_prop(input_index, "X")
@@ -131,9 +130,7 @@ class XZCommutePattern(RewritePattern):
                     if new_x is not None:
                         # Need to XOR with the existing value
                         new_x_op = rewriter.create_op(
-                            arith.XOrIOp,
-                            operands=[new_x, z_in],
-                            result_types=[i1]
+                            arith.XOrIOp, operands=[new_x, z_in], result_types=[i1]
                         )
                         new_ops.append(new_x_op)
                         new_x = new_x_op.results[0]
@@ -157,9 +154,7 @@ class XZCommutePattern(RewritePattern):
                     if new_z is not None:
                         # Need to XOR with the existing value
                         new_z_op = rewriter.create_op(
-                            arith.XOrIOp,
-                            operands=[new_z, z_in],
-                            result_types=[i1]
+                            arith.XOrIOp, operands=[new_z, z_in], result_types=[i1]
                         )
                         new_ops.append(new_z_op)
                         new_z = new_z_op.results[0]
@@ -174,7 +169,9 @@ class XZCommutePattern(RewritePattern):
                 new_xz_op = rewriter.create_op(
                     XZOp,
                     operands=[new_x, new_z],
-                    result_types=[gate.out.type]  # Same type as the original XZ operation
+                    result_types=[
+                        gate.out.type
+                    ],  # Same type as the original XZ operation
                 )
                 new_ops.append(new_xz_op)
 
@@ -182,7 +179,7 @@ class XZCommutePattern(RewritePattern):
                 new_dyn_gate = rewriter.create_op(
                     qssa.DynGateOp,
                     operands=[new_xz_op.results[0], output_qubit],
-                    result_types=[output_qubit.type]
+                    result_types=[output_qubit.type],
                 )
                 new_ops.append(new_dyn_gate)
                 results.append(new_dyn_gate.results[0])
