@@ -1,5 +1,8 @@
 from __future__ import annotations
 from typing import ClassVar
+from xdsl.ir import Attribute, Dialect, OpResult, SSAValue
+from xdsl.irdl importirdl_attr_definition,irdl_op_definition, ParameterDef, VarOperandDef, builder
+from typing import List, Tuple, Literal
 
 from xdsl.dialects.builtin import (
     IndexType,
@@ -85,6 +88,34 @@ class GateType(ParametrizedAttribute, TypeAttribute):
             ),
         )
 
+@irdl_attr_definition
+class CliffordGateAttr(GateAttr):
+    """
+    Attribute for Clifford gates that defines how Pauli operators propagate through them.
+    """
+    name = "gate.clifford_gate"
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> Tuple[Tuple[bool, bool], ...]:
+        """
+        Define how a Pauli gate propagates through this Clifford gate.
+
+        Args:
+            input_idx: The index of the input qubit that has the Pauli gate.
+            pauli_type: Either "X" or "Z" to indicate which Pauli gate.
+
+        Returns:
+            A tuple of pairs (has_x, has_z) for each output qubit, where:
+              - has_x is True if an X gate should be applied to that output.
+              - has_z is True if a Z gate should be applied to that output.
+        """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} is a Clifford gate "
+            "but does not implement pauli_prop"
+        )
+
+
 
 @irdl_op_definition
 class ConstantGateOp(IRDLOperation):
@@ -117,8 +148,19 @@ class ConstantGateOp(IRDLOperation):
 
 
 @irdl_attr_definition
-class HadamardGate(SingleQubitGate):
+class HadamardGate(CliffordGateAttr):
     name = "gate.h"
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> Tuple[Tuple[bool, bool], ...]:
+        if input_idx != 0:
+            raise ValueError("HadamardGate only has one input qubit.")
+        if pauli_type == "X":
+            return ((False, True),)  # X -> Z
+        if pauli_type == "Z":
+            return ((True, False),)  # Z -> X
+        raise ValueError(f"Unknown Pauli type: {pauli_type}")
+
 
 
 @irdl_attr_definition
@@ -221,13 +263,46 @@ class DynJGate(IRDLOperation):
 
 
 @irdl_attr_definition
-class CXGate(TwoQubitGate):
+class CXGate(CliffordGateAttr):
     name = "gate.cx"
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> Tuple[Tuple[bool, bool], ...]:
+        if input_idx not in (0, 1):
+            raise ValueError("CXGate input_idx must be 0 or 1.")
+        if pauli_type == "X":
+            if input_idx == 0:  # X on control
+                return ((True, False), (True, False))  # X on ctl_out, X on tgt_out
+            # input_idx == 1, X on target
+            return ((False, False), (True, False))  # I on ctl_out, X on tgt_out
+        if pauli_type == "Z":
+            if input_idx == 0:  # Z on control
+                return ((False, True), (False, False))  # Z on ctl_out, I on tgt_out
+            # input_idx == 1, Z on target
+            return ((False, True), (False, True))  # Z on ctl_out, Z on tgt_out
+        raise ValueError(f"Unknown Pauli type: {pauli_type}")
 
 
 @irdl_attr_definition
 class CZGate(TwoQubitGate):
     name = "gate.cz"
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> Tuple[Tuple[bool, bool], ...]:
+        if input_idx not in (0, 1):
+            raise ValueError("CZGate input_idx must be 0 or 1.")
+        if pauli_type == "X":
+            if input_idx == 0:  # X on first qubit
+                return ((True, False), (False, True))  # X on q0_out, Z on q1_out
+            # input_idx == 1, X on second qubit
+            return ((False, True), (True, False))  # Z on q0_out, X on q1_out
+        if pauli_type == "Z":
+            if input_idx == 0:  # Z on first qubit
+                return ((False, True), (False, False))  # Z on q0_out, I on q1_out
+            # input_idx == 1, Z on second qubit
+            return ((False, False), (False, True))  # I on q0_out, Z on q1_out
+        raise ValueError(f"Unknown Pauli type: {pauli_type}")
+
 
 
 @irdl_attr_definition
