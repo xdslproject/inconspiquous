@@ -8,6 +8,7 @@ from xdsl.pattern_rewriter import (
     RewritePattern,
     op_type_rewrite_pattern,
 )
+from xdsl.ir import Operation
 from inconspiquous.dialects import qssa
 from inconspiquous.dialects.angle import AngleAttr, CondNegateAngleOp, ConstantAngleOp
 from inconspiquous.dialects.gate import (
@@ -23,7 +24,7 @@ from inconspiquous.transforms.xzs.fusion import FuseXZGatesPattern
 from inconspiquous.utils.linear_walker import LinearWalker
 
 
-def _create_constant_bool(rewriter: PatternRewriter, value: bool) -> arith.ConstantOp:
+def _create_constant_bool(rewriter: PatternRewriter, value: bool) -> Operation:
     """Helper to create an i1 constant (boolean) value."""
     return rewriter.create_op(
         arith.ConstantOp,
