@@ -5,6 +5,11 @@ from inconspiquous.dialects import qref
 from inconspiquous.dialects import qir
 from inconspiquous.dialects.qref import GateOp, MeasureOp as QrefMeasureOp, DynGateOp
 
+# Define a dedicated QIRModule class
+class QIRModule:
+    def __init__(self, ops):
+        self.ops = ops
+
 # This is a stub. Actual integration with xDSL IR will require more work.
 def convert_qref_to_qir(qref_module):
     """
@@ -23,4 +28,4 @@ def convert_qref_to_qir(qref_module):
             continue  # skip dynamic gates
         # ...add more ops as needed...
     # Return a new qir module
-    return type('QIRModule', (), {'ops': qir_ops})()
+    return QIRModule(qir_ops)
