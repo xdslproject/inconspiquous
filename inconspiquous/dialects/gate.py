@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import ClassVar
+from typing import ClassVar, Literal
 
 from xdsl.dialects.builtin import (
     IndexType,
@@ -120,6 +120,15 @@ class ConstantGateOp(IRDLOperation):
 class HadamardGate(SingleQubitGate):
     name = "gate.h"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((False, True),)
+        else:
+            return ((True, False),)
+
 
 @irdl_attr_definition
 class XGate(SingleQubitGate):
@@ -224,10 +233,53 @@ class DynJGate(IRDLOperation):
 class CXGate(TwoQubitGate):
     name = "gate.cx"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        if pauli_type == "X":
+            if input_idx == 0:
+                return ((True, False), (True, False))
+            else:
+                return (
+                    (False, False),
+                    (True, False),
+                )
+        else:
+            if input_idx == 0:
+                return (
+                    (False, True),
+                    (False, False),
+                )
+            else:
+                return ((False, True), (False, True))
+
 
 @irdl_attr_definition
 class CZGate(TwoQubitGate):
     name = "gate.cz"
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        if pauli_type == "X":
+            if input_idx == 0:
+                return (
+                    (True, False),
+                    (False, True),
+                )
+            else:
+                return (
+                    (False, True),
+                    (True, False),
+                )
+        else:
+            if input_idx == 0:
+                return ((False, True), (False, False))
+            else:
+                return (
+                    (False, False),
+                    (False, True),
+                )
 
 
 @irdl_attr_definition
