@@ -1,21 +1,22 @@
 # Convert qref dialect to qir dialect
 # Only simple gates are converted; qref.dyn_gate is skipped.
 
-from inconspiquous.dialects import qref
-from inconspiquous.dialects import qir
 from inconspiquous.dialects.qref import GateOp, MeasureOp as QrefMeasureOp, DynGateOp
+
 
 # Define a dedicated QIRModule class
 class QIRModule:
     def __init__(self, ops):
         self.ops = ops
 
+
 # This is a stub. Actual integration with xDSL IR will require more work.
 def convert_qref_to_qir(qref_module):
     """
     Convert a qref dialect module to a qir dialect module, skipping dyn_gate ops.
     """
-    from inconspiquous.dialects.qir import HOp, XOp, CNOTOp, MeasureOp as QirMeasureOp
+    from inconspiquous.dialects.qir import HOp, MeasureOp as QirMeasureOp
+
     qir_ops = []
     for op in qref_module.ops:
         if isinstance(op, GateOp):
