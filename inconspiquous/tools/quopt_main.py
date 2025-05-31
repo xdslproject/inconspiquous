@@ -14,6 +14,13 @@ class QuoptMain(xDSLOptMain):
 
     def register_all_targets(self):
         super().register_all_targets()
+        try:
+            from inconspiquous.backend.qir import print_qir
+
+            self.available_targets["qir"] = print_qir
+        except ImportError:
+            # PyQIR not available
+            pass
 
 
 def main():
