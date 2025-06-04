@@ -10,32 +10,34 @@ class BitType(Attribute):
     name = "oq3.bit"
 
 # oq3.gate operation: takes a qubit, returns a qubit
+# NOTE: The following `# type: ignore` comments are required because pyright cannot analyze xDSL's metaclass magic for Operand/result_def fields.
+# These are not real runtime errors and are safe in xDSL dialect definitions.
 @irdl_op_definition
 class Gate(IRDLOperation):
     name = "oq3.gate"
-    qubit = Operand(QubitType())
-    result = result_def(QubitType())
+    qubit = Operand(QubitType())  # type: ignore
+    result = result_def(QubitType())  # type: ignore
 
 # oq3.measure operation: takes a qubit, returns a bit
 @irdl_op_definition
 class Measure(IRDLOperation):
     name = "oq3.measure"
-    qubit = Operand(QubitType())
-    result = result_def(BitType())
+    qubit = Operand(QubitType())  # type: ignore
+    result = result_def(BitType())  # type: ignore
 
 # oq3.reset operation: takes a qubit, returns a qubit (reset to |0>)
 @irdl_op_definition
 class Reset(IRDLOperation):
     name = "oq3.reset"
-    qubit = Operand(QubitType())
-    result = result_def(QubitType())
+    qubit = Operand(QubitType())  # type: ignore
+    result = result_def(QubitType())  # type: ignore
 
 # oq3.barrier operation: takes a qubit, returns a qubit (barrier for scheduling)
 @irdl_op_definition
 class Barrier(IRDLOperation):
     name = "oq3.barrier"
-    qubit = Operand(QubitType())
-    result = result_def(QubitType())
+    qubit = Operand(QubitType())  # type: ignore
+    result = result_def(QubitType())  # type: ignore
 
 # Example attribute: classical condition for conditional gate
 class ConditionAttr(Attribute):
@@ -46,9 +48,9 @@ class ConditionAttr(Attribute):
 @irdl_op_definition
 class CondGate(IRDLOperation):
     name = "oq3.cond_gate"
-    bit = Operand(BitType())
-    qubit = Operand(QubitType())
-    result = result_def(QubitType())
+    bit = Operand(BitType())  # type: ignore
+    qubit = Operand(QubitType())  # type: ignore
+    result = result_def(QubitType())  # type: ignore
     # cond attribute logic to be implemented if needed
 
 class OQ3Dialect(Dialect):
