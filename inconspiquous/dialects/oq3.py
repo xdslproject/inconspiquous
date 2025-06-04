@@ -40,7 +40,7 @@ class Barrier(Operation):
 # Example attribute: classical condition for conditional gate
 class ConditionAttr(Attribute):
     name = "oq3.condition"
-    # In thực tế, cần thêm logic lưu trữ bit/classical value
+    # In practice, logic to store bit/classical value needs to be added
 
 # oq3.cond_gate operation: conditional gate (if bit==1 then apply gate)
 @irdl_op_definition
