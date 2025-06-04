@@ -1,6 +1,6 @@
-# oq3.py - Skeleton for OQ3 dialect (ported from TableGen)
-from xdsl.ir import Dialect, Operation, Attribute
-from xdsl.irdl import irdl_op_definition, Operand, result_def
+from typing import Iterator
+from xdsl.ir import Dialect, Attribute
+from xdsl.irdl import irdl_op_definition, IRDLOperation, Operand, result_def
 
 # Define oq3.qubit and oq3.bit types
 class QubitType(Attribute):
@@ -11,28 +11,28 @@ class BitType(Attribute):
 
 # oq3.gate operation: takes a qubit, returns a qubit
 @irdl_op_definition
-class Gate(Operation):
+class Gate(IRDLOperation):
     name = "oq3.gate"
     qubit = Operand(QubitType)
     result = result_def(QubitType)
 
 # oq3.measure operation: takes a qubit, returns a bit
 @irdl_op_definition
-class Measure(Operation):
+class Measure(IRDLOperation):
     name = "oq3.measure"
     qubit = Operand(QubitType)
     result = result_def(BitType)
 
 # oq3.reset operation: takes a qubit, returns a qubit (reset to |0>)
 @irdl_op_definition
-class Reset(Operation):
+class Reset(IRDLOperation):
     name = "oq3.reset"
     qubit = Operand(QubitType)
     result = result_def(QubitType)
 
 # oq3.barrier operation: takes a qubit, returns a qubit (barrier for scheduling)
 @irdl_op_definition
-class Barrier(Operation):
+class Barrier(IRDLOperation):
     name = "oq3.barrier"
     qubit = Operand(QubitType)
     result = result_def(QubitType)
@@ -44,7 +44,7 @@ class ConditionAttr(Attribute):
 
 # oq3.cond_gate operation: conditional gate (if bit==1 then apply gate)
 @irdl_op_definition
-class CondGate(Operation):
+class CondGate(IRDLOperation):
     name = "oq3.cond_gate"
     bit = Operand(BitType)
     qubit = Operand(QubitType)
@@ -53,18 +53,18 @@ class CondGate(Operation):
 
 class OQ3Dialect(Dialect):
     @property
-    def name(self):
+    def name(self) -> str:
         return "oq3"
 
     @property
-    def operations(self):
-        return [Gate, Measure, Reset, Barrier, CondGate]
+    def operations(self) -> Iterator[type[IRDLOperation]]:
+        return iter([Gate, Measure, Reset, Barrier, CondGate])
 
     @property
-    def types(self):
-        return [QubitType, BitType]
+    def types(self) -> Iterator[type[Attribute]]:
+        return iter([QubitType, BitType])
 
     @property
-    def attributes(self):
-        return [ConditionAttr]
+    def attributes(self) -> Iterator[type[Attribute]]:
+        return iter([ConditionAttr])
     # Register the dialect if needed

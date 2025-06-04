@@ -1,6 +1,7 @@
 # quir.py - Skeleton for QUIR dialect (ported from TableGen)
-from xdsl.ir import Dialect, Operation, Attribute
-from xdsl.irdl import irdl_op_definition, Operand, result_def
+from typing import Iterator
+from xdsl.ir import Dialect, Attribute
+from xdsl.irdl import irdl_op_definition, IRDLOperation, Operand, result_def
 
 class QubitType(Attribute):
     name = "quir.qubit"
@@ -9,29 +10,29 @@ class BitType(Attribute):
     name = "quir.bit"
 
 @irdl_op_definition
-class AllocateQubit(Operation):
+class AllocateQubit(IRDLOperation):
     name = "quir.alloc_qubit"
     result = result_def(QubitType)
 
 @irdl_op_definition
-class Measure(Operation):
+class Measure(IRDLOperation):
     name = "quir.measure"
     qubit = Operand(QubitType)
     result = result_def(BitType)
 
 class QUIRDialect(Dialect):
     @property
-    def name(self):
+    def name(self) -> str:
         return "quir"
 
     @property
-    def operations(self):
-        return [AllocateQubit, Measure]
+    def operations(self) -> Iterator[type[IRDLOperation]]:
+        return iter([AllocateQubit, Measure])
 
     @property
-    def types(self):
-        return [QubitType, BitType]
+    def types(self) -> Iterator[type[Attribute]]:
+        return iter([QubitType, BitType])
 
     @property
-    def attributes(self):
-        return []
+    def attributes(self) -> Iterator[type[Attribute]]:
+        return iter([])
