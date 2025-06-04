@@ -13,29 +13,29 @@ class BitType(Attribute):
 @irdl_op_definition
 class Gate(IRDLOperation):
     name = "oq3.gate"
-    qubit = Operand(QubitType)
-    result = result_def(QubitType)
+    qubit = Operand(QubitType())
+    result = result_def(QubitType())
 
 # oq3.measure operation: takes a qubit, returns a bit
 @irdl_op_definition
 class Measure(IRDLOperation):
     name = "oq3.measure"
-    qubit = Operand(QubitType)
-    result = result_def(BitType)
+    qubit = Operand(QubitType())
+    result = result_def(BitType())
 
 # oq3.reset operation: takes a qubit, returns a qubit (reset to |0>)
 @irdl_op_definition
 class Reset(IRDLOperation):
     name = "oq3.reset"
-    qubit = Operand(QubitType)
-    result = result_def(QubitType)
+    qubit = Operand(QubitType())
+    result = result_def(QubitType())
 
 # oq3.barrier operation: takes a qubit, returns a qubit (barrier for scheduling)
 @irdl_op_definition
 class Barrier(IRDLOperation):
     name = "oq3.barrier"
-    qubit = Operand(QubitType)
-    result = result_def(QubitType)
+    qubit = Operand(QubitType())
+    result = result_def(QubitType())
 
 # Example attribute: classical condition for conditional gate
 class ConditionAttr(Attribute):
@@ -46,9 +46,9 @@ class ConditionAttr(Attribute):
 @irdl_op_definition
 class CondGate(IRDLOperation):
     name = "oq3.cond_gate"
-    bit = Operand(BitType)
-    qubit = Operand(QubitType)
-    result = result_def(QubitType)
+    bit = Operand(BitType())
+    qubit = Operand(QubitType())
+    result = result_def(QubitType())
     # cond attribute logic to be implemented if needed
 
 class OQ3Dialect(Dialect):

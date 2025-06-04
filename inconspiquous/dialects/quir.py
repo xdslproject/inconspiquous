@@ -12,13 +12,13 @@ class BitType(Attribute):
 @irdl_op_definition
 class AllocateQubit(IRDLOperation):
     name = "quir.alloc_qubit"
-    result = result_def(QubitType)
+    result = result_def(QubitType())
 
 @irdl_op_definition
 class Measure(IRDLOperation):
     name = "quir.measure"
-    qubit = Operand(QubitType)
-    result = result_def(BitType)
+    qubit = Operand(QubitType())
+    result = result_def(BitType())
 
 class QUIRDialect(Dialect):
     @property
