@@ -1,5 +1,5 @@
 # oq3.py - Skeleton for OQ3 dialect (ported from TableGen)
-from xdsl.dialects.builtin import Dialect, Operation, Attribute
+from xdsl.ir import Dialect, Operation, Attribute
 from xdsl.irdl import irdl_op_definition, Operand, result_def
 
 # Define oq3.qubit and oq3.bit types
@@ -49,11 +49,22 @@ class CondGate(Operation):
     bit = Operand(BitType)
     qubit = Operand(QubitType)
     result = result_def(QubitType)
-    cond = Attribute(ConditionAttr)  # Define 'cond' as an attribute for the condition
+    # cond attribute logic to be implemented if needed
 
 class OQ3Dialect(Dialect):
-    name = "oq3"
-    operations = [Gate, Measure, Reset, Barrier, CondGate]
-    types = [QubitType, BitType]
-    attributes = [ConditionAttr]
+    @property
+    def name(self):
+        return "oq3"
+
+    @property
+    def operations(self):
+        return [Gate, Measure, Reset, Barrier, CondGate]
+
+    @property
+    def types(self):
+        return [QubitType, BitType]
+
+    @property
+    def attributes(self):
+        return [ConditionAttr]
     # Register the dialect if needed
