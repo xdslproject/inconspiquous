@@ -49,7 +49,7 @@ class CondGate(Operation):
     bit = Operand(BitType)
     qubit = Operand(QubitType)
     result = result_def(QubitType)
-    cond = result_def(ConditionAttr)  # Placeholder for condition attribute
+    cond = Attribute(ConditionAttr)  # Define 'cond' as an attribute for the condition
 
 class OQ3Dialect(Dialect):
     name = "oq3"
