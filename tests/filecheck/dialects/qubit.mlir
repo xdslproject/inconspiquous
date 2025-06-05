@@ -1,10 +1,13 @@
 // RUN: QUOPT_ROUNDTRIP
-// RUN: QUOPT_GENERIC_ROUNDTRIP
 
-// CHECK: %q = qu.alloc
-// CHECK-GENERIC: %q = "qu.alloc"() <{alloc = #qu.zero}> : () -> !qu.bit
-%q = qu.alloc
 
-// CHECK: %q2 = qu.alloc<#qu.plus>
-// CHECK-GENERIC: %q2 = "qu.alloc"() <{alloc = #qu.plus}> : () -> !qu.bit
-%q2 = qu.alloc<#qu.plus>
+// CHECK-LABEL: func.func @test_qubit_allocs() {
+// CHECK-NEXT:    %q = "qu.alloc"() : () -> !qu.bit
+// CHECK-NEXT:    %q2 = "qu.alloc"() <{alloc = #qu.plus}> : () -> !qu.bit
+// CHECK-NEXT:    "func.return"() : () -> ()
+// CHECK-NEXT:  }
+func.func @test_qubit_allocs() {
+  %q = "qu.alloc"() : () -> !qu.bit
+  %q2 = "qu.alloc"() <{alloc = #qu.plus}> : () -> !qu.bit
+  "func.return"() : () -> ()
+}

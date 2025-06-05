@@ -1,15 +1,21 @@
 from typing import ClassVar
+
+from xdsl.dialects.builtin import IntegerAttr
 from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute
 from xdsl.irdl import (
     AnyInt,
     IRDLOperation,
     IntVarConstraint,
+    ParameterDef,
     RangeOf,
+    eq,
     irdl_attr_definition,
     irdl_op_definition,
+    operand_def,
     prop_def,
+    result_def,
+    var_operand_def,
     var_result_def,
-    eq,
 )
 
 from inconspiquous.alloc import AllocAttr
@@ -23,6 +29,16 @@ class BitType(ParametrizedAttribute, TypeAttribute):
     """
 
     name = "qu.bit"
+
+
+@irdl_attr_definition
+class QReg(ParametrizedAttribute, TypeAttribute):
+    """
+    Type for a register of qubits of a static size.
+    """
+
+    name = "qu.reg"
+    size: ParameterDef[IntegerAttr]
 
 
 @irdl_attr_definition
@@ -52,6 +68,37 @@ class AllocPlusAttr(AllocAttr):
 
 
 @irdl_op_definition
+class FromBitsOp(IRDLOperation):
+    name = "qu.from_bits"
+    qubits = var_operand_def(BitType)
+    reg = result_def(QReg)
+
+
+@irdl_op_definition
+class ToBitsOp(IRDLOperation):
+    name = "qu.to_bits"
+    reg = operand_def(QReg)
+    qubits = var_result_def(BitType)
+
+
+@irdl_op_definition
+class CombineOp(IRDLOperation):
+    name = "qu.combine"
+    reg1 = operand_def(QReg)
+    reg2 = operand_def(QReg)
+    res = result_def(QReg)
+
+
+@irdl_op_definition
+class SplitOp(IRDLOperation):
+    name = "qu.split"
+    reg = operand_def(QReg)
+    split_index = prop_def(IntegerAttr)
+    res1 = result_def(QReg)
+    res2 = result_def(QReg)
+
+
+@irdl_op_definition
 class AllocOp(IRDLOperation):
     name = "qu.alloc"
 
@@ -78,6 +125,15 @@ Qu = Dialect(
     "qu",
     [
         AllocOp,
+        FromBitsOp,
+        ToBitsOp,
+        CombineOp,
+        SplitOp,
     ],
-    [BitType, AllocZeroAttr, AllocPlusAttr],
+    [
+        BitType,
+        AllocZeroAttr,
+        AllocPlusAttr,
+        QReg,
+    ],
 )
