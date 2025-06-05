@@ -5,7 +5,7 @@ from xdsl.irdl import (
     operand_def,
     result_def,
 )
-from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute
+from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute, SSAValue, Operation
 
 # Qubit type for QIR
 define_qir_type = True
@@ -27,8 +27,8 @@ class HOp(IRDLOperation):
     name = "qir.h"
     qubit = operand_def(QubitType)
 
-    def __init__(self, qubit):
-        super().__init__(operands=(qubit,))
+    def __init__(self, qubit: SSAValue | Operation | None):
+        super().__init__(operands=[qubit])
 
 
 @irdl_op_definition
@@ -36,8 +36,8 @@ class XOp(IRDLOperation):
     name = "qir.x"
     qubit = operand_def(QubitType)
 
-    def __init__(self, qubit):
-        super().__init__(operands=(qubit,))
+    def __init__(self, qubit: SSAValue | Operation | None):
+        super().__init__(operands=[qubit])
 
 
 @irdl_op_definition
@@ -46,8 +46,8 @@ class CNOTOp(IRDLOperation):
     control = operand_def(QubitType)
     target = operand_def(QubitType)
 
-    def __init__(self, control, target):
-        super().__init__(operands=(control, target))
+    def __init__(self, control: SSAValue | Operation | None, target: SSAValue | Operation | None):
+        super().__init__(operands=[control, target])
 
 
 @irdl_op_definition
@@ -56,8 +56,8 @@ class MeasureOp(IRDLOperation):
     qubit = operand_def(QubitType)
     result = result_def(ResultType)
 
-    def __init__(self, qubit):
-        super().__init__(operands=(qubit,), result_types=(ResultType(),))
+    def __init__(self, qubit: SSAValue | Operation | None):
+        super().__init__(operands=[qubit], result_types=[ResultType()])
 
 
 QIR = Dialect(

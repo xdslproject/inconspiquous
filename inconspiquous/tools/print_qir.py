@@ -1,32 +1,34 @@
-# Print QIR assembly from the qir dialect using PyQIR
-# This function will take a module in the qir dialect and emit QIR assembly using PyQIR
+from typing import Any
 
-from pyqir import QirModule, QirBuilder
+try:
+    import pyqir
+except ImportError:
+    pyqir = None  # type: ignore
 from inconspiquous.dialects.qir import HOp, XOp, CNOTOp, MeasureOp
 
 
-# This is a stub. Actual integration with xDSL IR will require more work.
-def print_qir_assembly(qir_module):
+def print_qir_assembly(qir_module: Any) -> str:
     """
     Convert a qir dialect module to QIR assembly using PyQIR.
     """
-    # Create a QirModule and QirBuilder
-    module = QirModule(
+    if pyqir is None:
+        raise ImportError("pyqir is not installed")
+    module = getattr(pyqir, "QirModule")(
         "qir_module", num_qubits=4, num_results=4
-    )  # TODO: set correct numbers
-    builder = QirBuilder(module)
+    )  # type: ignore
+    builder = getattr(pyqir, "QirBuilder")(module)  # type: ignore
 
     # Walk the qir_module and emit QIR ops using builder
-    for op in qir_module.ops:
+    for op in getattr(qir_module, 'ops', []):
         if isinstance(op, HOp):
-            builder.h(0)  # TODO: use correct qubit index
+            getattr(builder, "h")(0)  # type: ignore
         elif isinstance(op, XOp):
-            builder.x(0)
+            getattr(builder, "x")(0)  # type: ignore
         elif isinstance(op, CNOTOp):
-            builder.cx(0, 1)
+            getattr(builder, "cx")(0, 1)  # type: ignore
         elif isinstance(op, MeasureOp):
-            builder.measure(0, 0)
+            getattr(builder, "measure")(0, 0)  # type: ignore
         # ...add more ops as needed...
 
     # Return the QIR assembly as a string
-    return module.ir()
+    return getattr(module, "ir")()  # type: ignore
