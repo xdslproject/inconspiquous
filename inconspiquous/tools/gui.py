@@ -5,7 +5,7 @@ from inconspiquous.dialects import get_all_dialects
 from inconspiquous.transforms import get_all_passes
 
 
-def main():
+def main() -> int:
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument(
         "input_file", type=str, nargs="?", help="path to input file"
@@ -34,12 +34,19 @@ def main():
     # pass_list = get_all_passes()
     # pipeline = tuple(PipelinePass.build_pipeline_tuples(pass_list, pass_spec_pipeline))
 
-    return InputApp(
+    app = InputApp(
         tuple(get_all_dialects().items()),
         tuple((p_name, p()) for p_name, p in sorted(get_all_passes().items())),
         file_path,
         file_contents,
-    ).run()
+    )
+    result: int = 0
+    run_method = getattr(app, 'run', None)
+    if callable(run_method):
+        maybe_result = run_method()
+        if isinstance(maybe_result, int):
+            result = maybe_result
+    return result
 
 
 if __name__ == "__main__":
