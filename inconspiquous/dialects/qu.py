@@ -1,13 +1,32 @@
 from typing import ClassVar
 
 from xdsl.dialects.builtin import IntAttr, IntAttrConstraint
-from xdsl.ir import (Dialect, ParametrizedAttribute, TypeAttribute, SSAValue,
-                   OpResult, Attribute)
+from xdsl.ir import (
+    Dialect,
+    ParametrizedAttribute,
+    TypeAttribute,
+    SSAValue,
+    OpResult,
+    Attribute,
+)
 from xdsl.irdl import (
-    AnyInt, IRDLOperation, IntVarConstraint, ParamAttrConstraint, RangeOf, eq,
-    irdl_attr_definition, irdl_op_definition, operand_def, prop_def,
-    result_def, var_operand_def, var_result_def, ParameterDef, Operand,
-    VarOperand, VarOpResult)
+    AnyInt,
+    IRDLOperation,
+    IntVarConstraint,
+    ParamAttrConstraint,
+    RangeOf,
+    eq,
+    irdl_attr_definition,
+    irdl_op_definition,
+    operand_def,
+    prop_def,
+    result_def,
+    var_operand_def,
+    var_result_def,
+    ParameterDef,
+    Operand,
+    VarOpResult,
+)
 from xdsl.utils.exceptions import VerifyException
 from xdsl.parser import AttrParser
 from xdsl.printer import Printer
@@ -18,13 +37,19 @@ from inconspiquous.constraints import SizedAttributeConstraint
 
 @irdl_attr_definition
 class BitType(ParametrizedAttribute, TypeAttribute):
-    """Type for a single qubit."""
+    """
+    Type for a single qubit
+    """
+
+
     name = "qu.bit"
 
 
 @irdl_attr_definition
 class RegisterType(ParametrizedAttribute, TypeAttribute):
-    """Type for a register of qubits of a static size."""
+    """
+    Allocate a qubit in the zero computational basis state
+    """
     name = "qu.reg"
     size: ParameterDef[IntAttr]
 
@@ -36,7 +61,6 @@ class RegisterType(ParametrizedAttribute, TypeAttribute):
         printer.print_string("<")
         printer.print_string(str(self.size.data))
         printer.print_string(">")
-
 
     @classmethod
     def parse_parameters(cls, parser: AttrParser) -> list[Attribute]:
@@ -50,17 +74,42 @@ class RegisterType(ParametrizedAttribute, TypeAttribute):
 class AllocZeroAttr(AllocAttr):
     """Allocate a qubit in the zero computational basis state."""
     name = "qu.zero"
+
     @property
-    def num_qubits(self) -> int: return 1
+    def num_qubits(self) -> int:
+        return 1
 
 
 @irdl_attr_definition
 class AllocPlusAttr(AllocAttr):
-    """Allocate a qubit in the plus state."""
+    """
+    Allocate a qubit in the plus state.
+    """
     name = "qu.plus"
-    @property
-    def num_qubits(self) -> int: return 1
 
+    @property
+    def num_qubits(self) -> int:
+        return 1
+
+@irdl_op_definition
+class AllocOp(IRDLOperation):
+    """Allocate a number of qubits, with an optional initial state."""
+    name = "qu.alloc"
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
+    alloc = prop_def(
+        SizedAttributeConstraint(AllocAttr, _I), default_value=AllocZeroAttr()
+    )
+    outs = var_result_def(RangeOf(eq(BitType()), length=_I))
+
+    assembly_format = "(`` `<` $alloc^ `>`)? attr-dict"
+
+    def __init__(self, alloc: AllocAttr = AllocZeroAttr()):
+        super().__init__(
+            properties={
+                "alloc": alloc,
+            },
+            result_types=((BitType(),) * alloc.num_qubits,),
+        )
 
 @irdl_op_definition
 class FromBitsOp(IRDLOperation):
@@ -68,12 +117,14 @@ class FromBitsOp(IRDLOperation):
     name = "qu.from_bits"
     _I: ClassVar = IntVarConstraint("I", AnyInt())
     qubits = var_operand_def(RangeOf(eq(BitType()), length=_I))
-    reg: OpResult = result_def(RegisterType.constr(_I))
+    reg = result_def(RegisterType.constr(_I))
 
     assembly_format = "$qubits attr-dict `:` type($reg)"
 
     def __init__(self, qubits: list[SSAValue]):
-        super().__init__(operands=[qubits], result_types=[RegisterType([IntAttr(len(qubits))])])
+        super().__init__(
+            operands=[qubits], result_types=[RegisterType([IntAttr(len(qubits))])]
+        )
 
 
 @irdl_op_definition
@@ -81,50 +132,56 @@ class ToBitsOp(IRDLOperation):
     """Converts a register to individual qubit typed SSA values."""
     name = "qu.to_bits"
     _I: ClassVar = IntVarConstraint("I", AnyInt())
-    reg: Operand = operand_def(RegisterType.constr(_I))
-    qubits: VarOpResult = var_result_def(RangeOf(eq(BitType()), length=_I))
+    reg = operand_def(RegisterType.constr(_I))
+    qubits = var_result_def(RangeOf(eq(BitType()), length=_I))
 
     assembly_format = "$reg attr-dict `:` type($reg)"
 
     def __init__(self, reg: SSAValue[RegisterType]):
         reg_type = reg.type
-        if not isinstance(reg_type, RegisterType): raise TypeError("Input must be RegisterType")
-        super().__init__(operands=[reg], result_types=[[BitType()] * reg_type.size.data])
+        super().__init__(
+            operands=[reg], result_types=[[BitType()] * reg_type.size.data]
+        )
 
 
 @irdl_op_definition
 class CombineOp(IRDLOperation):
     """Concatenates two registers."""
     name = "qu.combine"
-    reg1: Operand = operand_def(RegisterType)
-    reg2: Operand = operand_def(RegisterType)
-    res: OpResult = result_def(RegisterType)
+    reg1 = operand_def(RegisterType)
+    reg2 = operand_def(RegisterType)
+    res = result_def(RegisterType)
 
-    assembly_format = "$reg1 `,` $reg2 attr-dict `:` type($reg1) `,` type($reg2) `->` type($res)"
+    assembly_format = (
+        "$reg1 `,` $reg2 attr-dict `:` type($reg1) `,` type($reg2) `->` type($res)"
+    )
 
     def __init__(self, reg1: SSAValue, reg2: SSAValue):
         t1, t2 = reg1.type, reg2.type
         if not isinstance(t1, RegisterType) or not isinstance(t2, RegisterType):
             raise TypeError("Inputs must be RegisterType")
         res_size = t1.size.data + t2.size.data
-        super().__init__(operands=[reg1, reg2], result_types=[RegisterType([IntAttr(res_size)])])
+        super().__init__(
+            operands=[reg1, reg2], result_types=[RegisterType([IntAttr(res_size)])]
+        )
 
     def verify_(self):
-        # THIS IS THE FIX: self.res.type
         t1, t2, res_type = self.reg1.type, self.reg2.type, self.res.type
         if not all(isinstance(t, RegisterType) for t in (t1, t2, res_type)):
             return
         if t1.size.data + t2.size.data != res_type.size.data:
-            raise VerifyException("Result register size must equal the sum of input register sizes.")
+            raise VerifyException(
+                "Result register size must equal the sum of input register sizes."
+            )
 
 
 @irdl_op_definition
 class SplitOp(IRDLOperation):
     """Splits a register into two parts."""
     name = "qu.split"
-    reg: Operand = operand_def(RegisterType)
-    res1: OpResult = result_def(RegisterType)
-    res2: OpResult = result_def(RegisterType)
+    reg = operand_def(RegisterType)
+    res1 = result_def(RegisterType)
+    res2 = result_def(RegisterType)
 
     assembly_format = "$reg attr-dict `:` type($reg) `->` type($res1) `,` type($res2)"
 
@@ -133,7 +190,11 @@ class SplitOp(IRDLOperation):
 
     def verify_(self):
         reg_type, res1_type, res2_type = self.reg.type, self.res1.type, self.res2.type
-        if not all(isinstance(t, RegisterType) for t in (reg_type, res1_type, res2_type)):
+        if not (
+            isinstance(reg_type, RegisterType)
+            and isinstance(res1_type, RegisterType)
+            and isinstance(res2_type, RegisterType)
+        ):
             return
         if reg_type.size.data != res1_type.size.data + res2_type.size.data:
             raise VerifyException(
@@ -141,22 +202,20 @@ class SplitOp(IRDLOperation):
             )
 
 
-@irdl_op_definition
-class AllocOp(IRDLOperation):
-    """Allocate a number of qubits, with an optional initial state."""
-    name = "qu.alloc"
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
-    alloc = prop_def(SizedAttributeConstraint(AllocAttr, _I), default_value=AllocZeroAttr())
-    outs: VarOpResult = var_result_def(RangeOf(eq(BitType()), length=_I))
-
-    assembly_format = "(`` `<` $alloc^ `>`)? attr-dict"
-    
-    def __init__(self, alloc: AllocAttr = AllocZeroAttr()):
-        super().__init__(properties={"alloc": alloc}, result_types=((BitType(),) * alloc.num_qubits,))
-
 
 Qu = Dialect(
     "qu",
-    [AllocOp, FromBitsOp, ToBitsOp, CombineOp, SplitOp],
-    [BitType, RegisterType, AllocZeroAttr, AllocPlusAttr],
+    [
+    AllocOp,
+    FromBitsOp,
+    ToBitsOp,
+    CombineOp,
+    SplitOp
+    ],
+    [
+    BitType,
+    RegisterType,
+    AllocZeroAttr,
+    AllocPlusAttr
+    ],
 )
