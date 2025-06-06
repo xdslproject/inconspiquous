@@ -95,6 +95,7 @@ class AllocPlusAttr(AllocAttr):
 @irdl_op_definition
 class AllocOp(IRDLOperation):
     name = "qu.alloc"
+
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
     alloc = prop_def(
