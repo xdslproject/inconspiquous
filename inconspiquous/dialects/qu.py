@@ -67,7 +67,7 @@ class FromBitsOp(IRDLOperation):
     """Converts a collection of input qubits to a register."""
     name = "qu.from_bits"
     _I: ClassVar = IntVarConstraint("I", AnyInt())
-    qubits: VarOperand = var_operand_def(RangeOf(eq(BitType()), length=_I))
+    qubits = var_operand_def(RangeOf(eq(BitType()), length=_I))
     reg: OpResult = result_def(RegisterType.constr(_I))
 
     assembly_format = "$qubits attr-dict `:` type($reg)"
