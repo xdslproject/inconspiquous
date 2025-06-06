@@ -204,7 +204,6 @@ class SplitOp(IRDLOperation):
         assert isinstance(res1_type, RegisterType)
         assert isinstance(res2_type, RegisterType)
 
-
         if reg_type.size.data != res1_type.size.data + res2_type.size.data:
             raise VerifyException(
                 "Input register size must equal the sum of result register sizes."
