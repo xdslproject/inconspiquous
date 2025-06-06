@@ -41,7 +41,6 @@ class BitType(ParametrizedAttribute, TypeAttribute):
     Type for a single qubit
     """
 
-
     name = "qu.bit"
 
 
@@ -50,6 +49,7 @@ class RegisterType(ParametrizedAttribute, TypeAttribute):
     """
     Allocate a qubit in the zero computational basis state
     """
+
     name = "qu.reg"
     size: ParameterDef[IntAttr]
 
@@ -73,6 +73,7 @@ class RegisterType(ParametrizedAttribute, TypeAttribute):
 @irdl_attr_definition
 class AllocZeroAttr(AllocAttr):
     """Allocate a qubit in the zero computational basis state."""
+
     name = "qu.zero"
 
     @property
@@ -85,15 +86,18 @@ class AllocPlusAttr(AllocAttr):
     """
     Allocate a qubit in the plus state.
     """
+
     name = "qu.plus"
 
     @property
     def num_qubits(self) -> int:
         return 1
 
+
 @irdl_op_definition
 class AllocOp(IRDLOperation):
     """Allocate a number of qubits, with an optional initial state."""
+
     name = "qu.alloc"
     _I: ClassVar = IntVarConstraint("I", AnyInt())
     alloc = prop_def(
@@ -111,9 +115,11 @@ class AllocOp(IRDLOperation):
             result_types=((BitType(),) * alloc.num_qubits,),
         )
 
+
 @irdl_op_definition
 class FromBitsOp(IRDLOperation):
     """Converts a collection of input qubits to a register."""
+
     name = "qu.from_bits"
     _I: ClassVar = IntVarConstraint("I", AnyInt())
     qubits = var_operand_def(RangeOf(eq(BitType()), length=_I))
@@ -130,6 +136,7 @@ class FromBitsOp(IRDLOperation):
 @irdl_op_definition
 class ToBitsOp(IRDLOperation):
     """Converts a register to individual qubit typed SSA values."""
+
     name = "qu.to_bits"
     _I: ClassVar = IntVarConstraint("I", AnyInt())
     reg = operand_def(RegisterType.constr(_I))
@@ -147,6 +154,7 @@ class ToBitsOp(IRDLOperation):
 @irdl_op_definition
 class CombineOp(IRDLOperation):
     """Concatenates two registers."""
+
     name = "qu.combine"
     reg1 = operand_def(RegisterType)
     reg2 = operand_def(RegisterType)
@@ -178,6 +186,7 @@ class CombineOp(IRDLOperation):
 @irdl_op_definition
 class SplitOp(IRDLOperation):
     """Splits a register into two parts."""
+
     name = "qu.split"
     reg = operand_def(RegisterType)
     res1 = result_def(RegisterType)
@@ -202,20 +211,8 @@ class SplitOp(IRDLOperation):
             )
 
 
-
 Qu = Dialect(
     "qu",
-    [
-    AllocOp,
-    FromBitsOp,
-    ToBitsOp,
-    CombineOp,
-    SplitOp
-    ],
-    [
-    BitType,
-    RegisterType,
-    AllocZeroAttr,
-    AllocPlusAttr
-    ],
+    [AllocOp, FromBitsOp, ToBitsOp, CombineOp, SplitOp],
+    [BitType, RegisterType, AllocZeroAttr, AllocPlusAttr],
 )
