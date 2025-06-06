@@ -106,6 +106,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return commute.XZCommute
 
+    def get_convert_qref_to_qir():
+        from inconspiquous.transforms import convert_qref_to_qir
+
+        return convert_qref_to_qir.ConvertQrefToQir
+
     def get_xzs_fusion():
         from inconspiquous.transforms.xzs import fusion
 
@@ -130,6 +135,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "convert-to-cz-j": get_convert_to_cz_j,
         "convert-to-mbqc": get_convert_to_mbqc,
         "convert-to-xzs": get_convert_to_xzs,
+        "convert-qref-to-qir": get_convert_qref_to_qir,
         "cse": get_cse,
         "dce": get_dce,
         "flip-coins": get_flip_coins,
