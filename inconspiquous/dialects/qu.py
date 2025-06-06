@@ -56,7 +56,7 @@ class AllocZeroAttr(AllocAttr):
 
 @irdl_attr_definition
 class RegisterType(ParametrizedAttribute, TypeAttribute):
-    """Type for a register of qubits, represented as a list of IntAttr."""
+    """Type for a register of qubits of a static size."""
 
     name = "qu.reg"
     size: ParameterDef[IntAttr]
