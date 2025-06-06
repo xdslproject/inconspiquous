@@ -42,10 +42,21 @@ class BitType(ParametrizedAttribute, TypeAttribute):
 
 
 @irdl_attr_definition
-class RegisterType(ParametrizedAttribute, TypeAttribute):
+class AllocZeroAttr(AllocAttr):
     """
     Allocate a qubit in the zero computational basis state
     """
+
+    name = "qu.zero"
+
+    @property
+    def num_qubits(self) -> int:
+        return 1
+
+
+@irdl_attr_definition
+class RegisterType(ParametrizedAttribute, TypeAttribute):
+    """Type for a register of qubits, represented as a list of IntAttr."""
 
     name = "qu.reg"
     size: ParameterDef[IntAttr]
@@ -65,17 +76,6 @@ class RegisterType(ParametrizedAttribute, TypeAttribute):
         size = parser.parse_integer()
         parser.parse_punctuation(">")
         return [IntAttr(size)]
-
-
-@irdl_attr_definition
-class AllocZeroAttr(AllocAttr):
-    """Allocate a qubit in the zero computational basis state."""
-
-    name = "qu.zero"
-
-    @property
-    def num_qubits(self) -> int:
-        return 1
 
 
 @irdl_attr_definition
