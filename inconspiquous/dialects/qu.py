@@ -6,7 +6,6 @@ from xdsl.ir import (
     ParametrizedAttribute,
     TypeAttribute,
     SSAValue,
-    OpResult,
     Attribute,
 )
 from xdsl.irdl import (
@@ -24,8 +23,6 @@ from xdsl.irdl import (
     var_operand_def,
     var_result_def,
     ParameterDef,
-    Operand,
-    VarOpResult,
 )
 from xdsl.utils.exceptions import VerifyException
 from xdsl.parser import AttrParser
@@ -175,7 +172,11 @@ class CombineOp(IRDLOperation):
 
     def verify_(self):
         t1, t2, res_type = self.reg1.type, self.reg2.type, self.res.type
-        if not all(isinstance(t, RegisterType) for t in (t1, t2, res_type)):
+        if not (
+            isinstance(t1, RegisterType)
+            and isinstance(t2, RegisterType)
+            and isinstance(res_type, RegisterType)
+        ):
             return
         if t1.size.data + t2.size.data != res_type.size.data:
             raise VerifyException(
