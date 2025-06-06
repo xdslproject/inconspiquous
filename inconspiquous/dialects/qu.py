@@ -204,8 +204,6 @@ class SplitOp(IRDLOperation):
         assert isinstance(res1_type, RegisterType)
         assert isinstance(res2_type, RegisterType)
 
-        if not isinstance(reg_type, RegisterType):
-            return
 
         if reg_type.size.data != res1_type.size.data + res2_type.size.data:
             raise VerifyException(
