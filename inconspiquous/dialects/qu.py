@@ -172,6 +172,7 @@ class CombineOp(IRDLOperation):
 
     def verify_(self):
         t1, t2, res_type = self.reg1.type, self.reg2.type, self.res.type
+
         if not (
             isinstance(t1, RegisterType)
             and isinstance(t2, RegisterType)
@@ -200,12 +201,10 @@ class SplitOp(IRDLOperation):
 
     def verify_(self):
         reg_type, res1_type, res2_type = self.reg.type, self.res1.type, self.res2.type
-        if not (
-            isinstance(reg_type, RegisterType)
-            and isinstance(res1_type, RegisterType)
-            and isinstance(res2_type, RegisterType)
-        ):
+
+        if not isinstance(reg_type, RegisterType):
             return
+
         if reg_type.size.data != res1_type.size.data + res2_type.size.data:
             raise VerifyException(
                 "Input register size must equal the sum of result register sizes."
