@@ -103,7 +103,7 @@ class CombineOp(IRDLOperation):
     assembly_format = "$reg1 `,` $reg2 attr-dict `:` type($reg1) `,` type($reg2) `->` type($res)"
 
     def __init__(self, reg1: SSAValue, reg2: SSAValue):
-        t1, t2 = reg1.typ, reg2.typ
+        t1, t2 = reg1.type, reg2.type
         if not isinstance(t1, RegisterType) or not isinstance(t2, RegisterType):
             raise TypeError("Inputs must be RegisterType")
         res_size = t1.size.data + t2.size.data
