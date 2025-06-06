@@ -59,6 +59,7 @@ class RegisterType(ParametrizedAttribute, TypeAttribute):
     """Type for a register of qubits of a static size."""
 
     name = "qu.reg"
+
     size: ParameterDef[IntAttr]
 
     @classmethod
