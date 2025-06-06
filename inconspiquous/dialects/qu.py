@@ -93,7 +93,6 @@ class AllocPlusAttr(AllocAttr):
 
 @irdl_op_definition
 class AllocOp(IRDLOperation):
-    """Allocate a number of qubits, with an optional initial state."""
 
     name = "qu.alloc"
     _I: ClassVar = IntVarConstraint("I", AnyInt())
