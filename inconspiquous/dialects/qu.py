@@ -70,7 +70,7 @@ class FromBitsOp(IRDLOperation):
     qubits: VarOperand = var_operand_def(RangeOf(eq(BitType()), length=_I))
     reg: OpResult = result_def(RegisterType.constr(_I))
 
-    assembly_format = "$qubits attr-dict `:` type($qubits) `->` type($reg)"
+    assembly_format = "$qubits attr-dict `:` type($reg)"
 
     def __init__(self, qubits: list[SSAValue]):
         super().__init__(operands=[qubits], result_types=[RegisterType([IntAttr(len(qubits))])])
