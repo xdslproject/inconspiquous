@@ -97,9 +97,11 @@ class AllocOp(IRDLOperation):
 
     name = "qu.alloc"
     _I: ClassVar = IntVarConstraint("I", AnyInt())
+
     alloc = prop_def(
         SizedAttributeConstraint(AllocAttr, _I), default_value=AllocZeroAttr()
     )
+
     outs = var_result_def(RangeOf(eq(BitType()), length=_I))
 
     assembly_format = "(`` `<` $alloc^ `>`)? attr-dict"
