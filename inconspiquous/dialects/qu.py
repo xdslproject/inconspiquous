@@ -84,7 +84,7 @@ class ToBitsOp(IRDLOperation):
     reg: Operand = operand_def(RegisterType.constr(_I))
     qubits: VarOpResult = var_result_def(RangeOf(eq(BitType()), length=_I))
 
-    assembly_format = "$reg attr-dict `:` type($reg) `->` type($qubits)"
+    assembly_format = "$reg attr-dict `:` type($reg)"
 
     def __init__(self, reg: SSAValue):
         reg_type = reg.type
