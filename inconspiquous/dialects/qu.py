@@ -87,7 +87,7 @@ class ToBitsOp(IRDLOperation):
     assembly_format = "$reg attr-dict `:` type($reg) `->` type($qubits)"
 
     def __init__(self, reg: SSAValue):
-        reg_type = reg.typ
+        reg_type = reg.type
         if not isinstance(reg_type, RegisterType): raise TypeError("Input must be RegisterType")
         super().__init__(operands=[reg], result_types=[[BitType()] * reg_type.size.data])
 
