@@ -19,6 +19,7 @@ from inconspiquous.gates import CliffordGateAttr
 from inconspiquous.transforms.xzs.fusion import FuseXZGatesPattern
 from inconspiquous.utils.linear_walker import LinearWalker
 from xdsl.ir import Operation, SSAValue
+from typing import List, cast
 
 
 class XZCommutePattern(RewritePattern):
@@ -146,12 +147,12 @@ class XZCommutePattern(RewritePattern):
             final_ops = [new_op2, *ops_to_insert]
 
         # Construct new outputs list
-        new_outputs = []
+        new_outputs: List[SSAValue] = []
         for i, gate_op in enumerate(output_gates):
             if gate_op is not None:
-                new_outputs.append(gate_op.outs[0])
+                new_outputs.append(cast(SSAValue, gate_op.outs[0]))
             else:
-                new_outputs.append(new_op2.outs[i])
+                new_outputs.append(cast(SSAValue, new_op2.outs[i]))
 
         rewriter.replace_op(op2, final_ops, new_outputs)
         rewriter.erase_op(op1)
