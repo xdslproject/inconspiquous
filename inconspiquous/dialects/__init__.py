@@ -96,6 +96,11 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return Varith
 
+    def get_qir():
+        from inconspiquous.dialects.qir import QIR
+
+        return QIR
+
     return {
         "angle": get_angle,
         "arith": get_arith,
@@ -115,4 +120,5 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "tensor": get_tensor,
         "test": get_test,
         "varith": get_varith,
+        "qir": get_qir,
     }

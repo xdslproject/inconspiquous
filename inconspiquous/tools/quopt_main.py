@@ -1,3 +1,4 @@
+# pyright: reportUnknownMemberType=false, reportUnknownParameterType=false, reportUnknownArgumentType=false, reportAttributeAccessIssue=false
 from inconspiquous.dialects import get_all_dialects
 from inconspiquous.transforms import get_all_passes
 from xdsl.xdsl_opt_main import xDSLOptMain
@@ -14,6 +15,14 @@ class QuoptMain(xDSLOptMain):
 
     def register_all_targets(self):
         super().register_all_targets()
+        try:
+            from inconspiquous.backend.qir import print_qir
+
+            # Cast print_qir to the expected type
+            self.available_targets["qir"] = print_qir  # type: ignore
+        except ImportError:
+            # PyQIR not available
+            pass
 
 
 def main():

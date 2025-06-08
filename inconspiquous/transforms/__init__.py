@@ -121,6 +121,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return pipeline.XZSSimpl
 
+    def get_convert_qref_to_qir():
+        from inconspiquous.transforms.convert_qref_to_qir import ConvertQrefToQir
+
+        return ConvertQrefToQir
+
     return {
         "canonicalize": get_canonicalize,
         "convert-qref-to-qssa": get_convert_qref_to_qssa,
@@ -145,4 +150,5 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "xzs-fusion": get_xzs_fusion,
         "xzs-select": get_xzs_select,
         "xzs-simpl": get_xzs_simpl,
+        "convert-qref-to-qir": get_convert_qref_to_qir,
     }
