@@ -15,17 +15,17 @@ func.func @h_commute(%q : !qu.bit, %x : i1, %z : i1) {
 }
 
 // CHECK:      func.func @cz_commute(%q1 : !qu.bit, %q2 : !qu.bit, %x1 : i1, %z1 : i1, %x2 : i1, %z2 : i1) {
-// CHECK-NEXT:   %0 = arith.constant false
-// CHECK-NEXT:   %1 = arith.constant false
-// CHECK-NEXT:   %2, %3 = qssa.gate<#gate.cz> %q1, %q2
-// CHECK-NEXT:   %4 = arith.xori %1, %x1 : i1
-// CHECK-NEXT:   %5 = arith.xori %x2, %z1 : i1
-// CHECK-NEXT:   %6 = gate.xz %4, %5
-// CHECK-NEXT:   %q1_1 = qssa.dyn_gate<%6> %2
-// CHECK-NEXT:   %7 = arith.xori %x2, %0 : i1
-// CHECK-NEXT:   %8 = arith.xori %z2, %x1 : i1
-// CHECK-NEXT:   %g2 = gate.xz %7, %8
-// CHECK-NEXT:   %q2_1 = qssa.dyn_gate<%g2> %3
+// CHECK-NEXT:   %[[C0:.*]] = arith.constant false
+// CHECK-NEXT:   %[[C1:.*]] = arith.constant false
+// CHECK-NEXT:   %[[CZ0:.*]], %[[CZ1:.*]] = qssa.gate<#gate.cz> %q1, %q2
+// CHECK-NEXT:   %[[X1:.*]] = arith.xori %[[C1]], %x1 : i1
+// CHECK-NEXT:   %[[Z1:.*]] = arith.xori %x2, %z1 : i1
+// CHECK-NEXT:   %[[G1:.*]] = gate.xz %[[X1]], %[[Z1]]
+// CHECK-NEXT:   %[[Q1_1:.*]] = qssa.dyn_gate<%[[G1]]> %[[CZ0]]
+// CHECK-NEXT:   %[[X2:.*]] = arith.xori %x2, %[[C0]] : i1
+// CHECK-NEXT:   %[[Z2:.*]] = arith.xori %z2, %x1 : i1
+// CHECK-NEXT:   %[[G2:.*]] = gate.xz %[[X2]], %[[Z2]]
+// CHECK-NEXT:   %q2_1 = qssa.dyn_gate<%[[G2]]> %[[CZ1]]
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @cz_commute(%q1 : !qu.bit, %q2 : !qu.bit, %x1 : i1, %z1 : i1, %x2 : i1, %z2 : i1) {
@@ -38,17 +38,17 @@ func.func @cz_commute(%q1 : !qu.bit, %q2 : !qu.bit, %x1 : i1, %z1 : i1, %x2 : i1
 }
 
 // CHECK:      func.func @cx_commute(%q1 : !qu.bit, %q2 : !qu.bit, %x1 : i1, %z1 : i1, %x2 : i1, %z2 : i1) {
-// CHECK-NEXT:   %0 = arith.constant false
-// CHECK-NEXT:   %1 = arith.constant false
-// CHECK-NEXT:   %2, %3 = qssa.gate<#gate.cx> %q1, %q2
-// CHECK-NEXT:   %4 = arith.xori %1, %x1 : i1
-// CHECK-NEXT:   %5 = arith.xori %z2, %z1 : i1
-// CHECK-NEXT:   %6 = gate.xz %4, %5
-// CHECK-NEXT:   %q1_1 = qssa.dyn_gate<%6> %2
-// CHECK-NEXT:   %7 = arith.xori %x2, %x1 : i1
-// CHECK-NEXT:   %8 = arith.xori %z2, %0 : i1
-// CHECK-NEXT:   %g2 = gate.xz %7, %8
-// CHECK-NEXT:   %q2_1 = qssa.dyn_gate<%g2> %3
+// CHECK-NEXT:   %[[C0:.*]] = arith.constant false
+// CHECK-NEXT:   %[[C1:.*]] = arith.constant false
+// CHECK-NEXT:   %[[CX0:.*]], %[[CX1:.*]] = qssa.gate<#gate.cx> %q1, %q2
+// CHECK-NEXT:   %[[X1:.*]] = arith.xori %[[C1]], %x1 : i1
+// CHECK-NEXT:   %[[Z1:.*]] = arith.xori %z2, %z1 : i1
+// CHECK-NEXT:   %[[G1:.*]] = gate.xz %[[X1]], %[[Z1]]
+// CHECK-NEXT:   %[[Q1_1:.*]] = qssa.dyn_gate<%[[G1]]> %[[CX0]]
+// CHECK-NEXT:   %[[X2:.*]] = arith.xori %x2, %x1 : i1
+// CHECK-NEXT:   %[[Z2:.*]] = arith.xori %z2, %[[C0]] : i1
+// CHECK-NEXT:   %[[G2:.*]] = gate.xz %[[X2]], %[[Z2]]
+// CHECK-NEXT:   %q2_1 = qssa.dyn_gate<%[[G2]]> %[[CX1]]
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @cx_commute(%q1 : !qu.bit, %q2 : !qu.bit, %x1 : i1, %z1 : i1, %x2 : i1, %z2 : i1) {

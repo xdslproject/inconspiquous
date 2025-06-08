@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import ClassVar
+from typing import ClassVar, Literal
 
 from xdsl.dialects.builtin import (
     IndexType,
@@ -41,7 +41,11 @@ from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
 from xdsl.dialects.builtin import IntAttrConstraint
 
 from inconspiquous.dialects.angle import AngleAttr, AngleType
-from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
+from inconspiquous.gates import (
+    GateAttr,
+    SingleQubitCliffordGate,
+    TwoQubitCliffordGate,
+)
 from inconspiquous.constraints import SizedAttributeConstraint
 
 
@@ -117,47 +121,119 @@ class ConstantGateOp(IRDLOperation):
 
 
 @irdl_attr_definition
-class HadamardGate(SingleQubitGate):
+class HadamardGate(SingleQubitCliffordGate):
     name = "gate.h"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((False, True),)  # X propagates to Z
+        else:
+            return ((True, False),)  # Z propagates to X
+
 
 @irdl_attr_definition
-class XGate(SingleQubitGate):
+class XGate(SingleQubitCliffordGate):
     name = "gate.x"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, False),)  # X propagates to X
+        else:
+            return ((False, True),)  # Z propagates to Z
+
 
 @irdl_attr_definition
-class YGate(SingleQubitGate):
+class YGate(SingleQubitCliffordGate):
     name = "gate.y"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((False, True),)  # X propagates to Z
+        else:
+            return ((True, False),)  # Z propagates to X
+
 
 @irdl_attr_definition
-class ZGate(SingleQubitGate):
+class ZGate(SingleQubitCliffordGate):
     name = "gate.z"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, False),)  # X propagates to X
+        else:
+            return ((False, True),)  # Z propagates to Z
+
 
 @irdl_attr_definition
-class PhaseGate(SingleQubitGate):
+class PhaseGate(SingleQubitCliffordGate):
     name = "gate.s"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, True),)  # X propagates to XZ
+        else:
+            return ((False, True),)  # Z propagates to Z
+
 
 @irdl_attr_definition
-class PhaseDaggerGate(SingleQubitGate):
+class PhaseDaggerGate(SingleQubitCliffordGate):
     name = "gate.s_dagger"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, True),)  # X propagates to XZ
+        else:
+            return ((False, True),)  # Z propagates to Z
+
 
 @irdl_attr_definition
-class TGate(SingleQubitGate):
+class TGate(SingleQubitCliffordGate):
     name = "gate.t"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, True),)  # X propagates to XZ
+        else:
+            return ((False, True),)  # Z propagates to Z
+
 
 @irdl_attr_definition
-class TDaggerGate(SingleQubitGate):
+class TDaggerGate(SingleQubitCliffordGate):
     name = "gate.t_dagger"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, True),)  # X propagates to XZ
+        else:
+            return ((False, True),)  # Z propagates to Z
+
 
 @irdl_attr_definition
-class RZGate(SingleQubitGate):
+class RZGate(SingleQubitCliffordGate):
     name = "gate.rz"
 
     angle: ParameterDef[AngleAttr]
@@ -175,9 +251,18 @@ class RZGate(SingleQubitGate):
     def print_parameters(self, printer: Printer) -> None:
         return self.angle.print_parameters(printer)
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, True),)  # X propagates to XZ
+        else:
+            return ((False, True),)  # Z propagates to Z
+
 
 @irdl_attr_definition
-class JGate(SingleQubitGate):
+class JGate(SingleQubitCliffordGate):
     name = "gate.j"
 
     angle: ParameterDef[AngleAttr]
@@ -194,6 +279,15 @@ class JGate(SingleQubitGate):
 
     def print_parameters(self, printer: Printer) -> None:
         return self.angle.print_parameters(printer)
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, True),)  # X propagates to XZ
+        else:
+            return ((False, True),)  # Z propagates to Z
 
 
 class DynJGateHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
@@ -221,13 +315,65 @@ class DynJGate(IRDLOperation):
 
 
 @irdl_attr_definition
-class CXGate(TwoQubitGate):
+class CXGate(TwoQubitCliffordGate):
     name = "gate.cx"
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        if pauli_type == "X":
+            if input_idx == 0:
+                return (
+                    (True, False),
+                    (True, False),
+                )  # X on first input propagates to X on both outputs
+            else:
+                return (
+                    (False, False),
+                    (True, False),
+                )  # X on second input propagates to X on second output
+        else:
+            if input_idx == 0:
+                return (
+                    (False, True),
+                    (False, False),
+                )  # Z on first input propagates to Z on first output
+            else:
+                return (
+                    (False, True),
+                    (False, True),
+                )  # Z on second input propagates to Z on both outputs
 
 
 @irdl_attr_definition
-class CZGate(TwoQubitGate):
+class CZGate(TwoQubitCliffordGate):
     name = "gate.cz"
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        if pauli_type == "X":
+            if input_idx == 0:
+                return (
+                    (True, False),
+                    (False, True),
+                )  # X on first input propagates to X on first output and Z on second
+            else:
+                return (
+                    (False, True),
+                    (True, False),
+                )  # X on second input propagates to Z on first output and X on second
+        else:
+            if input_idx == 0:
+                return (
+                    (False, True),
+                    (False, False),
+                )  # Z on first input propagates to Z on first output
+            else:
+                return (
+                    (False, False),
+                    (False, True),
+                )  # Z on second input propagates to Z on second output
 
 
 @irdl_attr_definition
@@ -240,8 +386,17 @@ class ToffoliGate(GateAttr):
 
 
 @irdl_attr_definition
-class IdentityGate(SingleQubitGate):
+class IdentityGate(SingleQubitCliffordGate):
     name = "gate.id"
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, False),)  # X propagates to X
+        else:
+            return ((False, True),)  # Z propagates to Z
 
 
 @irdl_op_definition
