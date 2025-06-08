@@ -28,11 +28,13 @@ from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
 
 class QIRConversionError(Exception):
     """Base class for QIR conversion errors"""
+
     pass
 
 
 class UnsupportedGateError(QIRConversionError):
     """Gate not supported in QIR"""
+
     pass
 
 
@@ -97,7 +99,9 @@ class ConvertQrefMeasureToQir(RewritePattern):
     def match_and_rewrite(self, op: qref.MeasureOp, rewriter: PatternRewriter) -> None:
         try:
             if not isinstance(op.measurement, CompBasisMeasurementAttr):
-                raise QIRConversionError("Only computational basis measurements supported in QIR")
+                raise QIRConversionError(
+                    "Only computational basis measurements supported in QIR"
+                )
 
             measure_ops: List[Operation] = []
             read_ops: List[Operation] = []
@@ -133,4 +137,4 @@ class ConvertQrefToQir(ModulePass):
                 )
             ).rewrite_module(op)
         except Exception as e:
-            raise QIRConversionError(f"Failed to convert module to QIR: {e}") 
+            raise QIRConversionError(f"Failed to convert module to QIR: {e}")

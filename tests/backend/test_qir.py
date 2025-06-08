@@ -5,11 +5,14 @@ from xdsl.parser import Parser
 from xdsl.utils.exceptions import ParseError
 
 from inconspiquous.dialects import get_all_dialects
-from inconspiquous.transforms.convert_qref_to_qir import ConvertQrefToQir, QIRConversionError
-from inconspiquous.backend.qir import QIRBackendError, QIRUnsupportedOperationError
+from inconspiquous.transforms.convert_qref_to_qir import (
+    ConvertQrefToQir,
+    QIRConversionError,
+)
 
 try:
     from inconspiquous.backend.qir import print_qir
+
     QIR_BACKEND_AVAILABLE = True
 except ImportError:
     QIR_BACKEND_AVAILABLE = False
@@ -229,4 +232,4 @@ def test_qir_backend_multiple_measurements(ctx):
 
     # Accept 2 or more measurement calls (backend may emit extra for result mapping)
     assert qir_output.count("__quantum__qis__mz__body") >= 2
-    assert qir_output.count("%Result") >= 2 
+    assert qir_output.count("%Result") >= 2

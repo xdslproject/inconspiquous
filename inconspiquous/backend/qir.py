@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 try:
     from pyqir import BasicQisBuilder, SimpleModule
+
     pyqir_available = True
 except ImportError:
     pyqir_available = False
@@ -23,16 +24,19 @@ from inconspiquous.dialects import qir
 
 class QIRError(Exception):
     """Base class for QIR-related errors"""
+
     pass
 
 
 class QIRBackendError(QIRError):
     """Error in QIR backend"""
+
     pass
 
 
 class QIRUnsupportedOperationError(QIRError):
     """Operation not supported in QIR"""
+
     pass
 
 
@@ -167,20 +171,26 @@ class QIRBackend:
                         control_idx = qubit_map[op.control]
                         target_idx = qubit_map[op.target]
                         builder.cx(
-                            qir_module.qubits[control_idx], qir_module.qubits[target_idx]
+                            qir_module.qubits[control_idx],
+                            qir_module.qubits[target_idx],
                         )
                     else:
-                        raise QIRBackendError(f"Qubits not found for CX gate: {op.control}, {op.target}")
+                        raise QIRBackendError(
+                            f"Qubits not found for CX gate: {op.control}, {op.target}"
+                        )
 
                 case qir.CZGateOp():
                     if op.control in qubit_map and op.target in qubit_map:
                         control_idx = qubit_map[op.control]
                         target_idx = qubit_map[op.target]
                         builder.cz(
-                            qir_module.qubits[control_idx], qir_module.qubits[target_idx]
+                            qir_module.qubits[control_idx],
+                            qir_module.qubits[target_idx],
                         )
                     else:
-                        raise QIRBackendError(f"Qubits not found for CZ gate: {op.control}, {op.target}")
+                        raise QIRBackendError(
+                            f"Qubits not found for CZ gate: {op.control}, {op.target}"
+                        )
 
                 case qir.MeasureOp():
                     if op.qubit in qubit_map:
@@ -190,7 +200,9 @@ class QIRBackend:
                         )
                         result_map[op.result] = result
                     else:
-                        raise QIRBackendError(f"Qubit not found for measurement: {op.qubit}")
+                        raise QIRBackendError(
+                            f"Qubit not found for measurement: {op.qubit}"
+                        )
 
                 case qir.ReadResultOp():
                     # Result reading is handled automatically by PyQIR
@@ -200,4 +212,4 @@ class QIRBackend:
                     # Skip operations we don't handle
                     pass
         except Exception as e:
-            raise QIRBackendError(f"Failed to emit operation {op.name}: {e}") 
+            raise QIRBackendError(f"Failed to emit operation {op.name}: {e}")

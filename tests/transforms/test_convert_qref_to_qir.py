@@ -3,7 +3,10 @@ from xdsl.context import Context
 from xdsl.parser import Parser
 
 from inconspiquous.dialects import get_all_dialects
-from inconspiquous.transforms.convert_qref_to_qir import ConvertQrefToQir, QIRConversionError
+from inconspiquous.transforms.convert_qref_to_qir import (
+    ConvertQrefToQir,
+    QIRConversionError,
+)
 
 
 @pytest.fixture
@@ -172,4 +175,4 @@ def test_unsupported_gates_skipped(ctx):
 
     pass_instance = ConvertQrefToQir()
     with pytest.raises(QIRConversionError):
-        pass_instance.apply(ctx, module) 
+        pass_instance.apply(ctx, module)
