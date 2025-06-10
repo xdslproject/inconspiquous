@@ -98,8 +98,12 @@ def test_circuit_inlining():
     # - Circuit operation might still exist
 
     assert len(alloc_ops) == 1, f"Expected 1 alloc operation, got {len(alloc_ops)}"
-    assert len(gate_ops) >= 1, f"Expected at least 1 gate operation after inlining, got {len(gate_ops)}"
-    assert len(dyn_gate_ops) == 0, f"Expected no dyn_gate operations after inlining, got {len(dyn_gate_ops)}"
+    assert len(gate_ops) >= 1, (
+        f"Expected at least 1 gate operation after inlining, got {len(gate_ops)}"
+    )
+    assert len(dyn_gate_ops) == 0, (
+        f"Expected no dyn_gate operations after inlining, got {len(dyn_gate_ops)}"
+    )
 
     print("Test passed: Circuit inlining worked correctly")
 
@@ -181,8 +185,12 @@ def test_complex_circuit_inlining():
     # - 2 gate operations (X and Z from the circuit)
     # - 0 dyn_gate operations
 
-    assert len(gate_ops) == 2, f"Expected exactly 2 gate operations after inlining, got {len(gate_ops)}"
-    assert len(dyn_gate_ops) == 0, f"Expected no dyn_gate operations after inlining, got {len(dyn_gate_ops)}"
+    assert len(gate_ops) == 2, (
+        f"Expected exactly 2 gate operations after inlining, got {len(gate_ops)}"
+    )
+    assert len(dyn_gate_ops) == 0, (
+        f"Expected no dyn_gate operations after inlining, got {len(dyn_gate_ops)}"
+    )
 
     # Verify the gate types are correct
     gate_types = [type(op.gate) for op in gate_ops]
@@ -219,7 +227,9 @@ def test_two_qubit_circuit_inlining():
     input_alloc2 = AllocOp()
 
     # Create dyn_gate operation using the circuit
-    dyn_gate = DynGateOp(circuit.results[0], input_alloc1.results[0], input_alloc2.results[0])
+    dyn_gate = DynGateOp(
+        circuit.results[0], input_alloc1.results[0], input_alloc2.results[0]
+    )
 
     # Create module with all operations
     module = ModuleOp([input_alloc1, input_alloc2, circuit, dyn_gate])
@@ -236,7 +246,11 @@ def test_two_qubit_circuit_inlining():
     print(f"Two-qubit circuit - Gate operations: {len(gate_ops)}")
     print(f"Two-qubit circuit - DynGate operations: {len(dyn_gate_ops)}")
 
-    assert len(gate_ops) == 2, f"Expected exactly 2 gate operations after inlining, got {len(gate_ops)}"
-    assert len(dyn_gate_ops) == 0, f"Expected no dyn_gate operations after inlining, got {len(dyn_gate_ops)}"
+    assert len(gate_ops) == 2, (
+        f"Expected exactly 2 gate operations after inlining, got {len(gate_ops)}"
+    )
+    assert len(dyn_gate_ops) == 0, (
+        f"Expected no dyn_gate operations after inlining, got {len(dyn_gate_ops)}"
+    )
 
     print("Test passed: Two-qubit circuit inlining worked correctly")

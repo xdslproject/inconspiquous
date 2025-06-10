@@ -168,16 +168,22 @@ class CircuitOp(IRDLOperation):
         num_args = len(entry_block.args)
         expected_qubits = self.result.type.num_qubits.value.data
 
-        assert num_args == expected_qubits, f"Expected {expected_qubits} block arguments, got {num_args}"
+        assert num_args == expected_qubits, (
+            f"Expected {expected_qubits} block arguments, got {num_args}"
+        )
 
         # Check that all block arguments are qubit types
         for arg in entry_block.args:
-            assert isinstance(arg.type, BitType), f"Block argument must be !qu.bit, got {arg.type}"
+            assert isinstance(arg.type, BitType), (
+                f"Block argument must be !qu.bit, got {arg.type}"
+            )
 
         # Check terminator
         if entry_block.ops:
             terminator = entry_block.last_op
-            assert isinstance(terminator, ReturnOp), "Circuit must be terminated by qref.return"
+            assert isinstance(terminator, ReturnOp), (
+                "Circuit must be terminated by qref.return"
+            )
 
 
 @irdl_op_definition
