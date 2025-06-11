@@ -45,12 +45,7 @@ class InlineCircuitPattern(RewritePattern):
         if not isinstance(gate_op, CircuitOp):
             return
 
-        # Get the circuit body
-        circuit_body = gate_op.body
-        if len(circuit_body.blocks) != 1:
-            return
-
-        entry_block = circuit_body.blocks[0]
+        entry_block = gate_op.body.blocks[0]
 
         # Validate that the circuit is properly terminated
         ops_list = list(entry_block.ops)

@@ -16,7 +16,7 @@ from xdsl.irdl import (
     result_def,
     region_def,
 )
-from xdsl.traits import IsTerminator
+from xdsl.traits import IsTerminator, HasParent
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.traits import HasCanonicalizationPatternsTrait
 
@@ -152,6 +152,8 @@ class CircuitOp(IRDLOperation):
     body = region_def("single_block", entry_args=RangeOf(eq(BitType()), length=_I))
     result = result_def(GateType.constr(_I))
 
+    assembly_format = "`(` `)` `(` $body `)` `:` `(` `)` `->` type($result) attr-dict"
+
     def __init__(self, num_qubits: int, region: Region | None = None):
         if region is None:
             region = Region(Block(arg_types=[BitType() for _ in range(num_qubits)]))
@@ -162,27 +164,12 @@ class CircuitOp(IRDLOperation):
         )
 
     def verify_(self):
-        assert len(self.body.blocks) == 1, "Circuit must have exactly one block"
-
-        entry_block = self.body.blocks[0]
-        num_args = len(entry_block.args)
-        expected_qubits = self.result.type.num_qubits.value.data
-
-        assert num_args == expected_qubits, (
-            f"Expected {expected_qubits} block arguments, got {num_args}"
-        )
-
-        # Check that all block arguments are qubit types
-        for arg in entry_block.args:
-            assert isinstance(arg.type, BitType), (
-                f"Block argument must be !qu.bit, got {arg.type}"
-            )
-
         # Check terminator
+        entry_block = self.body.blocks[0]
         if entry_block.ops:
             terminator = entry_block.last_op
             assert isinstance(terminator, ReturnOp), (
-                "Circuit must be terminated by qref.return"
+                "qref.circuit must be terminated by qref.return"
             )
 
 
@@ -190,7 +177,8 @@ class CircuitOp(IRDLOperation):
 class ReturnOp(IRDLOperation):
     name = "qref.return"
 
-    traits = traits_def(IsTerminator())
+    traits = traits_def(HasParent(CircuitOp), IsTerminator())
+    assembly_format = "attr-dict"
 
     def __init__(self):
         super().__init__()

@@ -34,8 +34,6 @@ def test_basic_circuit_creation():
     assert len(circuit.body.blocks) == 1
     assert len(circuit.body.blocks[0].args) == 2
 
-    print("Test passed: Basic circuit operations work correctly")
-
 
 def test_circuit_inlining():
     """Test actual circuit inlining functionality."""
@@ -59,16 +57,10 @@ def test_circuit_inlining():
     input_alloc = AllocOp()  # This creates a qubit
 
     # Create dyn_gate operation using the circuit
-    dyn_gate = DynGateOp(circuit.results[0], input_alloc.results[0])
+    dyn_gate = DynGateOp(circuit.result, input_alloc.results[0])
 
     # Create module with all operations
     module = ModuleOp([input_alloc, circuit, dyn_gate])
-
-    # Count operations before inlining
-    ops_before = list(module.body.ops)
-    print(f"Operations before inlining: {len(ops_before)}")
-    for i, op in enumerate(ops_before):
-        print(f"  {i}: {op.name}")
 
     # Apply the inline circuits pass
     pass_instance = InlineCircuitsPass()
@@ -76,26 +68,17 @@ def test_circuit_inlining():
 
     # Count operations after inlining
     ops_after = list(module.body.ops)
-    print(f"Operations after inlining: {len(ops_after)}")
-    for i, op in enumerate(ops_after):
-        print(f"  {i}: {op.name}")
 
     # Verify that inlining happened correctly
     gate_ops = [op for op in ops_after if isinstance(op, GateOp)]
     dyn_gate_ops = [op for op in ops_after if isinstance(op, DynGateOp)]
-    circuit_ops = [op for op in ops_after if isinstance(op, CircuitOp)]
     alloc_ops = [op for op in ops_after if isinstance(op, AllocOp)]
-
-    print(f"Alloc operations: {len(alloc_ops)}")
-    print(f"Gate operations: {len(gate_ops)}")
-    print(f"DynGate operations: {len(dyn_gate_ops)}")
-    print(f"Circuit operations: {len(circuit_ops)}")
 
     # After inlining, we should have:
     # - Original allocation operation (1 alloc)
     # - Inlined circuit operation (1 gate: X)
     # - No dyn_gate operations (should be replaced)
-    # - Circuit operation might still exist
+    # - Circuit operation should still exist
 
     assert len(alloc_ops) == 1, f"Expected 1 alloc operation, got {len(alloc_ops)}"
     assert len(gate_ops) >= 1, (
@@ -104,8 +87,6 @@ def test_circuit_inlining():
     assert len(dyn_gate_ops) == 0, (
         f"Expected no dyn_gate operations after inlining, got {len(dyn_gate_ops)}"
     )
-
-    print("Test passed: Circuit inlining worked correctly")
 
 
 def test_empty_circuit():
@@ -123,8 +104,6 @@ def test_empty_circuit():
     assert len(circuit.body.blocks) == 1
     assert len(circuit.body.blocks[0].args) == 1
     assert len(circuit.body.blocks[0].ops) == 1  # Just the return
-
-    print("Test passed: Empty circuit creation works")
 
 
 def test_complex_circuit_inlining():
@@ -153,16 +132,10 @@ def test_complex_circuit_inlining():
     input_alloc = AllocOp()
 
     # Create dyn_gate operation using the circuit
-    dyn_gate = DynGateOp(circuit.results[0], input_alloc.results[0])
+    dyn_gate = DynGateOp(circuit.result, input_alloc.results[0])
 
     # Create module with all operations
     module = ModuleOp([input_alloc, circuit, dyn_gate])
-
-    # Count operations before inlining
-    ops_before = list(module.body.ops)
-    print(f"Complex circuit - Operations before inlining: {len(ops_before)}")
-    for i, op in enumerate(ops_before):
-        print(f"  {i}: {op.name}")
 
     # Apply the inline circuits pass
     pass_instance = InlineCircuitsPass()
@@ -170,16 +143,10 @@ def test_complex_circuit_inlining():
 
     # Count operations after inlining
     ops_after = list(module.body.ops)
-    print(f"Complex circuit - Operations after inlining: {len(ops_after)}")
-    for i, op in enumerate(ops_after):
-        print(f"  {i}: {op.name}")
 
     # Verify that inlining happened correctly
     gate_ops = [op for op in ops_after if isinstance(op, GateOp)]
     dyn_gate_ops = [op for op in ops_after if isinstance(op, DynGateOp)]
-
-    print(f"Complex circuit - Gate operations: {len(gate_ops)}")
-    print(f"Complex circuit - DynGate operations: {len(dyn_gate_ops)}")
 
     # After inlining, we should have:
     # - 2 gate operations (X and Z from the circuit)
@@ -196,8 +163,6 @@ def test_complex_circuit_inlining():
     gate_types = [type(op.gate) for op in gate_ops]
     assert XGate in gate_types, "Expected X gate to be inlined"
     assert ZGate in gate_types, "Expected Z gate to be inlined"
-
-    print("Test passed: Complex circuit inlining worked correctly")
 
 
 def test_two_qubit_circuit_inlining():
@@ -243,14 +208,9 @@ def test_two_qubit_circuit_inlining():
     gate_ops = [op for op in ops_after if isinstance(op, GateOp)]
     dyn_gate_ops = [op for op in ops_after if isinstance(op, DynGateOp)]
 
-    print(f"Two-qubit circuit - Gate operations: {len(gate_ops)}")
-    print(f"Two-qubit circuit - DynGate operations: {len(dyn_gate_ops)}")
-
     assert len(gate_ops) == 2, (
         f"Expected exactly 2 gate operations after inlining, got {len(gate_ops)}"
     )
     assert len(dyn_gate_ops) == 0, (
         f"Expected no dyn_gate operations after inlining, got {len(dyn_gate_ops)}"
     )
-
-    print("Test passed: Two-qubit circuit inlining worked correctly")
