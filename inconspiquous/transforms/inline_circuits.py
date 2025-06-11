@@ -3,7 +3,6 @@ Transformation to inline subcircuits when a qssa.dyn_gate is called with a circu
 """
 
 from xdsl.dialects import builtin
-from xdsl.ir import Operation, SSAValue
 from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
@@ -40,52 +39,71 @@ class InlineCircuitPattern(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter, /) -> None:
-        # Check if the gate operand is a circuit
-        gate_op = op.gate.owner
-        if not isinstance(gate_op, CircuitOp):
+        """
+        Inline a circuit when used with qssa.dyn_gate.
+
+        This transforms:
+          %result = qssa.dyn_gate<%circuit>(%inputs...)
+
+        Into the inlined circuit body with proper SSA value mapping.
+        """
+        # Only process dyn_gate operations that use a circuit
+        circuit_op = op.gate.owner
+        if not isinstance(circuit_op, CircuitOp):
             return
 
-        entry_block = gate_op.body.blocks[0]
-
-        # Validate that the circuit is properly terminated
-        ops_list = list(entry_block.ops)
-        if not ops_list or not isinstance(ops_list[-1], ReturnOp):
+        # Skip empty circuits
+        if not circuit_op.body.blocks:
             return
 
-        # Get the return operation
-        return_op = ops_list[-1]
+        circuit_block = circuit_op.body.blocks[0]
 
-        # Create a mapping from circuit block arguments to dyn_gate inputs
-        value_mapping: dict[SSAValue, SSAValue] = {}
-        for circuit_arg, dyn_gate_input in zip(entry_block.args, op.ins):
-            value_mapping[circuit_arg] = dyn_gate_input
+        # Find the circuit's return operation (there should be exactly one)
+        circuit_return = None
+        for circuit_op_in_block in circuit_block.ops:
+            if isinstance(circuit_op_in_block, ReturnOp):
+                circuit_return = circuit_op_in_block
+                break
 
-        # Clone all operations except the return and remap their operands
-        replacement_ops: list[Operation] = []
-        for circuit_op in ops_list[:-1]:  # Exclude return
-            cloned_op = circuit_op.clone()
+        if circuit_return is None:
+            return
 
-            # Remap operands in the cloned operation
-            remapped_operands: list[SSAValue] = []
-            for operand in cloned_op.operands:
-                mapped_operand: SSAValue = value_mapping.get(operand, operand)
-                remapped_operands.append(mapped_operand)
-            cloned_op.operands = remapped_operands
+        # Inline the entire circuit block before the dyn_gate operation
+        # This automatically handles SSA value mapping from circuit args to dyn_gate inputs
+        rewriter.inline_block(circuit_block, rewriter.insertion_point, op.ins)
 
-            # Update value mapping for results
-            for old_result, new_result in zip(circuit_op.results, cloned_op.results):
-                value_mapping[old_result] = new_result
+        # After inlining, the return operation is now in the parent block right before dyn_gate
+        # Find it by searching backward from the dyn_gate position
+        inlined_return = None
+        parent_block = op.parent
+        if parent_block is not None:
+            ops_list = list(parent_block.ops)
+            try:
+                dyn_gate_index = ops_list.index(op)
+                # Look backward from dyn_gate to find the most recent return
+                for i in range(dyn_gate_index - 1, -1, -1):
+                    if isinstance(ops_list[i], ReturnOp):
+                        inlined_return = ops_list[i]
+                        break
+            except ValueError:
+                pass
 
-            replacement_ops.append(cloned_op)
+        if inlined_return is not None:
+            # Replace the dyn_gate with the values being returned by the circuit
+            return_values = (
+                list(inlined_return.operands)
+                if hasattr(inlined_return, "operands")
+                else []
+            )
+            rewriter.replace_op(op, (), return_values)
+            # Remove the inlined return operation (it's not needed in the parent function)
+            rewriter.erase_op(inlined_return)
+        else:
+            # Fallback: replace with empty results if no return found
+            rewriter.replace_op(op, (), [])
 
-        # Map return values to replacement values
-        return_values: list[SSAValue] = []
-        for return_operand in return_op.args:
-            mapped_return: SSAValue = value_mapping.get(return_operand, return_operand)
-            return_values.append(mapped_return)
-
-        # Replace the dyn_gate with the cloned operations and return values
-        rewriter.replace_matched_op(tuple(replacement_ops), return_values)
+        # Clean up the original circuit operation
+        rewriter.erase_op(circuit_op)
 
 
 class InlineCircuitsPass(ModulePass):
