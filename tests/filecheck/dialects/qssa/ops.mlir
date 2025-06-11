@@ -42,3 +42,48 @@
 // CHECK: %{{.*}} = qssa.dyn_measure<%m> %q7
 // CHECK-GENERIC: %{{.*}} = "qssa.dyn_measure"(%m, %q7) : (!measurement.type<1>, !qu.bit) -> i1
 %2 = qssa.dyn_measure<%m> %q7
+
+// CHECK: %{{.*}} = qssa.circuit() ({
+// CHECK-NEXT: ^{{.*}}(%{{.*}} : !qu.bit):
+// CHECK-NEXT:   qssa.return %{{.*}}
+// CHECK-NEXT: }) : () -> !gate.type<1>
+// CHECK-GENERIC: %{{.*}} = "qssa.circuit"() ({
+// CHECK-GENERIC-NEXT: ^{{[0-9]+}}(%{{.*}} : !qu.bit):
+// CHECK-GENERIC-NEXT:   "qssa.return"(%{{.*}}) : (!qu.bit) -> ()
+// CHECK-GENERIC-NEXT: }) : () -> !gate.type<1>
+%circuit1 = qssa.circuit() ({
+^bb0(%arg0 : !qu.bit):
+  qssa.return %arg0
+}) : () -> !gate.type<1>
+
+// CHECK: %{{.*}} = qssa.circuit() ({
+// CHECK-NEXT: ^{{.*}}(%{{.*}} : !qu.bit):
+// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.x> %{{.*}}
+// CHECK-NEXT:   qssa.return %{{.*}}
+// CHECK-NEXT: }) : () -> !gate.type<1>
+// CHECK-GENERIC: %{{.*}} = "qssa.circuit"() ({
+// CHECK-GENERIC-NEXT: ^{{[0-9]+}}(%{{.*}} : !qu.bit):
+// CHECK-GENERIC-NEXT:   %{{.*}} = "qssa.gate"(%{{.*}}) <{gate = #gate.x}> : (!qu.bit) -> !qu.bit
+// CHECK-GENERIC-NEXT:   "qssa.return"(%{{.*}}) : (!qu.bit) -> ()
+// CHECK-GENERIC-NEXT: }) : () -> !gate.type<1>
+%circuit2 = qssa.circuit() ({
+^bb0(%arg0 : !qu.bit):
+  %q8 = qssa.gate<#gate.x> %arg0
+  qssa.return %q8
+}) : () -> !gate.type<1>
+
+// CHECK: %{{.*}} = qssa.circuit() ({
+// CHECK-NEXT: ^{{.*}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
+// CHECK-NEXT:   %{{.*}}, %{{.*}} = qssa.gate<#gate.cx> %{{.*}}, %{{.*}}
+// CHECK-NEXT:   qssa.return %{{.*}}, %{{.*}}
+// CHECK-NEXT: }) : () -> !gate.type<2>
+// CHECK-GENERIC: %{{.*}} = "qssa.circuit"() ({
+// CHECK-GENERIC-NEXT: ^{{[0-9]+}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
+// CHECK-GENERIC-NEXT:   %{{.*}}, %{{.*}} = "qssa.gate"(%{{.*}}, %{{.*}}) <{gate = #gate.cx}> : (!qu.bit, !qu.bit) -> (!qu.bit, !qu.bit)
+// CHECK-GENERIC-NEXT:   "qssa.return"(%{{.*}}, %{{.*}}) : (!qu.bit, !qu.bit) -> ()
+// CHECK-GENERIC-NEXT: }) : () -> !gate.type<2>
+%circuit3 = qssa.circuit() ({
+^bb0(%arg0 : !qu.bit, %arg1 : !qu.bit):
+  %q9, %q10 = qssa.gate<#gate.cx> %arg0, %arg1
+  qssa.return %q9, %q10
+}) : () -> !gate.type<2>
