@@ -93,7 +93,7 @@ class XZCommutePattern(RewritePattern):
 
             false_const = arith.ConstantOp.from_int_and_width(0, 1)
             false_const_needed = False
-            output_gates: list[qssa.DynGateOp | None] = [None] * len(new_op2.outs)
+            new_outputs: list[SSAValue] = []
 
             for out_idx, ((x_from_x, z_from_x), (x_from_z, z_from_z)) in enumerate(
                 zip(x_prop, z_prop)
@@ -138,18 +138,15 @@ class XZCommutePattern(RewritePattern):
                     xz_gate = XZOp(apply_x, apply_z)
                     dyn_gate = qssa.DynGateOp(xz_gate, new_op2.outs[out_idx])
                     ops_to_insert.extend([xz_gate, dyn_gate])
-                    output_gates[out_idx] = dyn_gate
+                    new_outputs.append(dyn_gate.outs[0])
+                else:
+                    new_outputs.append(new_op2.outs[out_idx])
 
             final_ops = (
                 (false_const, new_op2, *ops_to_insert)
                 if false_const_needed
                 else (new_op2, *ops_to_insert)
             )
-
-            new_outputs = [
-                gate_op.outs[0] if gate_op is not None else new_op2.outs[i]
-                for i, gate_op in enumerate(output_gates)
-            ]
 
             rewriter.replace_op(op2, final_ops, new_outputs)
             rewriter.erase_op(op1)
