@@ -14,6 +14,86 @@ func.func @h_commute(%q : !qu.bit, %x : i1, %z : i1) {
   func.return
 }
 
+// CHECK:      func.func @id_commute(%q : !qu.bit, %x : i1, %z : i1) {
+// CHECK-NEXT:   %g = gate.xz %x, %z
+// CHECK-NEXT:   %q_1 = qssa.gate<#gate.id> %q
+// CHECK-NEXT:   %q_2 = qssa.dyn_gate<%g> %q_1
+// CHECK-NEXT:   func.return
+// CHECK-NEXT: }
+func.func @id_commute(%q : !qu.bit, %x : i1, %z : i1) {
+  %g = gate.xz %x, %z
+  %q_1 = qssa.dyn_gate<%g> %q
+  %q_2 = qssa.gate<#gate.id> %q_1
+  func.return
+}
+
+// CHECK:      func.func @x_commute(%q : !qu.bit, %x : i1, %z : i1) {
+// CHECK-NEXT:   %g = gate.xz %x, %z
+// CHECK-NEXT:   %q_1 = qssa.gate<#gate.x> %q
+// CHECK-NEXT:   %q_2 = qssa.dyn_gate<%g> %q_1
+// CHECK-NEXT:   func.return
+// CHECK-NEXT: }
+func.func @x_commute(%q : !qu.bit, %x : i1, %z : i1) {
+  %g = gate.xz %x, %z
+  %q_1 = qssa.dyn_gate<%g> %q
+  %q_2 = qssa.gate<#gate.x> %q_1
+  func.return
+}
+
+// CHECK:      func.func @y_commute(%q : !qu.bit, %x : i1, %z : i1) {
+// CHECK-NEXT:   %g = gate.xz %x, %z
+// CHECK-NEXT:   %q_1 = qssa.gate<#gate.y> %q
+// CHECK-NEXT:   %q_2 = qssa.dyn_gate<%g> %q_1
+// CHECK-NEXT:   func.return
+// CHECK-NEXT: }
+func.func @y_commute(%q : !qu.bit, %x : i1, %z : i1) {
+  %g = gate.xz %x, %z
+  %q_1 = qssa.dyn_gate<%g> %q
+  %q_2 = qssa.gate<#gate.y> %q_1
+  func.return
+}
+
+// CHECK:      func.func @z_commute(%q : !qu.bit, %x : i1, %z : i1) {
+// CHECK-NEXT:   %g = gate.xz %x, %z
+// CHECK-NEXT:   %q_1 = qssa.gate<#gate.z> %q
+// CHECK-NEXT:   %q_2 = qssa.dyn_gate<%g> %q_1
+// CHECK-NEXT:   func.return
+// CHECK-NEXT: }
+func.func @z_commute(%q : !qu.bit, %x : i1, %z : i1) {
+  %g = gate.xz %x, %z
+  %q_1 = qssa.dyn_gate<%g> %q
+  %q_2 = qssa.gate<#gate.z> %q_1
+  func.return
+}
+
+// CHECK-NEXT:    func.func @phase_commute(%q : !qu.bit, %x : i1, %z : i1) {
+// CHECK-NEXT:      %q_1 = qssa.gate<#gate.s> %q
+// CHECK-NEXT:      %q_2 = arith.xori %x, %z : i1
+// CHECK-NEXT:      %q_3 = gate.xz %x, %q_2
+// CHECK-NEXT:      %q_4 = qssa.dyn_gate<%q_3> %q_1
+// CHECK-NEXT:      func.return
+// CHECK-NEXT:    }
+func.func @phase_commute(%q : !qu.bit, %x : i1, %z : i1) {
+  %g = gate.xz %x, %z
+  %q_1 = qssa.dyn_gate<%g> %q
+  %q_2 = qssa.gate<#gate.s> %q_1
+  func.return
+}
+
+// CHECK-NEXT:    func.func @phase_dagger_commute(%q : !qu.bit, %x : i1, %z : i1) {
+// CHECK-NEXT:      %q_1 = qssa.gate<#gate.s_dagger> %q
+// CHECK-NEXT:      %q_2 = arith.xori %x, %z : i1
+// CHECK-NEXT:      %q_3 = gate.xz %x, %q_2
+// CHECK-NEXT:      %q_4 = qssa.dyn_gate<%q_3> %q_1
+// CHECK-NEXT:      func.return
+// CHECK-NEXT:    }
+func.func @phase_dagger_commute(%q : !qu.bit, %x : i1, %z : i1) {
+  %g = gate.xz %x, %z
+  %q_1 = qssa.dyn_gate<%g> %q
+  %q_2 = qssa.gate<#gate.s_dagger> %q_1
+  func.return
+}
+
 // CHECK:      func.func @cz_commute(%q1 : !qu.bit, %q2 : !qu.bit, %x1 : i1, %z1 : i1, %x2 : i1, %z2 : i1) {
 // CHECK-NEXT:   %0 = arith.constant false
 // CHECK-NEXT:   %1 = arith.constant false

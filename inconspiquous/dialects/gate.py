@@ -48,7 +48,7 @@ from inconspiquous.gates import (
     SingleQubitGate,
 )
 from inconspiquous.constraints import SizedAttributeConstraint
-from inconspiquous.gates.core import PauliProp
+from inconspiquous.gates.core import PauliGate, PauliProp
 
 
 @irdl_attr_definition
@@ -137,55 +137,46 @@ class HadamardGate(SingleQubitCliffordGate):
 
 
 @irdl_attr_definition
-class XGate(SingleQubitCliffordGate):
+class XGate(PauliGate):
     name = "gate.x"
 
-    def pauli_prop(
-        self, input_idx: int, pauli_type: Literal["X", "Z"]
-    ) -> tuple[PauliProp, ...]:
-        assert input_idx == 0
-        if pauli_type == "X":
-            return (PauliProp(True, False),)
-        else:
-            return (PauliProp(False, True),)
-
 
 @irdl_attr_definition
-class YGate(SingleQubitCliffordGate):
+class YGate(PauliGate):
     name = "gate.y"
 
-    def pauli_prop(
-        self, input_idx: int, pauli_type: Literal["X", "Z"]
-    ) -> tuple[PauliProp, ...]:
-        assert input_idx == 0
-        if pauli_type == "X":
-            return (PauliProp(True, False),)
-        else:
-            return (PauliProp(False, True),)
-
 
 @irdl_attr_definition
-class ZGate(SingleQubitCliffordGate):
+class ZGate(PauliGate):
     name = "gate.z"
 
+
+@irdl_attr_definition
+class PhaseGate(SingleQubitCliffordGate):
+    name = "gate.s"
+
     def pauli_prop(
         self, input_idx: int, pauli_type: Literal["X", "Z"]
     ) -> tuple[PauliProp, ...]:
         assert input_idx == 0
         if pauli_type == "X":
-            return (PauliProp(True, False),)
+            return (PauliProp(True, True),)
         else:
             return (PauliProp(False, True),)
 
 
 @irdl_attr_definition
-class PhaseGate(SingleQubitGate):
-    name = "gate.s"
-
-
-@irdl_attr_definition
-class PhaseDaggerGate(SingleQubitGate):
+class PhaseDaggerGate(SingleQubitCliffordGate):
     name = "gate.s_dagger"
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[PauliProp, ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return (PauliProp(True, True),)
+        else:
+            return (PauliProp(False, True),)
 
 
 @irdl_attr_definition
@@ -325,7 +316,7 @@ class ToffoliGate(GateAttr):
 
 
 @irdl_attr_definition
-class IdentityGate(SingleQubitGate):
+class IdentityGate(PauliGate):
     name = "gate.id"
 
 

@@ -86,6 +86,19 @@ class SingleQubitCliffordGate(CliffordGateAttr):
         return 1
 
 
+class PauliGate(SingleQubitCliffordGate):
+    """Base class for pauli gates"""
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[PauliProp, ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return (PauliProp(True, False),)
+        else:
+            return (PauliProp(False, True),)
+
+
 class TwoQubitCliffordGate(CliffordGateAttr):
     """Base class for two-qubit Clifford gates."""
 
