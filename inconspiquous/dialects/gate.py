@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import ClassVar
+from typing import ClassVar, Literal
 
 from xdsl.dialects.builtin import (
     IndexType,
@@ -41,7 +41,12 @@ from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
 from xdsl.dialects.builtin import IntAttrConstraint
 
 from inconspiquous.dialects.angle import AngleAttr, AngleType
-from inconspiquous.gates import GateAttr, SingleQubitGate, TwoQubitGate
+from inconspiquous.gates import (
+    GateAttr,
+    SingleQubitCliffordGate,
+    TwoQubitCliffordGate,
+    SingleQubitGate,
+)
 from inconspiquous.constraints import SizedAttributeConstraint
 
 
@@ -117,23 +122,59 @@ class ConstantGateOp(IRDLOperation):
 
 
 @irdl_attr_definition
-class HadamardGate(SingleQubitGate):
+class HadamardGate(SingleQubitCliffordGate):
     name = "gate.h"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((False, True),)
+        else:
+            return ((True, False),)
+
 
 @irdl_attr_definition
-class XGate(SingleQubitGate):
+class XGate(SingleQubitCliffordGate):
     name = "gate.x"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, False),)
+        else:
+            return ((False, True),)
+
 
 @irdl_attr_definition
-class YGate(SingleQubitGate):
+class YGate(SingleQubitCliffordGate):
     name = "gate.y"
 
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, True),)
+        else:
+            return ((True, True),)
+
 
 @irdl_attr_definition
-class ZGate(SingleQubitGate):
+class ZGate(SingleQubitCliffordGate):
     name = "gate.z"
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        assert input_idx == 0
+        if pauli_type == "X":
+            return ((True, False),)
+        else:
+            return ((False, True),)
 
 
 @irdl_attr_definition
@@ -221,13 +262,56 @@ class DynJGate(IRDLOperation):
 
 
 @irdl_attr_definition
-class CXGate(TwoQubitGate):
+class CXGate(TwoQubitCliffordGate):
     name = "gate.cx"
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        if pauli_type == "X":
+            if input_idx == 0:
+                return ((True, False), (True, False))
+            else:
+                return (
+                    (False, False),
+                    (True, False),
+                )
+        else:
+            if input_idx == 0:
+                return (
+                    (False, True),
+                    (False, False),
+                )
+            else:
+                return ((False, True), (False, True))
 
 
 @irdl_attr_definition
-class CZGate(TwoQubitGate):
+class CZGate(TwoQubitCliffordGate):
     name = "gate.cz"
+
+    def pauli_prop(
+        self, input_idx: int, pauli_type: Literal["X", "Z"]
+    ) -> tuple[tuple[bool, bool], ...]:
+        if pauli_type == "X":
+            if input_idx == 0:
+                return (
+                    (True, False),
+                    (False, True),
+                )
+            else:
+                return (
+                    (False, True),
+                    (True, False),
+                )
+        else:
+            if input_idx == 0:
+                return ((False, True), (False, False))
+            else:
+                return (
+                    (False, False),
+                    (False, True),
+                )
 
 
 @irdl_attr_definition
