@@ -68,3 +68,19 @@ class CliffordGateAttr(GateAttr, ABC):
             - Z propagates to X: pauli_prop(0, "Z") returns ((True, False),)
         """
         pass
+
+
+class SingleQubitCliffordGate(CliffordGateAttr):
+    """Base class for single-qubit Clifford gates."""
+
+    @property
+    def num_qubits(self) -> int:
+        return 1
+
+
+class TwoQubitCliffordGate(CliffordGateAttr):
+    """Base class for two-qubit Clifford gates."""
+
+    @property
+    def num_qubits(self) -> int:
+        return 2
