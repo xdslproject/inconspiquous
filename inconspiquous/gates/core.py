@@ -76,7 +76,6 @@ class CliffordGateAttr(GateAttr, ABC):
             - X propagates to Z: pauli_prop(0, "X") returns ((x: False, z: True),)
             - Z propagates to X: pauli_prop(0, "Z") returns ((x: True, z: False),)
         """
-        ...
 
 
 class SingleQubitCliffordGate(CliffordGateAttr):
