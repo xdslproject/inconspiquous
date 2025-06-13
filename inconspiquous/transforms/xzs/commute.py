@@ -135,9 +135,14 @@ class XZCommutePattern(RewritePattern):
 
                 # Create XZ gate for this output
                 if needs_gate:
-                    xz_gate = XZOp(apply_x, apply_z)
+                    if apply_x == gate.x and apply_z == gate.z:
+                        xz_gate = gate
+                    else:
+                        xz_gate = XZOp(apply_x, apply_z)
+                        ops_to_insert.append(xz_gate)
+
                     dyn_gate = qssa.DynGateOp(xz_gate, new_op2.outs[out_idx])
-                    ops_to_insert.extend([xz_gate, dyn_gate])
+                    ops_to_insert.append(dyn_gate)
                     new_outputs.append(dyn_gate.outs[0])
                 else:
                     new_outputs.append(new_op2.outs[out_idx])
