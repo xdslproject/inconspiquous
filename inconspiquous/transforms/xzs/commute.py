@@ -95,22 +95,20 @@ class XZCommutePattern(RewritePattern):
             false_const_needed = False
             new_outputs: list[SSAValue] = []
 
-            for out_idx, ((x_from_x, z_from_x), (x_from_z, z_from_z)) in enumerate(
-                zip(x_prop, z_prop)
-            ):
+            for out_idx, (from_x, from_z) in enumerate(zip(x_prop, z_prop)):
                 apply_x: SSAValue
                 apply_z: SSAValue
                 needs_gate = False
 
-                if x_from_x and x_from_z:
+                if from_x.x and from_z.x:
                     xor_x = arith.XOrIOp(gate.x, gate.z)
                     apply_x = xor_x.result
                     ops_to_insert.append(xor_x)
                     needs_gate = True
-                elif x_from_x:
+                elif from_x.x:
                     apply_x = gate.x
                     needs_gate = True
-                elif x_from_z:
+                elif from_z.x:
                     apply_x = gate.z
                     needs_gate = True
                 else:
@@ -118,15 +116,15 @@ class XZCommutePattern(RewritePattern):
                     false_const_needed = True
 
                 # Z component
-                if z_from_x and z_from_z:
+                if from_x.z and from_z.z:
                     xor_z = arith.XOrIOp(gate.x, gate.z)
                     apply_z = xor_z.result
                     ops_to_insert.append(xor_z)
                     needs_gate = True
-                elif z_from_x:
+                elif from_x.z:
                     apply_z = gate.x
                     needs_gate = True
-                elif z_from_z:
+                elif from_z.z:
                     apply_z = gate.z
                     needs_gate = True
                 else:

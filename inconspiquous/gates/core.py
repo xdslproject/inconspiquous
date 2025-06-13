@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Literal
+from typing import Literal, NamedTuple
 
 from xdsl.ir import (
     ParametrizedAttribute,
@@ -43,6 +43,15 @@ class TwoQubitGate(GateAttr):
         return 2
 
 
+class PauliProp(NamedTuple):
+    """
+    Describes the combination of x and z pauli gates.
+    """
+
+    x: bool
+    z: bool
+
+
 class CliffordGateAttr(GateAttr, ABC):
     """
     Base class for Clifford gates that support Pauli propagation.
@@ -51,7 +60,7 @@ class CliffordGateAttr(GateAttr, ABC):
     @abstractmethod
     def pauli_prop(
         self, input_idx: int, pauli_type: Literal["X", "Z"]
-    ) -> tuple[tuple[bool, bool], ...]:
+    ) -> tuple[PauliProp, ...]:
         """
         Compute Pauli propagation through this gate.
 
@@ -60,14 +69,13 @@ class CliffordGateAttr(GateAttr, ABC):
             pauli_type: Either "X" or "Z" indicating the type of Pauli gate
 
         Returns:
-            A tuple of (X, Z) pairs for each output qubit, where True indicates
-            that the corresponding Pauli component should be applied to that output.
+            A PauliProp object where the `x` and `z` component determine whether
+            the corresponding Pauli component should be applied to that output.
 
         For example, for Hadamard gate:
-            - X propagates to Z: pauli_prop(0, "X") returns ((False, True),)
-            - Z propagates to X: pauli_prop(0, "Z") returns ((True, False),)
+            - X propagates to Z: pauli_prop(0, "X") returns ((x: False, z: True),)
+            - Z propagates to X: pauli_prop(0, "Z") returns ((x: True, z: False),)
         """
-        pass
 
 
 class SingleQubitCliffordGate(CliffordGateAttr):

@@ -48,6 +48,7 @@ from inconspiquous.gates import (
     SingleQubitGate,
 )
 from inconspiquous.constraints import SizedAttributeConstraint
+from inconspiquous.gates.core import PauliProp
 
 
 @irdl_attr_definition
@@ -127,12 +128,12 @@ class HadamardGate(SingleQubitCliffordGate):
 
     def pauli_prop(
         self, input_idx: int, pauli_type: Literal["X", "Z"]
-    ) -> tuple[tuple[bool, bool], ...]:
+    ) -> tuple[PauliProp, ...]:
         assert input_idx == 0
         if pauli_type == "X":
-            return ((False, True),)
+            return (PauliProp(False, True),)
         else:
-            return ((True, False),)
+            return (PauliProp(True, False),)
 
 
 @irdl_attr_definition
@@ -141,12 +142,12 @@ class XGate(SingleQubitCliffordGate):
 
     def pauli_prop(
         self, input_idx: int, pauli_type: Literal["X", "Z"]
-    ) -> tuple[tuple[bool, bool], ...]:
+    ) -> tuple[PauliProp, ...]:
         assert input_idx == 0
         if pauli_type == "X":
-            return ((True, False),)
+            return (PauliProp(True, False),)
         else:
-            return ((False, True),)
+            return (PauliProp(False, True),)
 
 
 @irdl_attr_definition
@@ -155,12 +156,12 @@ class YGate(SingleQubitCliffordGate):
 
     def pauli_prop(
         self, input_idx: int, pauli_type: Literal["X", "Z"]
-    ) -> tuple[tuple[bool, bool], ...]:
+    ) -> tuple[PauliProp, ...]:
         assert input_idx == 0
         if pauli_type == "X":
-            return ((True, True),)
+            return (PauliProp(True, False),)
         else:
-            return ((True, True),)
+            return (PauliProp(False, True),)
 
 
 @irdl_attr_definition
@@ -169,12 +170,12 @@ class ZGate(SingleQubitCliffordGate):
 
     def pauli_prop(
         self, input_idx: int, pauli_type: Literal["X", "Z"]
-    ) -> tuple[tuple[bool, bool], ...]:
+    ) -> tuple[PauliProp, ...]:
         assert input_idx == 0
         if pauli_type == "X":
-            return ((True, False),)
+            return (PauliProp(True, False),)
         else:
-            return ((False, True),)
+            return (PauliProp(False, True),)
 
 
 @irdl_attr_definition
@@ -267,23 +268,23 @@ class CXGate(TwoQubitCliffordGate):
 
     def pauli_prop(
         self, input_idx: int, pauli_type: Literal["X", "Z"]
-    ) -> tuple[tuple[bool, bool], ...]:
+    ) -> tuple[PauliProp, ...]:
         if pauli_type == "X":
             if input_idx == 0:
-                return ((True, False), (True, False))
+                return (PauliProp(True, False), PauliProp(True, False))
             else:
                 return (
-                    (False, False),
-                    (True, False),
+                    PauliProp(False, False),
+                    PauliProp(True, False),
                 )
         else:
             if input_idx == 0:
                 return (
-                    (False, True),
-                    (False, False),
+                    PauliProp(False, True),
+                    PauliProp(False, False),
                 )
             else:
-                return ((False, True), (False, True))
+                return (PauliProp(False, True), PauliProp(False, True))
 
 
 @irdl_attr_definition
@@ -292,25 +293,25 @@ class CZGate(TwoQubitCliffordGate):
 
     def pauli_prop(
         self, input_idx: int, pauli_type: Literal["X", "Z"]
-    ) -> tuple[tuple[bool, bool], ...]:
+    ) -> tuple[PauliProp, ...]:
         if pauli_type == "X":
             if input_idx == 0:
                 return (
-                    (True, False),
-                    (False, True),
+                    PauliProp(True, False),
+                    PauliProp(False, True),
                 )
             else:
                 return (
-                    (False, True),
-                    (True, False),
+                    PauliProp(False, True),
+                    PauliProp(True, False),
                 )
         else:
             if input_idx == 0:
-                return ((False, True), (False, False))
+                return (PauliProp(False, True), PauliProp(False, False))
             else:
                 return (
-                    (False, False),
-                    (False, True),
+                    PauliProp(False, False),
+                    PauliProp(False, True),
                 )
 
 
