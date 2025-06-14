@@ -1,5 +1,5 @@
 """
-Transformation to inline subcircuits when a qssa.dyn_gate is called with a circuit value.
+Transformation to inline subcircuits when a `qssa.dyn_gate` is called with a circuit value.
 """
 
 from xdsl.dialects import builtin
