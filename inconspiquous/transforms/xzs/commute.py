@@ -1,3 +1,4 @@
+from xdsl.ir import Operation, SSAValue
 from xdsl.dialects import arith, builtin
 from xdsl.parser import Context
 from xdsl.passes import ModulePass
@@ -9,17 +10,13 @@ from xdsl.pattern_rewriter import (
 )
 from inconspiquous.dialects import qssa
 from inconspiquous.dialects.angle import AngleAttr, CondNegateAngleOp, ConstantAngleOp
-from inconspiquous.dialects.gate import (
-    CXGate,
-    CZGate,
-    HadamardGate,
-    XZOp,
-)
+from inconspiquous.dialects.gate import XZOp
 from inconspiquous.dialects.measurement import (
     CompBasisMeasurementAttr,
     XYDynMeasurementOp,
     XYMeasurementAttr,
 )
+from inconspiquous.gates import CliffordGateAttr
 from inconspiquous.transforms.xzs.fusion import FuseXZGatesPattern
 from inconspiquous.utils.linear_walker import LinearWalker
 
@@ -67,6 +64,7 @@ class XZCommutePattern(RewritePattern):
                 op2, (*angle_op, negate, new_measurement, new_op2, new_op1)
             )
             rewriter.erase_op(op1)
+            return
 
         if isinstance(op2, qssa.MeasureOp):
             if not isinstance(op2.measurement, CompBasisMeasurementAttr):
@@ -76,67 +74,86 @@ class XZCommutePattern(RewritePattern):
 
             rewriter.replace_op(op2, (new_op2, new_op1))
             rewriter.erase_op(op1)
+            return
 
         if not isinstance(op2, qssa.GateOp):
             return
 
-        if isinstance(op2.gate, HadamardGate):
-            new_op2 = qssa.GateOp(HadamardGate(), *op1.ins)
-            new_gate = XZOp(gate.z, gate.x)
-            new_op1 = qssa.DynGateOp(new_gate, *new_op2.outs)
+        if isinstance(op2.gate, CliffordGateAttr):
+            input_idx = use.index
 
-            rewriter.replace_op(op2, (new_op2, new_gate, new_op1))
+            x_prop = op2.gate.pauli_prop(input_idx, "X")
+            z_prop = op2.gate.pauli_prop(input_idx, "Z")
+
+            new_operands = list(op2.ins)
+            new_operands[input_idx] = op1.ins[0]
+
+            new_op2 = qssa.GateOp(op2.gate, *new_operands)
+            ops_to_insert: list[Operation] = []
+
+            false_const = arith.ConstantOp.from_int_and_width(0, 1)
+            false_const_needed = False
+            new_outputs: list[SSAValue] = []
+
+            for out_idx, (from_x, from_z) in enumerate(zip(x_prop, z_prop)):
+                apply_x: SSAValue
+                apply_z: SSAValue
+                needs_gate = False
+
+                if from_x.x and from_z.x:
+                    xor_x = arith.XOrIOp(gate.x, gate.z)
+                    apply_x = xor_x.result
+                    ops_to_insert.append(xor_x)
+                    needs_gate = True
+                elif from_x.x:
+                    apply_x = gate.x
+                    needs_gate = True
+                elif from_z.x:
+                    apply_x = gate.z
+                    needs_gate = True
+                else:
+                    apply_x = false_const.result
+                    false_const_needed = True
+
+                # Z component
+                if from_x.z and from_z.z:
+                    xor_z = arith.XOrIOp(gate.x, gate.z)
+                    apply_z = xor_z.result
+                    ops_to_insert.append(xor_z)
+                    needs_gate = True
+                elif from_x.z:
+                    apply_z = gate.x
+                    needs_gate = True
+                elif from_z.z:
+                    apply_z = gate.z
+                    needs_gate = True
+                else:
+                    apply_z = false_const.result
+                    false_const_needed = True
+
+                # Create XZ gate for this output
+                if needs_gate:
+                    if apply_x == gate.x and apply_z == gate.z:
+                        xz_gate = gate
+                    else:
+                        xz_gate = XZOp(apply_x, apply_z)
+                        ops_to_insert.append(xz_gate)
+
+                    dyn_gate = qssa.DynGateOp(xz_gate, new_op2.outs[out_idx])
+                    ops_to_insert.append(dyn_gate)
+                    new_outputs.append(dyn_gate.outs[0])
+                else:
+                    new_outputs.append(new_op2.outs[out_idx])
+
+            final_ops = (
+                (false_const, new_op2, *ops_to_insert)
+                if false_const_needed
+                else (new_op2, *ops_to_insert)
+            )
+
+            rewriter.replace_op(op2, final_ops, new_outputs)
             rewriter.erase_op(op1)
-
-        if isinstance(op2.gate, CXGate):
-            c0 = arith.ConstantOp.from_int_and_width(0, 1)
-            if use.index == 0:
-                new_op2 = qssa.GateOp(CXGate(), *(op1.ins[0], op2.ins[1]))
-                new_op1_left = qssa.DynGateOp(gate, new_op2.outs[0])
-                new_gate_right = XZOp(gate.x, c0)
-                new_op1_right = qssa.DynGateOp(new_gate_right, new_op2.outs[1])
-                rewriter.replace_op(
-                    op2,
-                    (c0, new_op2, new_op1_left, new_gate_right, new_op1_right),
-                    (new_op1_left.outs[0], new_op1_right.outs[0]),
-                )
-                rewriter.erase_op(op1)
-            elif use.index == 1:
-                new_op2 = qssa.GateOp(CXGate(), *(op2.ins[0], op1.ins[0]))
-                new_gate_left = XZOp(c0, gate.z)
-                new_op1_left = qssa.DynGateOp(new_gate_left, new_op2.outs[0])
-                new_op1_right = qssa.DynGateOp(gate, new_op2.outs[1])
-                rewriter.replace_op(
-                    op2,
-                    (c0, new_op2, new_gate_left, new_op1_left, new_op1_right),
-                    (new_op1_left.outs[0], new_op1_right.outs[0]),
-                )
-                rewriter.erase_op(op1)
-
-        if isinstance(op2.gate, CZGate):
-            c0 = arith.ConstantOp.from_int_and_width(0, 1)
-            if use.index == 0:
-                new_op2 = qssa.GateOp(CZGate(), *(op1.ins[0], op2.ins[1]))
-                new_op1_left = qssa.DynGateOp(gate, new_op2.outs[0])
-                new_gate_right = XZOp(c0, gate.x)
-                new_op1_right = qssa.DynGateOp(new_gate_right, new_op2.outs[1])
-                rewriter.replace_op(
-                    op2,
-                    (c0, new_op2, new_op1_left, new_gate_right, new_op1_right),
-                    (new_op1_left.outs[0], new_op1_right.outs[0]),
-                )
-                rewriter.erase_op(op1)
-            elif use.index == 1:
-                new_op2 = qssa.GateOp(CZGate(), *(op2.ins[0], op1.ins[0]))
-                new_gate_left = XZOp(c0, gate.x)
-                new_op1_left = qssa.DynGateOp(new_gate_left, new_op2.outs[0])
-                new_op1_right = qssa.DynGateOp(gate, new_op2.outs[1])
-                rewriter.replace_op(
-                    op2,
-                    (c0, new_op2, new_gate_left, new_op1_left, new_op1_right),
-                    (new_op1_left.outs[0], new_op1_right.outs[0]),
-                )
-                rewriter.erase_op(op1)
+            return
 
 
 class XZCommute(ModulePass):
