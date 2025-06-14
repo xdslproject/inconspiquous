@@ -79,7 +79,7 @@ class InlineCircuitPattern(RewritePattern):
 
 class InlineCircuitsPass(ModulePass):
     """
-    Pass that inlines all circuit operations used with dyn_gate.
+    Pass that inlines all `qssa` circuit operations used with `qssa.dyn_gate`.
     """
 
     name = "inline-circuits"
