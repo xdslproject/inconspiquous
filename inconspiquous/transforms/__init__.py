@@ -61,6 +61,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
         return flip_coins.FlipCoinsPass
 
+    def get_inline_circuits():
+        from inconspiquous.transforms import inline_circuits
+
+        return inline_circuits.InlineCircuitsPass
+
     def get_lower_dyn_gate_to_scf():
         from inconspiquous.transforms import lower_dyn_gate_to_scf
 
@@ -133,6 +138,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "cse": get_cse,
         "dce": get_dce,
         "flip-coins": get_flip_coins,
+        "inline-circuits": get_inline_circuits,
         "qec-inline": get_qec_inline,
         "lower-dyn-gate-to-scf": get_lower_dyn_gate_to_scf,
         "lower-to-fin-supp": get_lower_to_fin_supp,

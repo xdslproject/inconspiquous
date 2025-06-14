@@ -1,6 +1,6 @@
 from typing import ClassVar
 from xdsl.dialects.builtin import i1
-from xdsl.ir import Dialect, Operation, SSAValue
+from xdsl.ir import Dialect, Operation, SSAValue, Block, Region
 from xdsl.irdl import (
     AnyInt,
     IRDLOperation,
@@ -13,7 +13,10 @@ from xdsl.irdl import (
     var_operand_def,
     eq,
     var_result_def,
+    result_def,
+    region_def,
 )
+from xdsl.traits import IsTerminator, HasParent
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.traits import HasCanonicalizationPatternsTrait
 
@@ -140,6 +143,47 @@ class DynMeasureOp(IRDLOperation):
         )
 
 
+@irdl_op_definition
+class CircuitOp(IRDLOperation):
+    name = "qref.circuit"
+
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
+
+    body = region_def("single_block", entry_args=RangeOf(eq(BitType()), length=_I))
+    result = result_def(GateType.constr(_I))
+
+    assembly_format = "`(` `)` `(` $body `)` `:` `(` `)` `->` type($result) attr-dict"
+
+    def __init__(self, num_qubits: int, region: Region | None = None):
+        if region is None:
+            region = Region(Block(arg_types=[BitType() for _ in range(num_qubits)]))
+
+        super().__init__(
+            regions=(region,),
+            result_types=(GateType(num_qubits),),
+        )
+
+    def verify_(self):
+        # Check terminator
+        entry_block = self.body.blocks[0]
+        if entry_block.ops:
+            terminator = entry_block.last_op
+            assert isinstance(terminator, ReturnOp), (
+                "qref.circuit must be terminated by qref.return"
+            )
+
+
+@irdl_op_definition
+class ReturnOp(IRDLOperation):
+    name = "qref.return"
+
+    traits = traits_def(HasParent(CircuitOp), IsTerminator())
+    assembly_format = "attr-dict"
+
+    def __init__(self):
+        super().__init__()
+
+
 Qref = Dialect(
     "qref",
     [
@@ -147,6 +191,8 @@ Qref = Dialect(
         DynGateOp,
         MeasureOp,
         DynMeasureOp,
+        CircuitOp,
+        ReturnOp,
     ],
     [],
 )
