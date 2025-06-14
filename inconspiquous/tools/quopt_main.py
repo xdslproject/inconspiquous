@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import IO
 from xdsl.xdsl_opt_main import xDSLOptMain
-from xdsl.ir import ModuleOp
+from xdsl.dialects.builtin import ModuleOp
 
 from inconspiquous.backend.qir import pyqir_available
 
