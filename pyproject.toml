@@ -6,8 +6,10 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "xdsl[gui]>=0.23.0",
-    "pyqir",
 ]
+
+[project.optional-dependencies]
+qir = ["pyqir"]
 
 [tool.uv]
 dev-dependencies = [

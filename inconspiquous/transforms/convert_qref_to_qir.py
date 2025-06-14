@@ -1,4 +1,4 @@
-# inconspiquous/transforms/convert_qref_to_qir.py
+from typing import List
 from xdsl.context import Context
 from xdsl.dialects import builtin
 from xdsl.passes import ModulePass
@@ -29,7 +29,7 @@ class ConvertQuAllocToQirAlloc(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qu.AllocOp, rewriter: PatternRewriter):
-        new_ops = []
+        new_ops: List[qir.QubitAllocateOp] = []
         for _ in op.outs:
             alloc_op = qir.QubitAllocateOp()
             new_ops.append(alloc_op)
@@ -80,8 +80,8 @@ class ConvertQrefMeasureToQir(RewritePattern):
         if not isinstance(op.measurement, CompBasisMeasurementAttr):
             return
 
-        measure_ops = []
-        read_ops = []
+        measure_ops: List[qir.MeasureOp] = []
+        read_ops: List[qir.ReadResultOp] = []
 
         for qubit in op.in_qubits:
             measure_op = qir.MeasureOp(qubit)
@@ -100,7 +100,7 @@ class ConvertQrefToQir(ModulePass):
 
     name = "convert-qref-to-qir"
 
-    def apply(self, _ctx: Context, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
             GreedyRewritePatternApplier(
                 [
