@@ -3,7 +3,8 @@
 // Test basic single-qubit circuit inlining
 // CHECK:      func.func @basic_inline() {
 // CHECK-NEXT:   %q0 = qu.alloc
-// CHECK-NEXT:   %circuit = qssa.circuit(%{{.*}} : !qu.bit) ({
+// CHECK-NEXT:   %circuit = qssa.circuit() ({
+// CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.x> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !gate.type<1>
@@ -12,10 +13,11 @@
 // CHECK-NEXT: }
 func.func @basic_inline() {
   %q0 = qu.alloc
-  %circuit = qssa.circuit(%arg0 : !qu.bit) ({
-  %q1 = qssa.gate<#gate.x> %arg0
-  qssa.return %q1
-}) : () -> !gate.type<1>
+  %circuit = qssa.circuit() ({
+  ^bb0(%arg0 : !qu.bit):
+    %q1 = qssa.gate<#gate.x> %arg0
+    qssa.return %q1
+  }) : () -> !gate.type<1>
   %result = qssa.dyn_gate<%circuit> %q0
   func.return
 }
@@ -23,16 +25,18 @@ func.func @basic_inline() {
 // Test identity circuit (no operations, just return)
 // CHECK:      func.func @identity_inline() {
 // CHECK-NEXT:   %q0 = qu.alloc
-// CHECK-NEXT:   %circuit = qssa.circuit(%{{.*}} : !qu.bit) ({
+// CHECK-NEXT:   %circuit = qssa.circuit() ({
+// CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !gate.type<1>
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @identity_inline() {
   %q0 = qu.alloc
-  %circuit = qssa.circuit(%arg0 : !qu.bit) ({
-  qssa.return %arg0
-}) : () -> !gate.type<1>
+  %circuit = qssa.circuit() ({
+  ^bb0(%arg0 : !qu.bit):
+    qssa.return %arg0
+  }) : () -> !gate.type<1>
   %result = qssa.dyn_gate<%circuit> %q0
   func.return
 }
@@ -40,7 +44,8 @@ func.func @identity_inline() {
 // Test complex single-qubit circuit with multiple gates
 // CHECK:      func.func @complex_single_qubit() {
 // CHECK-NEXT:   %q0 = qu.alloc
-// CHECK-NEXT:   %circuit = qssa.circuit(%{{.*}} : !qu.bit) ({
+// CHECK-NEXT:   %circuit = qssa.circuit() ({
+// CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.x> %{{.*}}
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.z> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
@@ -51,11 +56,12 @@ func.func @identity_inline() {
 // CHECK-NEXT: }
 func.func @complex_single_qubit() {
   %q0 = qu.alloc
-  %circuit = qssa.circuit(%arg0 : !qu.bit) ({
-  %q1 = qssa.gate<#gate.x> %arg0
-  %q2 = qssa.gate<#gate.z> %q1
-  qssa.return %q2
-}) : () -> !gate.type<1>
+  %circuit = qssa.circuit() ({
+  ^bb0(%arg0 : !qu.bit):
+    %q1 = qssa.gate<#gate.x> %arg0
+    %q2 = qssa.gate<#gate.z> %q1
+    qssa.return %q2
+  }) : () -> !gate.type<1>
   %result = qssa.dyn_gate<%circuit> %q0
   func.return
 }
@@ -64,7 +70,8 @@ func.func @complex_single_qubit() {
 // CHECK:      func.func @two_qubit_inline() {
 // CHECK-NEXT:   %q0 = qu.alloc
 // CHECK-NEXT:   %q1 = qu.alloc
-// CHECK-NEXT:   %circuit = qssa.circuit(%{{.*}} : !qu.bit) ({
+// CHECK-NEXT:   %circuit = qssa.circuit() ({
+// CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.x> %{{.*}}
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.y> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}, %{{.*}}
@@ -76,11 +83,12 @@ func.func @complex_single_qubit() {
 func.func @two_qubit_inline() {
   %q0 = qu.alloc
   %q1 = qu.alloc
-  %circuit = qssa.circuit(%arg0 : !qu.bit, %arg1 : !qu.bit) ({
-  %q2 = qssa.gate<#gate.x> %arg0
-  %q3 = qssa.gate<#gate.y> %arg1
-  qssa.return %q2, %q3
-}) : () -> !gate.type<2>
+  %circuit = qssa.circuit() ({
+  ^bb0(%arg0 : !qu.bit, %arg1 : !qu.bit):
+    %q2 = qssa.gate<#gate.x> %arg0
+    %q3 = qssa.gate<#gate.y> %arg1
+    qssa.return %q2, %q3
+  }) : () -> !gate.type<2>
   %result0, %result1 = qssa.dyn_gate<%circuit> %q0, %q1
   func.return
 }
@@ -89,7 +97,8 @@ func.func @two_qubit_inline() {
 // CHECK:      func.func @entangling_circuit() {
 // CHECK-NEXT:   %q0 = qu.alloc
 // CHECK-NEXT:   %q1 = qu.alloc
-// CHECK-NEXT:   %circuit = qssa.circuit(%{{.*}} : !qu.bit) ({
+// CHECK-NEXT:   %circuit = qssa.circuit() ({
+// CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.h> %{{.*}}
 // CHECK-NEXT:     %{{.*}}, %{{.*}} = qssa.gate<#gate.cx> %{{.*}}, %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}, %{{.*}}
@@ -101,11 +110,12 @@ func.func @two_qubit_inline() {
 func.func @entangling_circuit() {
   %q0 = qu.alloc
   %q1 = qu.alloc
-  %circuit = qssa.circuit(%arg0 : !qu.bit, %arg1 : !qu.bit) ({
-  %q2 = qssa.gate<#gate.h> %arg0
-  %q3, %q4 = qssa.gate<#gate.cx> %q2, %arg1
-  qssa.return %q3, %q4
-}) : () -> !gate.type<2>
+  %circuit = qssa.circuit() ({
+  ^bb0(%arg0 : !qu.bit, %arg1 : !qu.bit):
+    %q2 = qssa.gate<#gate.h> %arg0
+    %q3, %q4 = qssa.gate<#gate.cx> %q2, %arg1
+    qssa.return %q3, %q4
+  }) : () -> !gate.type<2>
   %result0, %result1 = qssa.dyn_gate<%circuit> %q0, %q1
   func.return
 }
@@ -113,7 +123,8 @@ func.func @entangling_circuit() {
 // Test that results are properly used after inlining
 // CHECK:      func.func @use_results() {
 // CHECK-NEXT:   %q0 = qu.alloc
-// CHECK-NEXT:   %circuit = qssa.circuit(%{{.*}} : !qu.bit) ({
+// CHECK-NEXT:   %circuit = qssa.circuit() ({
+// CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.x> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !gate.type<1>
@@ -123,10 +134,11 @@ func.func @entangling_circuit() {
 // CHECK-NEXT: }
 func.func @use_results() {
   %q0 = qu.alloc
-  %circuit = qssa.circuit(%arg0 : !qu.bit) ({
-  %q1 = qssa.gate<#gate.x> %arg0
-  qssa.return %q1
-}) : () -> !gate.type<1>
+  %circuit = qssa.circuit() ({
+  ^bb0(%arg0 : !qu.bit):
+    %q1 = qssa.gate<#gate.x> %arg0
+    qssa.return %q1
+  }) : () -> !gate.type<1>
   %result = qssa.dyn_gate<%circuit> %q0
   %final = qssa.gate<#gate.z> %result
   func.return
@@ -136,11 +148,13 @@ func.func @use_results() {
 // CHECK:      func.func @multiple_circuits() {
 // CHECK-NEXT:   %q0 = qu.alloc
 // CHECK-NEXT:   %q1 = qu.alloc
-// CHECK-NEXT:   %circuit1 = qssa.circuit(%{{.*}} : !qu.bit) ({
+// CHECK-NEXT:   %circuit1 = qssa.circuit() ({
+// CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.x> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !gate.type<1>
-// CHECK-NEXT:   %circuit2 = qssa.circuit(%{{.*}} : !qu.bit) ({
+// CHECK-NEXT:   %circuit2 = qssa.circuit() ({
+// CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.y> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !gate.type<1>
@@ -152,15 +166,17 @@ func.func @multiple_circuits() {
   %q0 = qu.alloc
   %q1 = qu.alloc
 
-  %circuit1 = qssa.circuit(%arg0 : !qu.bit) ({
-  %q2 = qssa.gate<#gate.x> %arg0
-  qssa.return %q2
-}) : () -> !gate.type<1>
+  %circuit1 = qssa.circuit() ({
+  ^bb0(%arg0 : !qu.bit):
+    %q2 = qssa.gate<#gate.x> %arg0
+    qssa.return %q2
+  }) : () -> !gate.type<1>
 
-  %circuit2 = qssa.circuit(%arg0 : !qu.bit) ({
-  %q3 = qssa.gate<#gate.y> %arg0
-  qssa.return %q3
-}) : () -> !gate.type<1>
+  %circuit2 = qssa.circuit() ({
+  ^bb0(%arg0 : !qu.bit):
+    %q3 = qssa.gate<#gate.y> %arg0
+    qssa.return %q3
+  }) : () -> !gate.type<1>
 
   %result1 = qssa.dyn_gate<%circuit1> %q0
   %result2 = qssa.dyn_gate<%circuit2> %q1
@@ -185,7 +201,8 @@ func.func @non_circuit_dyn_gate() {
 // CHECK:      func.func @circuit_reuse() {
 // CHECK-NEXT:   %q0 = qu.alloc
 // CHECK-NEXT:   %q1 = qu.alloc
-// CHECK-NEXT:   %reusable_circuit = qssa.circuit(%{{.*}} : !qu.bit) ({
+// CHECK-NEXT:   %reusable_circuit = qssa.circuit() ({
+// CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.h> %{{.*}}
 // CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.z> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
@@ -200,11 +217,12 @@ func.func @circuit_reuse() {
   %q0 = qu.alloc
   %q1 = qu.alloc
 
-  %reusable_circuit = qssa.circuit(%arg0 : !qu.bit) ({
-  %q2 = qssa.gate<#gate.h> %arg0
-  %q3 = qssa.gate<#gate.z> %q2
-  qssa.return %q3
-}) : () -> !gate.type<1>
+  %reusable_circuit = qssa.circuit() ({
+  ^bb0(%arg0 : !qu.bit):
+    %q2 = qssa.gate<#gate.h> %arg0
+    %q3 = qssa.gate<#gate.z> %q2
+    qssa.return %q3
+  }) : () -> !gate.type<1>
 
   // Use the same circuit on two different qubits
   %result1 = qssa.dyn_gate<%reusable_circuit> %q0
