@@ -37,6 +37,3 @@ class SizedAttributeConstraint(GenericAttrConstraint[SizedAttributeCovT]):
 
     def variables(self) -> set[str]:
         return self.size_constraint.variables()
-
-    def mapping_type_vars(self) -> dict[str, type]:
-        return {}

@@ -15,7 +15,7 @@ func.func @test_basic() {
 func.func @test_all_gates() {
   // CHECK: %[[Q:.*]] = qu.alloc
   %q = qu.alloc
-  // CHECK: qref.gate<#gate.h> %[[Q]]
+  // CHECK: qir.h %[[Q]]
   qref.gate<#gate.h> %q
   // CHECK: qref.gate<#gate.x> %[[Q]]
   qref.gate<#gate.x> %q

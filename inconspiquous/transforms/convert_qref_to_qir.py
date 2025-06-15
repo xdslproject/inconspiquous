@@ -22,6 +22,7 @@ from inconspiquous.dialects.gate import (
     CZGate,
 )
 from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
+import importlib.util
 
 
 class ConvertQuAllocToQirAlloc(RewritePattern):
@@ -101,6 +102,14 @@ class ConvertQrefToQir(ModulePass):
     name = "convert-qref-to-qir"
 
     def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
+        try:
+            if not importlib.util.find_spec("inconspiquous.backend.qir"):
+                raise ImportError
+        except ImportError:
+            raise ImportError(
+                "PyQIR is required for QIR conversion. Please install it with 'pip install pyqir'"
+            )
+
         PatternRewriteWalker(
             GreedyRewritePatternApplier(
                 [
