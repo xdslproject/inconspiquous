@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import TypeVar
+from typing_extensions import TypeVar
 from xdsl.ir import Attribute, VerifyException
 from xdsl.irdl import (
+    AttrConstraint,
     ConstraintContext,
     GenericAttrConstraint,
     IntConstraint,
@@ -37,3 +38,8 @@ class SizedAttributeConstraint(GenericAttrConstraint[SizedAttributeCovT]):
 
     def variables(self) -> set[str]:
         return self.size_constraint.variables()
+
+    def mapping_type_vars(
+        self, type_var_mapping: dict[TypeVar, AttrConstraint]
+    ) -> GenericAttrConstraint[SizedAttributeCovT]:
+        return self
