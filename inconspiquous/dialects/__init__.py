@@ -56,6 +56,11 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return QEC
 
+    def get_qft():
+        from inconspiquous.dialects.qft import QFT
+
+        return QFT
+
     def get_qref():
         from inconspiquous.dialects.qref import Qref
 
@@ -107,6 +112,7 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "measurement": get_measurement,
         "prob": get_prob,
         "qec": get_qec,
+        "qft": get_qft,
         "qref": get_qref,
         "qu": get_qu,
         "qssa": get_qssa,
