@@ -31,7 +31,7 @@ class AngleAttr(ParametrizedAttribute):
 
     def __init__(self, f: float):
         f_attr: FloatAttr[Float64Type] = FloatAttr(f % 2, 64)
-        super().__init__((f_attr,))
+        super().__init__(f_attr)
 
     @property
     def as_float_raw(self) -> float:

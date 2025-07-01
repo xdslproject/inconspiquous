@@ -56,7 +56,7 @@ class XYMeasurementAttr(MeasurementAttr):
         if not isinstance(angle, AngleAttr):
             angle = AngleAttr(angle)
 
-        super().__init__((angle,))
+        super().__init__(angle)
 
     @classmethod
     def parse_parameters(cls, parser: AttrParser) -> tuple[AngleAttr]:
@@ -83,7 +83,7 @@ class MeasurementType(ParametrizedAttribute, TypeAttribute):
     def __init__(self, num_qubits: int | IntegerAttr[IndexType]):
         if isinstance(num_qubits, int):
             num_qubits = IntegerAttr.from_index_int_value(num_qubits)
-        super().__init__((num_qubits,))
+        super().__init__(num_qubits)
 
     @classmethod
     def parse_parameters(cls, parser: AttrParser) -> tuple[IntegerAttr[IndexType]]:

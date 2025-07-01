@@ -113,7 +113,7 @@ class FinSuppOp(IRDLOperation):
 
     out = result_def(_T)
 
-    probabilities = prop_def(DenseArrayBase)
+    probabilities = prop_def(DenseArrayBase.constr(Float64Type()))
 
     traits = traits_def(FinSuppOpHasCanonicalizationPatterns())
 
@@ -126,9 +126,7 @@ class FinSuppOp(IRDLOperation):
     ):
         result_type = SSAValue.get(default_value).type
         if not isinstance(probabilities, DenseArrayBase):
-            probabilities = DenseArrayBase.create_dense_float(
-                Float64Type(), probabilities
-            )
+            probabilities = DenseArrayBase.from_list(Float64Type(), probabilities)
         super().__init__(
             operands=(ins, default_value),
             result_types=(result_type,),
