@@ -6,7 +6,6 @@ from xdsl.ir import (
     ParametrizedAttribute,
     TypeAttribute,
     SSAValue,
-    Attribute,
 )
 from xdsl.irdl import (
     AnyInt,
@@ -67,16 +66,13 @@ class RegisterType(ParametrizedAttribute, TypeAttribute):
         return ParamAttrConstraint(cls, (IntAttrConstraint(size),))
 
     def print_parameters(self, printer: Printer) -> None:
-        printer.print_string("<")
-        printer.print_string(str(self.size.data))
-        printer.print_string(">")
+        with printer.in_angle_brackets():
+            printer.print_int(self.size.data)
 
     @classmethod
-    def parse_parameters(cls, parser: AttrParser) -> list[Attribute]:
-        parser.parse_punctuation("<")
-        size = parser.parse_integer()
-        parser.parse_punctuation(">")
-        return [IntAttr(size)]
+    def parse_parameters(cls, parser: AttrParser) -> tuple[IntAttr]:
+        with parser.in_angle_brackets():
+            return (IntAttr(parser.parse_integer()),)
 
 
 @irdl_attr_definition
@@ -126,7 +122,7 @@ class FromBitsOp(IRDLOperation):
 
     assembly_format = "$qubits attr-dict `:` type($reg)"
 
-    def __init__(self, qubits: list[SSAValue]):
+    def __init__(self, *qubits: SSAValue):
         super().__init__(
             operands=[qubits], result_types=[RegisterType(IntAttr(len(qubits)))]
         )
@@ -144,9 +140,8 @@ class ToBitsOp(IRDLOperation):
     assembly_format = "$reg attr-dict `:` type($reg)"
 
     def __init__(self, reg: SSAValue[RegisterType]):
-        reg_type = reg.type
         super().__init__(
-            operands=[reg], result_types=[[BitType()] * reg_type.size.data]
+            operands=[reg], result_types=[[BitType()] * reg.type.size.data]
         )
 
 
@@ -163,23 +158,20 @@ class CombineOp(IRDLOperation):
         "$reg1 `,` $reg2 attr-dict `:` type($reg1) `,` type($reg2) `->` type($res)"
     )
 
-    def __init__(self, reg1: SSAValue, reg2: SSAValue):
-        t1, t2 = reg1.type, reg2.type
-        if not isinstance(t1, RegisterType) or not isinstance(t2, RegisterType):
-            raise TypeError("Inputs must be RegisterType")
-        res_size = t1.size.data + t2.size.data
+    def __init__(self, reg1: SSAValue[RegisterType], reg2: SSAValue[RegisterType]):
+        res_size = reg1.type.size.data + reg2.type.size.data
         super().__init__(
             operands=[reg1, reg2], result_types=[RegisterType(IntAttr(res_size))]
         )
 
     def verify_(self):
-        t1, t2, res_type = self.reg1.type, self.reg2.type, self.res.type
+        assert isinstance(self.reg1.type, RegisterType)
+        assert isinstance(self.reg2.type, RegisterType)
 
-        assert isinstance(t1, RegisterType)
-        assert isinstance(t2, RegisterType)
-        assert isinstance(res_type, RegisterType)
-
-        if t1.size.data + t2.size.data != res_type.size.data:
+        if (
+            self.reg1.type.size.data + self.reg2.type.size.data
+            != self.res.type.size.data
+        ):
             raise VerifyException(
                 "Result register size must equal the sum of input register sizes."
             )
@@ -196,17 +188,21 @@ class SplitOp(IRDLOperation):
 
     assembly_format = "$reg attr-dict `:` type($reg) `->` type($res1) `,` type($res2)"
 
-    def __init__(self, reg: SSAValue, res1_type: RegisterType, res2_type: RegisterType):
+    def __init__(
+        self,
+        reg: SSAValue[RegisterType],
+        res1_type: RegisterType,
+        res2_type: RegisterType,
+    ):
         super().__init__(operands=[reg], result_types=[res1_type, res2_type])
 
     def verify_(self):
-        reg_type, res1_type, res2_type = self.reg.type, self.res1.type, self.res2.type
+        assert isinstance(self.reg.type, RegisterType)
 
-        assert isinstance(reg_type, RegisterType)
-        assert isinstance(res1_type, RegisterType)
-        assert isinstance(res2_type, RegisterType)
-
-        if reg_type.size.data != res1_type.size.data + res2_type.size.data:
+        if (
+            self.reg.type.size.data
+            != self.res1.type.size.data + self.res2.type.size.data
+        ):
             raise VerifyException(
                 "Input register size must equal the sum of result register sizes."
             )

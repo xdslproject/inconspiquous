@@ -54,11 +54,8 @@ class BernoulliOp(IRDLOperation):
     traits = traits_def(BernoulliOpHasCanonicalizationPatterns())
 
     def __init__(self, prob: float | FloatAttr[Float64Type]):
-        if isinstance(prob, float):
+        if isinstance(prob, float | int):
             prob = FloatAttr(prob, 64)
-
-        # Why is this needed?
-        assert not isinstance(prob, int)
 
         super().__init__(
             properties={
@@ -144,19 +141,18 @@ class FinSuppOp(IRDLOperation):
 
     @classmethod
     def parse(cls, parser: Parser) -> Self:
-        parser.parse_punctuation("[")
-        probabilities: list[float] = []
-        cases: list[UnresolvedOperand] = []
-        while (n := parser.parse_optional_number()) is not None:
-            assert isinstance(n, float)
-            probabilities.append(n)
-            parser.parse_keyword("of")
-            cases.append(parser.parse_unresolved_operand())
-            parser.parse_punctuation(",")
-        if cases:
-            parser.parse_keyword("else")
-        default_unresolved = parser.parse_unresolved_operand()
-        parser.parse_punctuation("]")
+        with parser.in_square_brackets():
+            probabilities: list[float] = []
+            cases: list[UnresolvedOperand] = []
+            while (n := parser.parse_optional_number()) is not None:
+                assert isinstance(n, float)
+                probabilities.append(n)
+                parser.parse_keyword("of")
+                cases.append(parser.parse_unresolved_operand())
+                parser.parse_punctuation(",")
+            if cases:
+                parser.parse_keyword("else")
+            default_unresolved = parser.parse_unresolved_operand()
         parser.parse_punctuation(":")
         result_type = parser.parse_type()
         ins = tuple(parser.resolve_operand(x, result_type) for x in cases)
@@ -167,19 +163,23 @@ class FinSuppOp(IRDLOperation):
     @staticmethod
     def print_case(c: tuple[SSAValue, int | float], printer: Printer):
         operand, prob = c
-        printer.print_string(repr(prob) + " of ")
+        printer.print_float(prob, Float64Type())
+        printer.print_string(" of ")
         printer.print_operand(operand)
 
     def print(self, printer: Printer):
-        printer.print_string(" [ ")
-        printer.print_list(
-            zip(self.ins, self.probabilities.get_values()),
-            lambda c: self.print_case(c, printer),
-        )
-        if self.ins:
-            printer.print_string(", else ")
-        printer.print_operand(self.default_value)
-        printer.print_string(" ] : ")
+        printer.print_string(" ")
+        with printer.in_square_brackets():
+            printer.print_string(" ")
+            printer.print_list(
+                zip(self.ins, self.probabilities.get_values()),
+                lambda c: self.print_case(c, printer),
+            )
+            if self.ins:
+                printer.print_string(", else ")
+            printer.print_operand(self.default_value)
+            printer.print_string(" ")
+        printer.print_string(" : ")
         printer.print_attribute(self.out.type)
 
 

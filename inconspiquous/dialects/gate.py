@@ -2,8 +2,7 @@ from __future__ import annotations
 from typing import ClassVar, Literal
 
 from xdsl.dialects.builtin import (
-    IndexType,
-    IntegerAttr,
+    IntAttr,
     AnyFloatConstr,
     i1,
     IntegerType,
@@ -32,7 +31,6 @@ from xdsl.irdl import (
     prop_def,
     result_def,
     traits_def,
-    eq,
 )
 from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
@@ -59,22 +57,22 @@ class GateType(ParametrizedAttribute, TypeAttribute):
 
     name = "gate.type"
 
-    num_qubits: ParameterDef[IntegerAttr[IndexType]]
+    num_qubits: ParameterDef[IntAttr]
 
-    def __init__(self, num_qubits: int | IntegerAttr[IndexType]):
+    def __init__(self, num_qubits: int | IntAttr):
         if isinstance(num_qubits, int):
-            num_qubits = IntegerAttr.from_index_int_value(num_qubits)
+            num_qubits = IntAttr(num_qubits)
         super().__init__(num_qubits)
 
     @classmethod
-    def parse_parameters(cls, parser: AttrParser) -> tuple[IntegerAttr[IndexType]]:
+    def parse_parameters(cls, parser: AttrParser) -> tuple[IntAttr]:
         with parser.in_angle_brackets():
             i = parser.parse_integer(allow_boolean=False, allow_negative=False)
-            return (IntegerAttr.from_index_int_value(i),)
+            return (IntAttr(i),)
 
     def print_parameters(self, printer: Printer) -> None:
         with printer.in_angle_brackets():
-            printer.print_string(str(self.num_qubits.value.data))
+            printer.print_int(self.num_qubits.data)
 
     @classmethod
     def constr(
@@ -84,11 +82,7 @@ class GateType(ParametrizedAttribute, TypeAttribute):
             return BaseAttr(GateType)
         return ParamAttrConstraint(
             GateType,
-            (
-                IntegerAttr.constr(
-                    value=IntAttrConstraint(int_constraint), type=eq(IndexType())
-                ),
-            ),
+            (IntAttrConstraint(int_constraint),),
         )
 
 

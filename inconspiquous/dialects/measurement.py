@@ -12,7 +12,6 @@ from xdsl.irdl import (
     ParamAttrConstraint,
     ParameterDef,
     irdl_attr_definition,
-    eq,
     irdl_op_definition,
     operand_def,
     prop_def,
@@ -23,7 +22,7 @@ from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
 from inconspiquous.measurement import MeasurementAttr
-from xdsl.dialects.builtin import IndexType, IntAttrConstraint, IntegerAttr
+from xdsl.dialects.builtin import IntAttr, IntAttrConstraint
 from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
 from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.dialects.angle import AngleAttr, AngleType
@@ -78,22 +77,22 @@ class MeasurementType(ParametrizedAttribute, TypeAttribute):
 
     name = "measurement.type"
 
-    num_qubits: ParameterDef[IntegerAttr[IndexType]]
+    num_qubits: ParameterDef[IntAttr]
 
-    def __init__(self, num_qubits: int | IntegerAttr[IndexType]):
+    def __init__(self, num_qubits: int | IntAttr):
         if isinstance(num_qubits, int):
-            num_qubits = IntegerAttr.from_index_int_value(num_qubits)
+            num_qubits = IntAttr(num_qubits)
         super().__init__(num_qubits)
 
     @classmethod
-    def parse_parameters(cls, parser: AttrParser) -> tuple[IntegerAttr[IndexType]]:
+    def parse_parameters(cls, parser: AttrParser) -> tuple[IntAttr]:
         with parser.in_angle_brackets():
             i = parser.parse_integer(allow_boolean=False, allow_negative=False)
-            return (IntegerAttr.from_index_int_value(i),)
+            return (IntAttr(i),)
 
     def print_parameters(self, printer: Printer) -> None:
         with printer.in_angle_brackets():
-            printer.print_string(str(self.num_qubits.value.data))
+            printer.print_int(self.num_qubits.data)
 
     @classmethod
     def constr(
@@ -103,11 +102,7 @@ class MeasurementType(ParametrizedAttribute, TypeAttribute):
             return BaseAttr(MeasurementType)
         return ParamAttrConstraint(
             MeasurementType,
-            (
-                IntegerAttr.constr(
-                    value=IntAttrConstraint(int_constraint), type=eq(IndexType())
-                ),
-            ),
+            (IntAttrConstraint(int_constraint),),
         )
 
 
