@@ -128,7 +128,7 @@ class FromBitsOp(IRDLOperation):
 
     def __init__(self, qubits: list[SSAValue]):
         super().__init__(
-            operands=[qubits], result_types=[RegisterType([IntAttr(len(qubits))])]
+            operands=[qubits], result_types=[RegisterType(IntAttr(len(qubits)))]
         )
 
 
@@ -169,7 +169,7 @@ class CombineOp(IRDLOperation):
             raise TypeError("Inputs must be RegisterType")
         res_size = t1.size.data + t2.size.data
         super().__init__(
-            operands=[reg1, reg2], result_types=[RegisterType([IntAttr(res_size)])]
+            operands=[reg1, reg2], result_types=[RegisterType(IntAttr(res_size))]
         )
 
     def verify_(self):
