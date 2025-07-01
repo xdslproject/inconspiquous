@@ -11,7 +11,7 @@
 
 %2, %3, %4 = "test.op"() : () -> (i64, i64, i64)
 
-// CHECK: %{{.*}} = prob.fin_supp [ 0.1 of %{{.*}}, 0.2 of %{{.*}}, else %{{.*}} ] : i64
+// CHECK: %{{.*}} = prob.fin_supp [ 1.000000e-01 of %{{.*}}, 2.000000e-01 of %{{.*}}, else %{{.*}} ] : i64
 %5 = prob.fin_supp [
   0.1 of %2,
   0.2 of %3,

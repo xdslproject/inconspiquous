@@ -78,12 +78,8 @@ class CliffordGateAttr(GateAttr, ABC):
         """
 
 
-class SingleQubitCliffordGate(CliffordGateAttr):
+class SingleQubitCliffordGate(CliffordGateAttr, SingleQubitGate):
     """Base class for single-qubit Clifford gates."""
-
-    @property
-    def num_qubits(self) -> int:
-        return 1
 
 
 class PauliGate(SingleQubitCliffordGate):
@@ -99,9 +95,5 @@ class PauliGate(SingleQubitCliffordGate):
             return (PauliProp(False, True),)
 
 
-class TwoQubitCliffordGate(CliffordGateAttr):
+class TwoQubitCliffordGate(CliffordGateAttr, TwoQubitGate):
     """Base class for two-qubit Clifford gates."""
-
-    @property
-    def num_qubits(self) -> int:
-        return 2
