@@ -22,7 +22,6 @@ from xdsl.irdl import (
     IntConstraint,
     IntVarConstraint,
     ParamAttrConstraint,
-    ParameterDef,
     VarConstraint,
     base,
     irdl_attr_definition,
@@ -57,7 +56,7 @@ class GateType(ParametrizedAttribute, TypeAttribute):
 
     name = "gate.type"
 
-    num_qubits: ParameterDef[IntAttr]
+    num_qubits: IntAttr
 
     def __init__(self, num_qubits: int | IntAttr):
         if isinstance(num_qubits, int):
@@ -187,7 +186,7 @@ class TDaggerGate(SingleQubitGate):
 class RZGate(SingleQubitGate):
     name = "gate.rz"
 
-    angle: ParameterDef[AngleAttr]
+    angle: AngleAttr
 
     def __init__(self, angle: float | AngleAttr):
         if not isinstance(angle, AngleAttr):
@@ -207,7 +206,7 @@ class RZGate(SingleQubitGate):
 class JGate(SingleQubitGate):
     name = "gate.j"
 
-    angle: ParameterDef[AngleAttr]
+    angle: AngleAttr
 
     def __init__(self, angle: float | AngleAttr):
         if not isinstance(angle, AngleAttr):

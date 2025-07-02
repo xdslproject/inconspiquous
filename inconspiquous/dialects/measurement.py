@@ -10,7 +10,6 @@ from xdsl.irdl import (
     IntConstraint,
     IntVarConstraint,
     ParamAttrConstraint,
-    ParameterDef,
     irdl_attr_definition,
     irdl_op_definition,
     operand_def,
@@ -49,7 +48,7 @@ class XYMeasurementAttr(MeasurementAttr):
 
     name = "measurement.xy"
 
-    angle: ParameterDef[AngleAttr]
+    angle: AngleAttr
 
     def __init__(self, angle: float | AngleAttr):
         if not isinstance(angle, AngleAttr):
@@ -77,7 +76,7 @@ class MeasurementType(ParametrizedAttribute, TypeAttribute):
 
     name = "measurement.type"
 
-    num_qubits: ParameterDef[IntAttr]
+    num_qubits: IntAttr
 
     def __init__(self, num_qubits: int | IntAttr):
         if isinstance(num_qubits, int):

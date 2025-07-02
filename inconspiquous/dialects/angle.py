@@ -4,7 +4,6 @@ import math
 from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
-    ParameterDef,
     irdl_attr_definition,
     irdl_op_definition,
     operand_def,
@@ -27,7 +26,7 @@ class AngleAttr(ParametrizedAttribute):
     """
 
     name = "angle.attr"
-    data: ParameterDef[FloatAttr[Float64Type]]
+    data: FloatAttr[Float64Type]
 
     def __init__(self, f: float):
         f_attr: FloatAttr[Float64Type] = FloatAttr(f % 2, 64)
