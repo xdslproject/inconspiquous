@@ -507,8 +507,8 @@ wheels = [
 
 [[package]]
 name = "xdsl"
-version = "0.43.1.dev12+g2dd99880"
-source = { git = "https://github.com/xdslproject/xdsl#2dd99880bf6f098c490910ec819200fd89a78bbc" }
+version = "0.43.1.dev25+g1a997229"
+source = { git = "https://github.com/xdslproject/xdsl#1a9972298ffca85e40ef1bd18f81975d7a025002" }
 dependencies = [
     { name = "immutabledict" },
     { name = "ordered-set" },

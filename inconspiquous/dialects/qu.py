@@ -21,7 +21,6 @@ from xdsl.irdl import (
     result_def,
     var_operand_def,
     var_result_def,
-    ParameterDef,
 )
 from xdsl.utils.exceptions import VerifyException
 from xdsl.parser import AttrParser
@@ -59,7 +58,7 @@ class RegisterType(ParametrizedAttribute, TypeAttribute):
 
     name = "qu.reg"
 
-    size: ParameterDef[IntAttr]
+    size: IntAttr
 
     @classmethod
     def constr(cls, size: IntVarConstraint):
