@@ -5,7 +5,7 @@ from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAtt
 from xdsl.irdl import (
     AnyInt,
     BaseAttr,
-    GenericAttrConstraint,
+    AttrConstraint,
     IRDLOperation,
     IntConstraint,
     IntVarConstraint,
@@ -96,7 +96,7 @@ class MeasurementType(ParametrizedAttribute, TypeAttribute):
     @classmethod
     def constr(
         cls, int_constraint: IntConstraint | None = None
-    ) -> GenericAttrConstraint[MeasurementType]:
+    ) -> AttrConstraint[MeasurementType]:
         if int_constraint is None:
             return BaseAttr(MeasurementType)
         return ParamAttrConstraint(

@@ -17,7 +17,7 @@ from xdsl.ir import (
 from xdsl.irdl import (
     AnyInt,
     BaseAttr,
-    GenericAttrConstraint,
+    AttrConstraint,
     IRDLOperation,
     IntConstraint,
     IntVarConstraint,
@@ -76,7 +76,7 @@ class GateType(ParametrizedAttribute, TypeAttribute):
     @classmethod
     def constr(
         cls, int_constraint: IntConstraint | None = None
-    ) -> GenericAttrConstraint[GateType]:
+    ) -> AttrConstraint[GateType]:
         if int_constraint is None:
             return BaseAttr(GateType)
         return ParamAttrConstraint(
