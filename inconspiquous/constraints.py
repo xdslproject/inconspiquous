@@ -5,7 +5,6 @@ from xdsl.ir import Attribute, VerifyException
 from xdsl.irdl import (
     AttrConstraint,
     ConstraintContext,
-    GenericAttrConstraint,
     IntConstraint,
 )
 
@@ -21,7 +20,7 @@ SizedAttributeT = TypeVar("SizedAttributeT", bound=SizedAttribute)
 
 
 @dataclass(frozen=True)
-class SizedAttributeConstraint(GenericAttrConstraint[SizedAttributeCovT]):
+class SizedAttributeConstraint(AttrConstraint[SizedAttributeCovT]):
     """
     Constraints an attribute to be a gate type with size given by an integer constraint.
     """
@@ -41,5 +40,5 @@ class SizedAttributeConstraint(GenericAttrConstraint[SizedAttributeCovT]):
 
     def mapping_type_vars(
         self, type_var_mapping: dict[TypeVar, AttrConstraint]
-    ) -> GenericAttrConstraint[SizedAttributeCovT]:
+    ) -> AttrConstraint[SizedAttributeCovT]:
         return self
