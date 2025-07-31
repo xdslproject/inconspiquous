@@ -58,7 +58,7 @@ class ConvertQrefMeasureToQssaMeasure(RewritePattern):
                     return
 
                 # Don't rewrite if there are further uses of the measured qubit
-                if len(operand.uses) != 1:
+                if not operand.has_one_use():
                     return
 
         if isinstance(op, qref.MeasureOp):

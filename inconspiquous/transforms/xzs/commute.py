@@ -29,10 +29,8 @@ class XZCommutePattern(RewritePattern):
         gate = op1.gate.owner
         if not isinstance(gate, XZOp):
             return
-        if len(op1.outs[0].uses) != 1:
+        if (use := op1.outs[0].get_unique_use()) is None:
             return
-
-        (use,) = op1.outs[0].uses
 
         op2 = use.operation
 
