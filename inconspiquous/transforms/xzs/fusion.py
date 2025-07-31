@@ -26,7 +26,7 @@ class FuseXZGatesPattern(RewritePattern):
         if not isinstance(gate2, XZOp):
             return
 
-        if len(op.ins[0].uses) != 1:
+        if not op.ins[0].has_one_use():
             return
 
         predecessor = op.ins[0].owner
@@ -68,7 +68,7 @@ class FuseXZSGatesPattern(RewritePattern):
         if not isinstance(gate2, XZSOp | XZOp):
             return
 
-        if len(op.ins[0].uses) != 1:
+        if not op.ins[0].has_one_use():
             return
 
         predecessor = op.ins[0].owner
