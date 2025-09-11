@@ -1,3 +1,5 @@
+import functools
+
 from xdsl.passes import ModulePass
 from xdsl.ir import Operation, OpResult
 from xdsl.context import Context
@@ -35,6 +37,20 @@ def compute_frame_times(op: Operation) -> tuple[int, int] | None:
             if (dt := get_const_duration(duration.op)) is None:
                 return None
             return (delay_start, delay_start + dt)
+        case pulse.Barrier():
+            frames = list(op.operands)
+            if not frames:
+                return
+            # todo: deal with block args
+            frame_times: list[int] = []
+            for frame in frames:
+                if not isinstance(frame, OpResult):
+                    return None
+                if (t := get_time(frame.op, END_TIME)) is None:
+                    return None
+                frame_times.append(t)
+            barrier_time = functools.reduce(max, frame_times)
+            return (barrier_time, barrier_time)
         case _:
             pass
 

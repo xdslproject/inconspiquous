@@ -12,6 +12,8 @@ from xdsl.irdl import (
     IRDLOperation,
     traits_def,
     attr_def,
+    var_operand_def,
+    var_result_def,
 )
 from xdsl.traits import Pure, ConstantLike
 
@@ -116,9 +118,22 @@ class Delay(IRDLOperation):
         super().__init__(operands=[duration, frame], result_types=[result_type])
 
 
+@irdl_op_definition
+class Barrier(IRDLOperation):
+    name = "pulse.barrier"
+    in_frame = var_operand_def(FrameType)
+    out_frame = var_result_def(FrameType)
+
+    traits = traits_def()  # todo: trait for timing / side effects?
+
+    def __init__(self, *frames: Operation | SSAValue):
+        result_types = [SSAValue.get(frame).type for frame in frames]
+        super().__init__(operands=frames, result_types=result_types)
+
+
 Pulse = Dialect(
     "pulse",
-    [AllocFrame, ConstDuration, DurationFromInt, DurationToInt, Delay],
+    [AllocFrame, ConstDuration, DurationFromInt, DurationToInt, Delay, Barrier],
     [
         FrameType,
         DurationType,
