@@ -1,4 +1,4 @@
-from xdsl.builder import Builder, ImplicitBuilder
+from xdsl.builder import Builder
 from xdsl.ir import Operation, SSAValue
 from dataclasses import dataclass
 
@@ -28,7 +28,7 @@ class QSSABuilder(Builder):
             new_op = GateOp(gate, *(ref.get() for ref in qubit_refs))
         else:
             new_op = DynGateOp(gate, *(ref.get() for ref in qubit_refs))
-        if ImplicitBuilder.get() is None:
+        if new_op.parent is None:
             self.insert(new_op)
         for ref, qubit in zip(qubit_refs, new_op.outs):
             qubit.name_hint = ref.get().name_hint
@@ -36,7 +36,7 @@ class QSSABuilder(Builder):
 
     def alloc(self, *, name_hint: str | None = None) -> QubitRef:
         new_op = AllocOp()
-        if ImplicitBuilder.get() is None:
+        if new_op.parent is None:
             self.insert(new_op)
         qubit = new_op.outs[0]
         qubit.name_hint = name_hint
@@ -44,7 +44,7 @@ class QSSABuilder(Builder):
 
     def measure(self, ref: QubitRef, *, name_hint: str | None = None) -> SSAValue:
         new_op = MeasureOp(ref.get())
-        if ImplicitBuilder.get() is None:
+        if new_op.parent is None:
             self.insert(new_op)
         ref.qubit = None
         out = new_op.outs[0]
