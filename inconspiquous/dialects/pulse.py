@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TypeVar, Self
+from typing import TypeVar
 
 from xdsl.ir import Dialect, TypeAttribute, Operation, SSAValue, ParametrizedAttribute
 from xdsl.dialects import builtin
@@ -41,7 +41,7 @@ class FrameType(ParametrizedAttribute, TypeAttribute):
     frame_name: builtin.StringAttr
 
     @classmethod
-    def from_name(cls, frame_name: str) -> Self:
+    def from_name(cls, frame_name: str) -> FrameType:
         return cls(builtin.StringAttr(frame_name))
 
 
