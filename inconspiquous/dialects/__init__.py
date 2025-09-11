@@ -51,6 +51,11 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return Prob
 
+    def get_pulse():
+        from inconspiquous.dialects.pulse import Pulse
+
+        return Pulse
+
     def get_qec():
         from inconspiquous.dialects.qec import QEC
 
@@ -106,6 +111,7 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "linalg": get_linalg,
         "measurement": get_measurement,
         "prob": get_prob,
+        "pulse": get_pulse,
         "qec": get_qec,
         "qref": get_qref,
         "qu": get_qu,

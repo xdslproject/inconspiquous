@@ -6,6 +6,11 @@ from xdsl.passes import ModulePass
 def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
     """Returns all available passes."""
 
+    def get_compute_frame_times():
+        from inconspiquous.transforms import compute_frame_times
+
+        return compute_frame_times.ComputeFrameTimesPass
+
     def get_canonicalize():
         from xdsl.transforms import canonicalize
 
@@ -60,6 +65,11 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         from inconspiquous.transforms import flip_coins
 
         return flip_coins.FlipCoinsPass
+
+    def get_fold_arith_const_durations():
+        from inconspiquous.transforms import fold_arith_const_duration
+
+        return fold_arith_const_duration.FoldArithConstDurationsPass
 
     def get_inline_circuits():
         from inconspiquous.transforms import inline_circuits
@@ -128,6 +138,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
 
     return {
         "canonicalize": get_canonicalize,
+        "compute-frame-times": get_compute_frame_times,
         "convert-qref-to-qssa": get_convert_qref_to_qssa,
         "convert-qssa-to-qref": get_convert_qssa_to_qref,
         "convert-scf-to-cf": get_convert_scf_to_cf,
@@ -138,6 +149,7 @@ def get_all_passes() -> dict[str, Callable[[], type[ModulePass]]]:
         "cse": get_cse,
         "dce": get_dce,
         "flip-coins": get_flip_coins,
+        "fold-arith-const-durations": get_fold_arith_const_durations,
         "inline-circuits": get_inline_circuits,
         "qec-inline": get_qec_inline,
         "lower-dyn-gate-to-scf": get_lower_dyn_gate_to_scf,
