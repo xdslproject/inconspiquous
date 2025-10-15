@@ -7,6 +7,7 @@ from xdsl.dialects.builtin import (
     i1,
     IntegerType,
 )
+from xdsl.interfaces import ConstantLikeInterface, HasCanonicalizationPatternsInterface
 from xdsl.ir import (
     Dialect,
     Operation,
@@ -34,7 +35,7 @@ from xdsl.irdl import (
 from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
-from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
+from xdsl.traits import Pure
 from xdsl.dialects.builtin import IntAttrConstraint
 
 from inconspiquous.dialects.angle import AngleAttr, AngleType
@@ -86,7 +87,7 @@ class GateType(ParametrizedAttribute, TypeAttribute):
 
 
 @irdl_op_definition
-class ConstantGateOp(IRDLOperation):
+class ConstantGateOp(IRDLOperation, ConstantLikeInterface):
     """
     Constant-like operation for producing gates
     """
@@ -101,10 +102,7 @@ class ConstantGateOp(IRDLOperation):
 
     assembly_format = "$gate attr-dict"
 
-    traits = traits_def(
-        ConstantLike(),
-        Pure(),
-    )
+    traits = traits_def(Pure())
 
     def __init__(self, gate: GateAttr):
         super().__init__(
@@ -113,6 +111,9 @@ class ConstantGateOp(IRDLOperation):
             },
             result_types=(GateType(gate.num_qubits),),
         )
+
+    def get_constant_value(self) -> GateAttr:
+        return self.gate
 
 
 @irdl_attr_definition
@@ -222,28 +223,26 @@ class JGate(SingleQubitGate):
         return self.angle.print_parameters(printer)
 
 
-class DynJGateHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
-    @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization import gate
-
-        return (gate.DynJGateToJPattern(),)
-
-
 @irdl_op_definition
-class DynJGate(IRDLOperation):
+class DynJGate(IRDLOperation, HasCanonicalizationPatternsInterface):
     name = "gate.dyn_j"
 
     angle = operand_def(AngleType)
 
     out = result_def(GateType(1))
 
-    traits = traits_def(Pure(), DynJGateHasCanonicalizationPatterns())
+    traits = traits_def(Pure())
 
     assembly_format = "`` `<` $angle `>` attr-dict"
 
     def __init__(self, angle: SSAValue | Operation):
         super().__init__(operands=(angle,), result_types=(GateType(1),))
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import gate
+
+        return (gate.DynJGateToJPattern(),)
 
 
 @irdl_attr_definition
@@ -373,16 +372,8 @@ class ComposeGateOp(IRDLOperation):
         super().__init__(operands=(lhs, rhs), result_types=(lhs.type,))
 
 
-class XZSOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
-    @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization.gate import XZSToXZPattern
-
-        return (XZSToXZPattern(),)
-
-
 @irdl_op_definition
-class XZSOp(IRDLOperation):
+class XZSOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     """
     A gadget for describing combinations of X, Z, and (pi/2) phase gates.
     """
@@ -397,7 +388,7 @@ class XZSOp(IRDLOperation):
 
     assembly_format = "$x `,` $z `,` $phase attr-dict"
 
-    traits = traits_def(Pure(), XZSOpHasCanonicalizationPatterns())
+    traits = traits_def(Pure())
 
     def __init__(
         self,
@@ -406,6 +397,12 @@ class XZSOp(IRDLOperation):
         phase: Operation | SSAValue,
     ):
         super().__init__(operands=(x, z, phase), result_types=(GateType(1),))
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.gate import XZSToXZPattern
+
+        return (XZSToXZPattern(),)
 
 
 @irdl_op_definition

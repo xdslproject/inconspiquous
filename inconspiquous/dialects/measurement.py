@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import ClassVar
 
+from xdsl.interfaces import ConstantLikeInterface, HasCanonicalizationPatternsInterface
 from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     AnyInt,
@@ -22,7 +23,7 @@ from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
 from inconspiquous.measurement import MeasurementAttr
 from xdsl.dialects.builtin import IntAttr, IntAttrConstraint
-from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
+from xdsl.traits import Pure
 from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.dialects.angle import AngleAttr, AngleType
 
@@ -106,7 +107,7 @@ class MeasurementType(ParametrizedAttribute, TypeAttribute):
 
 
 @irdl_op_definition
-class ConstantMeasurementOp(IRDLOperation):
+class ConstantMeasurementOp(IRDLOperation, ConstantLikeInterface):
     """
     Constant-like operation for producing measurement types from measurement attributes.
     """
@@ -121,10 +122,7 @@ class ConstantMeasurementOp(IRDLOperation):
 
     assembly_format = "$measurement attr-dict"
 
-    traits = traits_def(
-        ConstantLike(),
-        Pure(),
-    )
+    traits = traits_def(Pure())
 
     def __init__(self, measurement: MeasurementAttr):
         super().__init__(
@@ -134,17 +132,12 @@ class ConstantMeasurementOp(IRDLOperation):
             result_types=(MeasurementType(measurement.num_qubits),),
         )
 
-
-class XYDynMeasurementOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
-    @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization import measurement
-
-        return (measurement.XYDynMeasurementConst(),)
+    def get_constant_value(self) -> MeasurementAttr:
+        return self.measurement
 
 
 @irdl_op_definition
-class XYDynMeasurementOp(IRDLOperation):
+class XYDynMeasurementOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     """
     Generate a measurement type for a measurement on the XY plane with input angle.
     """
@@ -157,10 +150,16 @@ class XYDynMeasurementOp(IRDLOperation):
 
     assembly_format = "`<` $angle `>` attr-dict"
 
-    traits = traits_def(Pure(), XYDynMeasurementOpHasCanonicalizationPatterns())
+    traits = traits_def(Pure())
 
     def __init__(self, angle: SSAValue | Operation):
         super().__init__(operands=(angle,), result_types=(MeasurementType(1),))
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import measurement
+
+        return (measurement.XYDynMeasurementConst(),)
 
 
 Measurement = Dialect(

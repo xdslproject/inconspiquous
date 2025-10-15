@@ -2,6 +2,7 @@ from typing import ClassVar, Sequence
 from typing_extensions import Self
 
 from xdsl.dialects.builtin import i1
+from xdsl.interfaces import HasCanonicalizationPatternsInterface
 from xdsl.ir import (
     Attribute,
     Dialect,
@@ -17,7 +18,6 @@ from xdsl.irdl import (
     operand_def,
     prop_def,
     result_def,
-    traits_def,
     var_operand_def,
 )
 from xdsl.parser import (
@@ -30,19 +30,10 @@ from xdsl.parser import (
 from xdsl.parser import Parser
 from xdsl.printer import Printer
 from xdsl.pattern_rewriter import RewritePattern
-from xdsl.traits import HasCanonicalizationPatternsTrait
-
-
-class BernoulliOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
-    @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization.prob import BernoulliConst
-
-        return (BernoulliConst(),)
 
 
 @irdl_op_definition
-class BernoulliOp(IRDLOperation):
+class BernoulliOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     name = "prob.bernoulli"
 
     prob = prop_def(FloatAttr[Float64Type])
@@ -50,8 +41,6 @@ class BernoulliOp(IRDLOperation):
     out = result_def(i1)
 
     assembly_format = "$prob attr-dict"
-
-    traits = traits_def(BernoulliOpHasCanonicalizationPatterns())
 
     def __init__(self, prob: float | FloatAttr[Float64Type]):
         if isinstance(prob, float | int):
@@ -63,6 +52,12 @@ class BernoulliOp(IRDLOperation):
             },
             result_types=(i1,),
         )
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.prob import BernoulliConst
+
+        return (BernoulliConst(),)
 
     def verify_(self) -> None:
         prob = self.prob.value.data
@@ -86,20 +81,8 @@ class UniformOp(IRDLOperation):
         )
 
 
-class FinSuppOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
-    @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization.prob import (
-            FinSuppTrivial,
-            FinSuppRemoveCase,
-            FinSuppDuplicate,
-        )
-
-        return (FinSuppTrivial(), FinSuppRemoveCase(), FinSuppDuplicate())
-
-
 @irdl_op_definition
-class FinSuppOp(IRDLOperation):
+class FinSuppOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     name = "prob.fin_supp"
 
     _T: ClassVar = VarConstraint("T", AnyAttr())
@@ -111,8 +94,6 @@ class FinSuppOp(IRDLOperation):
     out = result_def(_T)
 
     probabilities = prop_def(DenseArrayBase.constr(Float64Type()))
-
-    traits = traits_def(FinSuppOpHasCanonicalizationPatterns())
 
     def __init__(
         self,
@@ -130,6 +111,16 @@ class FinSuppOp(IRDLOperation):
             properties={"probabilities": probabilities},
             attributes=attr_dict,
         )
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.prob import (
+            FinSuppTrivial,
+            FinSuppRemoveCase,
+            FinSuppDuplicate,
+        )
+
+        return (FinSuppTrivial(), FinSuppRemoveCase(), FinSuppDuplicate())
 
     @staticmethod
     def parse_case(parser: Parser) -> tuple[UnresolvedOperand, float]:

@@ -1,4 +1,4 @@
-from xdsl.builder import ImplicitBuilder
+from xdsl.builder import Builder, ImplicitBuilder
 from xdsl.dialects import builtin
 from xdsl.dialects.arith import AndIOp, ConstantOp, OrIOp, SelectOp, XOrIOp
 from xdsl.parser import Context
@@ -37,44 +37,44 @@ class PerfectCode5QubitInliner(RewritePattern):
 
         (q1, q2, q3, q4, q5) = tuple(QubitRef(qubit) for qubit in op.ins)
 
-        builder = QSSABuilder(InsertPoint.before(op))
+        builder = Builder(InsertPoint.before(op))
 
         with ImplicitBuilder(builder):
-            a1 = builder.alloc(name_hint="a1")
-            builder.gate(HadamardGate(), a1)
-            builder.gate(CXGate(), a1, q1)
-            builder.gate(CZGate(), a1, q2)
-            builder.gate(CZGate(), a1, q3)
-            builder.gate(CXGate(), a1, q4)
-            builder.gate(HadamardGate(), a1)
-            s1 = builder.measure(a1, name_hint="s1")
+            a1 = QSSABuilder.alloc(name_hint="a1")
+            QSSABuilder.gate(HadamardGate(), a1)
+            QSSABuilder.gate(CXGate(), a1, q1)
+            QSSABuilder.gate(CZGate(), a1, q2)
+            QSSABuilder.gate(CZGate(), a1, q3)
+            QSSABuilder.gate(CXGate(), a1, q4)
+            QSSABuilder.gate(HadamardGate(), a1)
+            s1 = QSSABuilder.measure(a1, name_hint="s1")
 
-            a2 = builder.alloc(name_hint="a2")
-            builder.gate(HadamardGate(), a2)
-            builder.gate(CXGate(), a2, q2)
-            builder.gate(CZGate(), a2, q3)
-            builder.gate(CZGate(), a2, q4)
-            builder.gate(CXGate(), a2, q5)
-            builder.gate(HadamardGate(), a2)
-            s2 = builder.measure(a2, name_hint="s2")
+            a2 = QSSABuilder.alloc(name_hint="a2")
+            QSSABuilder.gate(HadamardGate(), a2)
+            QSSABuilder.gate(CXGate(), a2, q2)
+            QSSABuilder.gate(CZGate(), a2, q3)
+            QSSABuilder.gate(CZGate(), a2, q4)
+            QSSABuilder.gate(CXGate(), a2, q5)
+            QSSABuilder.gate(HadamardGate(), a2)
+            s2 = QSSABuilder.measure(a2, name_hint="s2")
 
-            a3 = builder.alloc(name_hint="a3")
-            builder.gate(HadamardGate(), a3)
-            builder.gate(CXGate(), a3, q1)
-            builder.gate(CXGate(), a3, q3)
-            builder.gate(CZGate(), a3, q4)
-            builder.gate(CZGate(), a3, q5)
-            builder.gate(HadamardGate(), a3)
-            s3 = builder.measure(a3, name_hint="s3")
+            a3 = QSSABuilder.alloc(name_hint="a3")
+            QSSABuilder.gate(HadamardGate(), a3)
+            QSSABuilder.gate(CXGate(), a3, q1)
+            QSSABuilder.gate(CXGate(), a3, q3)
+            QSSABuilder.gate(CZGate(), a3, q4)
+            QSSABuilder.gate(CZGate(), a3, q5)
+            QSSABuilder.gate(HadamardGate(), a3)
+            s3 = QSSABuilder.measure(a3, name_hint="s3")
 
-            a4 = builder.alloc(name_hint="a4")
-            builder.gate(HadamardGate(), a4)
-            builder.gate(CZGate(), a4, q1)
-            builder.gate(CXGate(), a4, q2)
-            builder.gate(CXGate(), a4, q4)
-            builder.gate(CZGate(), a4, q5)
-            builder.gate(HadamardGate(), a4)
-            s4 = builder.measure(a4, name_hint="s4")
+            a4 = QSSABuilder.alloc(name_hint="a4")
+            QSSABuilder.gate(HadamardGate(), a4)
+            QSSABuilder.gate(CZGate(), a4, q1)
+            QSSABuilder.gate(CXGate(), a4, q2)
+            QSSABuilder.gate(CXGate(), a4, q4)
+            QSSABuilder.gate(CZGate(), a4, q5)
+            QSSABuilder.gate(HadamardGate(), a4)
+            s4 = QSSABuilder.measure(a4, name_hint="s4")
 
             x = ConstantGateOp(XGate()).out
             x.name_hint = "x"
@@ -92,11 +92,11 @@ class PerfectCode5QubitInliner(RewritePattern):
 
             corx = AndIOp(cor, s4)
             corx_sel = SelectOp(corx, x, i)
-            builder.gate(corx_sel, q1)
+            QSSABuilder.gate(corx_sel, q1)
 
             corz = AndIOp(cor, s1)
             corz_sel = SelectOp(corz, z, i)
-            builder.gate(corz_sel, q1)
+            QSSABuilder.gate(corz_sel, q1)
 
             v0 = XOrIOp(s2, s4)
             v1 = OrIOp(v0, s3)
@@ -104,11 +104,11 @@ class PerfectCode5QubitInliner(RewritePattern):
 
             corx = AndIOp(cor, s1)
             corx_sel = SelectOp(corx, x, i)
-            builder.gate(corx_sel, q2)
+            QSSABuilder.gate(corx_sel, q2)
 
             corz = AndIOp(cor, s2)
             corz_sel = SelectOp(corz, z, i)
-            builder.gate(corz_sel, q2)
+            QSSABuilder.gate(corz_sel, q2)
 
             v0 = XOrIOp(s1, s2)
             v1 = OrIOp(v0, s4)
@@ -116,11 +116,11 @@ class PerfectCode5QubitInliner(RewritePattern):
 
             corx = AndIOp(cor, s1)
             corx_sel = SelectOp(corx, x, i)
-            builder.gate(corx_sel, q3)
+            QSSABuilder.gate(corx_sel, q3)
 
             corz = AndIOp(cor, s3)
             corz_sel = SelectOp(corz, z, i)
-            builder.gate(corz_sel, q3)
+            QSSABuilder.gate(corz_sel, q3)
 
             v0 = XOrIOp(s1, s4)
             v1 = XOrIOp(s2, s3)
@@ -129,11 +129,11 @@ class PerfectCode5QubitInliner(RewritePattern):
 
             corx = AndIOp(cor, s2)
             corx_sel = SelectOp(corx, x, i)
-            builder.gate(corx_sel, q4)
+            QSSABuilder.gate(corx_sel, q4)
 
             corz = AndIOp(cor, s1)
             corz_sel = SelectOp(corz, z, i)
-            builder.gate(corz_sel, q4)
+            QSSABuilder.gate(corz_sel, q4)
 
             v0 = XOrIOp(s3, s4)
             v1 = OrIOp(v0, s1)
@@ -141,11 +141,11 @@ class PerfectCode5QubitInliner(RewritePattern):
 
             corx = AndIOp(cor, s3)
             corx_sel = SelectOp(corx, x, i)
-            builder.gate(corx_sel, q5)
+            QSSABuilder.gate(corx_sel, q5)
 
             corz = AndIOp(cor, s2)
             corz_sel = SelectOp(corz, z, i)
-            builder.gate(corz_sel, q5)
+            QSSABuilder.gate(corz_sel, q5)
 
         rewriter.replace_matched_op(
             (), (q1.qubit, q2.qubit, q3.qubit, q4.qubit, q5.qubit)

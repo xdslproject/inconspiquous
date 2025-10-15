@@ -48,7 +48,7 @@ qref.dyn_gate<%g1> %q1
 // CHECK-NEXT:   qref.return
 // CHECK-NEXT: }) : () -> !gate.type<1>
 // CHECK-GENERIC: %{{.*}} = "qref.circuit"() ({
-// CHECK-GENERIC-NEXT: ^{{[0-9]+}}(%{{.*}} : !qu.bit):
+// CHECK-GENERIC-NEXT: ^{{.+}}(%{{.*}} : !qu.bit):
 // CHECK-GENERIC-NEXT:   "qref.return"() : () -> ()
 // CHECK-GENERIC-NEXT: }) : () -> !gate.type<1>
 %circuit1 = qref.circuit() ({
@@ -62,7 +62,7 @@ qref.dyn_gate<%g1> %q1
 // CHECK-NEXT:   qref.return
 // CHECK-NEXT: }) : () -> !gate.type<2>
 // CHECK-GENERIC: %{{.*}} = "qref.circuit"() ({
-// CHECK-GENERIC-NEXT: ^{{[0-9]+}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
+// CHECK-GENERIC-NEXT: ^{{.+}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
 // CHECK-GENERIC-NEXT:   "qref.gate"(%{{.*}}, %{{.*}}) <{gate = #gate.cx}> : (!qu.bit, !qu.bit) -> ()
 // CHECK-GENERIC-NEXT:   "qref.return"() : () -> ()
 // CHECK-GENERIC-NEXT: }) : () -> !gate.type<2>
