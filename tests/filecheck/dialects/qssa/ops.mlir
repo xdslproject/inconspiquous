@@ -48,7 +48,7 @@
 // CHECK-NEXT:   qssa.return %{{.*}}
 // CHECK-NEXT: }) : () -> !gate.type<1>
 // CHECK-GENERIC: %{{.*}} = "qssa.circuit"() ({
-// CHECK-GENERIC-NEXT: ^{{[0-9]+}}(%{{.*}} : !qu.bit):
+// CHECK-GENERIC-NEXT: ^{{.+}}(%{{.*}} : !qu.bit):
 // CHECK-GENERIC-NEXT:   "qssa.return"(%{{.*}}) : (!qu.bit) -> ()
 // CHECK-GENERIC-NEXT: }) : () -> !gate.type<1>
 %circuit1 = qssa.circuit() ({
@@ -62,7 +62,7 @@
 // CHECK-NEXT:   qssa.return %{{.*}}
 // CHECK-NEXT: }) : () -> !gate.type<1>
 // CHECK-GENERIC: %{{.*}} = "qssa.circuit"() ({
-// CHECK-GENERIC-NEXT: ^{{[0-9]+}}(%{{.*}} : !qu.bit):
+// CHECK-GENERIC-NEXT: ^{{.+}}(%{{.*}} : !qu.bit):
 // CHECK-GENERIC-NEXT:   %{{.*}} = "qssa.gate"(%{{.*}}) <{gate = #gate.x}> : (!qu.bit) -> !qu.bit
 // CHECK-GENERIC-NEXT:   "qssa.return"(%{{.*}}) : (!qu.bit) -> ()
 // CHECK-GENERIC-NEXT: }) : () -> !gate.type<1>
@@ -78,7 +78,7 @@
 // CHECK-NEXT:   qssa.return %{{.*}}, %{{.*}}
 // CHECK-NEXT: }) : () -> !gate.type<2>
 // CHECK-GENERIC: %{{.*}} = "qssa.circuit"() ({
-// CHECK-GENERIC-NEXT: ^{{[0-9]+}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
+// CHECK-GENERIC-NEXT: ^{{.+}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
 // CHECK-GENERIC-NEXT:   %{{.*}}, %{{.*}} = "qssa.gate"(%{{.*}}, %{{.*}}) <{gate = #gate.cx}> : (!qu.bit, !qu.bit) -> (!qu.bit, !qu.bit)
 // CHECK-GENERIC-NEXT:   "qssa.return"(%{{.*}}, %{{.*}}) : (!qu.bit, !qu.bit) -> ()
 // CHECK-GENERIC-NEXT: }) : () -> !gate.type<2>

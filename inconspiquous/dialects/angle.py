@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from xdsl.interfaces import ConstantLikeInterface, HasCanonicalizationPatternsInterface
 from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
@@ -15,7 +16,7 @@ from xdsl.dialects.builtin import Float64Type, FloatAttr, i1
 from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
-from xdsl.traits import ConstantLike, HasCanonicalizationPatternsTrait, Pure
+from xdsl.traits import Pure
 
 
 @irdl_attr_definition
@@ -87,7 +88,7 @@ class AngleType(ParametrizedAttribute, TypeAttribute):
 
 
 @irdl_op_definition
-class ConstantAngleOp(IRDLOperation):
+class ConstantAngleOp(IRDLOperation, ConstantLikeInterface):
     """
     Constant-like operation for producing angles
     """
@@ -101,7 +102,6 @@ class ConstantAngleOp(IRDLOperation):
     assembly_format = "`` $angle attr-dict"
 
     traits = traits_def(
-        ConstantLike(),
         Pure(),
     )
 
@@ -113,21 +113,12 @@ class ConstantAngleOp(IRDLOperation):
             result_types=(AngleType(),),
         )
 
-
-class CondNegateAngleOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
-    @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization import angle
-
-        return (
-            angle.CondNegateAngleOpZeroPiPattern(),
-            angle.CondNegateAngleOpFoldPattern(),
-            angle.CondNegateAngleOpAssocPattern(),
-        )
+    def get_constant_value(self) -> AngleAttr:
+        return self.angle
 
 
 @irdl_op_definition
-class CondNegateAngleOp(IRDLOperation):
+class CondNegateAngleOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     """
     Negates an angle if input condition is true.
     """
@@ -140,12 +131,22 @@ class CondNegateAngleOp(IRDLOperation):
 
     out = result_def(AngleType)
 
-    traits = traits_def(CondNegateAngleOpHasCanonicalizationPatterns(), Pure())
+    traits = traits_def(Pure())
 
     assembly_format = "$cond `,` $angle attr-dict"
 
     def __init__(self, cond: SSAValue | Operation, angle: SSAValue | Operation):
         super().__init__(operands=(cond, angle), result_types=(AngleType(),))
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import angle
+
+        return (
+            angle.CondNegateAngleOpZeroPiPattern(),
+            angle.CondNegateAngleOpFoldPattern(),
+            angle.CondNegateAngleOpAssocPattern(),
+        )
 
 
 Angle = Dialect("angle", [ConstantAngleOp, CondNegateAngleOp], [AngleAttr, AngleType])

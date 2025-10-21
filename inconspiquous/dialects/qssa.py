@@ -1,5 +1,6 @@
 from typing import ClassVar
 from xdsl.dialects.builtin import i1
+from xdsl.interfaces import HasCanonicalizationPatternsInterface
 from xdsl.ir import Dialect, Operation, SSAValue, Block, Region
 from xdsl.irdl import (
     AnyInt,
@@ -18,7 +19,6 @@ from xdsl.irdl import (
 )
 from xdsl.traits import IsTerminator, HasParent
 from xdsl.pattern_rewriter import RewritePattern
-from xdsl.traits import HasCanonicalizationPatternsTrait
 
 from inconspiquous.dialects.gate import GateType
 from inconspiquous.dialects.measurement import CompBasisMeasurementAttr, MeasurementType
@@ -28,16 +28,8 @@ from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.measurement import MeasurementAttr
 
 
-class GateOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
-    @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization.qssa import GateIdentity
-
-        return (GateIdentity(),)
-
-
 @irdl_op_definition
-class GateOp(IRDLOperation):
+class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     name = "qssa.gate"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
@@ -50,8 +42,6 @@ class GateOp(IRDLOperation):
 
     assembly_format = "`<` $gate `>` $ins attr-dict"
 
-    traits = traits_def(GateOpHasCanonicalizationPatterns())
-
     def __init__(self, gate: GateAttr, *ins: SSAValue | Operation):
         super().__init__(
             operands=[ins],
@@ -61,20 +51,15 @@ class GateOp(IRDLOperation):
             result_types=(tuple(BitType() for _ in ins),),
         )
 
-
-class DynGateOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization.qssa import (
-            DynGateConst,
-            DynGateCompose,
-        )
+        from inconspiquous.transforms.canonicalization.qssa import GateIdentity
 
-        return (DynGateConst(), DynGateCompose())
+        return (GateIdentity(),)
 
 
 @irdl_op_definition
-class DynGateOp(IRDLOperation):
+class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     name = "qssa.dyn_gate"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
@@ -87,13 +72,20 @@ class DynGateOp(IRDLOperation):
 
     assembly_format = "`<` $gate `>` $ins attr-dict"
 
-    traits = traits_def(DynGateOpHasCanonicalizationPatterns())
-
     def __init__(self, gate: SSAValue | Operation, *ins: SSAValue | Operation):
         super().__init__(
             operands=[gate, ins],
             result_types=(tuple(BitType() for _ in ins),),
         )
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.qssa import (
+            DynGateConst,
+            DynGateCompose,
+        )
+
+        return (DynGateConst(), DynGateCompose())
 
 
 @irdl_op_definition
@@ -127,18 +119,8 @@ class MeasureOp(IRDLOperation):
         )
 
 
-class DynMeasureOpHasCanonicalizationPatterns(HasCanonicalizationPatternsTrait):
-    @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization.qssa import (
-            DynMeasureConst,
-        )
-
-        return (DynMeasureConst(),)
-
-
 @irdl_op_definition
-class DynMeasureOp(IRDLOperation):
+class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     name = "qssa.dyn_measure"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
@@ -151,8 +133,6 @@ class DynMeasureOp(IRDLOperation):
 
     assembly_format = "`<` $measurement `>` $in_qubits attr-dict"
 
-    traits = traits_def(DynMeasureOpHasCanonicalizationPatterns())
-
     def __init__(
         self,
         *in_qubits: SSAValue | Operation,
@@ -162,6 +142,14 @@ class DynMeasureOp(IRDLOperation):
             operands=[measurement, in_qubits],
             result_types=(tuple(i1 for _ in in_qubits),),
         )
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.qssa import (
+            DynMeasureConst,
+        )
+
+        return (DynMeasureConst(),)
 
 
 @irdl_op_definition
