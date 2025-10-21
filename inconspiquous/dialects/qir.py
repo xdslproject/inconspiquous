@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
@@ -29,7 +29,7 @@ class ResultType(ParametrizedAttribute, TypeAttribute):
     name = "qir.result"
 
 
-class QIROperation(IRDLOperation):
+class QIROperation(IRDLOperation, ABC):
     """
     QIR operations are defined using opaque function.
     """
