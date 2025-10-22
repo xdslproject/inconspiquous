@@ -35,17 +35,19 @@ qir.cz %4, %5
 // CHECK-GENERIC-NEXT: "qir.h"(%{{.*}}) : (!qir.qubit) -> ()
 qir.h %4
 
-// CHECK-NEXT: qir.rx<1.000000e-01> %{{.*}}
-// CHECK-GENERIC-NEXT: "qir.rx"(%{{.*}}) <{angle = 1.000000e-01 : f64}> : (!qir.qubit) -> ()
-qir.rx<0.1> %4
+%6 = arith.constant 1.000000e-01 : f64
 
-// CHECK-NEXT: qir.ry<2.000000e-01> %{{.*}}
-// CHECK-GENERIC-NEXT: "qir.ry"(%{{.*}}) <{angle = 2.000000e-01 : f64}> : (!qir.qubit) -> ()
-qir.ry<0.2> %4
+// CHECK: qir.rx<%{{.*}}> %{{.*}}
+// CHECK-GENERIC: "qir.rx"(%{{.*}}, %{{.*}}) : (f64, !qir.qubit) -> ()
+qir.rx<%6> %4
 
-// CHECK-NEXT: qir.rz<3.000000e-01> %{{.*}}
-// CHECK-GENERIC-NEXT: "qir.rz"(%{{.*}}) <{angle = 3.000000e-01 : f64}> : (!qir.qubit) -> ()
-qir.rz<0.3> %4
+// CHECK-NEXT: qir.ry<%{{.*}}> %{{.*}}
+// CHECK-GENERIC-NEXT: "qir.ry"(%{{.*}}, %{{.*}}) : (f64, !qir.qubit) -> ()
+qir.ry<%6> %4
+
+// CHECK-NEXT: qir.rz<%{{.*}}> %{{.*}}
+// CHECK-GENERIC-NEXT: "qir.rz"(%{{.*}}, %{{.*}}) : (f64, !qir.qubit) -> ()
+qir.rz<%6> %4
 
 // CHECK-NEXT: qir.s %{{.*}}
 // CHECK-GENERIC-NEXT: "qir.s"(%{{.*}}) : (!qir.qubit) -> ()
