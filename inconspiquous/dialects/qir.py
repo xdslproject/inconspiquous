@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from xdsl.dialects import llvm
 from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
@@ -41,6 +42,22 @@ class QIROperation(IRDLOperation, ABC):
         """
         ...
 
+    @classmethod
+    def get_func_type(cls) -> llvm.LLVMFunctionType:
+        """
+        Return the llvm function type for this function.
+        If this function has inputs/outputs which are not llvm pointers,
+        then this function must be overriden.
+        """
+        irdl_def = cls.get_irdl_definition()
+        operands = len(irdl_def.operands)
+        results = len(irdl_def.results)
+
+        return llvm.LLVMFunctionType(
+            (llvm.LLVMPointerType.opaque(),) * operands,
+            llvm.LLVMPointerType.opaque() if results else None,
+        )
+
 
 @irdl_op_definition
 class ResultGetOneOp(QIROperation):
@@ -77,6 +94,12 @@ class ResultEqualOp(QIROperation):
     @staticmethod
     def get_func_name() -> str:
         return "__quantum__rt__result_equal"
+
+    @classmethod
+    def get_func_type(cls) -> llvm.LLVMFunctionType:
+        return llvm.LLVMFunctionType(
+            (llvm.LLVMPointerType.opaque(), llvm.LLVMPointerType.opaque()), i1
+        )
 
 
 @irdl_op_definition
@@ -201,6 +224,10 @@ class RXOp(QIROperation):
     def get_func_name() -> str:
         return "__quantum__qis__rx__body"
 
+    @classmethod
+    def get_func_type(cls) -> llvm.LLVMFunctionType:
+        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType.opaque()))
+
 
 @irdl_op_definition
 class RYOp(QIROperation):
@@ -219,6 +246,10 @@ class RYOp(QIROperation):
     def get_func_name() -> str:
         return "__quantum__qis__ry__body"
 
+    @classmethod
+    def get_func_type(cls) -> llvm.LLVMFunctionType:
+        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType.opaque()))
+
 
 @irdl_op_definition
 class RZOp(QIROperation):
@@ -236,6 +267,10 @@ class RZOp(QIROperation):
     @staticmethod
     def get_func_name() -> str:
         return "__quantum__qis__rz__body"
+
+    @classmethod
+    def get_func_type(cls) -> llvm.LLVMFunctionType:
+        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType.opaque()))
 
 
 @irdl_op_definition
