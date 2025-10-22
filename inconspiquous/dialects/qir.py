@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from xdsl.ir import Dialect, ParametrizedAttribute, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
@@ -28,8 +29,22 @@ class ResultType(ParametrizedAttribute, TypeAttribute):
     name = "qir.result"
 
 
+class QIROperation(IRDLOperation, ABC):
+    """
+    QIR operations are defined using opaque function.
+    """
+
+    @staticmethod
+    @abstractmethod
+    def get_func_name() -> str:
+        """
+        Return the name of the opaque function.
+        """
+        ...
+
+
 @irdl_op_definition
-class ResultGetOneOp(IRDLOperation):
+class ResultGetOneOp(QIROperation):
     """
     MLIR equivalent of __quantum__rt__result_get_one
     """
@@ -40,9 +55,13 @@ class ResultGetOneOp(IRDLOperation):
 
     assembly_format = "attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__rt__result_get_one"
+
 
 @irdl_op_definition
-class ResultEqualOp(IRDLOperation):
+class ResultEqualOp(QIROperation):
     """
     MLIR equivalent of __quantum__rt__result_equal
     """
@@ -56,9 +75,13 @@ class ResultEqualOp(IRDLOperation):
 
     assembly_format = "$lhs `,` $rhs attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__rt__result_equal"
+
 
 @irdl_op_definition
-class QubitAllocateOp(IRDLOperation):
+class QubitAllocateOp(QIROperation):
     """
     MLIR equivalent of __quantum__rt__qubit_allocate
     """
@@ -69,9 +92,13 @@ class QubitAllocateOp(IRDLOperation):
 
     assembly_format = "attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__rt__qubit_allocate"
+
 
 @irdl_op_definition
-class MeasureOp(IRDLOperation):
+class MeasureOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__m__body
     """
@@ -83,9 +110,13 @@ class MeasureOp(IRDLOperation):
 
     assembly_format = "$qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__m__body"
+
 
 @irdl_op_definition
-class ReleaseOp(IRDLOperation):
+class ReleaseOp(QIROperation):
     """
     MLIR equivalent of __quantum__rt__qubit_release
     """
@@ -96,9 +127,13 @@ class ReleaseOp(IRDLOperation):
 
     assembly_format = "$qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__rt__qubit_release"
+
 
 @irdl_op_definition
-class CNotOp(IRDLOperation):
+class CNotOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__cnot__body
     """
@@ -110,9 +145,13 @@ class CNotOp(IRDLOperation):
 
     assembly_format = "$control `,` $target attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__cnot__body"
+
 
 @irdl_op_definition
-class CZOp(IRDLOperation):
+class CZOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__cz__body
     """
@@ -124,9 +163,13 @@ class CZOp(IRDLOperation):
 
     assembly_format = "$control `,` $target attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__cz__body"
+
 
 @irdl_op_definition
-class HOp(IRDLOperation):
+class HOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__h__body
     """
@@ -137,9 +180,13 @@ class HOp(IRDLOperation):
 
     assembly_format = "$qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__h__body"
+
 
 @irdl_op_definition
-class RXOp(IRDLOperation):
+class RXOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__rx__body
     """
@@ -151,9 +198,13 @@ class RXOp(IRDLOperation):
 
     assembly_format = "`` `<` $angle `>` $qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__rx__body"
+
 
 @irdl_op_definition
-class RYOp(IRDLOperation):
+class RYOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__ry__body
     """
@@ -165,9 +216,13 @@ class RYOp(IRDLOperation):
 
     assembly_format = "`` `<` $angle `>` $qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__ry__body"
+
 
 @irdl_op_definition
-class RZOp(IRDLOperation):
+class RZOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__rz__body
     """
@@ -179,9 +234,13 @@ class RZOp(IRDLOperation):
 
     assembly_format = "`` `<` $angle `>` $qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__rz__body"
+
 
 @irdl_op_definition
-class SOp(IRDLOperation):
+class SOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__s__body
     """
@@ -192,9 +251,13 @@ class SOp(IRDLOperation):
 
     assembly_format = "$qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__s__body"
+
 
 @irdl_op_definition
-class SAdjOp(IRDLOperation):
+class SAdjOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__s_adj
     """
@@ -205,9 +268,13 @@ class SAdjOp(IRDLOperation):
 
     assembly_format = "$qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__s__adj"
+
 
 @irdl_op_definition
-class TOp(IRDLOperation):
+class TOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__t__body
     """
@@ -218,9 +285,13 @@ class TOp(IRDLOperation):
 
     assembly_format = "$qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__t__body"
+
 
 @irdl_op_definition
-class TAdjOp(IRDLOperation):
+class TAdjOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__t__adj
     """
@@ -231,9 +302,13 @@ class TAdjOp(IRDLOperation):
 
     assembly_format = "$qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__t__adj"
+
 
 @irdl_op_definition
-class XOp(IRDLOperation):
+class XOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__x__body
     """
@@ -244,9 +319,13 @@ class XOp(IRDLOperation):
 
     assembly_format = "$qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__x__body"
+
 
 @irdl_op_definition
-class YOp(IRDLOperation):
+class YOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__y__body
     """
@@ -257,9 +336,13 @@ class YOp(IRDLOperation):
 
     assembly_format = "$qubit attr-dict"
 
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__y__body"
+
 
 @irdl_op_definition
-class ZOp(IRDLOperation):
+class ZOp(QIROperation):
     """
     MLIR equivalent of __quantum__qis__z__body
     """
@@ -269,6 +352,10 @@ class ZOp(IRDLOperation):
     qubit = operand_def(QubitType)
 
     assembly_format = "$qubit attr-dict"
+
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__z__body"
 
 
 QIR = Dialect(
