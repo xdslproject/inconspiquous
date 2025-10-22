@@ -5,10 +5,9 @@ from xdsl.irdl import (
     irdl_attr_definition,
     irdl_op_definition,
     operand_def,
-    prop_def,
     result_def,
 )
-from xdsl.dialects.builtin import Float64Type, FloatAttr, i1
+from xdsl.dialects.builtin import Float64Type, i1
 
 
 @irdl_attr_definition
@@ -193,7 +192,7 @@ class RXOp(QIROperation):
 
     name = "qir.rx"
 
-    angle = prop_def(FloatAttr[Float64Type])
+    angle = operand_def(Float64Type)
     qubit = operand_def(QubitType)
 
     assembly_format = "`` `<` $angle `>` $qubit attr-dict"
@@ -211,7 +210,7 @@ class RYOp(QIROperation):
 
     name = "qir.ry"
 
-    angle = prop_def(FloatAttr[Float64Type])
+    angle = operand_def(Float64Type)
     qubit = operand_def(QubitType)
 
     assembly_format = "`` `<` $angle `>` $qubit attr-dict"
@@ -229,7 +228,7 @@ class RZOp(QIROperation):
 
     name = "qir.rz"
 
-    angle = prop_def(FloatAttr[Float64Type])
+    angle = operand_def(Float64Type)
     qubit = operand_def(QubitType)
 
     assembly_format = "`` `<` $angle `>` $qubit attr-dict"
