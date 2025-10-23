@@ -33,13 +33,11 @@ class AngleAttr(ParametrizedAttribute):
         f_attr: FloatAttr[Float64Type] = FloatAttr(f % 2, 64)
         super().__init__(f_attr)
 
-    @property
     def as_float_raw(self) -> float:
         return self.data.value.data
 
-    @property
     def as_float(self) -> float:
-        return self.as_float_raw * math.pi
+        return self.as_float_raw() * math.pi
 
     @classmethod
     def parse_parameters(cls, parser: AttrParser) -> tuple[FloatAttr[Float64Type]]:
@@ -60,7 +58,7 @@ class AngleAttr(ParametrizedAttribute):
 
     def print_parameters(self, printer: Printer) -> None:
         with printer.in_angle_brackets():
-            f = self.as_float_raw
+            f = self.as_float_raw()
             if f == 0.0:
                 printer.print_string("0")
             elif f == 1.0:
