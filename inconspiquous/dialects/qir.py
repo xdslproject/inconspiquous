@@ -54,8 +54,8 @@ class QIROperation(IRDLOperation, ABC):
         results = len(irdl_def.results)
 
         return llvm.LLVMFunctionType(
-            (llvm.LLVMPointerType.opaque(),) * operands,
-            llvm.LLVMPointerType.opaque() if results else None,
+            (llvm.LLVMPointerType(),) * operands,
+            llvm.LLVMPointerType() if results else None,
         )
 
 
@@ -101,7 +101,7 @@ class ResultEqualOp(QIROperation):
     @classmethod
     def get_func_type(cls) -> llvm.LLVMFunctionType:
         return llvm.LLVMFunctionType(
-            (llvm.LLVMPointerType.opaque(), llvm.LLVMPointerType.opaque()), i1
+            (llvm.LLVMPointerType(), llvm.LLVMPointerType()), i1
         )
 
     def __init__(self, lhs: SSAValue | Operation, rhs: SSAValue | Operation):
@@ -237,7 +237,7 @@ class RXOp(RotationOperation):
 
     @classmethod
     def get_func_type(cls) -> llvm.LLVMFunctionType:
-        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType.opaque()))
+        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType()))
 
 
 @irdl_op_definition
@@ -254,7 +254,7 @@ class RYOp(RotationOperation):
 
     @classmethod
     def get_func_type(cls) -> llvm.LLVMFunctionType:
-        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType.opaque()))
+        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType()))
 
 
 @irdl_op_definition
@@ -271,7 +271,7 @@ class RZOp(RotationOperation):
 
     @classmethod
     def get_func_type(cls) -> llvm.LLVMFunctionType:
-        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType.opaque()))
+        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType()))
 
 
 class SingleQubitOperation(QIROperation, ABC):

@@ -16,14 +16,14 @@ def test_qir_op_types():
         ty = op.get_func_type()
         assert len(ty.inputs) == len(op_def.operands)
         for i, operand in zip(ty.inputs, op_def.operands):
-            if i == LLVMPointerType.opaque():
+            if i == LLVMPointerType():
                 constr = operand[1].constr
                 assert constr.verifies((QubitType(),)) or constr.verifies(
                     (ResultType(),)
                 )
         if ty.output == LLVMVoidType():
             assert not op_def.results
-        elif ty.output == LLVMPointerType.opaque():
+        elif ty.output == LLVMPointerType():
             constr = op_def.results[0][1].constr
             assert constr.verifies((QubitType(),)) or constr.verifies((ResultType(),))
         else:
