@@ -125,9 +125,9 @@ class HadamardGate(SingleQubitCliffordGate):
     ) -> tuple[PauliProp, ...]:
         assert input_idx == 0
         if pauli_type == "X":
-            return (PauliProp(False, True),)
+            return (PauliProp.Z(),)
         else:
-            return (PauliProp(True, False),)
+            return (PauliProp.X(),)
 
 
 @irdl_attr_definition
@@ -154,9 +154,9 @@ class PhaseGate(SingleQubitCliffordGate):
     ) -> tuple[PauliProp, ...]:
         assert input_idx == 0
         if pauli_type == "X":
-            return (PauliProp(True, True),)
+            return (PauliProp.Y(),)
         else:
-            return (PauliProp(False, True),)
+            return (PauliProp.Z(),)
 
 
 @irdl_attr_definition
@@ -168,9 +168,9 @@ class PhaseDaggerGate(SingleQubitCliffordGate):
     ) -> tuple[PauliProp, ...]:
         assert input_idx == 0
         if pauli_type == "X":
-            return (PauliProp(True, True),)
+            return (PauliProp.Y(),)
         else:
-            return (PauliProp(False, True),)
+            return (PauliProp.Z(),)
 
 
 @irdl_attr_definition
@@ -254,20 +254,20 @@ class CXGate(TwoQubitCliffordGate):
     ) -> tuple[PauliProp, ...]:
         if pauli_type == "X":
             if input_idx == 0:
-                return (PauliProp(True, False), PauliProp(True, False))
+                return (PauliProp.X(), PauliProp.X())
             else:
                 return (
-                    PauliProp(False, False),
-                    PauliProp(True, False),
+                    PauliProp.none(),
+                    PauliProp.X(),
                 )
         else:
             if input_idx == 0:
                 return (
-                    PauliProp(False, True),
-                    PauliProp(False, False),
+                    PauliProp.Z(),
+                    PauliProp.none(),
                 )
             else:
-                return (PauliProp(False, True), PauliProp(False, True))
+                return (PauliProp.Z(), PauliProp.Z())
 
 
 @irdl_attr_definition
@@ -280,21 +280,21 @@ class CZGate(TwoQubitCliffordGate):
         if pauli_type == "X":
             if input_idx == 0:
                 return (
-                    PauliProp(True, False),
-                    PauliProp(False, True),
+                    PauliProp.X(),
+                    PauliProp.Z(),
                 )
             else:
                 return (
-                    PauliProp(False, True),
-                    PauliProp(True, False),
+                    PauliProp.Z(),
+                    PauliProp.X(),
                 )
         else:
             if input_idx == 0:
-                return (PauliProp(False, True), PauliProp(False, False))
+                return (PauliProp.Z(), PauliProp.none())
             else:
                 return (
-                    PauliProp(False, False),
-                    PauliProp(False, True),
+                    PauliProp.none(),
+                    PauliProp.Z(),
                 )
 
 

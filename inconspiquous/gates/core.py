@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Literal, NamedTuple
 
@@ -51,6 +53,28 @@ class PauliProp(NamedTuple):
     x: bool
     z: bool
 
+    @staticmethod
+    def none() -> PauliProp:
+        return PauliProp(False, False)
+
+    @staticmethod
+    def X() -> PauliProp:
+        return PauliProp(True, False)
+
+    @staticmethod
+    def Y() -> PauliProp:
+        return PauliProp(True, True)
+
+    @staticmethod
+    def Z() -> PauliProp:
+        return PauliProp(False, True)
+
+    @staticmethod
+    def from_lit(literal: Literal["X", "Z"]) -> PauliProp:
+        if literal == "X":
+            return PauliProp.X()
+        return PauliProp.Z()
+
 
 class CliffordGateAttr(GateAttr, ABC):
     """
@@ -89,10 +113,7 @@ class PauliGate(SingleQubitCliffordGate):
         self, input_idx: int, pauli_type: Literal["X", "Z"]
     ) -> tuple[PauliProp, ...]:
         assert input_idx == 0
-        if pauli_type == "X":
-            return (PauliProp(True, False),)
-        else:
-            return (PauliProp(False, True),)
+        return (PauliProp.from_lit(pauli_type),)
 
 
 class TwoQubitCliffordGate(CliffordGateAttr, TwoQubitGate):
