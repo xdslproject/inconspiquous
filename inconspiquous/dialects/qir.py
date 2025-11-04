@@ -391,6 +391,33 @@ class ZOp(SingleQubitOperation):
         return "__quantum__qis__z__body"
 
 
+@irdl_op_definition
+class ToffoliOp(QIROperation):
+    """
+    MLIR equivalent of __quantum__qis__toffoli__body
+    """
+
+    name = "qir.toffoli"
+
+    c1 = operand_def(QubitType)
+    c2 = operand_def(QubitType)
+    targ = operand_def(QubitType)
+
+    assembly_format = "$c1 `,` $c2 `,` $targ attr-dict"
+
+    def __init__(
+        self,
+        c1: SSAValue | Operation,
+        c2: SSAValue | Operation,
+        targ: SSAValue | Operation,
+    ):
+        super().__init__(operands=(c1, c2, targ))
+
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__toffoli__body"
+
+
 QIR = Dialect(
     "qir",
     [
@@ -412,6 +439,7 @@ QIR = Dialect(
         XOp,
         YOp,
         ZOp,
+        ToffoliOp,
     ],
     [
         QubitType,
