@@ -42,3 +42,7 @@
 // CHECK: %{{.*}} = gate.dyn_j<%phi>
 // CHECK-GENERIC: %{{.*}} = "gate.dyn_j"(%phi) : (!angle.type) -> !gate.type<1>
 %4 = gate.dyn_j<%phi>
+
+// CHECK: %{{.*}} = gate.cond<#gate.h> %cTrue
+// CHECK-GENERIC: %{{.*}} = "gate.cond"(%cTrue) <{gate = #gate.h}> : (i1) -> !gate.type<1>
+%5 = gate.cond<#gate.h> %cTrue
