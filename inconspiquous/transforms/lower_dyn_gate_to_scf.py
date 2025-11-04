@@ -15,21 +15,27 @@ from xdsl.pattern_rewriter import (
 )
 
 from inconspiquous.dialects import qssa, qref
+from inconspiquous.dialects.gate import CondOp
+from inconspiquous.gates.core import GateAttr
 
 
 class LowerQSSADynGateToScfPattern(RewritePattern):
     """
     Attempts to lower a qssa.dyn_gate op to scf
     When the gate argument is an arith.select we replace the gate with an scf.if
+    When the gate argument is a gate.cond we replace the gate with an scf.if
     When the gate argument is a varith.switch we replace the gate with an scf.index_switch
     """
 
     @staticmethod
-    def make_region_from_arg(op: qssa.DynGateOp, gate: SSAValue) -> Region:
+    def make_region_from_arg(op: qssa.DynGateOp, gate: SSAValue | GateAttr) -> Region:
         region = Region(Block())
         with ImplicitBuilder(region):
-            dyn_gate = qssa.DynGateOp(gate, *op.ins)
-            scf.YieldOp(dyn_gate)
+            if isinstance(gate, GateAttr):
+                gate_op = qssa.GateOp(gate, *op.ins)
+            else:
+                gate_op = qssa.DynGateOp(gate, *op.ins)
+            scf.YieldOp(*gate_op.outs)
         return region
 
     @op_type_rewrite_pattern
@@ -38,6 +44,14 @@ class LowerQSSADynGateToScfPattern(RewritePattern):
         if isinstance(gate, arith.SelectOp):
             then_region = self.make_region_from_arg(op, gate.lhs)
             else_region = self.make_region_from_arg(op, gate.rhs)
+            rewriter.replace_matched_op(
+                scf.IfOp(gate.cond, op.result_types, then_region, else_region)
+            )
+        if isinstance(gate, CondOp):
+            then_region = self.make_region_from_arg(op, gate.gate)
+            else_region = Region(Block())
+            with ImplicitBuilder(else_region):
+                scf.YieldOp(*op.ins)
             rewriter.replace_matched_op(
                 scf.IfOp(gate.cond, op.result_types, then_region, else_region)
             )
@@ -65,14 +79,18 @@ class LowerQRefDynGateToScfPattern(RewritePattern):
     """
     Attempts to lower a qref.dyn_gate op to scf
     When the gate argument is an arith.select we replace the gate with an scf.if
+    When the gate argument is a gate.cond we replace the gate with an scf.if with empty else
     When the gate argument is a varith.switch we replace the gate with an scf.index_switch
     """
 
     @staticmethod
-    def make_region_from_arg(op: qref.DynGateOp, gate: SSAValue) -> Region:
+    def make_region_from_arg(op: qref.DynGateOp, gate: SSAValue | GateAttr) -> Region:
         region = Region(Block())
         with ImplicitBuilder(region):
-            qref.DynGateOp(gate, *op.ins)
+            if isinstance(gate, GateAttr):
+                qref.GateOp(gate, *op.ins)
+            else:
+                qref.DynGateOp(gate, *op.ins)
             scf.YieldOp()
         return region
 
@@ -85,6 +103,9 @@ class LowerQRefDynGateToScfPattern(RewritePattern):
             rewriter.replace_matched_op(
                 scf.IfOp(gate.cond, (), then_region, else_region)
             )
+        if isinstance(gate, CondOp):
+            then_region = self.make_region_from_arg(op, gate.gate)
+            rewriter.replace_matched_op(scf.IfOp(gate.cond, (), then_region))
         elif isinstance(gate, varith.VarithSwitchOp):
             flag = arith.IndexCastOp(gate.flag, IndexType())
             cases = DenseArrayBase.from_list(
