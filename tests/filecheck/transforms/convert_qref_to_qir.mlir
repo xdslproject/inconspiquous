@@ -32,25 +32,31 @@ qref.gate<#gate.rz<0.5pi>> %q1
 // CHECK-NEXT: [[rhs:%.*]] = qir.result_get_one
 // CHECK-NEXT: [[meas:%.+]] = qir.result_equal [[lhs]], [[rhs]]
 %0 = qref.measure %q0
+// CHECK-NEXT: qir.h %q1
+// CHECK-NEXT: [[lhs:%.*]] = qir.m %q1
+// CHECK-NEXT: qir.qubit_release %q1
+// CHECK-NEXT: [[rhs:%.*]] = qir.result_get_one
+// CHECK-NEXT: [[meas:%.+]] = qir.result_equal [[lhs]], [[rhs]]
+%1 = qref.measure<#measurement.x_basis> %q1
 
 // CHECK-NEXT "test.op"([[meas]])
 "test.op"(%0) : (i1) -> ()
 
 func.func @qref_in_region(%q : !qu.bit, %p: i1) -> !qu.bit {
-  %q2 = scf.if %p -> (!qu.bit) {
+  %q3 = scf.if %p -> (!qu.bit) {
     qref.gate<#gate.z> %q
     scf.yield %q : !qu.bit
   } else {
     scf.yield %q : !qu.bit
   }
-  func.return %q2 : !qu.bit
+  func.return %q3 : !qu.bit
 }
 
 // CHECK:      func.func @qref_in_region
-// CHECK-NEXT: %q2 = scf.if %p -> (!qir.qubit) {
+// CHECK-NEXT: %q3 = scf.if %p -> (!qir.qubit) {
 // CHECK-NEXT:   qir.z %q
 // CHECK-NEXT:   scf.yield %q : !qir.qubit
 // CHECK-NEXT: } else {
 // CHECK-NEXT:   scf.yield %q : !qir.qubit
 // CHECK-NEXT: }
-// CHECK-NEXT: func.return %q2 : !qir.qubit
+// CHECK-NEXT: func.return %q3 : !qir.qubit

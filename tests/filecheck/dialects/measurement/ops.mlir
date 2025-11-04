@@ -4,6 +4,9 @@
 // CHECK: "test.op"() {measurement = #measurement.comp_basis} : () -> ()
 "test.op"() {measurement = #measurement.comp_basis} : () -> ()
 
+// CHECK: "test.op"() {measurement = #measurement.x_basis} : () -> ()
+"test.op"() {measurement = #measurement.x_basis} : () -> ()
+
 // CHECK: "test.op"() {measurement = #measurement.xy<pi>} : () -> ()
 "test.op"() {measurement = #measurement.xy<pi>} : () -> ()
 
