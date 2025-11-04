@@ -21,7 +21,7 @@
 // CHECK-GENERIC-NEXT: "qir.qubit_release"(%{{.*}}) : (!qir.qubit) -> ()
 qir.qubit_release %2
 
-%4, %5 = "test.op"() : () -> (!qir.qubit, !qir.qubit)
+%4, %5, %6 = "test.op"() : () -> (!qir.qubit, !qir.qubit, !qir.qubit)
 
 // CHECK: qir.cnot %{{.*}}, %{{.*}}
 // CHECK-GENERIC: "qir.cnot"(%{{.*}}, %{{.*}}) : (!qir.qubit, !qir.qubit) -> ()
@@ -35,19 +35,19 @@ qir.cz %4, %5
 // CHECK-GENERIC-NEXT: "qir.h"(%{{.*}}) : (!qir.qubit) -> ()
 qir.h %4
 
-%6 = arith.constant 1.000000e-01 : f64
+%7 = arith.constant 1.000000e-01 : f64
 
 // CHECK: qir.rx<%{{.*}}> %{{.*}}
 // CHECK-GENERIC: "qir.rx"(%{{.*}}, %{{.*}}) : (f64, !qir.qubit) -> ()
-qir.rx<%6> %4
+qir.rx<%7> %4
 
 // CHECK-NEXT: qir.ry<%{{.*}}> %{{.*}}
 // CHECK-GENERIC-NEXT: "qir.ry"(%{{.*}}, %{{.*}}) : (f64, !qir.qubit) -> ()
-qir.ry<%6> %4
+qir.ry<%7> %4
 
 // CHECK-NEXT: qir.rz<%{{.*}}> %{{.*}}
 // CHECK-GENERIC-NEXT: "qir.rz"(%{{.*}}, %{{.*}}) : (f64, !qir.qubit) -> ()
-qir.rz<%6> %4
+qir.rz<%7> %4
 
 // CHECK-NEXT: qir.s %{{.*}}
 // CHECK-GENERIC-NEXT: "qir.s"(%{{.*}}) : (!qir.qubit) -> ()
@@ -76,3 +76,7 @@ qir.y %4
 // CHECK-NEXT: qir.z %{{.*}}
 // CHECK-GENERIC-NEXT: "qir.z"(%{{.*}}) : (!qir.qubit) -> ()
 qir.z %4
+
+// CHECK-NEXT: qir.toffoli %{{.*}}, %{{.*}}, %{{.*}}
+// CHECK-GENERIC-NEXT: "qir.toffoli"(%{{.*}}, %{{.*}}, %{{.*}}) : (!qir.qubit, !qir.qubit, !qir.qubit) -> ()
+qir.toffoli %4, %5, %6

@@ -22,6 +22,7 @@ from inconspiquous.dialects.gate import (
     RZGate,
     TDaggerGate,
     TGate,
+    ToffoliGate,
     XGate,
     YGate,
     ZGate,
@@ -60,6 +61,10 @@ class QRefGateToQIRPattern(RewritePattern):
                 rewriter.replace_matched_op(qir.YOp(op.ins[0]))
             case ZGate():
                 rewriter.replace_matched_op(qir.ZOp(op.ins[0]))
+            case ToffoliGate():
+                rewriter.replace_matched_op(
+                    qir.ToffoliOp(op.ins[0], op.ins[1], op.ins[2])
+                )
             case RZGate():
                 rewriter.replace_matched_op(
                     (
