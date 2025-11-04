@@ -2,7 +2,7 @@
 
 // CHECK:      func.func @depolarising_dyn(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
-// CHECK-NEXT:   %id = gate.constant #gate.id
+// CHECK-NEXT:   %id = gate.constant #gate.id<1>
 // CHECK-NEXT:   %p2 = prob.uniform : i2
 // CHECK-NEXT:   %x = gate.constant #gate.x
 // CHECK-NEXT:   %y = gate.constant #gate.y
@@ -19,7 +19,7 @@
 // CHECK-NEXT: }
 func.func @depolarising_dyn(%q : !qu.bit) -> !qu.bit {
   %p = prob.bernoulli 0.1
-  %id = gate.constant #gate.id
+  %id = gate.constant #gate.id<1>
   %p2 = prob.uniform : i2
   %x = gate.constant #gate.x
   %y = gate.constant #gate.y

@@ -5,7 +5,7 @@
 // CHECK-NEXT: %q2 = qu.alloc
 // CHECK-NEXT: %0 = prob.uniform : i1
 // CHECK-NEXT: %1 = prob.uniform : i1
-// CHECK-NEXT: %2 = gate.constant #gate.id
+// CHECK-NEXT: %2 = gate.constant #gate.id<1>
 // CHECK-NEXT: %3 = gate.constant #gate.x
 // CHECK-NEXT: %4 = gate.constant #gate.z
 // CHECK-NEXT: %5 = arith.select %0, %3, %2 : !gate.type<1>
@@ -21,7 +21,7 @@
 // CHECK-NEXT: %14 = prob.uniform : i1
 // CHECK-NEXT: %15 = prob.uniform : i1
 // CHECK-NEXT: %16 = prob.uniform : i1
-// CHECK-NEXT: %17 = gate.constant #gate.id
+// CHECK-NEXT: %17 = gate.constant #gate.id<1>
 // CHECK-NEXT: %18 = gate.constant #gate.x
 // CHECK-NEXT: %19 = gate.constant #gate.z
 // CHECK-NEXT: %20 = arith.select %13, %18, %17 : !gate.type<1>
@@ -43,7 +43,7 @@
 // CHECK-NEXT: %35 = prob.uniform : i1
 // CHECK-NEXT: %36 = prob.uniform : i1
 // CHECK-NEXT: %37 = prob.uniform : i1
-// CHECK-NEXT: %38 = gate.constant #gate.id
+// CHECK-NEXT: %38 = gate.constant #gate.id<1>
 // CHECK-NEXT: %39 = gate.constant #gate.x
 // CHECK-NEXT: %40 = gate.constant #gate.z
 // CHECK-NEXT: %41 = arith.select %34, %39, %38 : !gate.type<1>

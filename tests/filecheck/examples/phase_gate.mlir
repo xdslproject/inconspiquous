@@ -2,7 +2,7 @@
 
 // CHECK:      func.func @phase_dyn(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
-// CHECK-NEXT:   %id = gate.constant #gate.id
+// CHECK-NEXT:   %id = gate.constant #gate.id<1>
 // CHECK-NEXT:   %z = gate.constant #gate.z
 // CHECK-NEXT:   %g = arith.select %p, %z, %id : !gate.type<1>
 // CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q
@@ -10,7 +10,7 @@
 // CHECK-NEXT: }
 func.func @phase_dyn(%q : !qu.bit) -> !qu.bit {
   %p = prob.bernoulli 0.1
-  %id = gate.constant #gate.id
+  %id = gate.constant #gate.id<1>
   %z = gate.constant #gate.z
   %g = arith.select %p, %z, %id : !gate.type<1>
   %q1 = qssa.dyn_gate<%g> %q

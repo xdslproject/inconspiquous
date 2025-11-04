@@ -1,6 +1,6 @@
 from xdsl.dialects import builtin
 from xdsl.dialects.arith import ConstantOp
-from xdsl.parser import Context
+from xdsl.parser import Context, IntAttr
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -59,7 +59,7 @@ class ToXZSGate(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: ConstantGateOp, rewriter: PatternRewriter):
         match op.gate:
-            case IdentityGate():
+            case IdentityGate(qubits=IntAttr(1)):
                 false = self.get_const(False, rewriter)
                 rewriter.replace_matched_op(XZOp(false, false))
             case XGate():

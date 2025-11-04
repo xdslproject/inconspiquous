@@ -40,7 +40,7 @@ class PadTGate(RewritePattern):
             return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
-        id_gate = ConstantGateOp(IdentityGate())
+        id_gate = ConstantGateOp(IdentityGate(1))
         x_gate = ConstantGateOp(XGate())
         z_gate = ConstantGateOp(ZGate())
         phase_gate = ConstantGateOp(PhaseGate())
@@ -93,7 +93,7 @@ class PadTDaggerGate(RewritePattern):
             return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
-        id_gate = ConstantGateOp(IdentityGate())
+        id_gate = ConstantGateOp(IdentityGate(1))
         x_gate = ConstantGateOp(XGate())
         z_gate = ConstantGateOp(ZGate())
         phase_dagger_gate = ConstantGateOp(PhaseDaggerGate())
@@ -146,7 +146,7 @@ class PadHadamardGate(RewritePattern):
             return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
-        id_gate = ConstantGateOp(IdentityGate())
+        id_gate = ConstantGateOp(IdentityGate(1))
         x_gate = ConstantGateOp(XGate())
         z_gate = ConstantGateOp(ZGate())
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
@@ -197,7 +197,7 @@ class PadCXGate(RewritePattern):
         z_rand_q1 = UniformOp(i1)
         z_rand_q2 = UniformOp(i1)
 
-        id_gate = ConstantGateOp(IdentityGate())
+        id_gate = ConstantGateOp(IdentityGate(1))
         x_gate = ConstantGateOp(XGate())
         z_gate = ConstantGateOp(ZGate())
 
@@ -266,7 +266,7 @@ class PadMeasure(RewritePattern):
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
 
-        id_gate = ConstantGateOp(IdentityGate())
+        id_gate = ConstantGateOp(IdentityGate(1))
         x_gate = ConstantGateOp(XGate())
         z_gate = ConstantGateOp(ZGate())
 
