@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Literal, NamedTuple
 
@@ -52,23 +54,23 @@ class PauliProp(NamedTuple):
     z: bool
 
     @staticmethod
-    def none() -> "PauliProp":
+    def none() -> PauliProp:
         return PauliProp(False, False)
 
     @staticmethod
-    def X() -> "PauliProp":
+    def X() -> PauliProp:
         return PauliProp(True, False)
 
     @staticmethod
-    def Y() -> "PauliProp":
+    def Y() -> PauliProp:
         return PauliProp(True, True)
 
     @staticmethod
-    def Z() -> "PauliProp":
+    def Z() -> PauliProp:
         return PauliProp(False, True)
 
     @staticmethod
-    def from_lit(literal: Literal["X", "Z"]) -> "PauliProp":
+    def from_lit(literal: Literal["X", "Z"]) -> PauliProp:
         if literal == "X":
             return PauliProp.X()
         return PauliProp.Z()
