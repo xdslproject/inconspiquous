@@ -3,7 +3,8 @@
 // CHECK:      %q0 = qir.qubit_allocate
 %q0 = qu.alloc
 // CHECK-NEXT: %q1 = qir.qubit_allocate
-%q1 = qu.alloc
+// CHECK-NEXT: qir.h %q1
+%q1 = qu.alloc<#qu.plus>
 // CHECK-NEXT: qir.cnot %q0, %q1
 qref.gate<#gate.cx> %q0, %q1
 // CHECK-NEXT: qir.cz %q0, %q1
