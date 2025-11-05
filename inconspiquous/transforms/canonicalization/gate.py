@@ -1,3 +1,4 @@
+from xdsl.ir import dataclass
 from xdsl.pattern_rewriter import (
     PatternRewriter,
     RewritePattern,
@@ -19,16 +20,21 @@ class XZSToXZPattern(RewritePattern):
             rewriter.replace_matched_op(gate.XZOp(op.x, op.z))
 
 
-class DynJGateToJPattern(RewritePattern):
+@dataclass(frozen=True)
+class DynRotationGateToRotationPattern(RewritePattern):
     """
-    Convert a dynamic J gate with a constant angle to a J gate.
+    Convert a dynamic rotation gate with a constant angle to the given rotation gate.
     """
 
+    rot_gate: type[gate.SingleQubitRotationGate]
+
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: gate.DynJGate, rewriter: PatternRewriter, /):
+    def match_and_rewrite(
+        self, op: gate.SingleQubitDynRotationGate, rewriter: PatternRewriter
+    ):
         if isinstance(op.angle.owner, ConstantAngleOp):
             rewriter.replace_matched_op(
-                gate.ConstantGateOp(gate.JGate(op.angle.owner.angle))
+                gate.ConstantGateOp(self.rot_gate(op.angle.owner.angle))
             )
 
 

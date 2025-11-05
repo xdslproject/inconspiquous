@@ -76,10 +76,22 @@
 
 %phi = "test.op"() : () -> !angle.type
 
+// CHECK: %{{.*}} = gate.dyn_rx<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_rx"(%phi) : (!angle.type) -> !gate.type<1>
+%4 = gate.dyn_rx<%phi>
+
+// CHECK: %{{.*}} = gate.dyn_ry<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_ry"(%phi) : (!angle.type) -> !gate.type<1>
+%5 = gate.dyn_ry<%phi>
+
+// CHECK: %{{.*}} = gate.dyn_rz<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_rz"(%phi) : (!angle.type) -> !gate.type<1>
+%6 = gate.dyn_rz<%phi>
+
 // CHECK: %{{.*}} = gate.dyn_j<%phi>
 // CHECK-GENERIC: %{{.*}} = "gate.dyn_j"(%phi) : (!angle.type) -> !gate.type<1>
-%4 = gate.dyn_j<%phi>
+%7 = gate.dyn_j<%phi>
 
 // CHECK: %{{.*}} = gate.control %4 : !gate.type<1>
 // CHECK-GENERIC: %{{.*}} = "gate.control"(%4) : (!gate.type<1>) -> !gate.type<2>
-%5 = gate.control %4 : !gate.type<1>
+%8 = gate.control %4 : !gate.type<1>
