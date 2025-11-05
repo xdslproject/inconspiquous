@@ -1,4 +1,5 @@
 from __future__ import annotations
+from abc import ABC
 from typing import ClassVar, Literal
 
 from xdsl.dialects.builtin import (
@@ -184,44 +185,53 @@ class TDaggerGate(SingleQubitGate):
     name = "gate.t_dagger"
 
 
+class SingleQubitRotationGate(SingleQubitGate, ABC):
+    angle: AngleAttr
+
+    def __init__(self, angle: float | AngleAttr):
+        if not isinstance(angle, AngleAttr):
+            angle = AngleAttr(angle)
+
+        super().__init__(angle)
+
+    @classmethod
+    def parse_parameters(cls, parser: AttrParser) -> tuple[AngleAttr]:
+        return (AngleAttr.new(AngleAttr.parse_parameters(parser)),)
+
+    def print_parameters(self, printer: Printer) -> None:
+        return self.angle.print_parameters(printer)
+
+
 @irdl_attr_definition
-class RZGate(SingleQubitGate):
+class RXGate(SingleQubitRotationGate):
+    name = "gate.rx"
+
+    def __init__(self, angle: float | AngleAttr):
+        super().__init__(angle)
+
+
+@irdl_attr_definition
+class RYGate(SingleQubitRotationGate):
+    name = "gate.ry"
+
+    def __init__(self, angle: float | AngleAttr):
+        super().__init__(angle)
+
+
+@irdl_attr_definition
+class RZGate(SingleQubitRotationGate):
     name = "gate.rz"
 
-    angle: AngleAttr
-
     def __init__(self, angle: float | AngleAttr):
-        if not isinstance(angle, AngleAttr):
-            angle = AngleAttr(angle)
-
         super().__init__(angle)
-
-    @classmethod
-    def parse_parameters(cls, parser: AttrParser) -> tuple[AngleAttr]:
-        return (AngleAttr.new(AngleAttr.parse_parameters(parser)),)
-
-    def print_parameters(self, printer: Printer) -> None:
-        return self.angle.print_parameters(printer)
 
 
 @irdl_attr_definition
-class JGate(SingleQubitGate):
+class JGate(SingleQubitRotationGate):
     name = "gate.j"
 
-    angle: AngleAttr
-
     def __init__(self, angle: float | AngleAttr):
-        if not isinstance(angle, AngleAttr):
-            angle = AngleAttr(angle)
-
         super().__init__(angle)
-
-    @classmethod
-    def parse_parameters(cls, parser: AttrParser) -> tuple[AngleAttr]:
-        return (AngleAttr.new(AngleAttr.parse_parameters(parser)),)
-
-    def print_parameters(self, printer: Printer) -> None:
-        return self.angle.print_parameters(printer)
 
 
 @irdl_op_definition
@@ -465,6 +475,8 @@ Gate = Dialect(
         PhaseDaggerGate,
         TGate,
         TDaggerGate,
+        RXGate,
+        RYGate,
         RZGate,
         JGate,
         CXGate,

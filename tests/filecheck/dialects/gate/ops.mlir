@@ -2,16 +2,53 @@
 // RUN: QUOPT_GENERIC_ROUNDTRIP
 
 "test.op"() {gate = #gate.h} : () -> ()
-
 // CHECK: "test.op"() {gate = #gate.h} : () -> ()
 
-"test.op"() {gate = #gate.id<2>} : () -> ()
+"test.op"() {gate = #gate.x} : () -> ()
+// CHECK: "test.op"() {gate = #gate.x} : () -> ()
 
-// CHECK: "test.op"() {gate = #gate.id<2>} : () -> ()
+"test.op"() {gate = #gate.y} : () -> ()
+// CHECK: "test.op"() {gate = #gate.y} : () -> ()
+
+"test.op"() {gate = #gate.z} : () -> ()
+// CHECK: "test.op"() {gate = #gate.z} : () -> ()
+
+"test.op"() {gate = #gate.s} : () -> ()
+// CHECK: "test.op"() {gate = #gate.s} : () -> ()
+
+"test.op"() {gate = #gate.s_dagger} : () -> ()
+// CHECK: "test.op"() {gate = #gate.s_dagger} : () -> ()
+
+"test.op"() {gate = #gate.t} : () -> ()
+// CHECK: "test.op"() {gate = #gate.t} : () -> ()
+
+"test.op"() {gate = #gate.t_dagger} : () -> ()
+// CHECK: "test.op"() {gate = #gate.t_dagger} : () -> ()
+
+"test.op"() {gate = #gate.rx<pi>} : () -> ()
+// CHECK-NEXT: "test.op"() {gate = #gate.rx<pi>} : () -> ()
+
+"test.op"() {gate = #gate.ry<pi>} : () -> ()
+// CHECK-NEXT: "test.op"() {gate = #gate.ry<pi>} : () -> ()
 
 "test.op"() {gate = #gate.rz<pi>} : () -> ()
-
 // CHECK-NEXT: "test.op"() {gate = #gate.rz<pi>} : () -> ()
+
+"test.op"() {gate = #gate.j<pi>} : () -> ()
+// CHECK-NEXT: "test.op"() {gate = #gate.j<pi>} : () -> ()
+
+"test.op"() {gate = #gate.cx} : () -> ()
+// CHECK-NEXT: "test.op"() {gate = #gate.cx} : () -> ()
+
+"test.op"() {gate = #gate.cz} : () -> ()
+// CHECK-NEXT: "test.op"() {gate = #gate.cz} : () -> ()
+
+"test.op"() {gate = #gate.toffoli} : () -> ()
+// CHECK-NEXT: "test.op"() {gate = #gate.toffoli} : () -> ()
+
+"test.op"() {gate = #gate.id<2>} : () -> ()
+// CHECK: "test.op"() {gate = #gate.id<2>} : () -> ()
+
 
 %0 = gate.constant #gate.h
 
