@@ -1,4 +1,5 @@
 from __future__ import annotations
+from abc import ABC
 from typing import ClassVar, Literal
 
 from xdsl.dialects.builtin import (
@@ -184,10 +185,7 @@ class TDaggerGate(SingleQubitGate):
     name = "gate.t_dagger"
 
 
-@irdl_attr_definition
-class RZGate(SingleQubitGate):
-    name = "gate.rz"
-
+class SingleQubitRotationGate(SingleQubitGate, ABC):
     angle: AngleAttr
 
     def __init__(self, angle: float | AngleAttr):
@@ -202,6 +200,21 @@ class RZGate(SingleQubitGate):
 
     def print_parameters(self, printer: Printer) -> None:
         return self.angle.print_parameters(printer)
+
+
+@irdl_attr_definition
+class RXGate(SingleQubitRotationGate):
+    name = "gate.rx"
+
+
+@irdl_attr_definition
+class RYGate(SingleQubitRotationGate):
+    name = "gate.ry"
+
+
+@irdl_attr_definition
+class RZGate(SingleQubitRotationGate):
+    name = "gate.rz"
 
 
 @irdl_attr_definition
@@ -465,6 +478,8 @@ Gate = Dialect(
         PhaseDaggerGate,
         TGate,
         TDaggerGate,
+        RXGate,
+        RYGate,
         RZGate,
         JGate,
         CXGate,
