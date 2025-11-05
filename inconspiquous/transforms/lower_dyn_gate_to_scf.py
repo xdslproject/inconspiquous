@@ -61,7 +61,7 @@ class LowerQSSADynGateToScfPattern(RewritePattern):
             )
 
 
-class LowerQRefDynGateToScf(RewritePattern):
+class LowerQRefDynGateToScfPattern(RewritePattern):
     """
     Attempts to lower a qref.dyn_gate op to scf
     When the gate argument is an arith.select we replace the gate with an scf.if
@@ -109,6 +109,6 @@ class LowerDynGateToScf(ModulePass):
     def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
             GreedyRewritePatternApplier(
-                [LowerQRefDynGateToScf(), LowerQSSADynGateToScfPattern()]
+                [LowerQRefDynGateToScfPattern(), LowerQSSADynGateToScfPattern()]
             )
         ).rewrite_module(op)
