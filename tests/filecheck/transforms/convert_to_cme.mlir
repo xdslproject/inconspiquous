@@ -5,7 +5,7 @@
 // CHECK-NEXT: %q1_2, %q1_3 = qssa.gate<#gate.cz> %q1, %q1_1
 // CHECK-NEXT: %q1_4 = qssa.measure<#measurement.xy<pi>> %q1_2
 // CHECK-NEXT: %q1_5 = gate.constant #gate.x
-// CHECK-NEXT: %q1_6 = gate.constant #gate.id
+// CHECK-NEXT: %q1_6 = gate.constant #gate.id<1>
 // CHECK-NEXT: %q1_7 = arith.select %q1_4, %q1_5, %q1_6 : !gate.type<1>
 // CHECK-NEXT: %q1_8 = qssa.dyn_gate<%q1_7> %q1_3
 // CHECK-NEXT: %q1_9 = qu.alloc<#qu.plus>

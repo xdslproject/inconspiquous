@@ -35,7 +35,7 @@
 // CHECK-NEXT:   %s4 = qssa.measure %a4_6
 // CHECK-NEXT:   %x = gate.constant #gate.x
 // CHECK-NEXT:   %z = gate.constant #gate.z
-// CHECK-NEXT:   %id = gate.constant #gate.id
+// CHECK-NEXT:   %id = gate.constant #gate.id<1>
 // CHECK-NEXT:   %0 = arith.constant true
 // CHECK-NEXT:   %1 = arith.xori %s1, %s3 : i1
 // CHECK-NEXT:   %2 = arith.ori %1, %s2 : i1
@@ -117,7 +117,7 @@
 // CHECK-NEXT:   %s4_1 = qssa.measure %a4_13
 // CHECK-NEXT:   %x_1 = gate.constant #gate.x
 // CHECK-NEXT:   %z_1 = gate.constant #gate.z
-// CHECK-NEXT:   %id_1 = gate.constant #gate.id
+// CHECK-NEXT:   %id_1 = gate.constant #gate.id<1>
 // CHECK-NEXT:   %37 = arith.constant true
 // CHECK-NEXT:   %38 = arith.xori %s1_1, %s3_1 : i1
 // CHECK-NEXT:   %39 = arith.ori %38, %s2_1 : i1

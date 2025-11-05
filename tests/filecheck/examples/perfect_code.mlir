@@ -35,7 +35,7 @@
 // CHECK-NEXT:   %s4 = qref.measure %a4
 // CHECK-NEXT:   %x = gate.constant #gate.x
 // CHECK-NEXT:   %z = gate.constant #gate.z
-// CHECK-NEXT:   %id = gate.constant #gate.id
+// CHECK-NEXT:   %id = gate.constant #gate.id<1>
 // CHECK-NEXT:   %c1 = arith.constant true
 // CHECK-NEXT:   %0 = arith.addi %s1, %s3 : i1
 // CHECK-NEXT:   %1 = arith.ori %0, %s2 : i1
@@ -202,7 +202,7 @@ func.func @perfect_code(%q1: !qu.bit, %q2: !qu.bit, %q3: !qu.bit, %q4: !qu.bit, 
 
   %x = gate.constant #gate.x
   %z = gate.constant #gate.z
-  %id = gate.constant #gate.id
+  %id = gate.constant #gate.id<1>
   %c1 = arith.constant true
 
   %0 = arith.addi %s1, %s3 : i1

@@ -27,7 +27,7 @@ class LowerXZToSelectPattern(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: XZOp, rewriter: PatternRewriter):
-        identity = ConstantGateOp(IdentityGate())
+        identity = ConstantGateOp(IdentityGate(1))
         z = ConstantGateOp(ZGate())
         y = ConstantGateOp(YGate())
         x = ConstantGateOp(XGate())
@@ -54,7 +54,7 @@ class LowerXZSToSelectPattern(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: XZSOp, rewriter: PatternRewriter):
-        identity = ConstantGateOp(IdentityGate())
+        identity = ConstantGateOp(IdentityGate(1))
         s = ConstantGateOp(PhaseGate())
         z = ConstantGateOp(ZGate())
         y = ConstantGateOp(YGate())

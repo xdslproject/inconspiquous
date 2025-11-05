@@ -28,6 +28,7 @@ from xdsl.irdl import (
     irdl_attr_definition,
     irdl_op_definition,
     operand_def,
+    param_def,
     prop_def,
     result_def,
     traits_def,
@@ -46,7 +47,7 @@ from inconspiquous.gates import (
     SingleQubitGate,
 )
 from inconspiquous.constraints import SizedAttributeConstraint
-from inconspiquous.gates.core import PauliGate, PauliProp
+from inconspiquous.gates.core import CliffordGateAttr, PauliGate, PauliProp
 
 
 @irdl_attr_definition
@@ -308,8 +309,30 @@ class ToffoliGate(GateAttr):
 
 
 @irdl_attr_definition
-class IdentityGate(PauliGate):
+class IdentityGate(CliffordGateAttr):
     name = "gate.id"
+
+    qubits: IntAttr = param_def(converter=IntAttr.get)
+
+    @classmethod
+    def parse_parameters(cls, parser: AttrParser) -> tuple[IntAttr]:
+        with parser.in_angle_brackets():
+            i = parser.parse_integer(allow_boolean=False, allow_negative=False)
+            return (IntAttr(i),)
+
+    def print_parameters(self, printer: Printer) -> None:
+        with printer.in_angle_brackets():
+            printer.print_int(self.qubits.data)
+
+    @property
+    def num_qubits(self) -> int:
+        return self.qubits.data
+
+    def pauli_prop(self, input_idx: int, pauli_type: Literal["X", "Z"]):
+        return tuple(
+            PauliProp.from_lit(pauli_type) if i == input_idx else PauliProp.none()
+            for i in range(self.qubits.data)
+        )
 
 
 @irdl_op_definition

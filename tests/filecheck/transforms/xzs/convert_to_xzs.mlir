@@ -8,8 +8,8 @@
 // CHECK-NEXT:   func.return %q_2 : !qu.bit
 // CHECK-NEXT: }
 func.func @id(%q: !qu.bit) -> !qu.bit {
-  %q_1 = qssa.gate<#gate.id> %q
-  %g = gate.constant #gate.id
+  %q_1 = qssa.gate<#gate.id<1>> %q
+  %g = gate.constant #gate.id<1>
   %q_2 = qssa.dyn_gate<%g> %q_1
   func.return %q_2 : !qu.bit
 }

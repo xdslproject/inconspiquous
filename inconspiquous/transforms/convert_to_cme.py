@@ -46,7 +46,7 @@ class ToCMEPattern(RewritePattern):
         )
 
         x = ConstantGateOp(XGate())
-        i = ConstantGateOp(IdentityGate())
+        i = ConstantGateOp(IdentityGate(1))
 
         x_sel = arith.SelectOp(m.outs[0], x, i)
 
@@ -75,7 +75,7 @@ class DynToCMEPattern(RewritePattern):
         m = qssa.DynMeasureOp(cz.outs[0], measurement=dyn_measure)
 
         x = ConstantGateOp(XGate())
-        i = ConstantGateOp(IdentityGate())
+        i = ConstantGateOp(IdentityGate(1))
 
         x_sel = arith.SelectOp(m.outs[0], x, i)
 
