@@ -3,14 +3,23 @@ from xdsl.parser import Context, ModuleOp
 from xdsl.passes import ModulePass
 from xdsl.dialects import llvm
 from xdsl.pattern_rewriter import (
+    GreedyRewritePatternApplier,
     PatternRewriteWalker,
     PatternRewriter,
     RewritePattern,
+    TypeConversionPattern,
+    attr_type_rewrite_pattern,
     op_type_rewrite_pattern,
 )
 from xdsl.rewriter import InsertPoint
 
-from inconspiquous.dialects.qir import QIROperation
+from inconspiquous.dialects.qir import QIROperation, QubitType, ResultType
+
+
+class QIRTypeToLLVMPointerPattern(TypeConversionPattern):
+    @attr_type_rewrite_pattern
+    def convert_type(self, typ: QubitType | ResultType) -> llvm.LLVMPointerType:
+        return llvm.LLVMPointerType()
 
 
 @dataclass
@@ -51,4 +60,8 @@ class ConvertQIRTLLVMPass(ModulePass):
     name = "convert-qir-to-llvm"
 
     def apply(self, ctx: Context, op: ModuleOp) -> None:
-        PatternRewriteWalker(QIRToLLVMPattern(op)).rewrite_module(op)
+        PatternRewriteWalker(
+            GreedyRewritePatternApplier(
+                [QIRTypeToLLVMPointerPattern(recursive=True), QIRToLLVMPattern(op)]
+            )
+        ).rewrite_module(op)

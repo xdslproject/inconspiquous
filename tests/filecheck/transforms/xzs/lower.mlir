@@ -1,7 +1,7 @@
 // RUN: quopt -p lower-xzs-to-select %s | filecheck %s
 
 // CHECK:      func.func @xzs(%x : i1, %z : i1, %s : i1) -> !gate.type<1> {
-// CHECK-NEXT:   %[[#id:]] = gate.constant #gate.id
+// CHECK-NEXT:   %[[#id:]] = gate.constant #gate.id<1>
 // CHECK-NEXT:   %[[#gs:]] = gate.constant #gate.s
 // CHECK-NEXT:   %[[#gz:]] = gate.constant #gate.z
 // CHECK-NEXT:   %[[#gy:]] = gate.constant #gate.y
