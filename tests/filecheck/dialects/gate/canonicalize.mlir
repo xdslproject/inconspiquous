@@ -17,3 +17,15 @@
 %g = gate.dyn_j<%phi>
 
 "test.op"(%g) : (!gate.type<1>) -> ()
+
+// -----
+
+%cTrue = arith.constant true
+%cFalse = arith.constant false
+
+// CHECK: gate.constant #gate.cz
+%0 = gate.cond<#gate.cz> %cTrue
+// CHECK: gate.constant #gate.id<2>
+%1 = gate.cond<#gate.cz> %cFalse
+
+"test.op"(%0, %1) : (!gate.type<2>, !gate.type<2>) -> ()

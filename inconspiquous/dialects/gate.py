@@ -453,9 +453,50 @@ class XZOp(IRDLOperation):
         super().__init__(operands=(x, z), result_types=(GateType(1),))
 
 
+@irdl_op_definition
+class CondOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+    """
+    Classically condition a static gate.
+    """
+
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
+
+    name = "gate.cond"
+
+    gate = prop_def(SizedAttributeConstraint(GateAttr, _I))
+    cond = operand_def(i1)
+
+    out = result_def(GateType.constr(_I))
+
+    assembly_format = "`<` $gate `>` $cond attr-dict"
+
+    traits = traits_def(Pure())
+
+    def __init__(self, gate: GateAttr, cond: Operation | SSAValue):
+        super().__init__(
+            operands=(cond,),
+            properties={"gate": gate},
+            result_types=(GateType(gate.num_qubits),),
+        )
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.gate import FoldCondOpPattern
+
+        return (FoldCondOpPattern(),)
+
+
 Gate = Dialect(
     "gate",
-    [ConstantGateOp, QuaternionGateOp, ComposeGateOp, XZSOp, XZOp, DynJGate],
+    [
+        ConstantGateOp,
+        QuaternionGateOp,
+        ComposeGateOp,
+        XZSOp,
+        XZOp,
+        DynJGate,
+        CondOp,
+    ],
     [
         HadamardGate,
         XGate,

@@ -8,6 +8,24 @@ from inconspiquous.dialects import gate
 from inconspiquous.dialects.angle import ConstantAngleOp
 
 
+class FoldCondOpPattern(RewritePattern):
+    """
+    Convert a conditional gate with constant condition.
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: gate.CondOp, rewriter: PatternRewriter, /):
+        c = const_evaluate_operand(op.cond)
+        if c is None:
+            return
+        if c:
+            rewriter.replace_matched_op(gate.ConstantGateOp(op.gate))
+        else:
+            rewriter.replace_matched_op(
+                gate.ConstantGateOp(gate.IdentityGate(op.gate.num_qubits))
+            )
+
+
 class XZSToXZPattern(RewritePattern):
     """
     Convert an XZS gadget with 0 phase to an XZ gadget.
