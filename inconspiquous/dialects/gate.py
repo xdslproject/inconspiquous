@@ -15,6 +15,7 @@ from xdsl.ir import (
     ParametrizedAttribute,
     SSAValue,
     TypeAttribute,
+    dataclass,
 )
 from xdsl.irdl import (
     AnyInt,
@@ -185,6 +186,7 @@ class TDaggerGate(SingleQubitGate):
     name = "gate.t_dagger"
 
 
+@dataclass(frozen=True, init=False)
 class SingleQubitRotationGate(SingleQubitGate, ABC):
     angle: AngleAttr
 
@@ -206,20 +208,32 @@ class SingleQubitRotationGate(SingleQubitGate, ABC):
 class RXGate(SingleQubitRotationGate):
     name = "gate.rx"
 
+    def __init__(self, angle: float | AngleAttr):
+        super().__init__(angle)
+
 
 @irdl_attr_definition
 class RYGate(SingleQubitRotationGate):
     name = "gate.ry"
+
+    def __init__(self, angle: float | AngleAttr):
+        super().__init__(angle)
 
 
 @irdl_attr_definition
 class RZGate(SingleQubitRotationGate):
     name = "gate.rz"
 
+    def __init__(self, angle: float | AngleAttr):
+        super().__init__(angle)
+
 
 @irdl_attr_definition
 class JGate(SingleQubitRotationGate):
     name = "gate.j"
+
+    def __init__(self, angle: float | AngleAttr):
+        super().__init__(angle)
 
 
 @irdl_op_definition
