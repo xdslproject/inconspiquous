@@ -27,7 +27,7 @@ qref.gate<#gate.y> %q0
 qref.gate<#gate.z> %q0
 // CHECK-NEXT: %q2 = qir.qubit_allocate
 %q2 = qu.alloc
-// CHECK-NEXT: qir.toffoli %q0, %q1, %q2
+// CHECK-NEXT: qir.ccx %q0, %q1, %q2
 qref.gate<#gate.toffoli> %q0, %q1, %q2
 // CHECK-NEXT: [[angle:%.*]] = arith.constant
 // CHECK-NEXT: qir.rz<[[angle]]> %q1
