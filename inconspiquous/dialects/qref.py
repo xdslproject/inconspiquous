@@ -29,7 +29,7 @@ from inconspiquous.measurement import MeasurementAttr
 
 
 @irdl_op_definition
-class GateOp(IRDLOperation):
+class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     name = "qref.gate"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
@@ -47,6 +47,12 @@ class GateOp(IRDLOperation):
                 "gate": gate,
             },
         )
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.qref import GateIdentity
+
+        return (GateIdentity(),)
 
 
 @irdl_op_definition
@@ -68,9 +74,12 @@ class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization.qref import DynGateConst
+        from inconspiquous.transforms.canonicalization.qref import (
+            DynGateConst,
+            DynGateCompose,
+        )
 
-        return (DynGateConst(),)
+        return (DynGateConst(), DynGateCompose())
 
 
 @irdl_op_definition

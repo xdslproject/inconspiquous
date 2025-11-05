@@ -24,6 +24,10 @@ qref.gate<#gate.x> %q0
 qref.gate<#gate.y> %q0
 // CHECK-NEXT: qir.z %q0
 qref.gate<#gate.z> %q0
+// CHECK-NEXT: %q2 = qir.qubit_allocate
+%q2 = qu.alloc
+// CHECK-NEXT: qir.toffoli %q0, %q1, %q2
+qref.gate<#gate.toffoli> %q0, %q1, %q2
 // CHECK-NEXT: [[angle:%.*]] = arith.constant
 // CHECK-NEXT: qir.rz<[[angle]]> %q1
 qref.gate<#gate.rz<0.5pi>> %q1
@@ -37,20 +41,20 @@ qref.gate<#gate.rz<0.5pi>> %q1
 "test.op"(%0) : (i1) -> ()
 
 func.func @qref_in_region(%q : !qu.bit, %p: i1) -> !qu.bit {
-  %q2 = scf.if %p -> (!qu.bit) {
+  %q3 = scf.if %p -> (!qu.bit) {
     qref.gate<#gate.z> %q
     scf.yield %q : !qu.bit
   } else {
     scf.yield %q : !qu.bit
   }
-  func.return %q2 : !qu.bit
+  func.return %q3 : !qu.bit
 }
 
 // CHECK:      func.func @qref_in_region
-// CHECK-NEXT: %q2 = scf.if %p -> (!qir.qubit) {
+// CHECK-NEXT: %q3 = scf.if %p -> (!qir.qubit) {
 // CHECK-NEXT:   qir.z %q
 // CHECK-NEXT:   scf.yield %q : !qir.qubit
 // CHECK-NEXT: } else {
 // CHECK-NEXT:   scf.yield %q : !qir.qubit
 // CHECK-NEXT: }
-// CHECK-NEXT: func.return %q2 : !qir.qubit
+// CHECK-NEXT: func.return %q3 : !qir.qubit

@@ -5,6 +5,10 @@
 
 // CHECK: "test.op"() {gate = #gate.h} : () -> ()
 
+"test.op"() {gate = #gate.id<2>} : () -> ()
+
+// CHECK: "test.op"() {gate = #gate.id<2>} : () -> ()
+
 "test.op"() {gate = #gate.rz<pi>} : () -> ()
 
 // CHECK-NEXT: "test.op"() {gate = #gate.rz<pi>} : () -> ()

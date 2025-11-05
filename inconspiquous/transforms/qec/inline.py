@@ -81,7 +81,7 @@ class PerfectCode5QubitInliner(RewritePattern):
             z = ConstantGateOp(ZGate()).out
             z.name_hint = "z"
 
-            i = ConstantGateOp(IdentityGate()).out
+            i = ConstantGateOp(IdentityGate(1)).out
             i.name_hint = "id"
 
             true = ConstantOp.from_int_and_width(1, 1)
