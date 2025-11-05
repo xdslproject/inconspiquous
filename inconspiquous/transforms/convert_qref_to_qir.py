@@ -84,9 +84,15 @@ class QRefGateToQIRPattern(RewritePattern):
 class QRefAllocToQIRPattern(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qu.AllocOp, rewriter: PatternRewriter, /):
-        if not op.alloc == qu.AllocZeroAttr():
-            return
-        rewriter.replace_matched_op(qir.QubitAllocateOp())
+        match op.alloc:
+            case qu.AllocZeroAttr():
+                rewriter.replace_matched_op(qir.QubitAllocateOp())
+            case qu.AllocPlusAttr():
+                rewriter.replace_matched_op(
+                    (a := qir.QubitAllocateOp(), qir.HOp(a)), (a.out,)
+                )
+            case _:
+                return
 
 
 class QRefMeasureToQIRPattern(RewritePattern):
