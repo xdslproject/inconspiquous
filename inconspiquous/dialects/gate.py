@@ -15,7 +15,6 @@ from xdsl.ir import (
     ParametrizedAttribute,
     SSAValue,
     TypeAttribute,
-    dataclass,
 )
 from xdsl.irdl import (
     AnyInt,
@@ -186,7 +185,6 @@ class TDaggerGate(SingleQubitGate):
     name = "gate.t_dagger"
 
 
-@dataclass(frozen=True, init=False)
 class SingleQubitRotationGate(SingleQubitGate, ABC):
     angle: AngleAttr
 
