@@ -29,7 +29,7 @@ class DynGateCompose(RewritePattern):
     def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter):
         if isinstance(gate := op.gate.owner, ComposeGateOp):
             dyn_gate_lhs = DynGateOp(gate.lhs, *op.ins)
-            dyn_gate_rhs = DynGateOp(gate.rhs, dyn_gate_lhs)
+            dyn_gate_rhs = DynGateOp(gate.rhs, *dyn_gate_lhs.outs)
             rewriter.replace_matched_op((dyn_gate_lhs, dyn_gate_rhs))
 
 
