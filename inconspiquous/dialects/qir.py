@@ -222,6 +222,10 @@ class RotationOperation(QIROperation, ABC):
     def __init__(self, angle: SSAValue | Operation, qubit: SSAValue | Operation):
         super().__init__(operands=(angle, qubit))
 
+    @classmethod
+    def get_func_type(cls) -> llvm.LLVMFunctionType:
+        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType()))
+
 
 @irdl_op_definition
 class RXOp(RotationOperation):
@@ -234,10 +238,6 @@ class RXOp(RotationOperation):
     @staticmethod
     def get_func_name() -> str:
         return "__quantum__qis__rx__body"
-
-    @classmethod
-    def get_func_type(cls) -> llvm.LLVMFunctionType:
-        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType()))
 
 
 @irdl_op_definition
@@ -252,10 +252,6 @@ class RYOp(RotationOperation):
     def get_func_name() -> str:
         return "__quantum__qis__ry__body"
 
-    @classmethod
-    def get_func_type(cls) -> llvm.LLVMFunctionType:
-        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType()))
-
 
 @irdl_op_definition
 class RZOp(RotationOperation):
@@ -269,9 +265,70 @@ class RZOp(RotationOperation):
     def get_func_name() -> str:
         return "__quantum__qis__rz__body"
 
+
+class ControlledRotationOperation(QIROperation, ABC):
+    """
+    Base class for controlled rotation gates
+    """
+
+    angle = operand_def(Float64Type)
+    control = operand_def(QubitType)
+    target = operand_def(QubitType)
+
+    assembly_format = "`` `<` $angle `>` $control `,` $target attr-dict"
+
+    def __init__(
+        self,
+        angle: SSAValue | Operation,
+        control: SSAValue | Operation,
+        target: SSAValue | Operation,
+    ):
+        super().__init__(operands=(angle, control, target))
+
     @classmethod
     def get_func_type(cls) -> llvm.LLVMFunctionType:
-        return llvm.LLVMFunctionType((Float64Type(), llvm.LLVMPointerType()))
+        return llvm.LLVMFunctionType(
+            (Float64Type(), llvm.LLVMPointerType(), llvm.LLVMPointerType())
+        )
+
+
+@irdl_op_definition
+class CRXOp(ControlledRotationOperation):
+    """
+    MLIR equivalent of __quantum__qis__rx__ctl
+    """
+
+    name = "qir.crx"
+
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__rx__ctl"
+
+
+@irdl_op_definition
+class CRYOp(ControlledRotationOperation):
+    """
+    MLIR equivalent of __quantum__qis__ry__ctl
+    """
+
+    name = "qir.cry"
+
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__ry__ctl"
+
+
+@irdl_op_definition
+class CRZOp(ControlledRotationOperation):
+    """
+    MLIR equivalent of __quantum__qis__rz__ctl
+    """
+
+    name = "qir.crz"
+
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__rz__ctl"
 
 
 class SingleQubitOperation(QIROperation, ABC):
@@ -432,6 +489,9 @@ QIR = Dialect(
         RXOp,
         RYOp,
         RZOp,
+        CRXOp,
+        CRYOp,
+        CRZOp,
         SOp,
         SAdjOp,
         TOp,

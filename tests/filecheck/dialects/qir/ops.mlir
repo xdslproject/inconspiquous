@@ -49,6 +49,18 @@ qir.ry<%7> %4
 // CHECK-GENERIC-NEXT: "qir.rz"(%{{.*}}, %{{.*}}) : (f64, !qir.qubit) -> ()
 qir.rz<%7> %4
 
+// CHECK: qir.crx<%{{.*}}> %{{.*}}, %{{.*}}
+// CHECK-GENERIC: "qir.crx"(%{{.*}}, %{{.*}}, %{{.*}}) : (f64, !qir.qubit, !qir.qubit) -> ()
+qir.crx<%7> %4, %5
+
+// CHECK-NEXT: qir.cry<%{{.*}}> %{{.*}}, %{{.*}}
+// CHECK-GENERIC-NEXT: "qir.cry"(%{{.*}}, %{{.*}}, %{{.*}}) : (f64, !qir.qubit, !qir.qubit) -> ()
+qir.cry<%7> %4, %5
+
+// CHECK-NEXT: qir.crz<%{{.*}}> %{{.*}}, %{{.*}}
+// CHECK-GENERIC-NEXT: "qir.crz"(%{{.*}}, %{{.*}}, %{{.*}}) : (f64, !qir.qubit, !qir.qubit) -> ()
+qir.crz<%7> %4, %5
+
 // CHECK-NEXT: qir.s %{{.*}}
 // CHECK-GENERIC-NEXT: "qir.s"(%{{.*}}) : (!qir.qubit) -> ()
 qir.s %4
