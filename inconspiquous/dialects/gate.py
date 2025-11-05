@@ -218,23 +218,8 @@ class RZGate(SingleQubitRotationGate):
 
 
 @irdl_attr_definition
-class JGate(SingleQubitGate):
+class JGate(SingleQubitRotationGate):
     name = "gate.j"
-
-    angle: AngleAttr
-
-    def __init__(self, angle: float | AngleAttr):
-        if not isinstance(angle, AngleAttr):
-            angle = AngleAttr(angle)
-
-        super().__init__(angle)
-
-    @classmethod
-    def parse_parameters(cls, parser: AttrParser) -> tuple[AngleAttr]:
-        return (AngleAttr.new(AngleAttr.parse_parameters(parser)),)
-
-    def print_parameters(self, printer: Printer) -> None:
-        return self.angle.print_parameters(printer)
 
 
 @irdl_op_definition
