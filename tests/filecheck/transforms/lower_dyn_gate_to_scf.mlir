@@ -5,8 +5,10 @@
 %b = "test.op"() : () -> i1
 %g5 = arith.select %b, %g1, %g2 : !gate.type<1>
 
+%g6 = gate.cond<#gate.h> %b
+
 %i = "test.op"() : () -> i2
-%g6 = varith.switch %i : i2 -> !gate.type<1>, [
+%g7 = varith.switch %i : i2 -> !gate.type<1>, [
   default: %g1,
   1: %g2,
   2: %g3,
@@ -22,6 +24,11 @@
 // CHECK-NEXT:      qref.dyn_gate<%g2> %q
 // CHECK-NEXT:    }
 qref.dyn_gate<%g5> %q
+
+// CHECK-NEXT:    scf.if %b {
+// CHECK-NEXT:      qref.gate<#gate.h> %q
+// CHECK-NEXT:    }
+qref.dyn_gate<%g6> %q
 
 // CHECK-NEXT:    %0 = arith.index_cast %i : i2 to index
 // CHECK-NEXT:    scf.index_switch %0
@@ -41,7 +48,7 @@ qref.dyn_gate<%g5> %q
 // CHECK-NEXT:      qref.dyn_gate<%g1> %q
 // CHECK-NEXT:      scf.yield
 // CHECK-NEXT:    }
-qref.dyn_gate<%g6> %q
+qref.dyn_gate<%g7> %q
 
 // CHECK-NEXT:    %q1 = scf.if %b -> (!qu.bit) {
 // CHECK-NEXT:      %1 = qssa.dyn_gate<%g1> %q
@@ -51,6 +58,14 @@ qref.dyn_gate<%g6> %q
 // CHECK-NEXT:      scf.yield %2 : !qu.bit
 // CHECK-NEXT:    }
 %q1 = qssa.dyn_gate<%g5> %q
+
+// CHECK-NEXT:    %q2 = scf.if %b -> (!qu.bit) {
+// CHECK-NEXT:      %3 = qssa.gate<#gate.h> %q1
+// CHECK-NEXT:      scf.yield %3 : !qu.bit
+// CHECK-NEXT:    } else {
+// CHECK-NEXT:      scf.yield %q1 : !qu.bit
+// CHECK-NEXT:    }
+%q2 = qssa.dyn_gate<%g6> %q1
 
 // CHECK-NEXT:    %q2 = arith.index_cast %i : i2 to index
 // CHECK-NEXT:    %q2_1 = scf.index_switch %q2 -> !qu.bit
@@ -71,4 +86,4 @@ qref.dyn_gate<%g6> %q
 // CHECK-NEXT:      scf.yield %6 : !qu.bit
 // CHECK-NEXT:    }
 // CHECK-NEXT:  }
-%q2 = qssa.dyn_gate<%g6> %q1
+%q3 = qssa.dyn_gate<%g7> %q2
