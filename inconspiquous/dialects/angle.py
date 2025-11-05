@@ -12,7 +12,7 @@ from xdsl.irdl import (
     result_def,
     traits_def,
 )
-from xdsl.dialects.builtin import Float64Type, FloatAttr, i1
+from xdsl.dialects.builtin import FloatData, i1
 from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
@@ -27,20 +27,20 @@ class AngleAttr(ParametrizedAttribute):
     """
 
     name = "angle.attr"
-    data: FloatAttr[Float64Type]
+    data: FloatData
 
     def __init__(self, f: float):
-        f_attr: FloatAttr[Float64Type] = FloatAttr(f % 2, 64)
+        f_attr = FloatData(f % 2)
         super().__init__(f_attr)
 
     def as_float_raw(self) -> float:
-        return self.data.value.data
+        return self.data.data
 
     def as_float(self) -> float:
         return self.as_float_raw() * math.pi
 
     @classmethod
-    def parse_parameters(cls, parser: AttrParser) -> tuple[FloatAttr[Float64Type]]:
+    def parse_parameters(cls, parser: AttrParser) -> tuple[FloatData]:
         with parser.in_angle_brackets():
             is_negative = parser.parse_optional_punctuation("-") is not None
             f = parser.parse_optional_number()
@@ -54,7 +54,7 @@ class AngleAttr(ParametrizedAttribute):
                 parser.parse_keyword("pi")
             if is_negative:
                 f = -f
-            return (FloatAttr(f % 2, 64),)
+            return (FloatData(f % 2),)
 
     def print_parameters(self, printer: Printer) -> None:
         with printer.in_angle_brackets():
@@ -67,13 +67,13 @@ class AngleAttr(ParametrizedAttribute):
                 printer.print_string(f"{f}pi")
 
     def __add__(self, other: AngleAttr) -> AngleAttr:
-        return AngleAttr(self.data.value.data + other.data.value.data)
+        return AngleAttr(self.data.data + other.data.data)
 
     def __sub__(self, other: AngleAttr) -> AngleAttr:
-        return AngleAttr(self.data.value.data - other.data.value.data)
+        return AngleAttr(self.data.data - other.data.data)
 
     def __neg__(self) -> AngleAttr:
-        return AngleAttr(-self.data.value.data)
+        return AngleAttr(-self.data.data)
 
 
 @irdl_attr_definition
