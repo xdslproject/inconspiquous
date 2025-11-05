@@ -42,6 +42,19 @@ class CompBasisMeasurementAttr(MeasurementAttr):
 
 
 @irdl_attr_definition
+class XBasisMeasurementAttr(MeasurementAttr):
+    """
+    An X basis measurement attribute.
+    """
+
+    name = "measurement.x_basis"
+
+    @property
+    def num_qubits(self) -> int:
+        return 1
+
+
+@irdl_attr_definition
 class XYMeasurementAttr(MeasurementAttr):
     """
     An XY plane measurement attribute with specified angle.
@@ -170,6 +183,7 @@ Measurement = Dialect(
     ],
     [
         CompBasisMeasurementAttr,
+        XBasisMeasurementAttr,
         XYMeasurementAttr,
         MeasurementType,
     ],

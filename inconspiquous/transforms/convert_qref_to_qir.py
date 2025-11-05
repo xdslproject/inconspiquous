@@ -27,7 +27,10 @@ from inconspiquous.dialects.gate import (
     YGate,
     ZGate,
 )
-from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
+from inconspiquous.dialects.measurement import (
+    CompBasisMeasurementAttr,
+    XBasisMeasurementAttr,
+)
 from inconspiquous.dialects import qu
 
 
@@ -95,11 +98,17 @@ class QRefAllocToQIRPattern(RewritePattern):
 class QRefMeasureToQIRPattern(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qref.MeasureOp, rewriter: PatternRewriter, /):
-        if not op.measurement == CompBasisMeasurementAttr():
-            return
+        match op.measurement:
+            case CompBasisMeasurementAttr():
+                correction = ()
+            case XBasisMeasurementAttr():
+                correction = (qir.HOp(op.in_qubits[0]),)
+            case _:
+                return
 
         rewriter.replace_matched_op(
-            (
+            correction
+            + (
                 m := qir.MeasureOp(op.in_qubits[0]),
                 qir.ReleaseOp(op.in_qubits[0]),
                 one := qir.ResultGetOneOp(),

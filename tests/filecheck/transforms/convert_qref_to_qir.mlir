@@ -37,6 +37,12 @@ qref.gate<#gate.rz<0.5pi>> %q1
 // CHECK-NEXT: [[rhs:%.*]] = qir.result_get_one
 // CHECK-NEXT: [[meas:%.+]] = qir.result_equal [[lhs]], [[rhs]]
 %0 = qref.measure %q0
+// CHECK-NEXT: qir.h %q1
+// CHECK-NEXT: [[lhs:%.*]] = qir.m %q1
+// CHECK-NEXT: qir.qubit_release %q1
+// CHECK-NEXT: [[rhs:%.*]] = qir.result_get_one
+// CHECK-NEXT: [[meas:%.+]] = qir.result_equal [[lhs]], [[rhs]]
+%1 = qref.measure<#measurement.x_basis> %q1
 
 // CHECK-NEXT "test.op"([[meas]])
 "test.op"(%0) : (i1) -> ()
