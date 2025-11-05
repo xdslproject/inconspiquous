@@ -47,7 +47,7 @@ from inconspiquous.gates import (
     TwoQubitCliffordGate,
     SingleQubitGate,
 )
-from inconspiquous.constraints import SizedAttributeConstraint
+from inconspiquous.constraints import IncrementConstraint, SizedAttributeConstraint
 from inconspiquous.gates.core import CliffordGateAttr, PauliGate, PauliProp
 
 
@@ -463,9 +463,47 @@ class XZOp(IRDLOperation):
         super().__init__(operands=(x, z), result_types=(GateType(1),))
 
 
+@irdl_op_definition
+class ControlOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+    """
+    Adds a control qubit to an input gate.
+    """
+
+    name = "gate.control"
+
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
+
+    gate = operand_def(GateType.constr(_I))
+
+    out = result_def(GateType.constr(IncrementConstraint(_I)))
+
+    traits = traits_def(Pure())
+
+    assembly_format = "$gate `:` type($gate) attr-dict"
+
+    def __init__(self, gate: SSAValue[GateType]):
+        super().__init__(
+            operands=(gate,), result_types=(GateType(gate.type.num_qubits.data + 1),)
+        )
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.gate import ControlOpFoldPattern
+
+        return (ControlOpFoldPattern(),)
+
+
 Gate = Dialect(
     "gate",
-    [ConstantGateOp, QuaternionGateOp, ComposeGateOp, XZSOp, XZOp, DynJGate],
+    [
+        ConstantGateOp,
+        QuaternionGateOp,
+        ComposeGateOp,
+        XZSOp,
+        XZOp,
+        DynJGate,
+        ControlOp,
+    ],
     [
         HadamardGate,
         XGate,

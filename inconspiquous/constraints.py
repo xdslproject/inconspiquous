@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Mapping
+from typing import AbstractSet, Mapping
 from typing_extensions import TypeVar
 from xdsl.ir import Attribute, VerifyException
 from xdsl.irdl import (
@@ -42,4 +42,32 @@ class SizedAttributeConstraint(AttrConstraint[SizedAttributeCovT]):
     def mapping_type_vars(
         self, type_var_mapping: Mapping[TypeVar, AttrConstraint | IntConstraint]
     ) -> AttrConstraint[SizedAttributeCovT]:
-        return self
+        return SizedAttributeConstraint(
+            self.base_class, self.size_constraint.mapping_type_vars(type_var_mapping)
+        )
+
+
+@dataclass(frozen=True)
+class IncrementConstraint(IntConstraint):
+    """
+    Increments an int constraint by 1
+    """
+
+    constraint: IntConstraint
+
+    def verify(self, i: int, constraint_context: ConstraintContext) -> None:
+        self.constraint.verify(i - 1, constraint_context)
+
+    def variables(self) -> set[str]:
+        return self.constraint.variables()
+
+    def can_infer(self, var_constraint_names: AbstractSet[str]) -> bool:
+        return self.constraint.can_infer(var_constraint_names)
+
+    def infer(self, context: ConstraintContext) -> int:
+        return self.constraint.infer(context) + 1
+
+    def mapping_type_vars(
+        self, type_var_mapping: Mapping[TypeVar, AttrConstraint | IntConstraint]
+    ) -> IntConstraint:
+        return IncrementConstraint(self.constraint.mapping_type_vars(type_var_mapping))
