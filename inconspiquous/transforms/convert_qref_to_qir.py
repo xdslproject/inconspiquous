@@ -36,6 +36,8 @@ from inconspiquous.dialects.gate import (
 from inconspiquous.dialects.measurement import (
     CompBasisMeasurementAttr,
     XBasisMeasurementAttr,
+    XYDynMeasurementOp,
+    XYMeasurementAttr,
 )
 from inconspiquous.dialects import qu
 
@@ -133,7 +135,7 @@ class QRefGateToQIRPattern(RewritePattern):
                 return
 
 
-class DynQRefGateToQIRPattern(RewritePattern):
+class QRefDynGateToQIRPattern(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qref.DynGateOp, rewriter: PatternRewriter):
         gate_op = op.gate.owner
@@ -181,12 +183,39 @@ class QRefMeasureToQIRPattern(RewritePattern):
                 correction = ()
             case XBasisMeasurementAttr():
                 correction = (qir.HOp(op.in_qubits[0]),)
+            case XYMeasurementAttr():
+                correction = (
+                    c := arith.ConstantOp(
+                        FloatAttr(-op.measurement.angle.as_float_raw(), Float64Type())
+                    ),
+                    qir.RZOp(c, op.in_qubits[0]),
+                    qir.HOp(op.in_qubits[0]),
+                )
             case _:
                 return
 
         rewriter.replace_matched_op(
             correction
             + (
+                m := qir.MeasureOp(op.in_qubits[0]),
+                qir.ReleaseOp(op.in_qubits[0]),
+                one := qir.ResultGetOneOp(),
+                qir.ResultEqualOp(m, one),
+            )
+        )
+
+
+class QRefDynMeasureToQIRPattern(RewritePattern):
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: qref.DynMeasureOp, rewriter: PatternRewriter):
+        if not isinstance(op.measurement.owner, XYDynMeasurementOp):
+            return
+
+        rewriter.replace_matched_op(
+            (
+                a := arith.NegfOp(op.measurement.owner.angle),
+                qir.RZOp(a, op.in_qubits[0]),
+                qir.HOp(op.in_qubits[0]),
                 m := qir.MeasureOp(op.in_qubits[0]),
                 qir.ReleaseOp(op.in_qubits[0]),
                 one := qir.ResultGetOneOp(),
@@ -209,8 +238,9 @@ class ConvertQRefToQIRPass(ModulePass):
                     LowerCondNegateAnglePattern(),
                     QRefAllocToQIRPattern(),
                     QRefGateToQIRPattern(),
-                    DynQRefGateToQIRPattern(),
+                    QRefDynGateToQIRPattern(),
                     QRefMeasureToQIRPattern(),
+                    QRefDynMeasureToQIRPattern(),
                 ]
             )
         ).rewrite_module(op)

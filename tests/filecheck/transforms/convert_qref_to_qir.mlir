@@ -1,4 +1,4 @@
-// RUN: quopt -p convert-qref-to-qir %s | filecheck %s
+// RUN: quopt -p convert-qref-to-qir %s --split-input-file | filecheck %s
 
 // CHECK:      %q0 = qir.qubit_allocate
 %q0 = qu.alloc
@@ -78,15 +78,43 @@ qref.dyn_gate<%crz> %q0, %q1
 // CHECK-NEXT: [[meas:%.+]] = qir.result_equal [[lhs]], [[rhs]]
 %0 = qref.measure %q0
 // CHECK-NEXT: qir.h %q1
-// CHECK-NEXT: [[lhs:%.*]] = qir.m %q1
+// CHECK-NEXT: [[lhs2:%.*]] = qir.m %q1
 // CHECK-NEXT: qir.qubit_release %q1
-// CHECK-NEXT: [[rhs:%.*]] = qir.result_get_one
-// CHECK-NEXT: [[meas:%.+]] = qir.result_equal [[lhs]], [[rhs]]
+// CHECK-NEXT: [[rhs2:%.*]] = qir.result_get_one
+// CHECK-NEXT: [[meas2:%.+]] = qir.result_equal [[lhs2]], [[rhs2]]
 %1 = qref.measure<#measurement.x_basis> %q1
+// CHECK-NEXT: [[angle8:%.*]] = arith.constant
+// CHECK-NEXT: qir.rz<[[angle8]]> %q2
+// CHECK-NEXT: qir.h %q2
+// CHECK-NEXT: [[lhs3:%.*]] = qir.m %q2
+// CHECK-NEXT: qir.qubit_release %q2
+// CHECK-NEXT: [[rhs3:%.*]] = qir.result_get_one
+// CHECK-NEXT: [[meas3:%.+]] = qir.result_equal [[lhs3]], [[rhs3]]
+%2 = qref.measure<#measurement.xy<0.1pi>> %q2
 
-// CHECK-NEXT "test.op"([[meas]])
-"test.op"(%0) : (i1) -> ()
+// CHECK-NEXT "test.op"([[meas]], [[meas2]], [[meas3]])
+"test.op"(%0, %1, %2) : (i1, i1, i1) -> ()
 
+// -----
+
+func.func @xy_measurement(%a : !angle.type) -> i1 {
+  %q = qu.alloc
+  %m = measurement.dyn_xy<%a>
+  %0 = qref.dyn_measure<%m> %q
+  func.return %0 : i1
+}
+// CHECK-LABEL: @xy_measurement
+// CHECK-NEXT: %q = qir.qubit_allocate
+// CHECK-NEXT: [[negation:%.*]] = arith.negf %a
+// CHECK-NEXT: qir.rz<[[negation]]> %q
+// CHECK-NEXT: qir.h %q
+// CHECK-NEXT: [[lhs4:%.*]] = qir.m %q
+// CHECK-NEXT: qir.qubit_release %q
+// CHECK-NEXT: [[rhs4:%.*]] = qir.result_get_one
+// CHECK-NEXT: [[meas4:%.+]] = qir.result_equal [[lhs4]], [[rhs4]]
+// CHECK-NEXT: func.return [[meas4]]
+
+// -----
 func.func @qref_in_region(%q : !qu.bit, %p: i1) -> !qu.bit {
   %q3 = scf.if %p -> (!qu.bit) {
     qref.gate<#gate.z> %q
@@ -97,7 +125,7 @@ func.func @qref_in_region(%q : !qu.bit, %p: i1) -> !qu.bit {
   func.return %q3 : !qu.bit
 }
 
-// CHECK:      func.func @qref_in_region
+// CHECK-LABEL: @qref_in_region
 // CHECK-NEXT: %q3 = scf.if %p -> (!qir.qubit) {
 // CHECK-NEXT:   qir.z %q
 // CHECK-NEXT:   scf.yield %q : !qir.qubit
