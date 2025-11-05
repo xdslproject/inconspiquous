@@ -3,7 +3,7 @@
 // CHECK:      func.func @t_gate(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
-// CHECK-NEXT:   %2 = gate.constant #gate.id
+// CHECK-NEXT:   %2 = gate.constant #gate.id<1>
 // CHECK-NEXT:   %3 = gate.constant #gate.x
 // CHECK-NEXT:   %4 = gate.constant #gate.z
 // CHECK-NEXT:   %5 = gate.constant #gate.s
@@ -27,7 +27,7 @@ func.func @t_gate(%q: !qu.bit) -> !qu.bit {
 // CHECK:     func.func @t_dagger_gate(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
-// CHECK-NEXT:   %2 = gate.constant #gate.id
+// CHECK-NEXT:   %2 = gate.constant #gate.id<1>
 // CHECK-NEXT:   %3 = gate.constant #gate.x
 // CHECK-NEXT:   %4 = gate.constant #gate.z
 // CHECK-NEXT:   %5 = gate.constant #gate.s_dagger
@@ -51,7 +51,7 @@ func.func @t_dagger_gate(%q: !qu.bit) -> !qu.bit {
 // CHECK:      func.func @h_gate(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
-// CHECK-NEXT:   %2 = gate.constant #gate.id
+// CHECK-NEXT:   %2 = gate.constant #gate.id<1>
 // CHECK-NEXT:   %3 = gate.constant #gate.x
 // CHECK-NEXT:   %4 = gate.constant #gate.z
 // CHECK-NEXT:   %5 = arith.select %0, %3, %2 : !gate.type<1>
@@ -75,7 +75,7 @@ func.func @h_gate(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = prob.uniform : i1
 // CHECK-NEXT:   %3 = prob.uniform : i1
-// CHECK-NEXT:   %4 = gate.constant #gate.id
+// CHECK-NEXT:   %4 = gate.constant #gate.id<1>
 // CHECK-NEXT:   %5 = gate.constant #gate.x
 // CHECK-NEXT:   %6 = gate.constant #gate.z
 // CHECK-NEXT:   %7 = arith.select %0, %5, %4 : !gate.type<1>
@@ -103,7 +103,7 @@ func.func @cx_gate(%q1: !qu.bit, %q2: !qu.bit) -> (!qu.bit, !qu.bit) {
 // CHECK:      func.func @measure(%q : !qu.bit) -> i1 {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
-// CHECK-NEXT:   %2 = gate.constant #gate.id
+// CHECK-NEXT:   %2 = gate.constant #gate.id<1>
 // CHECK-NEXT:   %3 = gate.constant #gate.x
 // CHECK-NEXT:   %4 = gate.constant #gate.z
 // CHECK-NEXT:   %5 = arith.select %0, %3, %2 : !gate.type<1>

@@ -16,14 +16,14 @@ func.func @h_commute(%q : !qu.bit, %x : i1, %z : i1) {
 
 // CHECK:      func.func @id_commute(%q : !qu.bit, %x : i1, %z : i1) {
 // CHECK-NEXT:   %g = gate.xz %x, %z
-// CHECK-NEXT:   %q_1 = qssa.gate<#gate.id> %q
+// CHECK-NEXT:   %q_1 = qssa.gate<#gate.id<1>> %q
 // CHECK-NEXT:   %q_2 = qssa.dyn_gate<%g> %q_1
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @id_commute(%q : !qu.bit, %x : i1, %z : i1) {
   %g = gate.xz %x, %z
   %q_1 = qssa.dyn_gate<%g> %q
-  %q_2 = qssa.gate<#gate.id> %q_1
+  %q_2 = qssa.gate<#gate.id<1>> %q_1
   func.return
 }
 
