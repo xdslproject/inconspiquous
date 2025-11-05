@@ -65,9 +65,7 @@ class QRefGateToQIRPattern(RewritePattern):
             case ZGate():
                 rewriter.replace_matched_op(qir.ZOp(op.ins[0]))
             case ToffoliGate():
-                rewriter.replace_matched_op(
-                    qir.ToffoliOp(op.ins[0], op.ins[1], op.ins[2])
-                )
+                rewriter.replace_matched_op(qir.CCXOp(op.ins[0], op.ins[1], op.ins[2]))
             case RZGate():
                 rewriter.replace_matched_op(
                     (

@@ -77,6 +77,6 @@ qir.y %4
 // CHECK-GENERIC-NEXT: "qir.z"(%{{.*}}) : (!qir.qubit) -> ()
 qir.z %4
 
-// CHECK-NEXT: qir.toffoli %{{.*}}, %{{.*}}, %{{.*}}
-// CHECK-GENERIC-NEXT: "qir.toffoli"(%{{.*}}, %{{.*}}, %{{.*}}) : (!qir.qubit, !qir.qubit, !qir.qubit) -> ()
-qir.toffoli %4, %5, %6
+// CHECK-NEXT: qir.ccx %{{.*}}, %{{.*}}, %{{.*}}
+// CHECK-GENERIC-NEXT: "qir.ccx"(%{{.*}}, %{{.*}}, %{{.*}}) : (!qir.qubit, !qir.qubit, !qir.qubit) -> ()
+qir.ccx %4, %5, %6
