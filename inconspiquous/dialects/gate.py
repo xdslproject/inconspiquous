@@ -234,10 +234,9 @@ class JGate(SingleQubitRotationGate):
         super().__init__(angle)
 
 
-@irdl_op_definition
-class DynJGate(IRDLOperation, HasCanonicalizationPatternsInterface):
-    name = "gate.dyn_j"
-
+class SingleQubitDynRotationGate(
+    IRDLOperation, HasCanonicalizationPatternsInterface, ABC
+):
     angle = operand_def(AngleType)
 
     out = result_def(GateType(1))
@@ -249,11 +248,49 @@ class DynJGate(IRDLOperation, HasCanonicalizationPatternsInterface):
     def __init__(self, angle: SSAValue | Operation):
         super().__init__(operands=(angle,), result_types=(GateType(1),))
 
+
+@irdl_op_definition
+class DynRXGate(SingleQubitDynRotationGate):
+    name = "gate.dyn_rx"
+
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
         from inconspiquous.transforms.canonicalization import gate
 
-        return (gate.DynJGateToJPattern(),)
+        return (gate.DynRotationGateToRotationPattern(RXGate),)
+
+
+@irdl_op_definition
+class DynRYGate(SingleQubitDynRotationGate):
+    name = "gate.dyn_ry"
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import gate
+
+        return (gate.DynRotationGateToRotationPattern(RYGate),)
+
+
+@irdl_op_definition
+class DynRZGate(SingleQubitDynRotationGate):
+    name = "gate.dyn_rz"
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import gate
+
+        return (gate.DynRotationGateToRotationPattern(RZGate),)
+
+
+@irdl_op_definition
+class DynJGate(SingleQubitDynRotationGate):
+    name = "gate.dyn_j"
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import gate
+
+        return (gate.DynRotationGateToRotationPattern(JGate),)
 
 
 @irdl_attr_definition
@@ -501,6 +538,9 @@ Gate = Dialect(
         ComposeGateOp,
         XZSOp,
         XZOp,
+        DynRXGate,
+        DynRYGate,
+        DynRZGate,
         DynJGate,
         ControlOp,
     ],
