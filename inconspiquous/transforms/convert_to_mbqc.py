@@ -30,6 +30,7 @@ class ToMBQC(ModulePass):
             XZCommute(),
             CommonSubexpressionElimination(),
             CanonicalizePass(),
+            CommonSubexpressionElimination(),
             MBQCLegalize(),
         ):
             p.apply(ctx, op)

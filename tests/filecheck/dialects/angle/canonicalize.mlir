@@ -1,37 +1,117 @@
-// RUN: quopt %s -p canonicalize | filecheck %s
+// RUN: quopt %s -p canonicalize --split-input-file | filecheck %s
 
-%c0 = arith.constant false
+// CHECK-LABEL: negate_fold
+func.func @negate_fold() -> !angle.type {
+  %a = angle.constant<0.5pi>
 
-%a = "test.op"() : () -> !angle.type
+  // CHECK: [[angle:%.*]] = angle.constant<1.5pi>
+  %b = angle.negate %a
 
-%b = angle.cond_negate %c0, %a
+  // CHECK: func.return [[angle]]
+  func.return %b : !angle.type
+}
 
-// CHECK: "test.op"(%a) {cond_false} : (!angle.type) -> ()
-"test.op"(%b) {cond_false} : (!angle.type) -> ()
+// -----
 
-%c1 = arith.constant true
+// CHECK-LABEL: negate_negate
+func.func @negate_negate(%a : !angle.type) -> !angle.type {
+  %b = angle.negate %a
+  %c = angle.negate %b
 
-%c = angle.constant<0.5pi>
+  // CHECK: func.return %a
+  func.return %c : !angle.type
+}
 
-%d = angle.cond_negate %c1, %c
-// CHECK: [[const:%.*]] = angle.constant<1.5pi>
-// CHECK: "test.op"([[const]]) : (!angle.type) -> ()
-"test.op"(%d) : (!angle.type) -> ()
+// -----
 
-%x, %y = "test.op"() : () -> (i1, i1)
+func.func @negate_cond_negate(%a : !angle.type, %x: i1) -> !angle.type {
+  // CHECK: [[true:%.*]] = arith.constant true
+  // CHECK-NEXT: [[xor:%.*]] = arith.xori %x, [[true]]
+  // CHECK-NEXT: [[res:%.*]] = angle.cond_negate [[xor]], %a
+  %b = angle.cond_negate %x, %a
+  %c = angle.negate %b
 
-%e = angle.cond_negate %x, %a
-%f = angle.cond_negate %y, %e
-// CHECK: [[xor:%.*]] = arith.xori %y, %x
-// CHECK: [[assoc:%.*]] = angle.cond_negate [[xor]], %a
-// CHECK: "test.op"([[assoc]]) : (!angle.type) -> ()
-"test.op"(%f) : (!angle.type) -> ()
+  // CHECK: func.return [[res]]
+  func.return %c : !angle.type
+}
 
-%g = angle.constant<pi>
-%h = angle.cond_negate %x, %g
+// -----
 
-%i = angle.constant<0>
-%j = angle.cond_negate %y, %i
+// CHECK-LABEL: cond_negate_pi
+func.func @cond_negate_pi(%x : i1) -> !angle.type {
+  // CHECK: %a = angle.constant<pi>
+  %a = angle.constant<pi>
+  // CHECK-NOT: angle.cond_negate
+  %b = angle.cond_negate %x, %a
 
-// CHECK: "test.op"(%g, %i) {pi_or_zero} : (!angle.type, !angle.type) -> ()
-"test.op"(%h, %j) {pi_or_zero} : (!angle.type, !angle.type) -> ()
+  // CHECK: func.return %a
+  func.return %b : !angle.type
+}
+
+// -----
+
+// CHECK-LABEL: cond_negate_zero
+func.func @cond_negate_zero(%x : i1) -> !angle.type {
+  // CHECK: %a = angle.constant<0>
+  %a = angle.constant<0>
+  // CHECK-NOT: angle.cond_negate
+  %b = angle.cond_negate %x, %a
+
+  // CHECK: func.return %a
+  func.return %b : !angle.type
+}
+
+// -----
+
+// CHECK-LABEL: cond_false
+func.func @cond_false(%a : !angle.type) -> !angle.type {
+  %cFalse = arith.constant false
+
+  // CHECK-NOT: angle.cond_negate
+  %b = angle.cond_negate %cFalse, %a
+
+  // CHECK: func.return %a
+  func.return %b : !angle.type
+}
+
+// -----
+
+// CHECK-LABEL: cond_true
+func.func @cond_true(%a : !angle.type) -> !angle.type {
+  %cTrue = arith.constant true
+
+  // CHECK-NOT: angle.cond_negate
+  // CHECK: [[res:%.*]] = angle.negate %a
+  %b = angle.cond_negate %cTrue, %a
+  // CHECK-NOT: angle.cond_negate
+
+  // CHECK: func.return [[res]]
+  func.return %b : !angle.type
+}
+
+// -----
+
+// CHECK-LABEL: cond_negate_negate
+func.func @cond_negate_negate(%a : !angle.type, %x: i1) -> !angle.type {
+  // CHECK: [[true:%.*]] = arith.constant true
+  // CHECK-NEXT: [[xor:%.*]] = arith.xori %x, [[true]]
+  // CHECK-NEXT: [[res:%.*]] = angle.cond_negate [[xor]], %a
+  %b = angle.negate %a
+  %c = angle.cond_negate %x, %b
+
+  // CHECK: func.return [[res]]
+  func.return %c : !angle.type
+}
+
+// -----
+
+// CHECK-LABEL: cond_negate_cond_negate
+func.func @cond_negate_cond_negate(%a : !angle.type, %x: i1, %y: i1) -> !angle.type {
+  // CHECK: [[xor:%.*]] = arith.xori %y, %x
+  // CHECK: [[res:%.*]] = angle.cond_negate [[xor]], %a
+  %b = angle.cond_negate %x, %a
+  %c = angle.cond_negate %y, %b
+
+  // CHECK: func.return [[res]]
+  func.return %c : !angle.type
+}

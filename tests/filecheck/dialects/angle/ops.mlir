@@ -31,6 +31,10 @@
 
 %0 = "test.op"() : () -> i1
 
-// CHECK: %a2 = angle.cond_negate %0, %a
-// CHECK-GENERIC: %a2 = "angle.cond_negate"(%0, %a) : (i1, !angle.type) -> !angle.type
-%a2 = angle.cond_negate %0, %a
+// CHECK: %a1 = angle.negate %a
+// CHECK-GENERIC: %a1 = "angle.negate"(%a) : (!angle.type) -> !angle.type
+%a1 = angle.negate %a
+
+// CHECK: %a2 = angle.cond_negate %0, %a1
+// CHECK-GENERIC: %a2 = "angle.cond_negate"(%0, %a1) : (i1, !angle.type) -> !angle.type
+%a2 = angle.cond_negate %0, %a1
