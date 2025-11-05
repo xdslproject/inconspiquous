@@ -30,3 +30,23 @@ class DynJGateToJPattern(RewritePattern):
             rewriter.replace_matched_op(
                 gate.ConstantGateOp(gate.JGate(op.angle.owner.angle))
             )
+
+
+class ControlOpFoldPattern(RewritePattern):
+    """
+    Converts the control of some constant gates to their constant controlled variants.
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: gate.ControlOp, rewriter: PatternRewriter):
+        if not isinstance(op.gate.owner, gate.ConstantGateOp):
+            return
+        match op.gate.owner.gate:
+            case gate.XGate():
+                rewriter.replace_matched_op(gate.ConstantGateOp(gate.CXGate()))
+            case gate.ZGate():
+                rewriter.replace_matched_op(gate.ConstantGateOp(gate.CZGate()))
+            case gate.CXGate():
+                rewriter.replace_matched_op(gate.ConstantGateOp(gate.ToffoliGate()))
+            case _:
+                return
