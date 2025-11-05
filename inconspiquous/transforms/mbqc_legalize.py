@@ -7,7 +7,11 @@ from xdsl.passes import ModulePass
 from xdsl.rewriter import InsertPoint, Rewriter
 from xdsl.utils.exceptions import PassFailedException
 
-from inconspiquous.dialects.angle import CondNegateAngleOp, ConstantAngleOp
+from inconspiquous.dialects.angle import (
+    CondNegateAngleOp,
+    ConstantAngleOp,
+    NegateAngleOp,
+)
 from inconspiquous.dialects.measurement import XYDynMeasurementOp, XYMeasurementAttr
 from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, MeasureOp, GateOp
 from inconspiquous.dialects.gate import (
@@ -128,6 +132,7 @@ class MBQCLegalize(ModulePass):
                 case (
                     ConstantAngleOp()
                     | XZOp()
+                    | NegateAngleOp()
                     | CondNegateAngleOp()
                     | XYDynMeasurementOp()
                 ):

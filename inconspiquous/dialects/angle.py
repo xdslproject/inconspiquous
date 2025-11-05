@@ -116,6 +116,32 @@ class ConstantAngleOp(IRDLOperation, ConstantLikeInterface):
 
 
 @irdl_op_definition
+class NegateAngleOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+    """
+    Negate an angle.
+    """
+
+    name = "angle.negate"
+
+    angle = operand_def(AngleType)
+
+    out = result_def(AngleType)
+
+    traits = traits_def(Pure())
+
+    assembly_format = "$angle attr-dict"
+
+    def __init__(self, angle: SSAValue | Operation):
+        super().__init__(operands=(angle,), result_types=(AngleType(),))
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import angle
+
+        return (angle.NegateAngleOpFoldPattern(), angle.NegateMergePattern())
+
+
+@irdl_op_definition
 class CondNegateAngleOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     """
     Negates an angle if input condition is true.
@@ -143,8 +169,19 @@ class CondNegateAngleOp(IRDLOperation, HasCanonicalizationPatternsInterface):
         return (
             angle.CondNegateAngleOpZeroPiPattern(),
             angle.CondNegateAngleOpFoldPattern(),
-            angle.CondNegateAngleOpAssocPattern(),
+            angle.CondNegateMergePattern(),
         )
 
 
-Angle = Dialect("angle", [ConstantAngleOp, CondNegateAngleOp], [AngleAttr, AngleType])
+Angle = Dialect(
+    "angle",
+    [
+        ConstantAngleOp,
+        NegateAngleOp,
+        CondNegateAngleOp,
+    ],
+    [
+        AngleAttr,
+        AngleType,
+    ],
+)
