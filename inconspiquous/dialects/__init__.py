@@ -46,6 +46,11 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return LLVM
 
+    def get_math():
+        from xdsl.dialects.math import Math
+
+        return Math
+
     def get_measurement():
         from inconspiquous.dialects.measurement import Measurement
 
@@ -115,6 +120,7 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "gate": get_gate,
         "linalg": get_linalg,
         "llvm": get_llvm,
+        "math": get_math,
         "measurement": get_measurement,
         "prob": get_prob,
         "qec": get_qec,
