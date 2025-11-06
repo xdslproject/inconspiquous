@@ -13,7 +13,7 @@ from xdsl.irdl import (
     traits_def,
 )
 from xdsl.dialects.builtin import FloatData, i1
-from xdsl.parser import AttrParser
+from xdsl.parser import AttrParser, Float64Type
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
 from xdsl.traits import Pure
@@ -74,6 +74,9 @@ class AngleAttr(ParametrizedAttribute):
 
     def __neg__(self) -> AngleAttr:
         return AngleAttr(-self.data.data)
+
+    def __mul__(self, other: float):
+        return AngleAttr(self.data.data * other)
 
 
 @irdl_attr_definition
@@ -173,12 +176,68 @@ class CondNegateAngleOp(IRDLOperation, HasCanonicalizationPatternsInterface):
         )
 
 
+@irdl_op_definition
+class ScaleAngleOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+    """
+    Scale an angle by a float or integer
+    """
+
+    name = "angle.scale"
+
+    angle = operand_def(AngleType)
+
+    scale = operand_def(Float64Type)
+
+    out = result_def(AngleType)
+
+    traits = traits_def(Pure())
+
+    assembly_format = "$angle `,` $scale attr-dict"
+
+    def __init__(self, angle: SSAValue | Operation, scale: SSAValue | Operation):
+        super().__init__(operands=(angle, scale), result_types=(AngleType(),))
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import angle
+
+        return (angle.ScaleAngleFoldPattern(),)
+
+
+@irdl_op_definition
+class AddAngleOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+    """
+    Adds two angles.
+    """
+
+    name = "angle.add"
+
+    lhs = operand_def(AngleType)
+
+    rhs = operand_def(AngleType)
+
+    out = result_def(AngleType)
+
+    assembly_format = "$lhs `,` $rhs attr-dict"
+
+    def __init__(self, lhs: SSAValue | Operation, rhs: SSAValue | Operation):
+        super().__init__(operands=(lhs, rhs), result_types=(AngleType(),))
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import angle
+
+        return (angle.AddAngleFoldPattern(),)
+
+
 Angle = Dialect(
     "angle",
     [
         ConstantAngleOp,
         NegateAngleOp,
         CondNegateAngleOp,
+        ScaleAngleOp,
+        AddAngleOp,
     ],
     [
         AngleAttr,

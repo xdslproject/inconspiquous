@@ -38,3 +38,13 @@
 // CHECK: %a2 = angle.cond_negate %0, %a1
 // CHECK-GENERIC: %a2 = "angle.cond_negate"(%0, %a1) : (i1, !angle.type) -> !angle.type
 %a2 = angle.cond_negate %0, %a1
+
+%cHalf = arith.constant 0.5 : f64
+
+// CHECK: %a3 = angle.scale %a2, %cHalf
+// CHECK-GENERIC: %a3 = "angle.scale"(%a2, %cHalf) : (!angle.type, f64) -> !angle.type
+%a3 = angle.scale %a2, %cHalf
+
+// CHECK: %a4 = angle.add %a2, %a3
+// CHECK-GENERIC: %a4 = "angle.add"(%a2, %a3) : (!angle.type, !angle.type) -> !angle.type
+%a4 = angle.add %a2, %a3

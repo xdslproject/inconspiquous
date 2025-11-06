@@ -35,5 +35,6 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.pyright]
+enableExperimentalFeatures = true
 typeCheckingMode = "strict"
 include = ["inconspiquous"]

@@ -1,5 +1,5 @@
 from xdsl.dialects.arith import ConstantOp, XOrIOp
-from xdsl.parser import BoolAttr
+from xdsl.parser import BoolAttr, FloatAttr
 from xdsl.pattern_rewriter import (
     PatternRewriter,
     RewritePattern,
@@ -8,9 +8,11 @@ from xdsl.pattern_rewriter import (
 from xdsl.transforms.canonicalization_patterns.utils import const_evaluate_operand
 
 from inconspiquous.dialects.angle import (
+    AddAngleOp,
     CondNegateAngleOp,
     ConstantAngleOp,
     NegateAngleOp,
+    ScaleAngleOp,
 )
 
 
@@ -93,3 +95,40 @@ class CondNegateMergePattern(RewritePattern):
             return
 
         rewriter.replace_matched_op((xor, CondNegateAngleOp(xor, arg.angle)))
+
+
+class ScaleAngleFoldPattern(RewritePattern):
+    """
+    Folds a scale angle with constant arguments.
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: ScaleAngleOp, rewriter: PatternRewriter):
+        if not isinstance(op.angle.owner, ConstantAngleOp):
+            return
+        if not isinstance(op.scale.owner, ConstantOp):
+            return
+
+        scale = op.scale.owner.get_constant_value()
+        if not isinstance(scale, FloatAttr):
+            return
+        rewriter.replace_matched_op(
+            ConstantAngleOp(op.angle.owner.angle * scale.value.data)
+        )
+
+
+class AddAngleFoldPattern(RewritePattern):
+    """
+    Folds an add angle with constant arguments.
+    """
+
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: AddAngleOp, rewriter: PatternRewriter):
+        if not isinstance(op.lhs.owner, ConstantAngleOp):
+            return
+        if not isinstance(op.rhs.owner, ConstantAngleOp):
+            return
+
+        rewriter.replace_matched_op(
+            ConstantAngleOp(op.lhs.owner.angle + op.rhs.owner.angle)
+        )
