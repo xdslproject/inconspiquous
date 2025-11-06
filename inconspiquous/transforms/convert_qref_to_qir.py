@@ -78,6 +78,18 @@ class LowerCondNegateAnglePattern(RewritePattern):
         )
 
 
+class LowerScaleAnglePattern(RewritePattern):
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: angle.ScaleAngleOp, rewriter: PatternRewriter, /):
+        rewriter.replace_matched_op(arith.MulfOp(op.angle, op.scale))
+
+
+class LowerAddAnglePattern(RewritePattern):
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: angle.AddAngleOp, rewriter: PatternRewriter, /):
+        rewriter.replace_matched_op(arith.AddfOp(op.lhs, op.rhs))
+
+
 class QRefGateToQIRPattern(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qref.GateOp, rewriter: PatternRewriter):
@@ -236,6 +248,8 @@ class ConvertQRefToQIRPass(ModulePass):
                     LowerConstantAnglePattern(),
                     LowerNegateAnglePattern(),
                     LowerCondNegateAnglePattern(),
+                    LowerScaleAnglePattern(),
+                    LowerAddAnglePattern(),
                     QRefAllocToQIRPattern(),
                     QRefGateToQIRPattern(),
                     QRefDynGateToQIRPattern(),

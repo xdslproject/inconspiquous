@@ -48,6 +48,13 @@ qref.gate<#gate.rz<0.5pi>> %q1
 // CHECK-NEXT: [[angle7:%.*]] = arith.select %b, [[angle6]], [[angle4]]
 %cond_negate = angle.cond_negate %b, %a
 
+%cHalf = arith.constant 0.5 : f64
+// CHECK: [[angle8:%.*]] = arith.mulf [[angle7]], {{.*}}
+%scale = angle.scale %cond_negate, %cHalf
+
+// CHECK: [[angle9:%.*]] = arith.addf [[angle8]], [[angle7]]
+%add = angle.add %scale, %cond_negate
+
 %rx = gate.dyn_rx<%a>
 // CHECK-NEXT: qir.rx<[[angle4]]> %q0
 qref.dyn_gate<%rx> %q0
@@ -56,8 +63,8 @@ qref.dyn_gate<%rx> %q0
 // CHECK-NEXT: qir.ry<[[angle5]]> %q0
 qref.dyn_gate<%ry> %q0
 
-%rz = gate.dyn_rz<%cond_negate>
-// CHECK-NEXT: qir.rz<[[angle7]]> %q0
+%rz = gate.dyn_rz<%add>
+// CHECK-NEXT: qir.rz<[[angle9]]> %q0
 qref.dyn_gate<%rz> %q0
 
 %crx = gate.control %rx : !gate.type<1>
@@ -69,7 +76,7 @@ qref.dyn_gate<%crx> %q0, %q1
 qref.dyn_gate<%cry> %q0, %q1
 
 %crz = gate.control %rz : !gate.type<1>
-// CHECK-NEXT: qir.crz<[[angle7]]> %q0, %q1
+// CHECK-NEXT: qir.crz<[[angle9]]> %q0, %q1
 qref.dyn_gate<%crz> %q0, %q1
 
 // CHECK-NEXT: [[lhs:%.*]] = qir.m %q0
@@ -83,8 +90,8 @@ qref.dyn_gate<%crz> %q0, %q1
 // CHECK-NEXT: [[rhs2:%.*]] = qir.result_get_one
 // CHECK-NEXT: [[meas2:%.+]] = qir.result_equal [[lhs2]], [[rhs2]]
 %1 = qref.measure<#measurement.x_basis> %q1
-// CHECK-NEXT: [[angle8:%.*]] = arith.constant
-// CHECK-NEXT: qir.rz<[[angle8]]> %q2
+// CHECK-NEXT: [[angle10:%.*]] = arith.constant
+// CHECK-NEXT: qir.rz<[[angle10]]> %q2
 // CHECK-NEXT: qir.h %q2
 // CHECK-NEXT: [[lhs3:%.*]] = qir.m %q2
 // CHECK-NEXT: qir.qubit_release %q2

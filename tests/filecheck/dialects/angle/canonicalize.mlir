@@ -115,3 +115,28 @@ func.func @cond_negate_cond_negate(%a : !angle.type, %x: i1, %y: i1) -> !angle.t
   // CHECK: func.return [[res]]
   func.return %c : !angle.type
 }
+
+// -----
+
+// CHECK-LABEL: scale_fold
+func.func @scale_fold() -> !angle.type {
+  %a = angle.constant<0.5pi>
+
+  %c2 = arith.constant 2.0 : f64
+  // angle.constant<pi>
+  %a1 = angle.scale %a, %c2
+
+  func.return %a1 : !angle.type
+}
+
+// -----
+
+// CHECK-LABEL: add_fold
+func.func @add_fold() -> !angle.type {
+  %a = angle.constant<0.5pi>
+  %b = angle.constant<pi>
+  // CHECK: angle.constant<1.5pi>
+  %c = angle.add %a, %b
+
+  func.return %c : !angle.type
+}
