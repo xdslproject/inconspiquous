@@ -1,7 +1,6 @@
 from xdsl.dialects import arith
-from xdsl.dialects import builtin
+from xdsl.parser import Context, ModuleOp
 from xdsl.dialects.builtin import Float64Type, FloatAttr
-from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -12,13 +11,20 @@ from xdsl.pattern_rewriter import (
     attr_type_rewrite_pattern,
     op_type_rewrite_pattern,
 )
-from inconspiquous.dialects import qref, qir
+from xdsl.transforms.dead_code_elimination import DeadCodeElimination
+from inconspiquous.dialects import qref, qir, angle
 from inconspiquous.dialects.gate import (
     CXGate,
     CZGate,
+    ControlOp,
+    DynRXGate,
+    DynRYGate,
+    DynRZGate,
     HadamardGate,
     PhaseDaggerGate,
     PhaseGate,
+    RXGate,
+    RYGate,
     RZGate,
     TDaggerGate,
     TGate,
@@ -38,6 +44,36 @@ class QRefTypeToQIRPattern(TypeConversionPattern):
     @attr_type_rewrite_pattern
     def convert_type(self, typ: qu.BitType) -> qir.QubitType:
         return qir.QubitType()
+
+
+class AngleTypeToFloatPattern(TypeConversionPattern):
+    @attr_type_rewrite_pattern
+    def convert_type(self, typ: angle.AngleType) -> Float64Type:
+        return Float64Type()
+
+
+class LowerConstantAnglePattern(RewritePattern):
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: angle.ConstantAngleOp, rewriter: PatternRewriter):
+        rewriter.replace_matched_op(
+            arith.ConstantOp(FloatAttr(op.angle.as_float(), Float64Type()))
+        )
+
+
+class LowerNegateAnglePattern(RewritePattern):
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: angle.NegateAngleOp, rewriter: PatternRewriter, /):
+        rewriter.replace_matched_op(arith.NegfOp(op.angle))
+
+
+class LowerCondNegateAnglePattern(RewritePattern):
+    @op_type_rewrite_pattern
+    def match_and_rewrite(
+        self, op: angle.CondNegateAngleOp, rewriter: PatternRewriter, /
+    ):
+        rewriter.replace_matched_op(
+            (n := arith.NegfOp(op.angle), arith.SelectOp(op.cond, n, op.angle))
+        )
 
 
 class QRefGateToQIRPattern(RewritePattern):
@@ -66,6 +102,24 @@ class QRefGateToQIRPattern(RewritePattern):
                 rewriter.replace_matched_op(qir.ZOp(op.ins[0]))
             case ToffoliGate():
                 rewriter.replace_matched_op(qir.CCXOp(op.ins[0], op.ins[1], op.ins[2]))
+            case RXGate():
+                rewriter.replace_matched_op(
+                    (
+                        const := arith.ConstantOp(
+                            FloatAttr(op.gate.angle.as_float(), type=Float64Type())
+                        ),
+                        qir.RXOp(const, op.ins[0]),
+                    )
+                )
+            case RYGate():
+                rewriter.replace_matched_op(
+                    (
+                        const := arith.ConstantOp(
+                            FloatAttr(op.gate.angle.as_float(), type=Float64Type())
+                        ),
+                        qir.RYOp(const, op.ins[0]),
+                    )
+                )
             case RZGate():
                 rewriter.replace_matched_op(
                     (
@@ -74,6 +128,32 @@ class QRefGateToQIRPattern(RewritePattern):
                         ),
                         qir.RZOp(const, op.ins[0]),
                     )
+                )
+            case _:
+                return
+
+
+class DynQRefGateToQIRPattern(RewritePattern):
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: qref.DynGateOp, rewriter: PatternRewriter):
+        gate_op = op.gate.owner
+        control = False
+        if isinstance(gate_op, ControlOp):
+            control = True
+            gate_op = gate_op.gate.owner
+
+        match gate_op:
+            case DynRXGate():
+                rewriter.replace_matched_op(
+                    (qir.CRXOp if control else qir.RXOp)(gate_op.angle, *op.ins)
+                )
+            case DynRYGate():
+                rewriter.replace_matched_op(
+                    (qir.CRYOp if control else qir.RYOp)(gate_op.angle, *op.ins)
+                )
+            case DynRZGate():
+                rewriter.replace_matched_op(
+                    (qir.CRZOp if control else qir.RZOp)(gate_op.angle, *op.ins)
                 )
             case _:
                 return
@@ -118,14 +198,20 @@ class QRefMeasureToQIRPattern(RewritePattern):
 class ConvertQRefToQIRPass(ModulePass):
     name = "convert-qref-to-qir"
 
-    def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
+    def apply(self, ctx: Context, op: ModuleOp) -> None:
         PatternRewriteWalker(
             GreedyRewritePatternApplier(
                 [
                     QRefTypeToQIRPattern(recursive=True),
+                    AngleTypeToFloatPattern(recursive=True),
+                    LowerConstantAnglePattern(),
+                    LowerNegateAnglePattern(),
+                    LowerCondNegateAnglePattern(),
                     QRefAllocToQIRPattern(),
                     QRefGateToQIRPattern(),
+                    DynQRefGateToQIRPattern(),
                     QRefMeasureToQIRPattern(),
                 ]
             )
         ).rewrite_module(op)
+        DeadCodeElimination().apply(ctx, op)
