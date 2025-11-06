@@ -115,6 +115,7 @@ func.func @xy_measurement(%a : !angle.type) -> i1 {
 // CHECK-NEXT: func.return [[meas4]]
 
 // -----
+
 func.func @qref_in_region(%q : !qu.bit, %p: i1) -> !qu.bit {
   %q3 = scf.if %p -> (!qu.bit) {
     qref.gate<#gate.z> %q
