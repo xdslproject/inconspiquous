@@ -20,12 +20,14 @@ from inconspiquous.dialects.gate import (
     DynRXGate,
     DynRYGate,
     DynRZGate,
+    DynRZZGate,
     HadamardGate,
     PhaseDaggerGate,
     PhaseGate,
     RXGate,
     RYGate,
     RZGate,
+    RZZGate,
     TDaggerGate,
     TGate,
     ToffoliGate,
@@ -143,6 +145,15 @@ class QRefGateToQIRPattern(RewritePattern):
                         qir.RZOp(const, op.ins[0]),
                     )
                 )
+            case RZZGate():
+                rewriter.replace_matched_op(
+                    (
+                        const := arith.ConstantOp(
+                            FloatAttr(op.gate.angle.as_float(), type=Float64Type())
+                        ),
+                        qir.RZZOp(const, op.ins[0], op.ins[1]),
+                    )
+                )
             case _:
                 return
 
@@ -169,6 +180,10 @@ class QRefDynGateToQIRPattern(RewritePattern):
                 rewriter.replace_matched_op(
                     (qir.CRZOp if control else qir.RZOp)(gate_op.angle, *op.ins)
                 )
+            case DynRZZGate():
+                if control:
+                    return
+                rewriter.replace_matched_op((qir.RZZOp)(gate_op.angle, *op.ins))
             case _:
                 return
 

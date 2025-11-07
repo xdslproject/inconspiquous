@@ -26,12 +26,10 @@ class DynRotationGateToRotationPattern(RewritePattern):
     Convert a dynamic rotation gate with a constant angle to the given rotation gate.
     """
 
-    rot_gate: type[gate.SingleQubitRotationGate]
+    rot_gate: type[gate.RotationGate]
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(
-        self, op: gate.SingleQubitDynRotationGate, rewriter: PatternRewriter
-    ):
+    def match_and_rewrite(self, op: gate.DynRotationGate, rewriter: PatternRewriter):
         if isinstance(op.angle.owner, ConstantAngleOp):
             rewriter.replace_matched_op(
                 gate.ConstantGateOp(self.rot_gate(op.angle.owner.angle))

@@ -47,6 +47,15 @@
 
 // -----
 
+%phi = angle.constant<0.5pi>
+
+// CHECK: gate.constant #gate.rzz<0.5pi>
+%g = gate.dyn_rzz<%phi>
+
+"test.op"(%g) : (!gate.type<2>) -> ()
+
+// -----
+
 %g = gate.constant #gate.x
 
 %g1 = gate.control %g : !gate.type<1>
