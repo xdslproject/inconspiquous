@@ -266,6 +266,39 @@ class RZOp(RotationOperation):
         return "__quantum__qis__rz__body"
 
 
+@irdl_op_definition
+class RZZOp(QIROperation):
+    """
+    MLIR equivalent of __quantum__qis__rzz__body
+    """
+
+    name = "qir.rzz"
+
+    angle = operand_def(Float64Type)
+    qubit1 = operand_def(QubitType)
+    qubit2 = operand_def(QubitType)
+
+    assembly_format = "`` `<` $angle `>` $qubit1 `,` $qubit2 attr-dict"
+
+    def __init__(
+        self,
+        angle: SSAValue | Operation,
+        qubit1: SSAValue | Operation,
+        qubit2: SSAValue | Operation,
+    ):
+        super().__init__(operands=(angle, qubit1, qubit2))
+
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__qis__rzz__body"
+
+    @classmethod
+    def get_func_type(cls) -> llvm.LLVMFunctionType:
+        return llvm.LLVMFunctionType(
+            (Float64Type(), llvm.LLVMPointerType(), llvm.LLVMPointerType())
+        )
+
+
 class ControlledRotationOperation(QIROperation, ABC):
     """
     Base class for controlled rotation gates
@@ -489,6 +522,7 @@ QIR = Dialect(
         RXOp,
         RYOp,
         RZOp,
+        RZZOp,
         CRXOp,
         CRYOp,
         CRZOp,

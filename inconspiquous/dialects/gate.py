@@ -48,7 +48,12 @@ from inconspiquous.gates import (
     SingleQubitGate,
 )
 from inconspiquous.constraints import IncrementConstraint, SizedAttributeConstraint
-from inconspiquous.gates.core import CliffordGateAttr, PauliGate, PauliProp
+from inconspiquous.gates.core import (
+    CliffordGateAttr,
+    PauliGate,
+    PauliProp,
+    TwoQubitGate,
+)
 
 
 @irdl_attr_definition
@@ -185,7 +190,11 @@ class TDaggerGate(SingleQubitGate):
     name = "gate.t_dagger"
 
 
-class SingleQubitRotationGate(SingleQubitGate, ABC):
+class RotationGate(GateAttr, ABC):
+    """
+    A gate with angle parameter
+    """
+
     angle: AngleAttr
 
     def __init__(self, angle: float | AngleAttr):
@@ -203,7 +212,7 @@ class SingleQubitRotationGate(SingleQubitGate, ABC):
 
 
 @irdl_attr_definition
-class RXGate(SingleQubitRotationGate):
+class RXGate(RotationGate, SingleQubitGate):
     name = "gate.rx"
 
     def __init__(self, angle: float | AngleAttr):
@@ -211,7 +220,7 @@ class RXGate(SingleQubitRotationGate):
 
 
 @irdl_attr_definition
-class RYGate(SingleQubitRotationGate):
+class RYGate(RotationGate, SingleQubitGate):
     name = "gate.ry"
 
     def __init__(self, angle: float | AngleAttr):
@@ -219,7 +228,7 @@ class RYGate(SingleQubitRotationGate):
 
 
 @irdl_attr_definition
-class RZGate(SingleQubitRotationGate):
+class RZGate(RotationGate, SingleQubitGate):
     name = "gate.rz"
 
     def __init__(self, angle: float | AngleAttr):
@@ -227,23 +236,31 @@ class RZGate(SingleQubitRotationGate):
 
 
 @irdl_attr_definition
-class JGate(SingleQubitRotationGate):
+class JGate(RotationGate, SingleQubitGate):
     name = "gate.j"
 
     def __init__(self, angle: float | AngleAttr):
         super().__init__(angle)
 
 
-class SingleQubitDynRotationGate(
-    IRDLOperation, HasCanonicalizationPatternsInterface, ABC
-):
-    angle = operand_def(AngleType)
+@irdl_attr_definition
+class RZZGate(RotationGate, TwoQubitGate):
+    name = "gate.rzz"
 
-    out = result_def(GateType(1))
+    def __init__(self, angle: float | AngleAttr):
+        super().__init__(angle)
+
+
+class DynRotationGate(IRDLOperation, HasCanonicalizationPatternsInterface, ABC):
+    angle = operand_def(AngleType)
 
     traits = traits_def(Pure())
 
     assembly_format = "`` `<` $angle `>` attr-dict"
+
+
+class SingleQubitDynRotationGate(DynRotationGate, ABC):
+    out = result_def(GateType(1))
 
     def __init__(self, angle: SSAValue | Operation):
         super().__init__(operands=(angle,), result_types=(GateType(1),))
@@ -280,6 +297,22 @@ class DynRZGate(SingleQubitDynRotationGate):
         from inconspiquous.transforms.canonicalization import gate
 
         return (gate.DynRotationGateToRotationPattern(RZGate),)
+
+
+@irdl_op_definition
+class DynRZZGate(DynRotationGate):
+    name = "gate.dyn_rzz"
+
+    out = result_def(GateType(2))
+
+    def __init__(self, angle: SSAValue | Operation):
+        super().__init__(operands=(angle,), result_types=(GateType(2),))
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import gate
+
+        return (gate.DynRotationGateToRotationPattern(RZZGate),)
 
 
 @irdl_op_definition
@@ -542,6 +575,7 @@ Gate = Dialect(
         DynRYGate,
         DynRZGate,
         DynJGate,
+        DynRZZGate,
         ControlOp,
     ],
     [
@@ -557,6 +591,7 @@ Gate = Dialect(
         RYGate,
         RZGate,
         JGate,
+        RZZGate,
         CXGate,
         CZGate,
         ToffoliGate,
