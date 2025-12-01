@@ -89,7 +89,7 @@ class CondNegateMergePattern(RewritePattern):
         elif isinstance(arg, NegateAngleOp):
             cTrue = ConstantOp(BoolAttr.from_bool(True))
             cTrue.result.name_hint = "cTrue"
-            rewriter.insert_op_before_matched_op(cTrue)
+            rewriter.insert_op(cTrue)
             xor = XOrIOp(op.cond, cTrue)
         else:
             return
