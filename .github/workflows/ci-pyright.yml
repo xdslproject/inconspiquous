@@ -39,6 +39,6 @@ jobs:
         echo "$PWD/.venv/bin" >> $GITHUB_PATH
 
     - name: Pyright
-      uses: jakebailey/pyright-action@v2
+      uses: jakebailey/pyright-action@v3
       with:
         version: PATH
