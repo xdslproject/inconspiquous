@@ -57,6 +57,7 @@ class FlipCoinsPass(ModulePass):
         rand.seed(self.seed)
         PatternRewriteWalker(
             GreedyRewritePatternApplier(
-                [FlipCoinBernoulliPattern(rand), FlipCoinUniformPattern(rand)]
+                [FlipCoinBernoulliPattern(rand), FlipCoinUniformPattern(rand)],
+                dce_enabled=False,
             )
         ).rewrite_module(op)
