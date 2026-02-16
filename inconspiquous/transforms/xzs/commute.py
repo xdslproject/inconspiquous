@@ -159,5 +159,7 @@ class XZCommute(ModulePass):
 
     def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         LinearWalker(
-            GreedyRewritePatternApplier([FuseXZGatesPattern(), XZCommutePattern()])
+            GreedyRewritePatternApplier(
+                [FuseXZGatesPattern(), XZCommutePattern()], dce_enabled=False
+            )
         ).rewrite_module(op)

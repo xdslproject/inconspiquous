@@ -17,12 +17,12 @@
 
 // CHECK-SIMPL:      func.func @double_phase(%q : !qu.bit) -> !qu.bit {
 // CHECK-SIMPL-NEXT:   %p = prob.bernoulli 1.000000e-01
-// CHECK-SIMPL-NEXT:   %id = gate.constant #gate.id<1>
-// CHECK-SIMPL-NEXT:   %id_1 = gate.constant #gate.z
 // CHECK-SIMPL-NEXT:   %p2 = prob.bernoulli 1.000000e-01
 // CHECK-SIMPL-NEXT:   %0 = arith.xori %p, %p2 : i1
-// CHECK-SIMPL-NEXT:   %g = arith.select %0, %id_1, %id : !gate.type<1>
-// CHECK-SIMPL-NEXT:   %q2 = qssa.dyn_gate<%g> %q
+// CHECK-SIMPL-NEXT:   %g = gate.constant #gate.id<1>
+// CHECK-SIMPL-NEXT:   %g_1 = gate.constant #gate.z
+// CHECK-SIMPL-NEXT:   %g_2 = arith.select %0, %g_1, %g : !gate.type<1>
+// CHECK-SIMPL-NEXT:   %q2 = qssa.dyn_gate<%g_2> %q
 // CHECK-SIMPL-NEXT:   func.return %q2 : !qu.bit
 // CHECK-SIMPL-NEXT: }
 
