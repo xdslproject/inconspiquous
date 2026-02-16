@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import ClassVar
 
-from xdsl.interfaces import ConstantLikeInterface, HasCanonicalizationPatternsInterface
+from xdsl.interfaces import HasCanonicalizationPatternsInterface, HasFolderInterface
 from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     AnyInt,
@@ -23,7 +23,7 @@ from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
 from inconspiquous.measurement import MeasurementAttr
 from xdsl.dialects.builtin import IntAttr, IntAttrConstraint
-from xdsl.traits import Pure
+from xdsl.traits import ConstantLike, Pure
 from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.dialects.angle import AngleAttr, AngleType
 
@@ -120,7 +120,7 @@ class MeasurementType(ParametrizedAttribute, TypeAttribute):
 
 
 @irdl_op_definition
-class ConstantMeasurementOp(IRDLOperation, ConstantLikeInterface):
+class ConstantMeasurementOp(IRDLOperation, HasFolderInterface):
     """
     Constant-like operation for producing measurement types from measurement attributes.
     """
@@ -135,7 +135,7 @@ class ConstantMeasurementOp(IRDLOperation, ConstantLikeInterface):
 
     assembly_format = "$measurement attr-dict"
 
-    traits = traits_def(Pure())
+    traits = traits_def(Pure(), ConstantLike())
 
     def __init__(self, measurement: MeasurementAttr):
         super().__init__(
@@ -145,8 +145,8 @@ class ConstantMeasurementOp(IRDLOperation, ConstantLikeInterface):
             result_types=(MeasurementType(measurement.num_qubits),),
         )
 
-    def get_constant_value(self) -> MeasurementAttr:
-        return self.measurement
+    def fold(self) -> tuple[MeasurementAttr]:
+        return (self.measurement,)
 
 
 @irdl_op_definition

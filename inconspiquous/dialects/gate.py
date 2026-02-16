@@ -8,7 +8,7 @@ from xdsl.dialects.builtin import (
     i1,
     IntegerType,
 )
-from xdsl.interfaces import ConstantLikeInterface, HasCanonicalizationPatternsInterface
+from xdsl.interfaces import HasCanonicalizationPatternsInterface, HasFolderInterface
 from xdsl.ir import (
     Dialect,
     Operation,
@@ -37,7 +37,7 @@ from xdsl.irdl import (
 from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
-from xdsl.traits import Pure
+from xdsl.traits import ConstantLike, Pure
 from xdsl.dialects.builtin import IntAttrConstraint
 
 from inconspiquous.dialects.angle import AngleAttr, AngleType
@@ -94,7 +94,7 @@ class GateType(ParametrizedAttribute, TypeAttribute):
 
 
 @irdl_op_definition
-class ConstantGateOp(IRDLOperation, ConstantLikeInterface):
+class ConstantGateOp(IRDLOperation, HasFolderInterface):
     """
     Constant-like operation for producing gates
     """
@@ -109,7 +109,7 @@ class ConstantGateOp(IRDLOperation, ConstantLikeInterface):
 
     assembly_format = "$gate attr-dict"
 
-    traits = traits_def(Pure())
+    traits = traits_def(Pure(), ConstantLike())
 
     def __init__(self, gate: GateAttr):
         super().__init__(
@@ -119,8 +119,8 @@ class ConstantGateOp(IRDLOperation, ConstantLikeInterface):
             result_types=(GateType(gate.num_qubits),),
         )
 
-    def get_constant_value(self) -> GateAttr:
-        return self.gate
+    def fold(self) -> tuple[GateAttr]:
+        return (self.gate,)
 
 
 @irdl_attr_definition

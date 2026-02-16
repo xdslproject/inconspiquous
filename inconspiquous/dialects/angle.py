@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from xdsl.interfaces import ConstantLikeInterface, HasCanonicalizationPatternsInterface
+from xdsl.interfaces import HasFolderInterface, HasCanonicalizationPatternsInterface
 from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
@@ -16,7 +16,7 @@ from xdsl.dialects.builtin import FloatData, i1
 from xdsl.parser import AttrParser, Float64Type
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
-from xdsl.traits import Pure
+from xdsl.traits import ConstantLike, Pure
 
 
 @irdl_attr_definition
@@ -89,7 +89,7 @@ class AngleType(ParametrizedAttribute, TypeAttribute):
 
 
 @irdl_op_definition
-class ConstantAngleOp(IRDLOperation, ConstantLikeInterface):
+class ConstantAngleOp(IRDLOperation, HasFolderInterface):
     """
     Constant-like operation for producing angles
     """
@@ -102,9 +102,7 @@ class ConstantAngleOp(IRDLOperation, ConstantLikeInterface):
 
     assembly_format = "`` $angle attr-dict"
 
-    traits = traits_def(
-        Pure(),
-    )
+    traits = traits_def(Pure(), ConstantLike())
 
     def __init__(self, angle: AngleAttr):
         super().__init__(
@@ -114,8 +112,8 @@ class ConstantAngleOp(IRDLOperation, ConstantLikeInterface):
             result_types=(AngleType(),),
         )
 
-    def get_constant_value(self) -> AngleAttr:
-        return self.angle
+    def fold(self) -> tuple[AngleAttr]:
+        return (self.angle,)
 
 
 @irdl_op_definition
