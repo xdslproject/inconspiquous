@@ -37,7 +37,9 @@ class ConvertQrefGateToQssaGate(RewritePattern):
         rewriter.replace_matched_op(new_op, ())
 
         for operand, result in zip(op.ins, new_op.results):
-            operand.replace_by_if(result, lambda use: use.operation is not new_op)
+            operand.replace_uses_with_if(
+                result, lambda use: use.operation is not new_op
+            )
 
 
 class ConvertQrefMeasureToQssaMeasure(RewritePattern):

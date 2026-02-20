@@ -5,6 +5,7 @@ from xdsl.pattern_rewriter import (
     RewritePattern,
     op_type_rewrite_pattern,
 )
+from xdsl.traits import ConstantLike
 from xdsl.transforms.canonicalization_patterns.utils import const_evaluate_operand
 
 from inconspiquous.dialects.angle import (
@@ -109,7 +110,7 @@ class ScaleAngleFoldPattern(RewritePattern):
         if not isinstance(op.scale.owner, ConstantOp):
             return
 
-        scale = op.scale.owner.get_constant_value()
+        scale = ConstantLike.get_constant_value(op.scale)
         if not isinstance(scale, FloatAttr):
             return
         rewriter.replace_matched_op(
