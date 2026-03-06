@@ -1,8 +1,6 @@
 // RUN: QUOPT_ROUNDTRIP
 // RUN: QUOPT_GENERIC_ROUNDTRIP
 
-//--- Qubit Allocation Tests ---//
-
 // CHECK-LABEL: func.func @test_qubit_allocs() {
 // CHECK-NEXT:    %q = qu.alloc
 // CHECK-NEXT:    %q2 = qu.alloc<#qu.plus>
@@ -20,9 +18,21 @@ func.func @test_qubit_allocs() {
   func.return
 }
 
-//---
-
-//--- Qubit Register Tests ---//
+// CHECK-LABEL: @test_qubit_release
+// CHECK-NEXT:    %q = qu.alloc
+// CHECK-NEXT:    qu.release %q
+// CHECK-NEXT:    func.return
+// CHECK-NEXT:  }
+// CHECK-GENERIC-LABEL: "test_qubit_release"
+// CHECK-GENERIC-NEXT:    %q = "qu.alloc"() <{alloc = #qu.zero}> : () -> !qu.bit
+// CHECK-GENERIC-NEXT:    "qu.release"(%q) : (!qu.bit) -> ()
+// CHECK-GENERIC-NEXT:    "func.return"() : () -> ()
+// CHECK-GENERIC-NEXT:  }) : () -> ()
+func.func @test_qubit_release() {
+  %q = qu.alloc
+  qu.release %q
+  func.return
+}
 
 // CHECK-LABEL: func.func @test_qreg_ops() {
 // CHECK-NEXT:    %q0 = qu.alloc

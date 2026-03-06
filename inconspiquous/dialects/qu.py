@@ -3,6 +3,7 @@ from typing import ClassVar
 from xdsl.dialects.builtin import IntAttr, IntAttrConstraint
 from xdsl.ir import (
     Dialect,
+    Operation,
     ParametrizedAttribute,
     TypeAttribute,
     SSAValue,
@@ -111,6 +112,18 @@ class AllocOp(IRDLOperation):
 
 
 @irdl_op_definition
+class ReleaseOp(IRDLOperation):
+    name = "qu.release"
+
+    in_qubit = operand_def(BitType)
+
+    assembly_format = "$in_qubit attr-dict"
+
+    def __init__(self, in_qubit: Operation | SSAValue):
+        super().__init__(operands=(in_qubit,))
+
+
+@irdl_op_definition
 class FromBitsOp(IRDLOperation):
     """Converts a collection of input qubits to a register."""
 
@@ -209,6 +222,18 @@ class SplitOp(IRDLOperation):
 
 Qu = Dialect(
     "qu",
-    [AllocOp, FromBitsOp, ToBitsOp, CombineOp, SplitOp],
-    [BitType, RegisterType, AllocZeroAttr, AllocPlusAttr],
+    [
+        AllocOp,
+        ReleaseOp,
+        FromBitsOp,
+        ToBitsOp,
+        CombineOp,
+        SplitOp,
+    ],
+    [
+        BitType,
+        RegisterType,
+        AllocZeroAttr,
+        AllocPlusAttr,
+    ],
 )
