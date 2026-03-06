@@ -37,6 +37,15 @@
 "test.op"() {gate = #gate.j<pi>} : () -> ()
 // CHECK-NEXT: "test.op"() {gate = #gate.j<pi>} : () -> ()
 
+"test.op"() {gate = #gate.crx<pi>} : () -> ()
+// CHECK-NEXT: "test.op"() {gate = #gate.crx<pi>} : () -> ()
+
+"test.op"() {gate = #gate.cry<pi>} : () -> ()
+// CHECK-NEXT: "test.op"() {gate = #gate.cry<pi>} : () -> ()
+
+"test.op"() {gate = #gate.crz<pi>} : () -> ()
+// CHECK-NEXT: "test.op"() {gate = #gate.crz<pi>} : () -> ()
+
 "test.op"() {gate = #gate.rzz<pi>} : () -> ()
 // CHECK-NEXT: "test.op"() {gate = #gate.rzz<pi>} : () -> ()
 
@@ -95,10 +104,18 @@
 // CHECK-GENERIC: %{{.*}} = "gate.dyn_j"(%phi) : (!angle.type) -> !gate.type<1>
 %7 = gate.dyn_j<%phi>
 
+// CHECK: %{{.*}} = gate.dyn_crx<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_crx"(%phi) : (!angle.type) -> !gate.type<2>
+%8 = gate.dyn_crx<%phi>
+
+// CHECK: %{{.*}} = gate.dyn_cry<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_cry"(%phi) : (!angle.type) -> !gate.type<2>
+%9 = gate.dyn_cry<%phi>
+
+// CHECK: %{{.*}} = gate.dyn_crz<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_crz"(%phi) : (!angle.type) -> !gate.type<2>
+%10 = gate.dyn_crz<%phi>
+
 // CHECK: %{{.*}} = gate.dyn_rzz<%phi>
 // CHECK-GENERIC: %{{.*}} = "gate.dyn_rzz"(%phi) : (!angle.type) -> !gate.type<2>
-%8 = gate.dyn_rzz<%phi>
-
-// CHECK: %{{.*}} = gate.control %4 : !gate.type<1>
-// CHECK-GENERIC: %{{.*}} = "gate.control"(%4) : (!gate.type<1>) -> !gate.type<2>
-%9 = gate.control %4 : !gate.type<1>
+%11 = gate.dyn_rzz<%phi>

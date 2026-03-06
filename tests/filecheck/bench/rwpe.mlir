@@ -34,7 +34,7 @@ func.func @rwpe(%mu0 : !angle.type, %sigma0 : f64, %theta : !angle.type, %iter: 
 
     %angle2 = angle.scale %theta, %t
     %rz2 = gate.dyn_rz<%angle2>
-    %crz = gate.control %rz2 : !gate.type<1>
+    %crz = gate.dyn_crz<%angle2>
     %a_3, %q_2 = qssa.dyn_gate<%crz> %a_2, %q_1
 
     %a_4 = qssa.gate<#gate.h> %a_3
