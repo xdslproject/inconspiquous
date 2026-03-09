@@ -1,5 +1,6 @@
 from xdsl.ir import Dialect
 from xdsl.irdl import irdl_attr_definition
+
 from inconspiquous.gates import GateAttr
 
 

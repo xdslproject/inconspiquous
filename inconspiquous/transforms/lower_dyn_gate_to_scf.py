@@ -1,20 +1,20 @@
 from typing import cast
+
 from xdsl.builder import ImplicitBuilder
-from xdsl.dialects import arith, scf, varith
-from xdsl.dialects import builtin
-from xdsl.ir import Block, Region, SSAValue
+from xdsl.dialects import arith, builtin, scf, varith
 from xdsl.dialects.builtin import IndexType
-from xdsl.parser import DenseArrayBase, IntegerType, Context
+from xdsl.ir import Block, Region, SSAValue
+from xdsl.parser import Context, DenseArrayBase, IntegerType
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     op_type_rewrite_pattern,
 )
 
-from inconspiquous.dialects import qssa, qref
+from inconspiquous.dialects import qref, qssa
 
 
 class LowerQSSADynGateToScfPattern(RewritePattern):

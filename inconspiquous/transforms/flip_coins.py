@@ -1,17 +1,18 @@
+import random
+
+from xdsl.dialects import arith, builtin
 from xdsl.ir import dataclass, field
 from xdsl.parser import Context, IntegerAttr, IntegerType
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     op_type_rewrite_pattern,
 )
-from xdsl.dialects import arith, builtin
-from inconspiquous.dialects.prob import BernoulliOp, UniformOp
 
-import random
+from inconspiquous.dialects.prob import BernoulliOp, UniformOp
 
 
 @dataclass

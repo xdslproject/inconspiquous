@@ -1,5 +1,5 @@
-from xdsl.ir import Block, Operation, Region
 from xdsl.dialects.builtin import ModuleOp
+from xdsl.ir import Block, Operation, Region
 from xdsl.pattern_rewriter import (
     PatternRewriter,
     PatternRewriterListener,

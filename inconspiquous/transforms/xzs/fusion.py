@@ -1,16 +1,16 @@
-from xdsl.dialects import builtin
-from xdsl.dialects import arith
+from xdsl.dialects import arith, builtin
 from xdsl.dialects.arith import AndIOp, XOrIOp
 from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     op_type_rewrite_pattern,
 )
 from xdsl.rewriter import InsertPoint
+
 from inconspiquous.dialects.gate import XZOp, XZSOp
 from inconspiquous.dialects.qssa import DynGateOp
 

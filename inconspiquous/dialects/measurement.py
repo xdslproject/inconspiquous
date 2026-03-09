@@ -1,15 +1,17 @@
 from __future__ import annotations
+
 from typing import ClassVar
 
+from xdsl.dialects.builtin import IntAttr, IntAttrConstraint
 from xdsl.interfaces import HasCanonicalizationPatternsInterface, HasFolderInterface
 from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     AnyInt,
-    BaseAttr,
     AttrConstraint,
-    IRDLOperation,
+    BaseAttr,
     IntConstraint,
     IntVarConstraint,
+    IRDLOperation,
     ParamAttrConstraint,
     irdl_attr_definition,
     irdl_op_definition,
@@ -21,11 +23,11 @@ from xdsl.irdl import (
 from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
-from inconspiquous.measurement import MeasurementAttr
-from xdsl.dialects.builtin import IntAttr, IntAttrConstraint
 from xdsl.traits import ConstantLike, Pure
+
 from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.dialects.angle import AngleAttr, AngleType
+from inconspiquous.measurement import MeasurementAttr
 
 
 @irdl_attr_definition

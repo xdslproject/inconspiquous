@@ -1,22 +1,22 @@
-from xdsl.dialects import arith, builtin
 from xdsl.context import Context
+from xdsl.dialects import arith, builtin
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     op_type_rewrite_pattern,
 )
 
 from inconspiquous.dialects.gate import (
     ComposeGateOp,
+    ConstantGateOp,
     IdentityGate,
     PhaseGate,
     XGate,
     XZOp,
     XZSOp,
-    ConstantGateOp,
     YGate,
     ZGate,
 )

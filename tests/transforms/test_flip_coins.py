@@ -1,8 +1,7 @@
-from xdsl.dialects import arith
-from xdsl.parser import Parser
 from xdsl.context import Context
+from xdsl.dialects import arith
 from xdsl.dialects.builtin import ModuleOp
-from xdsl.parser import IntegerAttr
+from xdsl.parser import IntegerAttr, Parser
 
 from inconspiquous.dialects.prob import BernoulliOp, Prob
 from inconspiquous.transforms.flip_coins import FlipCoinsPass

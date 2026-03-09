@@ -9,7 +9,7 @@ from xdsl.pattern_rewriter import (
     op_type_rewrite_pattern,
 )
 
-from inconspiquous.dialects import qssa, qref
+from inconspiquous.dialects import qref, qssa
 
 
 class ConvertQssaGateToQrefGate(RewritePattern):

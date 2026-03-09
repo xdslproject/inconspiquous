@@ -6,7 +6,7 @@ from xdsl.pattern_rewriter import (
 
 from inconspiquous.dialects.gate import ComposeGateOp, ConstantGateOp, IdentityGate
 from inconspiquous.dialects.measurement import ConstantMeasurementOp
-from inconspiquous.dialects.qssa import DynMeasureOp, GateOp, MeasureOp, DynGateOp
+from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, GateOp, MeasureOp
 
 
 class DynGateConst(RewritePattern):

@@ -4,17 +4,17 @@ from xdsl.dialects.arith import AndIOp, ConstantOp, OrIOp, SelectOp, XOrIOp
 from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     op_type_rewrite_pattern,
 )
 from xdsl.rewriter import InsertPoint
 
 from inconspiquous.dialects.gate import (
+    ConstantGateOp,
     CXGate,
     CZGate,
-    ConstantGateOp,
     HadamardGate,
     IdentityGate,
     XGate,

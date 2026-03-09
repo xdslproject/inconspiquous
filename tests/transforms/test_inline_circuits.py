@@ -6,9 +6,9 @@ from xdsl.context import Context
 from xdsl.dialects.builtin import ModuleOp
 from xdsl.ir import Block, Region
 
-from inconspiquous.dialects.qssa import CircuitOp, ReturnOp, GateOp, DynGateOp
-from inconspiquous.dialects.qu import BitType, AllocOp
 from inconspiquous.dialects.gate import XGate, YGate, ZGate
+from inconspiquous.dialects.qssa import CircuitOp, DynGateOp, GateOp, ReturnOp
+from inconspiquous.dialects.qu import AllocOp, BitType
 from inconspiquous.transforms.inline_circuits import InlineCircuitsPass
 
 

@@ -6,13 +6,13 @@ from xdsl.dialects import builtin
 from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     op_type_rewrite_pattern,
 )
 
-from inconspiquous.dialects.qssa import DynGateOp, CircuitOp, ReturnOp
+from inconspiquous.dialects.qssa import CircuitOp, DynGateOp, ReturnOp
 
 
 class InlineCircuitPattern(RewritePattern):

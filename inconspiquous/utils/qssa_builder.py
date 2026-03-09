@@ -1,5 +1,6 @@
-from xdsl.ir import Operation, SSAValue
 from dataclasses import dataclass
+
+from xdsl.ir import Operation, SSAValue
 
 from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
 from inconspiquous.dialects.qu import AllocOp

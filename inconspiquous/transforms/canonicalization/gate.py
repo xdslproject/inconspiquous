@@ -5,6 +5,7 @@ from xdsl.pattern_rewriter import (
     op_type_rewrite_pattern,
 )
 from xdsl.transforms.canonicalization_patterns.utils import const_evaluate_operand
+
 from inconspiquous.dialects import gate
 from inconspiquous.dialects.angle import ConstantAngleOp
 

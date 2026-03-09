@@ -1,6 +1,7 @@
+from xdsl.xdsl_opt_main import xDSLOptMain
+
 from inconspiquous.dialects import get_all_dialects
 from inconspiquous.transforms import get_all_passes
-from xdsl.xdsl_opt_main import xDSLOptMain
 
 
 class QuoptMain(xDSLOptMain):

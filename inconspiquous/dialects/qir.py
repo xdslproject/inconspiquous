@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+
 from xdsl.dialects import llvm
+from xdsl.dialects.builtin import Float64Type, i1
 from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
@@ -8,7 +10,6 @@ from xdsl.irdl import (
     operand_def,
     result_def,
 )
-from xdsl.dialects.builtin import Float64Type, i1
 
 
 @irdl_attr_definition

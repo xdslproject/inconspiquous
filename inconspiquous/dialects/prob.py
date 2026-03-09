@@ -1,6 +1,7 @@
-from typing import ClassVar, Sequence
-from typing_extensions import Self
+from collections.abc import Sequence
+from typing import ClassVar
 
+from typing_extensions import Self
 from xdsl.dialects.builtin import i1
 from xdsl.interfaces import HasCanonicalizationPatternsInterface
 from xdsl.ir import (
@@ -25,11 +26,11 @@ from xdsl.parser import (
     Float64Type,
     FloatAttr,
     IntegerType,
+    Parser,
     UnresolvedOperand,
 )
-from xdsl.parser import Parser
-from xdsl.printer import Printer
 from xdsl.pattern_rewriter import RewritePattern
+from xdsl.printer import Printer
 
 
 @irdl_op_definition
@@ -115,9 +116,9 @@ class FinSuppOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
         from inconspiquous.transforms.canonicalization.prob import (
-            FinSuppTrivial,
-            FinSuppRemoveCase,
             FinSuppDuplicate,
+            FinSuppRemoveCase,
+            FinSuppTrivial,
         )
 
         return (FinSuppTrivial(), FinSuppRemoveCase(), FinSuppDuplicate())

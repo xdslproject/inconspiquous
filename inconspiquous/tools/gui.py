@@ -1,4 +1,5 @@
 import argparse
+
 from xdsl.interactive.app import InputApp
 
 from inconspiquous.dialects import get_all_dialects

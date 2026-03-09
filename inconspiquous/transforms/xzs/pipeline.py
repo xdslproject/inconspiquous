@@ -1,5 +1,5 @@
-from xdsl.dialects import builtin
 from xdsl.context import Context
+from xdsl.dialects import builtin
 from xdsl.passes import ModulePass
 from xdsl.transforms.canonicalize import CanonicalizePass
 from xdsl.transforms.common_subexpression_elimination import (
@@ -7,8 +7,8 @@ from xdsl.transforms.common_subexpression_elimination import (
 )
 
 from inconspiquous.transforms.xzs.convert_to_xzs import ConvertToXZS
-from inconspiquous.transforms.xzs.lower import LowerXZSToSelect
 from inconspiquous.transforms.xzs.fusion import XZSFusion
+from inconspiquous.transforms.xzs.lower import LowerXZSToSelect
 from inconspiquous.transforms.xzs.select import XZSSelect
 
 

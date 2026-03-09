@@ -1,6 +1,7 @@
 from xdsl.context import Context
 from xdsl.dialects import builtin
 from xdsl.dialects.arith import SelectOp, XOrIOp
+from xdsl.dialects.builtin import i1
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
@@ -9,12 +10,11 @@ from xdsl.pattern_rewriter import (
     RewritePattern,
     op_type_rewrite_pattern,
 )
-from xdsl.dialects.builtin import i1
 from xdsl.rewriter import InsertPoint
 
 from inconspiquous.dialects.gate import (
-    CXGate,
     ConstantGateOp,
+    CXGate,
     HadamardGate,
     IdentityGate,
     PhaseDaggerGate,
@@ -25,8 +25,8 @@ from inconspiquous.dialects.gate import (
     ZGate,
 )
 from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
-from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
 from inconspiquous.dialects.prob import UniformOp
+from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
 
 
 class PadTGate(RewritePattern):

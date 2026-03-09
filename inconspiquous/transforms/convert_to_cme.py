@@ -3,17 +3,16 @@ from xdsl.parser import BoolAttr, Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     op_type_rewrite_pattern,
 )
 
-from inconspiquous.dialects import angle, measurement
-from inconspiquous.dialects import qssa, qu
+from inconspiquous.dialects import angle, measurement, qssa, qu
 from inconspiquous.dialects.gate import (
-    CZGate,
     ConstantGateOp,
+    CZGate,
     DynJGate,
     IdentityGate,
     JGate,
@@ -21,7 +20,13 @@ from inconspiquous.dialects.gate import (
 )
 
 """
-CME is a normal form for MBQC patterns, see https://en.wikipedia.org/wiki/One-way_quantum_computer#CME_pattern which uses only entanglement operations, measurement, and classical controlled correction. This pass rewrites operations to be of this form.
+CME is a normal form for MBQC patterns, which uses only
+- entanglement operations,
+- measurement,
+- and classical controlled correction.
+see https://en.wikipedia.org/wiki/One-way_quantum_computer#CME_pattern
+
+This pass rewrites operations to be of this form.
 
 As CZ gates are legal in CME, this pass only rewrites J gates into CME form.
 """

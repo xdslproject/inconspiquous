@@ -1,8 +1,8 @@
-from inconspiquous.dialects import qssa, qu, gate
+import pytest
+
+from inconspiquous.dialects import gate, qssa, qu
 from inconspiquous.dialects.gate import HadamardGate
 from inconspiquous.utils.qssa_builder import QSSABuilder
-
-import pytest
 
 
 def test_qssa_builder_alloc():
@@ -58,5 +58,5 @@ def test_double_measure():
     q = QSSABuilder.alloc()
     QSSABuilder.measure(q)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Consumed qubit was used"):
         QSSABuilder.measure(q)
