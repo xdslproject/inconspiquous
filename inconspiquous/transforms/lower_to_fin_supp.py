@@ -1,16 +1,16 @@
 from xdsl.context import Context
-from xdsl.dialects import builtin
+from xdsl.dialects import arith, builtin
 from xdsl.dialects.builtin import BoolAttr
 from xdsl.ir import Operation, dataclass
+from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     op_type_rewrite_pattern,
 )
-from xdsl.dialects import arith
-from xdsl.passes import ModulePass
+
 from inconspiquous.dialects.prob import BernoulliOp, FinSuppOp, UniformOp
 
 

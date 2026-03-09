@@ -1,30 +1,31 @@
 from typing import ClassVar
+
 from xdsl.dialects.builtin import i1
 from xdsl.interfaces import HasCanonicalizationPatternsInterface
-from xdsl.ir import Dialect, Operation, SSAValue, Block, Region
+from xdsl.ir import Block, Dialect, Operation, Region, SSAValue
 from xdsl.irdl import (
     AnyInt,
-    IRDLOperation,
     IntVarConstraint,
+    IRDLOperation,
     RangeOf,
+    eq,
     irdl_op_definition,
     operand_def,
     prop_def,
+    region_def,
+    result_def,
     traits_def,
     var_operand_def,
-    eq,
     var_result_def,
-    result_def,
-    region_def,
 )
-from xdsl.traits import IsTerminator, HasParent
 from xdsl.pattern_rewriter import RewritePattern
+from xdsl.traits import HasParent, IsTerminator
 
+from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.dialects.gate import GateType
 from inconspiquous.dialects.measurement import CompBasisMeasurementAttr, MeasurementType
-from inconspiquous.gates import GateAttr
 from inconspiquous.dialects.qu import BitType
-from inconspiquous.constraints import SizedAttributeConstraint
+from inconspiquous.gates import GateAttr
 from inconspiquous.measurement import MeasurementAttr
 
 
@@ -75,8 +76,8 @@ class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
         from inconspiquous.transforms.canonicalization.qref import (
-            DynGateConst,
             DynGateCompose,
+            DynGateConst,
         )
 
         return (DynGateConst(), DynGateCompose())

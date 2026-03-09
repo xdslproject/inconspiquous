@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import math
-from xdsl.interfaces import HasFolderInterface, HasCanonicalizationPatternsInterface
+
+from xdsl.dialects.builtin import FloatData, i1
+from xdsl.interfaces import HasCanonicalizationPatternsInterface, HasFolderInterface
 from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
@@ -12,7 +14,6 @@ from xdsl.irdl import (
     result_def,
     traits_def,
 )
-from xdsl.dialects.builtin import FloatData, i1
 from xdsl.parser import AttrParser, Float64Type
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer

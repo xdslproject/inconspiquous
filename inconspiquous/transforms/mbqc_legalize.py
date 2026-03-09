@@ -1,10 +1,10 @@
+from xdsl.context import Context
 from xdsl.dialects import builtin
 from xdsl.dialects.func import FuncOp
 from xdsl.ir import Block, Operation
-from xdsl.traits import IsTerminator
-from xdsl.context import Context
 from xdsl.passes import ModulePass
 from xdsl.rewriter import InsertPoint, Rewriter
+from xdsl.traits import IsTerminator
 from xdsl.utils.exceptions import PassFailedException
 
 from inconspiquous.dialects.angle import (
@@ -12,17 +12,17 @@ from inconspiquous.dialects.angle import (
     ConstantAngleOp,
     NegateAngleOp,
 )
-from inconspiquous.dialects.measurement import XYDynMeasurementOp, XYMeasurementAttr
-from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, MeasureOp, GateOp
 from inconspiquous.dialects.gate import (
-    CZGate,
     ConstantGateOp,
+    CZGate,
     IdentityGate,
     XGate,
+    XZOp,
     YGate,
     ZGate,
-    XZOp,
 )
+from inconspiquous.dialects.measurement import XYDynMeasurementOp, XYMeasurementAttr
+from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, GateOp, MeasureOp
 from inconspiquous.dialects.qu import AllocOp
 
 

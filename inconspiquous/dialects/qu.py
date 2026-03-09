@@ -5,13 +5,13 @@ from xdsl.ir import (
     Dialect,
     Operation,
     ParametrizedAttribute,
-    TypeAttribute,
     SSAValue,
+    TypeAttribute,
 )
 from xdsl.irdl import (
     AnyInt,
-    IRDLOperation,
     IntVarConstraint,
+    IRDLOperation,
     ParamAttrConstraint,
     RangeOf,
     eq,
@@ -23,9 +23,9 @@ from xdsl.irdl import (
     var_operand_def,
     var_result_def,
 )
-from xdsl.utils.exceptions import VerifyException
 from xdsl.parser import AttrParser
 from xdsl.printer import Printer
+from xdsl.utils.exceptions import VerifyException
 
 from inconspiquous.alloc import AllocAttr
 from inconspiquous.constraints import SizedAttributeConstraint

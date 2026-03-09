@@ -1,11 +1,11 @@
 from xdsl.dialects import builtin
-from xdsl.dialects.arith import SelectOp, ConstantOp
+from xdsl.dialects.arith import ConstantOp, SelectOp
 from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     op_type_rewrite_pattern,
 )

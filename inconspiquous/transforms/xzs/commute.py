@@ -1,5 +1,5 @@
-from xdsl.ir import Operation, SSAValue
 from xdsl.dialects import arith, builtin
+from xdsl.ir import Operation, SSAValue
 from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
@@ -8,6 +8,7 @@ from xdsl.pattern_rewriter import (
     RewritePattern,
     op_type_rewrite_pattern,
 )
+
 from inconspiquous.dialects import qssa
 from inconspiquous.dialects.angle import AngleAttr, CondNegateAngleOp, ConstantAngleOp
 from inconspiquous.dialects.gate import XZOp

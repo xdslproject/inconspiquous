@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from xdsl.ir import ParametrizedAttribute
 
 from inconspiquous.constraints import SizedAttribute

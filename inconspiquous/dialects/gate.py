@@ -1,12 +1,14 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import ClassVar, Literal
 
 from xdsl.dialects.builtin import (
-    IntAttr,
     AnyFloatConstr,
-    i1,
+    IntAttr,
+    IntAttrConstraint,
     IntegerType,
+    i1,
 )
 from xdsl.interfaces import HasCanonicalizationPatternsInterface, HasFolderInterface
 from xdsl.ir import (
@@ -18,11 +20,11 @@ from xdsl.ir import (
 )
 from xdsl.irdl import (
     AnyInt,
-    BaseAttr,
     AttrConstraint,
-    IRDLOperation,
+    BaseAttr,
     IntConstraint,
     IntVarConstraint,
+    IRDLOperation,
     ParamAttrConstraint,
     VarConstraint,
     base,
@@ -38,16 +40,15 @@ from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
 from xdsl.traits import ConstantLike, Pure
-from xdsl.dialects.builtin import IntAttrConstraint
 
+from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.dialects.angle import AngleAttr, AngleType
 from inconspiquous.gates import (
     GateAttr,
     SingleQubitCliffordGate,
-    TwoQubitCliffordGate,
     SingleQubitGate,
+    TwoQubitCliffordGate,
 )
-from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.gates.core import (
     CliffordGateAttr,
     PauliGate,

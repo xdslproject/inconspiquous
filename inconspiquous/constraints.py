@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Mapping
+
 from typing_extensions import TypeVar
 from xdsl.ir import Attribute, VerifyException
 from xdsl.irdl import (

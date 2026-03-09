@@ -1,11 +1,11 @@
+from xdsl.dialects import llvm
 from xdsl.ir import dataclass, field
 from xdsl.parser import Context, ModuleOp
 from xdsl.passes import ModulePass
-from xdsl.dialects import llvm
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     TypeConversionPattern,
     attr_type_rewrite_pattern,

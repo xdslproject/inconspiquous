@@ -1,5 +1,6 @@
 from contextlib import redirect_stdout
 from io import StringIO
+
 from inconspiquous.tools.quopt_main import QuoptMain
 
 

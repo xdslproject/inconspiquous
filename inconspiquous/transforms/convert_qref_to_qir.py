@@ -1,18 +1,19 @@
 from xdsl.dialects import arith
-from xdsl.parser import Context, ModuleOp
 from xdsl.dialects.builtin import Float64Type, FloatAttr
+from xdsl.parser import Context, ModuleOp
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
     GreedyRewritePatternApplier,
-    PatternRewriteWalker,
     PatternRewriter,
+    PatternRewriteWalker,
     RewritePattern,
     TypeConversionPattern,
     attr_type_rewrite_pattern,
     op_type_rewrite_pattern,
 )
 from xdsl.transforms.dead_code_elimination import DeadCodeElimination
-from inconspiquous.dialects import qref, qir, angle
+
+from inconspiquous.dialects import angle, qir, qref, qu
 from inconspiquous.dialects.gate import (
     CRXGate,
     CRYGate,
@@ -46,7 +47,6 @@ from inconspiquous.dialects.measurement import (
     XYDynMeasurementOp,
     XYMeasurementAttr,
 )
-from inconspiquous.dialects import qu
 
 
 class QRefTypeToQIRPattern(TypeConversionPattern):
