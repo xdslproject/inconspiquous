@@ -406,7 +406,7 @@ class SOp(SingleQubitOperation):
 @irdl_op_definition
 class SAdjOp(SingleQubitOperation):
     """
-    MLIR equivalent of __quantum__qis__s_adj
+    MLIR equivalent of __quantum__qis__s__adj
     """
 
     name = "qir.s_adj"
