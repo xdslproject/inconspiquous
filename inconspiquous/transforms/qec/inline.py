@@ -12,7 +12,6 @@ from xdsl.pattern_rewriter import (
 from xdsl.rewriter import InsertPoint
 
 from inconspiquous.dialects.gate import (
-    ConstantGateOp,
     CXGate,
     CZGate,
     HadamardGate,
@@ -20,6 +19,7 @@ from inconspiquous.dialects.gate import (
     XGate,
     ZGate,
 )
+from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.qec import PerfectCode5QubitCorrectionAttr
 from inconspiquous.dialects.qssa import GateOp
 from inconspiquous.utils.qssa_builder import QSSABuilder, QubitRef
@@ -76,12 +76,12 @@ class PerfectCode5QubitInliner(RewritePattern):
             QSSABuilder.gate(HadamardGate(), a4)
             s4 = QSSABuilder.measure(a4, name_hint="s4")
 
-            x = ConstantGateOp(XGate()).out
+            x = ConstantInstrumentOp(XGate()).out
             x.name_hint = "x"
-            z = ConstantGateOp(ZGate()).out
+            z = ConstantInstrumentOp(ZGate()).out
             z.name_hint = "z"
 
-            i = ConstantGateOp(IdentityGate(1)).out
+            i = ConstantInstrumentOp(IdentityGate(1)).out
             i.name_hint = "id"
 
             true = ConstantOp.from_int_and_width(1, 1)

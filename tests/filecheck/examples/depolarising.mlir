@@ -2,35 +2,35 @@
 
 // CHECK:      func.func @depolarising_dyn(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
-// CHECK-NEXT:   %id = gate.constant #gate.id<1>
+// CHECK-NEXT:   %id = instrument.constant #gate.id<1>
 // CHECK-NEXT:   %p2 = prob.uniform : i2
-// CHECK-NEXT:   %x = gate.constant #gate.x
-// CHECK-NEXT:   %y = gate.constant #gate.y
-// CHECK-NEXT:   %z = gate.constant #gate.z
-// CHECK-NEXT:   %choice = varith.switch %p2 : i2 -> !gate.type<1>, [
+// CHECK-NEXT:   %x = instrument.constant #gate.x
+// CHECK-NEXT:   %y = instrument.constant #gate.y
+// CHECK-NEXT:   %z = instrument.constant #gate.z
+// CHECK-NEXT:   %choice = varith.switch %p2 : i2 -> !instrument.type<1>, [
 // CHECK-NEXT:     default: %id,
 // CHECK-NEXT:     1: %x,
 // CHECK-NEXT:     -2: %y,
 // CHECK-NEXT:     -1: %z
 // CHECK-NEXT:   ]
-// CHECK-NEXT:   %g = arith.select %p, %choice, %id : !gate.type<1>
+// CHECK-NEXT:   %g = arith.select %p, %choice, %id : !instrument.type<1>
 // CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q
 // CHECK-NEXT:   func.return %q1 : !qu.bit
 // CHECK-NEXT: }
 func.func @depolarising_dyn(%q : !qu.bit) -> !qu.bit {
   %p = prob.bernoulli 0.1
-  %id = gate.constant #gate.id<1>
+  %id = instrument.constant #gate.id<1>
   %p2 = prob.uniform : i2
-  %x = gate.constant #gate.x
-  %y = gate.constant #gate.y
-  %z = gate.constant #gate.z
-  %choice = varith.switch %p2 : i2 -> !gate.type<1>, [
+  %x = instrument.constant #gate.x
+  %y = instrument.constant #gate.y
+  %z = instrument.constant #gate.z
+  %choice = varith.switch %p2 : i2 -> !instrument.type<1>, [
     default: %id,
     1: %x,
     2: %y,
     3: %z
   ]
-  %g = arith.select %p, %choice, %id : !gate.type<1>
+  %g = arith.select %p, %choice, %id : !instrument.type<1>
   %q1 = qssa.dyn_gate<%g> %q
   func.return %q1 : !qu.bit
 }

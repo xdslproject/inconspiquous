@@ -38,7 +38,7 @@
 // -----
 
 // CHECK: Only expected dynamic Pauli gates, found #gate.cz
-%g = gate.constant #gate.cz
+%g = instrument.constant #gate.cz
 
 // -----
 

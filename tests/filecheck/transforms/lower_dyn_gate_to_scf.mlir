@@ -1,12 +1,12 @@
 // RUN: quopt %s -p lower-dyn-gate-to-scf
 
-%g1, %g2, %g3, %g4 = "test.op"() : () -> (!gate.type<1>,!gate.type<1>,!gate.type<1>,!gate.type<1>)
+%g1, %g2, %g3, %g4 = "test.op"() : () -> (!instrument.type<1>,!instrument.type<1>,!instrument.type<1>,!instrument.type<1>)
 
 %b = "test.op"() : () -> i1
-%g5 = arith.select %b, %g1, %g2 : !gate.type<1>
+%g5 = arith.select %b, %g1, %g2 : !instrument.type<1>
 
 %i = "test.op"() : () -> i2
-%g6 = varith.switch %i : i2 -> !gate.type<1>, [
+%g6 = varith.switch %i : i2 -> !instrument.type<1>, [
   default: %g1,
   1: %g2,
   2: %g3,

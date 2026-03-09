@@ -561,7 +561,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -796,14 +796,14 @@ requires-dist = [
     { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.380" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.3" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9.0" },
-    { name = "xdsl", extras = ["gui"], git = "https://github.com/xdslproject/xdsl" },
+    { name = "xdsl", extras = ["gui"], git = "https://github.com/xdslproject/xdsl?branch=alexarice%2Frange-0" },
 ]
 provides-extras = ["dev"]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "inconspiquous", extras = ["dev"] },
-    { name = "xdsl", extras = ["dev"], git = "https://github.com/xdslproject/xdsl" },
+    { name = "xdsl", extras = ["dev"], git = "https://github.com/xdslproject/xdsl?branch=alexarice%2Frange-0" },
 ]
 
 [[package]]
@@ -2801,8 +2801,8 @@ wheels = [
 
 [[package]]
 name = "xdsl"
-version = "0.57.3.dev9+g09abb1766"
-source = { git = "https://github.com/xdslproject/xdsl#09abb1766312f604eb71b54d0b488707d8e8cf78" }
+version = "0.57.3.dev11+ga2cd952a4"
+source = { git = "https://github.com/xdslproject/xdsl?branch=alexarice%2Frange-0#a2cd952a452c2528be59b69eb8f0c13435e0d5dd" }
 dependencies = [
     { name = "immutabledict" },
     { name = "ordered-set" },

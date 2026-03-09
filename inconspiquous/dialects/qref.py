@@ -4,7 +4,9 @@ from xdsl.dialects.builtin import i1
 from xdsl.interfaces import HasCanonicalizationPatternsInterface
 from xdsl.ir import Block, Dialect, Operation, Region, SSAValue
 from xdsl.irdl import (
+    AnyAttr,
     AnyInt,
+    EqIntConstraint,
     IntVarConstraint,
     IRDLOperation,
     RangeOf,
@@ -22,7 +24,11 @@ from xdsl.pattern_rewriter import RewritePattern
 from xdsl.traits import HasParent, IsTerminator
 
 from inconspiquous.constraints import SizedAttributeConstraint
-from inconspiquous.dialects.gate import GateAttr, GateType
+from inconspiquous.dialects.instrument import (
+    InstrumentAttr,
+    InstrumentConstraint,
+    InstrumentType,
+)
 from inconspiquous.dialects.measurement import CompBasisMeasurementAttr, MeasurementType
 from inconspiquous.dialects.qu import BitType
 from inconspiquous.measurement import MeasurementAttr
@@ -34,13 +40,15 @@ class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    gate = prop_def(SizedAttributeConstraint(GateAttr, _I))
+    gate = prop_def(
+        InstrumentConstraint(_I, RangeOf(AnyAttr()).of_length(EqIntConstraint(0)))
+    )
 
     ins = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
 
     assembly_format = "`<` $gate `>` $ins attr-dict"
 
-    def __init__(self, gate: GateAttr, *ins: SSAValue | Operation):
+    def __init__(self, gate: InstrumentAttr, *ins: SSAValue | Operation):
         super().__init__(
             operands=[ins],
             properties={
@@ -61,7 +69,9 @@ class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    gate = operand_def(GateType.constr(_I))
+    gate = operand_def(
+        InstrumentType.constr(_I, RangeOf(AnyAttr()).of_length(EqIntConstraint(0)))
+    )
 
     ins = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
 
@@ -151,7 +161,9 @@ class CircuitOp(IRDLOperation):
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
     body = region_def("single_block", entry_args=RangeOf(eq(BitType())).of_length(_I))
-    result = result_def(GateType.constr(_I))
+    result = result_def(
+        InstrumentType.constr(_I, RangeOf(AnyAttr()).of_length(EqIntConstraint(0)))
+    )
 
     assembly_format = "`(` `)` `(` $body `)` `:` `(` `)` `->` type($result) attr-dict"
 
@@ -161,7 +173,7 @@ class CircuitOp(IRDLOperation):
 
         super().__init__(
             regions=(region,),
-            result_types=(GateType(num_qubits),),
+            result_types=(InstrumentType(num_qubits),),
         )
 
     def verify_(self):

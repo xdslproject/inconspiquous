@@ -12,7 +12,6 @@ from xdsl.pattern_rewriter import (
 from xdsl.rewriter import InsertPoint
 
 from inconspiquous.dialects.gate import (
-    ConstantGateOp,
     IdentityGate,
     PhaseDaggerGate,
     PhaseGate,
@@ -22,6 +21,7 @@ from inconspiquous.dialects.gate import (
     YGate,
     ZGate,
 )
+from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.qssa import DynGateOp, GateOp
 
 
@@ -37,7 +37,7 @@ class ToDynGate(RewritePattern):
         ):
             return
 
-        constant = ConstantGateOp(op.gate)
+        constant = ConstantInstrumentOp(op.gate)
         constant.out.name_hint = "g"
         rewriter.insert_op(constant, InsertPoint.before(op))
 
@@ -57,8 +57,8 @@ class ToXZSGate(RewritePattern):
         return n
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: ConstantGateOp, rewriter: PatternRewriter):
-        match op.gate:
+    def match_and_rewrite(self, op: ConstantInstrumentOp, rewriter: PatternRewriter):
+        match op.instrument:
             case IdentityGate(qubits=IntAttr(1)):
                 false = self.get_const(False, rewriter)
                 rewriter.replace_matched_op(XZOp(false, false))

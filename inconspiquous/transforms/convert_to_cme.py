@@ -11,13 +11,13 @@ from xdsl.pattern_rewriter import (
 
 from inconspiquous.dialects import angle, measurement, qssa, qu
 from inconspiquous.dialects.gate import (
-    ConstantGateOp,
     CZGate,
     DynJGate,
     IdentityGate,
     JGate,
     XGate,
 )
+from inconspiquous.dialects.instrument import ConstantInstrumentOp
 
 """
 CME is a normal form for MBQC patterns, which uses only
@@ -50,8 +50,8 @@ class ToCMEPattern(RewritePattern):
             cz.outs[0], measurement=measurement.XYMeasurementAttr(-op.gate.angle)
         )
 
-        x = ConstantGateOp(XGate())
-        i = ConstantGateOp(IdentityGate(1))
+        x = ConstantInstrumentOp(XGate())
+        i = ConstantInstrumentOp(IdentityGate(1))
 
         x_sel = arith.SelectOp(m.outs[0], x, i)
 
@@ -79,8 +79,8 @@ class DynToCMEPattern(RewritePattern):
 
         m = qssa.DynMeasureOp(cz.outs[0], measurement=dyn_measure)
 
-        x = ConstantGateOp(XGate())
-        i = ConstantGateOp(IdentityGate(1))
+        x = ConstantInstrumentOp(XGate())
+        i = ConstantInstrumentOp(IdentityGate(1))
 
         x_sel = arith.SelectOp(m.outs[0], x, i)
 

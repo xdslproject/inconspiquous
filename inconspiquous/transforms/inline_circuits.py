@@ -26,7 +26,7 @@ class InlineCircuitPattern(RewritePattern):
       %0 = qssa.gate<#gate.x> %arg0
       %1 = qssa.gate<#gate.y> %arg1
       qssa.return %0, %1
-    }) : () -> !gate.type<2>
+    }) : () -> !instrument.type<2>
     %result0, %result1 = qssa.dyn_gate<%circuit> %in0, %in1
     ```
 
@@ -37,7 +37,7 @@ class InlineCircuitPattern(RewritePattern):
       %0 = qssa.gate<#gate.x> %arg0
       %1 = qssa.gate<#gate.y> %arg1
       qssa.return %0, %1
-    }) : () -> !gate.type<2>
+    }) : () -> !instrument.type<2>
     %0 = qssa.gate<#gate.x> %in0
     %1 = qssa.gate<#gate.y> %in1
     ```
