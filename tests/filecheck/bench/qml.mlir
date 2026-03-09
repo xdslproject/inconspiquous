@@ -19,19 +19,19 @@ func.func @qml(%ql: !qu.bit, %qo: !qu.bit, %w: !angle.type, %b: !angle.type) -> 
   %ql_res, %qo_res = scf.while(%ql_1 = %ql, %qo_1 = %qo)
     : (!qu.bit, !qu.bit) -> (!qu.bit, !qu.bit) {
     %qa = qu.alloc
-    %ql_2, %qa_1 = qssa.dyn_gate<%crxw> %ql_1, %qa
-    %qa_2 = qssa.dyn_gate<%rxb> %qa_1
-    %qa_3, %qo_2 = qssa.gate<#gate.cx> %qa_2, %qo_1
-    %qa_4 = qssa.gate<#gate.s_dagger> %qa_3
-    %qa_5 = qssa.dyn_gate<%rxbn> %qa_4
-    %ql_3, %qa_6 = qssa.dyn_gate<%crxwn> %ql_2, %qa_5
+    %ql_2, %qa_1 = qssa.dyn_apply<%crxw> %ql_1, %qa
+    %qa_2 = qssa.dyn_apply<%rxb> %qa_1
+    %qa_3, %qo_2 = qssa.apply<#gate.cx> %qa_2, %qo_1
+    %qa_4 = qssa.apply<#gate.s_dagger> %qa_3
+    %qa_5 = qssa.dyn_apply<%rxbn> %qa_4
+    %ql_3, %qa_6 = qssa.dyn_apply<%crxwn> %ql_2, %qa_5
 
     %m = qssa.measure %qa_6
 
     scf.condition(%m) %ql_3, %qo_2 : !qu.bit, !qu.bit
   } do {
     ^bb0(%ql_1 : !qu.bit, %qo_1 : !qu.bit):
-    %qo_2 = qssa.gate<#gate.rx<0.5pi>> %qo_1
+    %qo_2 = qssa.apply<#gate.rx<0.5pi>> %qo_1
     scf.yield %ql_1, %qo_2 : !qu.bit, !qu.bit
   }
   func.return %ql_res, %qo_res : !qu.bit, !qu.bit

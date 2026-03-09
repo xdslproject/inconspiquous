@@ -7,7 +7,7 @@ from xdsl.dialects.builtin import ModuleOp
 from xdsl.ir import Block, Region
 
 from inconspiquous.dialects.gate import XGate, YGate, ZGate
-from inconspiquous.dialects.qssa import CircuitOp, DynGateOp, GateOp, ReturnOp
+from inconspiquous.dialects.qssa import ApplyOp, CircuitOp, DynApplyOp, ReturnOp
 from inconspiquous.dialects.qu import AllocOp, BitType
 from inconspiquous.transforms.inline_circuits import InlineCircuitsPass
 
@@ -42,7 +42,7 @@ def test_circuit_inlining():
     circuit_block = Block(arg_types=[BitType()])
 
     # Add X gate operation inside the circuit
-    x_gate = GateOp(XGate(), circuit_block.args[0])
+    x_gate = ApplyOp(XGate(), circuit_block.args[0])
     circuit_block.add_op(x_gate)
 
     # Return the result of the X gate
@@ -57,7 +57,7 @@ def test_circuit_inlining():
     input_alloc = AllocOp()  # This creates a qubit
 
     # Create dyn_gate operation using the circuit
-    dyn_gate = DynGateOp(circuit.result, input_alloc.results[0])
+    dyn_gate = DynApplyOp(circuit.result, input_alloc.results[0])
 
     # Create module with all operations
     module = ModuleOp([input_alloc, circuit, dyn_gate])
@@ -70,8 +70,8 @@ def test_circuit_inlining():
     ops_after = list(module.body.ops)
 
     # Verify that inlining happened correctly
-    gate_ops = [op for op in ops_after if isinstance(op, GateOp)]
-    dyn_gate_ops = [op for op in ops_after if isinstance(op, DynGateOp)]
+    gate_ops = [op for op in ops_after if isinstance(op, ApplyOp)]
+    dyn_gate_ops = [op for op in ops_after if isinstance(op, DynApplyOp)]
     alloc_ops = [op for op in ops_after if isinstance(op, AllocOp)]
 
     # After inlining, we should have:
@@ -113,11 +113,11 @@ def test_complex_circuit_inlining():
     circuit_block = Block(arg_types=[BitType()])
 
     # Add X gate operation inside the circuit
-    x_gate = GateOp(XGate(), circuit_block.args[0])
+    x_gate = ApplyOp(XGate(), circuit_block.args[0])
     circuit_block.add_op(x_gate)
 
     # Add Z gate operation on the result of X gate
-    z_gate = GateOp(ZGate(), x_gate.results[0])
+    z_gate = ApplyOp(ZGate(), x_gate.results[0])
     circuit_block.add_op(z_gate)
 
     # Return the result of the Z gate
@@ -132,7 +132,7 @@ def test_complex_circuit_inlining():
     input_alloc = AllocOp()
 
     # Create dyn_gate operation using the circuit
-    dyn_gate = DynGateOp(circuit.result, input_alloc.results[0])
+    dyn_gate = DynApplyOp(circuit.result, input_alloc.results[0])
 
     # Create module with all operations
     module = ModuleOp([input_alloc, circuit, dyn_gate])
@@ -145,8 +145,8 @@ def test_complex_circuit_inlining():
     ops_after = list(module.body.ops)
 
     # Verify that inlining happened correctly
-    gate_ops = [op for op in ops_after if isinstance(op, GateOp)]
-    dyn_gate_ops = [op for op in ops_after if isinstance(op, DynGateOp)]
+    gate_ops = [op for op in ops_after if isinstance(op, ApplyOp)]
+    dyn_gate_ops = [op for op in ops_after if isinstance(op, DynApplyOp)]
 
     # After inlining, we should have:
     # - 2 gate operations (X and Z from the circuit)
@@ -172,11 +172,11 @@ def test_two_qubit_circuit_inlining():
     circuit_block = Block(arg_types=[BitType(), BitType()])
 
     # Add X gate to first qubit
-    x_gate = GateOp(XGate(), circuit_block.args[0])
+    x_gate = ApplyOp(XGate(), circuit_block.args[0])
     circuit_block.add_op(x_gate)
 
     # Add Y gate to second qubit
-    y_gate = GateOp(YGate(), circuit_block.args[1])
+    y_gate = ApplyOp(YGate(), circuit_block.args[1])
     circuit_block.add_op(y_gate)
 
     # Return both results
@@ -192,7 +192,7 @@ def test_two_qubit_circuit_inlining():
     input_alloc2 = AllocOp()
 
     # Create dyn_gate operation using the circuit
-    dyn_gate = DynGateOp(
+    dyn_gate = DynApplyOp(
         circuit.results[0], input_alloc1.results[0], input_alloc2.results[0]
     )
 
@@ -205,8 +205,8 @@ def test_two_qubit_circuit_inlining():
 
     # Verify that inlining happened correctly
     ops_after = list(module.body.ops)
-    gate_ops = [op for op in ops_after if isinstance(op, GateOp)]
-    dyn_gate_ops = [op for op in ops_after if isinstance(op, DynGateOp)]
+    gate_ops = [op for op in ops_after if isinstance(op, ApplyOp)]
+    dyn_gate_ops = [op for op in ops_after if isinstance(op, DynApplyOp)]
 
     assert len(gate_ops) == 2, (
         f"Expected exactly 2 gate operations after inlining, got {len(gate_ops)}"

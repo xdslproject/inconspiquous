@@ -25,19 +25,19 @@ func.func @rwpe(%mu0 : !angle.type, %sigma0 : f64, %theta : !angle.type, %iter: 
     %t = arith.divf %c1_float, %sigma : f64
 
     %a = qu.alloc
-    %a_1 = qssa.gate<#gate.h> %a
+    %a_1 = qssa.apply<#gate.h> %a
 
     %mt = arith.negf %t : f64
     %angle1 = angle.scale %winv, %mt
     %rz1 = gate.dyn_rz<%angle1>
-    %a_2 = qssa.dyn_gate<%rz1> %a_1
+    %a_2 = qssa.dyn_apply<%rz1> %a_1
 
     %angle2 = angle.scale %theta, %t
     %rz2 = gate.dyn_rz<%angle2>
     %crz = gate.dyn_crz<%angle2>
-    %a_3, %q_2 = qssa.dyn_gate<%crz> %a_2, %q_1
+    %a_3, %q_2 = qssa.dyn_apply<%crz> %a_2, %q_1
 
-    %a_4 = qssa.gate<#gate.h> %a_3
+    %a_4 = qssa.apply<#gate.h> %a_3
     %m = qssa.measure %a_4
 
     %sigma_over_root_e = arith.divf %sigma, %root_e : f64

@@ -20,12 +20,12 @@ func.func @qaoa_problem(
 ) -> (!qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit) {
   %g = gate.dyn_rzz<%theta>
 
-  %q1_1, %q2_1 = qssa.dyn_gate<%g> %q1, %q2
-  %q2_2, %q3_1 = qssa.dyn_gate<%g> %q2_1, %q3
-  %q3_2, %q4_1 = qssa.dyn_gate<%g> %q3_1, %q4
-  %q4_2, %q1_2 = qssa.dyn_gate<%g> %q4_1, %q1_1
-  %q1_3, %q5_1 = qssa.dyn_gate<%g> %q1_2, %q5
-  %q2_3, %q5_2 = qssa.dyn_gate<%g> %q2_2, %q5_1
+  %q1_1, %q2_1 = qssa.dyn_apply<%g> %q1, %q2
+  %q2_2, %q3_1 = qssa.dyn_apply<%g> %q2_1, %q3
+  %q3_2, %q4_1 = qssa.dyn_apply<%g> %q3_1, %q4
+  %q4_2, %q1_2 = qssa.dyn_apply<%g> %q4_1, %q1_1
+  %q1_3, %q5_1 = qssa.dyn_apply<%g> %q1_2, %q5
+  %q2_3, %q5_2 = qssa.dyn_apply<%g> %q2_2, %q5_1
 
   func.return %q1_3, %q2_3, %q3_2, %q4_2, %q5_2 : !qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit
 }
@@ -54,11 +54,11 @@ func.func @qaoa_mixer(
 ) -> (!qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit) {
   %g = gate.dyn_rx<%beta>
 
-  %q1_1 = qssa.dyn_gate<%g> %q1
-  %q2_1 = qssa.dyn_gate<%g> %q2
-  %q3_1 = qssa.dyn_gate<%g> %q3
-  %q4_1 = qssa.dyn_gate<%g> %q4
-  %q5_1 = qssa.dyn_gate<%g> %q5
+  %q1_1 = qssa.dyn_apply<%g> %q1
+  %q2_1 = qssa.dyn_apply<%g> %q2
+  %q3_1 = qssa.dyn_apply<%g> %q3
+  %q4_1 = qssa.dyn_apply<%g> %q4
+  %q5_1 = qssa.dyn_apply<%g> %q5
 
   func.return %q1_1, %q2_1, %q3_1, %q4_1, %q5_1 : !qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit
 }

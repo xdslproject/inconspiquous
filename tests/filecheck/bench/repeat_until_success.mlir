@@ -7,11 +7,11 @@ func.func @a(%q : !qu.bit) -> !qu.bit {
     %a1 = qu.alloc<#qu.plus>
     %a2 = qu.alloc<#qu.plus>
 
-    %a1_1, %a2_1, %q_2 = qssa.gate<#gate.toffoli> %a1, %a2, %q_1
-    %q_3 = qssa.gate<#gate.s> %q_2
-    %a1_2, %a2_2, %q_4 = qssa.gate<#gate.toffoli> %a1_1, %a2_1, %q_3
+    %a1_1, %a2_1, %q_2 = qssa.apply<#gate.toffoli> %a1, %a2, %q_1
+    %q_3 = qssa.apply<#gate.s> %q_2
+    %a1_2, %a2_2, %q_4 = qssa.apply<#gate.toffoli> %a1_1, %a2_1, %q_3
 
-    %q_5 = qssa.gate<#gate.z> %q_4
+    %q_5 = qssa.apply<#gate.z> %q_4
 
     %m1 = qssa.measure<#measurement.x_basis> %a1_2
     %m2 = qssa.measure<#measurement.x_basis> %a2_2
@@ -61,11 +61,11 @@ func.func @b(%q : !qu.bit) -> !qu.bit {
     %a2 = qu.alloc<#qu.plus>
     %a3 = qu.alloc
 
-    %a1_1, %a2_1, %a3_1 = qssa.gate<#gate.toffoli> %a1, %a2, %a3
-    %a3_2, %q_2 = qssa.gate<#gate.cx> %a3_1, %q_1
-    %q_3 = qssa.gate<#gate.s> %q_2
-    %a3_3, %q_4 = qssa.gate<#gate.cx> %a3_2, %q_3
-    %q_5 = qssa.gate<#gate.z> %q_4
+    %a1_1, %a2_1, %a3_1 = qssa.apply<#gate.toffoli> %a1, %a2, %a3
+    %a3_2, %q_2 = qssa.apply<#gate.cx> %a3_1, %q_1
+    %q_3 = qssa.apply<#gate.s> %q_2
+    %a3_3, %q_4 = qssa.apply<#gate.cx> %a3_2, %q_3
+    %q_5 = qssa.apply<#gate.z> %q_4
 
     %m3 = qssa.measure<#measurement.x_basis> %a3_3
 
@@ -73,7 +73,7 @@ func.func @b(%q : !qu.bit) -> !qu.bit {
     %id = instrument.constant #gate.id<2>
     %g = arith.select %m3, %cz, %id : !instrument.type<2>
 
-    %a1_2, %a2_2 = qssa.dyn_gate<%g> %a1_1, %a2_1
+    %a1_2, %a2_2 = qssa.dyn_apply<%g> %a1_1, %a2_1
 
     %m1 = qssa.measure<#measurement.x_basis> %a1_2
     %m2 = qssa.measure<#measurement.x_basis> %a2_2
@@ -133,17 +133,17 @@ func.func @b(%q : !qu.bit) -> !qu.bit {
 
 func.func @c(%q : !qu.bit) -> !qu.bit {
   %res = scf.while (%q_1 = %q) : (!qu.bit) -> !qu.bit {
-    %q_2 = qssa.gate<#gate.t> %q_1
-    %q_3 = qssa.gate<#gate.z> %q_2
+    %q_2 = qssa.apply<#gate.t> %q_1
+    %q_3 = qssa.apply<#gate.z> %q_2
 
     %a1 = qu.alloc<#qu.plus>
     %a2 = qu.alloc<#qu.plus>
 
-    %a1_1 = qssa.gate<#gate.t_dagger> %a1
-    %a2_1, %a1_2 = qssa.gate<#gate.cx> %a2, %a1_1
-    %q_4, %a2_2 = qssa.gate<#gate.cx> %q_3, %a2_1
-    %a1_3 = qssa.gate<#gate.t> %a1_2
-    %a2_3 = qssa.gate<#gate.t> %a2_2
+    %a1_1 = qssa.apply<#gate.t_dagger> %a1
+    %a2_1, %a1_2 = qssa.apply<#gate.cx> %a2, %a1_1
+    %q_4, %a2_2 = qssa.apply<#gate.cx> %q_3, %a2_1
+    %a1_3 = qssa.apply<#gate.t> %a1_2
+    %a2_3 = qssa.apply<#gate.t> %a2_2
 
     %m1 = qssa.measure<#measurement.x_basis> %a1_3
     %m2 = qssa.measure<#measurement.x_basis> %a2_3

@@ -25,38 +25,38 @@ from inconspiquous.dialects.gate import (
 
 class ToCZJPattern(RewritePattern):
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qssa.GateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: qssa.ApplyOp, rewriter: PatternRewriter):
         match op.gate:
             case CXGate():
-                j1 = qssa.GateOp(JGate(0), op.ins[1])
-                cz = qssa.GateOp(CZGate(), op.ins[0], j1)
-                j2 = qssa.GateOp(JGate(0), cz.outs[1])
+                j1 = qssa.ApplyOp(JGate(0), op.ins[1])
+                cz = qssa.ApplyOp(CZGate(), op.ins[0], j1)
+                j2 = qssa.ApplyOp(JGate(0), cz.outs[1])
                 rewriter.replace_matched_op((j1, cz, j2), (cz.outs[0], j2.outs[0]))
             case ZGate():
-                j1 = qssa.GateOp(JGate(0), op.ins[0])
-                j2 = qssa.GateOp(JGate(1), j1)
+                j1 = qssa.ApplyOp(JGate(0), op.ins[0])
+                j2 = qssa.ApplyOp(JGate(1), j1)
                 rewriter.replace_matched_op((j1, j2))
             case XGate():
-                j1 = qssa.GateOp(JGate(1), op.ins[0])
-                j2 = qssa.GateOp(JGate(0), j1)
+                j1 = qssa.ApplyOp(JGate(1), op.ins[0])
+                j2 = qssa.ApplyOp(JGate(0), j1)
                 rewriter.replace_matched_op((j1, j2))
             case YGate():
-                j1 = qssa.GateOp(JGate(1), op.ins[0])
-                j2 = qssa.GateOp(JGate(1), j1)
+                j1 = qssa.ApplyOp(JGate(1), op.ins[0])
+                j2 = qssa.ApplyOp(JGate(1), j1)
                 rewriter.replace_matched_op((j1, j2))
             case HadamardGate():
-                rewriter.replace_matched_op(qssa.GateOp(JGate(0), op.ins[0]))
+                rewriter.replace_matched_op(qssa.ApplyOp(JGate(0), op.ins[0]))
             case PhaseGate():
-                j1 = qssa.GateOp(JGate(0), op.ins[0])
-                j2 = qssa.GateOp(JGate(0.5), j1)
+                j1 = qssa.ApplyOp(JGate(0), op.ins[0])
+                j2 = qssa.ApplyOp(JGate(0.5), j1)
                 rewriter.replace_matched_op((j1, j2))
             case TGate():
-                j1 = qssa.GateOp(JGate(0), op.ins[0])
-                j2 = qssa.GateOp(JGate(0.25), j1)
+                j1 = qssa.ApplyOp(JGate(0), op.ins[0])
+                j2 = qssa.ApplyOp(JGate(0.25), j1)
                 rewriter.replace_matched_op((j1, j2))
             case RZGate():
-                j1 = qssa.GateOp(JGate(0), op.ins[0])
-                j2 = qssa.GateOp(JGate(op.gate.angle), j1)
+                j1 = qssa.ApplyOp(JGate(0), op.ins[0])
+                j2 = qssa.ApplyOp(JGate(op.gate.angle), j1)
                 rewriter.replace_matched_op((j1, j2))
             case _:
                 return

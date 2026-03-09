@@ -40,26 +40,26 @@ func.func @logical_plus() {
 
   // Measure Z stabilisers (using order in https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.7.033074)
 
-  %q02_1, %a1_1 = qssa.gate<#gate.cx> %q02, %a1
-  %q09_1, %a2_1 = qssa.gate<#gate.cx> %q09, %a2
-  %q04_1, %a4_1 = qssa.gate<#gate.cx> %q04, %a4
-  %q11_1, %a5_1 = qssa.gate<#gate.cx> %q11, %a5
-  %q06_1, %a7_1 = qssa.gate<#gate.cx> %q06, %a7
-  %q08_1, %a1_2 = qssa.gate<#gate.cx> %q08, %a1_1
-  %q03_1, %a3_1 = qssa.gate<#gate.cx> %q03, %a3
-  %q10_1, %a4_2 = qssa.gate<#gate.cx> %q10, %a4_1
-  %q05_1, %a6_1 = qssa.gate<#gate.cx> %q05, %a6
-  %q12_1, %a7_2 = qssa.gate<#gate.cx> %q12, %a7_1
-  %q01_1, %a1_3 = qssa.gate<#gate.cx> %q01, %a1_2
-  %q08_2, %a2_2 = qssa.gate<#gate.cx> %q08_1, %a2_1
-  %q03_2, %a4_3 = qssa.gate<#gate.cx> %q03_1, %a4_2
-  %q10_2, %a5_2 = qssa.gate<#gate.cx> %q10_1, %a5_1
-  %q05_2, %a7_3 = qssa.gate<#gate.cx> %q05_1, %a7_2
-  %q07_1, %a1_4 = qssa.gate<#gate.cx> %q07, %a1_3
-  %q02_2, %a3_2 = qssa.gate<#gate.cx> %q02_1, %a3_1
-  %q09_2, %a4_4 = qssa.gate<#gate.cx> %q09_1, %a4_3
-  %q04_2, %a6_2 = qssa.gate<#gate.cx> %q04_1, %a6_1
-  %q11_2, %a7_4 = qssa.gate<#gate.cx> %q11_1, %a7_3
+  %q02_1, %a1_1 = qssa.apply<#gate.cx> %q02, %a1
+  %q09_1, %a2_1 = qssa.apply<#gate.cx> %q09, %a2
+  %q04_1, %a4_1 = qssa.apply<#gate.cx> %q04, %a4
+  %q11_1, %a5_1 = qssa.apply<#gate.cx> %q11, %a5
+  %q06_1, %a7_1 = qssa.apply<#gate.cx> %q06, %a7
+  %q08_1, %a1_2 = qssa.apply<#gate.cx> %q08, %a1_1
+  %q03_1, %a3_1 = qssa.apply<#gate.cx> %q03, %a3
+  %q10_1, %a4_2 = qssa.apply<#gate.cx> %q10, %a4_1
+  %q05_1, %a6_1 = qssa.apply<#gate.cx> %q05, %a6
+  %q12_1, %a7_2 = qssa.apply<#gate.cx> %q12, %a7_1
+  %q01_1, %a1_3 = qssa.apply<#gate.cx> %q01, %a1_2
+  %q08_2, %a2_2 = qssa.apply<#gate.cx> %q08_1, %a2_1
+  %q03_2, %a4_3 = qssa.apply<#gate.cx> %q03_1, %a4_2
+  %q10_2, %a5_2 = qssa.apply<#gate.cx> %q10_1, %a5_1
+  %q05_2, %a7_3 = qssa.apply<#gate.cx> %q05_1, %a7_2
+  %q07_1, %a1_4 = qssa.apply<#gate.cx> %q07, %a1_3
+  %q02_2, %a3_2 = qssa.apply<#gate.cx> %q02_1, %a3_1
+  %q09_2, %a4_4 = qssa.apply<#gate.cx> %q09_1, %a4_3
+  %q04_2, %a6_2 = qssa.apply<#gate.cx> %q04_1, %a6_1
+  %q11_2, %a7_4 = qssa.apply<#gate.cx> %q11_1, %a7_3
 
   %s1 = qssa.measure %a1_4
   %s2 = qssa.measure %a2_2
@@ -73,31 +73,31 @@ func.func @logical_plus() {
   %c0 = arith.constant false
 
   %g1 = gate.xz %s1, %c0
-  %q02_3 = qssa.dyn_gate<%g1> %q02_2
+  %q02_3 = qssa.dyn_apply<%g1> %q02_2
 
   %g2 = gate.xz %s2, %c0
-  %q09_3 = qssa.dyn_gate<%g2> %q09_2
+  %q09_3 = qssa.dyn_apply<%g2> %q09_2
 
   %x3 = arith.xori %s1, %s3 : i1
   %g3 = gate.xz %x3, %c0
-  %q03_3 = qssa.dyn_gate<%g3> %q03_2
+  %q03_3 = qssa.dyn_apply<%g3> %q03_2
 
   %t4 = arith.xori %s2, %x3 : i1
   %x4 = arith.xori %t4, %s4 : i1
   %g4 = gate.xz %x4, %c0
-  %q04_3 = qssa.dyn_gate<%g4> %q04_2
+  %q04_3 = qssa.dyn_apply<%g4> %q04_2
 
   %g5 = gate.xz %s5, %c0
-  %q11_3 = qssa.dyn_gate<%g5> %q11_2
+  %q11_3 = qssa.dyn_apply<%g5> %q11_2
 
   %x6 = arith.xori %x4, %s6 : i1
   %g6 = gate.xz %x6, %c0
-  %q05_3 = qssa.dyn_gate<%g6> %q05_2
+  %q05_3 = qssa.dyn_apply<%g6> %q05_2
 
   %t7 = arith.xori %s5, %x6 : i1
   %x7 = arith.xori %t7, %s7 : i1
   %g7 = gate.xz %x7, %c0
-  %q06_2 = qssa.dyn_gate<%g7> %q06_1
+  %q06_2 = qssa.dyn_apply<%g7> %q06_1
 
   func.return
 }

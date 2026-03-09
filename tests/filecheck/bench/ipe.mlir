@@ -18,16 +18,16 @@ func.func @ipe(%theta: !angle.type, %m: i64) -> !angle.type {
     %mfactor = math.exp2 %mfloat : f64
 
     %a = qu.alloc
-    %a_1 = qssa.gate<#gate.h> %a
+    %a_1 = qssa.apply<#gate.h> %a
 
     %angle = angle.scale %theta, %factor
     %rx = gate.dyn_rx<%angle>
     %crx = gate.dyn_crx<%angle>
-    %a_2, %q_2 = qssa.dyn_gate<%crx> %a_1, %q_1
+    %a_2, %q_2 = qssa.dyn_apply<%crx> %a_1, %q_1
 
     %z = gate.dyn_rz<%phi>
-    %a_3 = qssa.dyn_gate<%z> %a_2
-    %a_4 = qssa.gate<#gate.h> %a_3
+    %a_3 = qssa.dyn_apply<%z> %a_2
+    %a_4 = qssa.apply<#gate.h> %a_3
     %measured = qssa.measure %a_4
 
     // Update phi

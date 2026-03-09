@@ -26,7 +26,7 @@ from inconspiquous.dialects.gate import (
 from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
 from inconspiquous.dialects.prob import UniformOp
-from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
+from inconspiquous.dialects.qssa import ApplyOp, DynApplyOp, MeasureOp
 
 
 class PadTGate(RewritePattern):
@@ -35,7 +35,7 @@ class PadTGate(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: ApplyOp, rewriter: PatternRewriter):
         if not isinstance(op.gate, TGate):
             return
         x_rand = UniformOp(i1)
@@ -45,18 +45,18 @@ class PadTGate(RewritePattern):
         z_gate = ConstantInstrumentOp(ZGate())
         phase_gate = ConstantInstrumentOp(PhaseGate())
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
-        pre_x = DynGateOp(pre_x_sel, *op.ins)
+        pre_x = DynApplyOp(pre_x_sel, *op.ins)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
-        pre_z = DynGateOp(pre_z_sel, pre_x)
+        pre_z = DynApplyOp(pre_z_sel, pre_x)
 
-        new_t = GateOp(op.gate, pre_z)
+        new_t = ApplyOp(op.gate, pre_z)
 
         post_z_sel = SelectOp(z_rand, z_gate, id_gate)
-        post_z = DynGateOp(post_z_sel, new_t)
+        post_z = DynApplyOp(post_z_sel, new_t)
 
-        post_x_1 = DynGateOp(pre_x_sel, post_z)
+        post_x_1 = DynApplyOp(pre_x_sel, post_z)
         post_x_sel_2 = SelectOp(x_rand, phase_gate, id_gate)
-        post_x_2 = DynGateOp(post_x_sel_2, post_x_1)
+        post_x_2 = DynApplyOp(post_x_sel_2, post_x_1)
 
         rewriter.insert_op(
             (
@@ -88,7 +88,7 @@ class PadTDaggerGate(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: ApplyOp, rewriter: PatternRewriter):
         if not isinstance(op.gate, TDaggerGate):
             return
         x_rand = UniformOp(i1)
@@ -98,18 +98,18 @@ class PadTDaggerGate(RewritePattern):
         z_gate = ConstantInstrumentOp(ZGate())
         phase_dagger_gate = ConstantInstrumentOp(PhaseDaggerGate())
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
-        pre_x = DynGateOp(pre_x_sel, *op.ins)
+        pre_x = DynApplyOp(pre_x_sel, *op.ins)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
-        pre_z = DynGateOp(pre_z_sel, pre_x)
+        pre_z = DynApplyOp(pre_z_sel, pre_x)
 
-        new_t = GateOp(op.gate, pre_z)
+        new_t = ApplyOp(op.gate, pre_z)
 
         post_z_sel = SelectOp(z_rand, z_gate, id_gate)
-        post_z = DynGateOp(post_z_sel, new_t)
+        post_z = DynApplyOp(post_z_sel, new_t)
 
-        post_x_1 = DynGateOp(pre_x_sel, post_z)
+        post_x_1 = DynApplyOp(pre_x_sel, post_z)
         post_x_sel_2 = SelectOp(x_rand, phase_dagger_gate, id_gate)
-        post_x_2 = DynGateOp(post_x_sel_2, post_x_1)
+        post_x_2 = DynApplyOp(post_x_sel_2, post_x_1)
 
         rewriter.insert_op(
             (
@@ -141,7 +141,7 @@ class PadHadamardGate(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: ApplyOp, rewriter: PatternRewriter):
         if not isinstance(op.gate, HadamardGate):
             return
         x_rand = UniformOp(i1)
@@ -150,16 +150,16 @@ class PadHadamardGate(RewritePattern):
         x_gate = ConstantInstrumentOp(XGate())
         z_gate = ConstantInstrumentOp(ZGate())
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
-        pre_x = DynGateOp(pre_x_sel, *op.ins)
+        pre_x = DynApplyOp(pre_x_sel, *op.ins)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
-        pre_z = DynGateOp(pre_z_sel, pre_x)
+        pre_z = DynApplyOp(pre_z_sel, pre_x)
 
-        new_hadamard = GateOp(HadamardGate(), pre_z)
+        new_hadamard = ApplyOp(HadamardGate(), pre_z)
 
         post_z_sel = SelectOp(z_rand, x_gate, id_gate)
-        post_z = DynGateOp(post_z_sel, new_hadamard)
+        post_z = DynApplyOp(post_z_sel, new_hadamard)
         post_x_sel = SelectOp(x_rand, z_gate, id_gate)
-        post_x = DynGateOp(post_x_sel, post_z)
+        post_x = DynApplyOp(post_x_sel, post_z)
 
         rewriter.insert_op(
             (
@@ -189,7 +189,7 @@ class PadCXGate(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: ApplyOp, rewriter: PatternRewriter):
         if not isinstance(op.gate, CXGate):
             return
         x_rand_q1 = UniformOp(i1)
@@ -207,20 +207,20 @@ class PadCXGate(RewritePattern):
         z_sel_q1 = SelectOp(z_rand_q1, z_gate, id_gate)
         z_sel_q2 = SelectOp(z_rand_q2, z_gate, id_gate)
 
-        pre_x_q1 = DynGateOp(x_sel_q1, op.ins[0])
-        pre_z_q1 = DynGateOp(z_sel_q1, pre_x_q1)
-        pre_x_q2 = DynGateOp(x_sel_q2, op.ins[1])
-        pre_z_q2 = DynGateOp(z_sel_q2, pre_x_q2)
+        pre_x_q1 = DynApplyOp(x_sel_q1, op.ins[0])
+        pre_z_q1 = DynApplyOp(z_sel_q1, pre_x_q1)
+        pre_x_q2 = DynApplyOp(x_sel_q2, op.ins[1])
+        pre_z_q2 = DynApplyOp(z_sel_q2, pre_x_q2)
 
-        new_cx = GateOp(CXGate(), pre_z_q1, pre_z_q2)
+        new_cx = ApplyOp(CXGate(), pre_z_q1, pre_z_q2)
 
-        post_z_q1_1 = DynGateOp(z_sel_q1, new_cx.outs[0])
-        post_z_q1_2 = DynGateOp(z_sel_q2, post_z_q1_1)
-        post_x_q1 = DynGateOp(x_sel_q1, post_z_q1_2)
+        post_z_q1_1 = DynApplyOp(z_sel_q1, new_cx.outs[0])
+        post_z_q1_2 = DynApplyOp(z_sel_q2, post_z_q1_1)
+        post_x_q1 = DynApplyOp(x_sel_q1, post_z_q1_2)
 
-        post_z_q2 = DynGateOp(z_sel_q2, new_cx.outs[1])
-        post_x_q2_1 = DynGateOp(x_sel_q1, post_z_q2)
-        post_x_q2_2 = DynGateOp(x_sel_q2, post_x_q2_1)
+        post_z_q2 = DynApplyOp(z_sel_q2, new_cx.outs[1])
+        post_x_q2_1 = DynApplyOp(x_sel_q1, post_z_q2)
+        post_x_q2_2 = DynApplyOp(x_sel_q2, post_x_q2_1)
 
         rewriter.insert_op(
             (
@@ -271,9 +271,9 @@ class PadMeasure(RewritePattern):
         z_gate = ConstantInstrumentOp(ZGate())
 
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
-        pre_x = DynGateOp(pre_x_sel, *op.in_qubits)
+        pre_x = DynApplyOp(pre_x_sel, *op.in_qubits)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
-        pre_z = DynGateOp(pre_z_sel, pre_x)
+        pre_z = DynApplyOp(pre_z_sel, pre_x)
 
         new_measure = MeasureOp(pre_z)
 

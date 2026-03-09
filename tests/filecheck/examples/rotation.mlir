@@ -5,10 +5,10 @@
 // CHECK-NEXT:   %q3 = qu.alloc<#qu.plus>
 // CHECK-NEXT:   %q4 = qu.alloc<#qu.plus>
 // CHECK-NEXT:   %q5 = qu.alloc<#qu.plus>
-// CHECK-NEXT:   qref.gate<#gate.cz> %q1, %q2
-// CHECK-NEXT:   qref.gate<#gate.cz> %q2, %q3
-// CHECK-NEXT:   qref.gate<#gate.cz> %q3, %q4
-// CHECK-NEXT:   qref.gate<#gate.cz> %q4, %q5
+// CHECK-NEXT:   qref.apply<#gate.cz> %q1, %q2
+// CHECK-NEXT:   qref.apply<#gate.cz> %q2, %q3
+// CHECK-NEXT:   qref.apply<#gate.cz> %q3, %q4
+// CHECK-NEXT:   qref.apply<#gate.cz> %q4, %q5
 // CHECK-NEXT:   %0 = qref.measure<#measurement.xy<0>> %q1
 // CHECK-NEXT:   %a2 = angle.cond_negate %0, %lambda
 // CHECK-NEXT:   %m2 = measurement.dyn_xy<%a2>
@@ -22,7 +22,7 @@
 // CHECK-NEXT:   %3 = qref.dyn_measure<%m4> %q4
 // CHECK-NEXT:   %x = arith.xori %1, %3 : i1
 // CHECK-NEXT:   %g = gate.xz %x, %z
-// CHECK-NEXT:   qref.dyn_gate<%g> %q5
+// CHECK-NEXT:   qref.dyn_apply<%g> %q5
 // CHECK-NEXT:   func.return %q5 : !qu.bit
 // CHECK-NEXT: }
 func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type, %q1: !qu.bit) -> !qu.bit {
@@ -30,10 +30,10 @@ func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type
   %q3 = qu.alloc<#qu.plus>
   %q4 = qu.alloc<#qu.plus>
   %q5 = qu.alloc<#qu.plus>
-  qref.gate<#gate.cz> %q1, %q2
-  qref.gate<#gate.cz> %q2, %q3
-  qref.gate<#gate.cz> %q3, %q4
-  qref.gate<#gate.cz> %q4, %q5
+  qref.apply<#gate.cz> %q1, %q2
+  qref.apply<#gate.cz> %q2, %q3
+  qref.apply<#gate.cz> %q3, %q4
+  qref.apply<#gate.cz> %q4, %q5
   %1 = qref.measure<#measurement.xy<0>> %q1
   %a2 = angle.cond_negate %1, %lambda
   %m2 = measurement.dyn_xy<%a2>
@@ -47,6 +47,6 @@ func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type
   %4 = qref.dyn_measure<%m4> %q4
   %x = arith.xori %2, %4 : i1
   %g = gate.xz %x, %z
-  qref.dyn_gate<%g> %q5
+  qref.dyn_apply<%g> %q5
   func.return %q5 : !qu.bit
 }

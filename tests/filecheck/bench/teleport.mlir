@@ -10,21 +10,21 @@ func.func @teleport(%q : !qu.bit) -> !qu.bit {
   %a5 = qu.alloc
   %a6 = qu.alloc
 
-  %a1_1 = qssa.gate<#gate.h> %a1
-  %a3_1 = qssa.gate<#gate.h> %a3
-  %a5_1 = qssa.gate<#gate.h> %a5
+  %a1_1 = qssa.apply<#gate.h> %a1
+  %a3_1 = qssa.apply<#gate.h> %a3
+  %a5_1 = qssa.apply<#gate.h> %a5
 
-  %a1_2, %a2_1 = qssa.gate<#gate.cx> %a1_1, %a2
-  %a3_2, %a4_1 = qssa.gate<#gate.cx> %a3_1, %a4
-  %a5_2, %a6_1 = qssa.gate<#gate.cx> %a5_1, %a6
+  %a1_2, %a2_1 = qssa.apply<#gate.cx> %a1_1, %a2
+  %a3_2, %a4_1 = qssa.apply<#gate.cx> %a3_1, %a4
+  %a5_2, %a6_1 = qssa.apply<#gate.cx> %a5_1, %a6
 
-  %q_1, %a1_3 = qssa.gate<#gate.cx> %q, %a1_2
-  %a2_2, %a3_3 = qssa.gate<#gate.cx> %a2_1, %a3_2
-  %a4_2, %a5_3 = qssa.gate<#gate.cx> %a4_1, %a5_2
+  %q_1, %a1_3 = qssa.apply<#gate.cx> %q, %a1_2
+  %a2_2, %a3_3 = qssa.apply<#gate.cx> %a2_1, %a3_2
+  %a4_2, %a5_3 = qssa.apply<#gate.cx> %a4_1, %a5_2
 
-  %q_2 = qssa.gate<#gate.h> %q_1
-  %a2_3 = qssa.gate<#gate.h> %a2_2
-  %a4_3 = qssa.gate<#gate.h> %a4_2
+  %q_2 = qssa.apply<#gate.h> %q_1
+  %a2_3 = qssa.apply<#gate.h> %a2_2
+  %a4_3 = qssa.apply<#gate.h> %a4_2
 
   %m0 = qssa.measure %q_2
   %m1 = qssa.measure %a1_3
@@ -41,9 +41,9 @@ func.func @teleport(%q : !qu.bit) -> !qu.bit {
 
   %c0 = arith.constant false
   %g1 = gate.xz %x, %c0
-  %a6_2 = qssa.dyn_gate<%g1> %a6_1
+  %a6_2 = qssa.dyn_apply<%g1> %a6_1
   %g2 = gate.xz %c0, %z
-  %a6_3 = qssa.dyn_gate<%g2> %a6_2
+  %a6_3 = qssa.dyn_apply<%g2> %a6_2
 
   func.return %a6_3 : !qu.bit
 }

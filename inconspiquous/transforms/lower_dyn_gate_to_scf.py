@@ -19,21 +19,21 @@ from inconspiquous.dialects import qref, qssa
 
 class LowerQSSADynGateToScfPattern(RewritePattern):
     """
-    Attempts to lower a qssa.dyn_gate op to scf
+    Attempts to lower a qssa.dyn_apply op to scf
     When the gate argument is an arith.select we replace the gate with an scf.if
     When the gate argument is a varith.switch we replace the gate with an scf.index_switch
     """
 
     @staticmethod
-    def make_region_from_arg(op: qssa.DynGateOp, gate: SSAValue) -> Region:
+    def make_region_from_arg(op: qssa.DynApplyOp, gate: SSAValue) -> Region:
         region = Region(Block())
         with ImplicitBuilder(region):
-            dyn_gate = qssa.DynGateOp(gate, *op.ins)
+            dyn_gate = qssa.DynApplyOp(gate, *op.ins)
             scf.YieldOp(dyn_gate)
         return region
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qssa.DynGateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: qssa.DynApplyOp, rewriter: PatternRewriter):
         gate = op.gate.owner
         if isinstance(gate, arith.SelectOp):
             then_region = self.make_region_from_arg(op, gate.lhs)
@@ -63,21 +63,21 @@ class LowerQSSADynGateToScfPattern(RewritePattern):
 
 class LowerQRefDynGateToScfPattern(RewritePattern):
     """
-    Attempts to lower a qref.dyn_gate op to scf
+    Attempts to lower a qref.dyn_apply op to scf
     When the gate argument is an arith.select we replace the gate with an scf.if
     When the gate argument is a varith.switch we replace the gate with an scf.index_switch
     """
 
     @staticmethod
-    def make_region_from_arg(op: qref.DynGateOp, gate: SSAValue) -> Region:
+    def make_region_from_arg(op: qref.DynApplyOp, gate: SSAValue) -> Region:
         region = Region(Block())
         with ImplicitBuilder(region):
-            qref.DynGateOp(gate, *op.ins)
+            qref.DynApplyOp(gate, *op.ins)
             scf.YieldOp()
         return region
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qref.DynGateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: qref.DynApplyOp, rewriter: PatternRewriter):
         gate = op.gate.owner
         if isinstance(gate, arith.SelectOp):
             then_region = self.make_region_from_arg(op, gate.lhs)

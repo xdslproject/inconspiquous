@@ -35,8 +35,8 @@ from inconspiquous.measurement import MeasurementAttr
 
 
 @irdl_op_definition
-class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
-    name = "qssa.gate"
+class ApplyOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+    name = "qssa.apply"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
@@ -67,8 +67,8 @@ class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
 
 @irdl_op_definition
-class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
-    name = "qssa.dyn_gate"
+class DynApplyOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+    name = "qssa.dyn_apply"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
@@ -219,8 +219,8 @@ class ReturnOp(IRDLOperation):
 Qssa = Dialect(
     "qssa",
     [
-        GateOp,
-        DynGateOp,
+        ApplyOp,
+        DynApplyOp,
         MeasureOp,
         DynMeasureOp,
         CircuitOp,

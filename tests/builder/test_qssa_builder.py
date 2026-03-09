@@ -19,12 +19,12 @@ def test_qssa_gate():
     no_hint = QSSABuilder.alloc()
 
     QSSABuilder.gate(HadamardGate(), no_hint)
-    assert isinstance(no_hint.get().owner, qssa.GateOp)
+    assert isinstance(no_hint.get().owner, qssa.ApplyOp)
     assert no_hint.get().name_hint is None
 
     hint = QSSABuilder.alloc(name_hint="test")
     QSSABuilder.gate(HadamardGate(), hint)
-    assert isinstance(hint.get().owner, qssa.GateOp)
+    assert isinstance(hint.get().owner, qssa.ApplyOp)
     assert hint.get().name_hint == "test"
 
 
@@ -33,12 +33,12 @@ def test_qssa_dyn_gate():
     gate_val = instrument.ConstantInstrumentOp(HadamardGate())
 
     QSSABuilder.gate(gate_val, no_hint)
-    assert isinstance(no_hint.get().owner, qssa.DynGateOp)
+    assert isinstance(no_hint.get().owner, qssa.DynApplyOp)
     assert no_hint.get().name_hint is None
 
     hint = QSSABuilder.alloc(name_hint="test")
     QSSABuilder.gate(gate_val, hint)
-    assert isinstance(hint.get().owner, qssa.DynGateOp)
+    assert isinstance(hint.get().owner, qssa.DynApplyOp)
     assert hint.get().name_hint == "test"
 
 

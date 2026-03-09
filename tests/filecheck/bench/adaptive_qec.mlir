@@ -22,22 +22,22 @@ func.func @adaptive_qec_cycle(
   %a2 = qu.alloc
   %a3 = qu.alloc
 
-  %a1_1 = qssa.gate<#gate.h> %a1
-  %a1_2, %q4_1 = qssa.gate<#gate.cx> %a1_1, %q4
-  %q3_1, %a3_1 = qssa.gate<#gate.cx> %q3, %a3
-  %q6_1, %a2_1 = qssa.gate<#gate.cx> %q6, %a2
-  %a1_3, %a2_2 = qssa.gate<#gate.cx> %a1_2, %a2_1
-  %a1_4, %q1_1 = qssa.gate<#gate.cx> %a1_3, %q1
-  %q4_2, %a3_2 = qssa.gate<#gate.cx> %q4_1, %a3_1
-  %q5_1, %a2_3 = qssa.gate<#gate.cx> %q5, %a2_2
-  %a1_5, %q2_1 = qssa.gate<#gate.cx> %a1_4, %q2
-  %q7_1, %a3_3 = qssa.gate<#gate.cx> %q7, %a3_2
-  %q3_2, %a2_4 = qssa.gate<#gate.cx> %q3_1, %a2_3
-  %a1_6, %a3_4 = qssa.gate<#gate.cx> %a1_5, %a3_3
-  %a1_7, %q3_3 = qssa.gate<#gate.cx> %a1_6, %q3_2
-  %q6_2, %a3_5 = qssa.gate<#gate.cx> %q6_1, %a3_4
-  %q2_2, %a2_5 = qssa.gate<#gate.cx> %q2_1, %a2_4
-  %a1_8 = qssa.gate<#gate.h> %a1_7
+  %a1_1 = qssa.apply<#gate.h> %a1
+  %a1_2, %q4_1 = qssa.apply<#gate.cx> %a1_1, %q4
+  %q3_1, %a3_1 = qssa.apply<#gate.cx> %q3, %a3
+  %q6_1, %a2_1 = qssa.apply<#gate.cx> %q6, %a2
+  %a1_3, %a2_2 = qssa.apply<#gate.cx> %a1_2, %a2_1
+  %a1_4, %q1_1 = qssa.apply<#gate.cx> %a1_3, %q1
+  %q4_2, %a3_2 = qssa.apply<#gate.cx> %q4_1, %a3_1
+  %q5_1, %a2_3 = qssa.apply<#gate.cx> %q5, %a2_2
+  %a1_5, %q2_1 = qssa.apply<#gate.cx> %a1_4, %q2
+  %q7_1, %a3_3 = qssa.apply<#gate.cx> %q7, %a3_2
+  %q3_2, %a2_4 = qssa.apply<#gate.cx> %q3_1, %a2_3
+  %a1_6, %a3_4 = qssa.apply<#gate.cx> %a1_5, %a3_3
+  %a1_7, %q3_3 = qssa.apply<#gate.cx> %a1_6, %q3_2
+  %q6_2, %a3_5 = qssa.apply<#gate.cx> %q6_1, %a3_4
+  %q2_2, %a2_5 = qssa.apply<#gate.cx> %q2_1, %a2_4
+  %a1_8 = qssa.apply<#gate.h> %a1_7
 
   %f1 = qssa.measure %a1_8
   %fd1 = arith.xori %f1, %prev_s1 : i1
@@ -58,24 +58,24 @@ func.func @adaptive_qec_cycle(
     %a5 = qu.alloc
     %a6 = qu.alloc
 
-    %a5_1 = qssa.gate<#gate.h> %a5
-    %a6_1 = qssa.gate<#gate.h> %a6
-    %q4_4, %a4_1 = qssa.gate<#gate.cx> %q4_2, %a4
-    %a6_2, %q3_5 = qssa.gate<#gate.cx> %a6_1, %q3_3
-    %a5_2, %q6_4 = qssa.gate<#gate.cx> %a5_1, %q6_2
-    %a5_3, %a4_2 = qssa.gate<#gate.cx> %a5_2, %a4_1
-    %q1_3, %a4_3 = qssa.gate<#gate.cx> %q1_1, %a4_2
-    %a6_3, %q4_5 = qssa.gate<#gate.cx> %a6_2, %q4_4
-    %a5_4, %q5_3 = qssa.gate<#gate.cx> %a5_3, %q5_1
-    %q2_4, %a4_4 = qssa.gate<#gate.cx> %q2_2, %a4_3
-    %a6_4, %q7_3 = qssa.gate<#gate.cx> %a6_3, %q7_1
-    %a5_5, %q3_6 = qssa.gate<#gate.cx> %a5_4, %q3_5
-    %a6_5, %a4_5 = qssa.gate<#gate.cx> %a6_4, %a4_4
-    %q3_7, %a4_6 = qssa.gate<#gate.cx> %q3_6, %a4_5
-    %a6_6, %q6_5 = qssa.gate<#gate.cx> %a6_5, %q6_4
-    %a5_6, %q2_5 = qssa.gate<#gate.cx> %a5_5, %q2_4
-    %a5_7 = qssa.gate<#gate.h> %a5_6
-    %a6_7 = qssa.gate<#gate.h> %a6_6
+    %a5_1 = qssa.apply<#gate.h> %a5
+    %a6_1 = qssa.apply<#gate.h> %a6
+    %q4_4, %a4_1 = qssa.apply<#gate.cx> %q4_2, %a4
+    %a6_2, %q3_5 = qssa.apply<#gate.cx> %a6_1, %q3_3
+    %a5_2, %q6_4 = qssa.apply<#gate.cx> %a5_1, %q6_2
+    %a5_3, %a4_2 = qssa.apply<#gate.cx> %a5_2, %a4_1
+    %q1_3, %a4_3 = qssa.apply<#gate.cx> %q1_1, %a4_2
+    %a6_3, %q4_5 = qssa.apply<#gate.cx> %a6_2, %q4_4
+    %a5_4, %q5_3 = qssa.apply<#gate.cx> %a5_3, %q5_1
+    %q2_4, %a4_4 = qssa.apply<#gate.cx> %q2_2, %a4_3
+    %a6_4, %q7_3 = qssa.apply<#gate.cx> %a6_3, %q7_1
+    %a5_5, %q3_6 = qssa.apply<#gate.cx> %a5_4, %q3_5
+    %a6_5, %a4_5 = qssa.apply<#gate.cx> %a6_4, %a4_4
+    %q3_7, %a4_6 = qssa.apply<#gate.cx> %q3_6, %a4_5
+    %a6_6, %q6_5 = qssa.apply<#gate.cx> %a6_5, %q6_4
+    %a5_6, %q2_5 = qssa.apply<#gate.cx> %a5_5, %q2_4
+    %a5_7 = qssa.apply<#gate.h> %a5_6
+    %a6_7 = qssa.apply<#gate.h> %a6_6
 
     %f2 = qssa.measure %a4_6
     %fd2_1 = arith.xori %f2, %prev_s2 : i1
@@ -103,66 +103,66 @@ func.func @adaptive_qec_cycle(
     -> (!qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit, i1, i1, i1, i1, i1, i1) {
     // S1 syndrome
     %as1 = qu.alloc
-    %q1_5, %as1_1 = qssa.gate<#gate.cx> %q1_2, %as1
-    %q2_7, %as1_2 = qssa.gate<#gate.cx> %q2_3, %as1_1
-    %q3_9, %as1_3 = qssa.gate<#gate.cx> %q3_4, %as1_2
-    %q4_7, %as1_4 = qssa.gate<#gate.cx> %q4_3, %as1_3
+    %q1_5, %as1_1 = qssa.apply<#gate.cx> %q1_2, %as1
+    %q2_7, %as1_2 = qssa.apply<#gate.cx> %q2_3, %as1_1
+    %q3_9, %as1_3 = qssa.apply<#gate.cx> %q3_4, %as1_2
+    %q4_7, %as1_4 = qssa.apply<#gate.cx> %q4_3, %as1_3
     %s1 = qssa.measure %as1_4
 
     %s1_diff = arith.xori %prev_s1, %s1 : i1
 
     // S2 syndrome
     %as2 = qu.alloc
-    %q2_8, %as2_1 = qssa.gate<#gate.cx> %q2_7, %as2
-    %q3_10, %as2_2 = qssa.gate<#gate.cx> %q3_9, %as2_1
-    %q5_5, %as2_3 = qssa.gate<#gate.cx> %q5_2, %as2_2
-    %q6_7, %as2_4 = qssa.gate<#gate.cx> %q6_3, %as2_3
+    %q2_8, %as2_1 = qssa.apply<#gate.cx> %q2_7, %as2
+    %q3_10, %as2_2 = qssa.apply<#gate.cx> %q3_9, %as2_1
+    %q5_5, %as2_3 = qssa.apply<#gate.cx> %q5_2, %as2_2
+    %q6_7, %as2_4 = qssa.apply<#gate.cx> %q6_3, %as2_3
     %s2 = qssa.measure %as2_4
 
     %s2_diff = arith.xori %prev_s2, %s2 : i1
 
     // S3 syndrome
     %as3 = qu.alloc
-    %q3_11, %as3_1 = qssa.gate<#gate.cx> %q3_10, %as3
-    %q4_8, %as3_2 = qssa.gate<#gate.cx> %q4_7, %as3_1
-    %q6_8, %as3_3 = qssa.gate<#gate.cx> %q6_7, %as3_2
-    %q7_5, %as3_4 = qssa.gate<#gate.cx> %q7_2, %as3_3
+    %q3_11, %as3_1 = qssa.apply<#gate.cx> %q3_10, %as3
+    %q4_8, %as3_2 = qssa.apply<#gate.cx> %q4_7, %as3_1
+    %q6_8, %as3_3 = qssa.apply<#gate.cx> %q6_7, %as3_2
+    %q7_5, %as3_4 = qssa.apply<#gate.cx> %q7_2, %as3_3
     %s3 = qssa.measure %as3_4
 
     %s3_diff = arith.xori %prev_s3, %s3 : i1
 
     // S4 syndrome
     %as4 = qu.alloc
-    %as4_1 = qssa.gate<#gate.h> %as4
-    %as4_2, %q1_6 = qssa.gate<#gate.cx> %as4_1, %q1_5
-    %as4_3, %q2_9 = qssa.gate<#gate.cx> %as4_2, %q2_8
-    %as4_4, %q3_12 = qssa.gate<#gate.cx> %as4_3, %q3_11
-    %as4_5, %q4_9 = qssa.gate<#gate.cx> %as4_4, %q4_8
-    %as4_6 = qssa.gate<#gate.h> %as4_5
+    %as4_1 = qssa.apply<#gate.h> %as4
+    %as4_2, %q1_6 = qssa.apply<#gate.cx> %as4_1, %q1_5
+    %as4_3, %q2_9 = qssa.apply<#gate.cx> %as4_2, %q2_8
+    %as4_4, %q3_12 = qssa.apply<#gate.cx> %as4_3, %q3_11
+    %as4_5, %q4_9 = qssa.apply<#gate.cx> %as4_4, %q4_8
+    %as4_6 = qssa.apply<#gate.h> %as4_5
     %s4 = qssa.measure %as4_6
 
     %s4_diff = arith.xori %prev_s4, %s4 : i1
 
     // S5 syndrome
     %as5 = qu.alloc
-    %as5_1 = qssa.gate<#gate.h> %as5
-    %as5_2, %q2_10 = qssa.gate<#gate.cx> %as5_1, %q2_9
-    %as5_3, %q3_13 = qssa.gate<#gate.cx> %as5_2, %q3_12
-    %as5_4, %q5_6 = qssa.gate<#gate.cx> %as5_3, %q5_5
-    %as5_5, %q6_9 = qssa.gate<#gate.cx> %as5_4, %q6_8
-    %as5_6 = qssa.gate<#gate.h> %as5_5
+    %as5_1 = qssa.apply<#gate.h> %as5
+    %as5_2, %q2_10 = qssa.apply<#gate.cx> %as5_1, %q2_9
+    %as5_3, %q3_13 = qssa.apply<#gate.cx> %as5_2, %q3_12
+    %as5_4, %q5_6 = qssa.apply<#gate.cx> %as5_3, %q5_5
+    %as5_5, %q6_9 = qssa.apply<#gate.cx> %as5_4, %q6_8
+    %as5_6 = qssa.apply<#gate.h> %as5_5
     %s5 = qssa.measure %as5_6
 
     %s5_diff = arith.xori %prev_s5, %s5 : i1
 
     // S6 syndrome
     %as6 = qu.alloc
-    %as6_1 = qssa.gate<#gate.h> %as6
-    %as6_2, %q3_14 = qssa.gate<#gate.cx> %as6_1, %q3_13
-    %as6_3, %q4_10 = qssa.gate<#gate.cx> %as6_2, %q4_9
-    %as6_4, %q6_10 = qssa.gate<#gate.cx> %as6_3, %q6_9
-    %as6_5, %q7_6 = qssa.gate<#gate.cx> %as6_4, %q7_5
-    %as6_6 = qssa.gate<#gate.h> %as6_5
+    %as6_1 = qssa.apply<#gate.h> %as6
+    %as6_2, %q3_14 = qssa.apply<#gate.cx> %as6_1, %q3_13
+    %as6_3, %q4_10 = qssa.apply<#gate.cx> %as6_2, %q4_9
+    %as6_4, %q6_10 = qssa.apply<#gate.cx> %as6_3, %q6_9
+    %as6_5, %q7_6 = qssa.apply<#gate.cx> %as6_4, %q7_5
+    %as6_6 = qssa.apply<#gate.h> %as6_5
     %s6 = qssa.measure %as6_6
 
     %s6_diff = arith.xori %prev_s6, %s6 : i1
@@ -175,9 +175,9 @@ func.func @adaptive_qec_cycle(
 
     // Perform correction
     %g = gate.xz %x, %z
-    %q5_7 = qssa.dyn_gate<%g> %q5_6
-    %q6_11 = qssa.dyn_gate<%g> %q6_10
-    %q7_7 = qssa.dyn_gate<%g> %q7_6
+    %q5_7 = qssa.dyn_apply<%g> %q5_6
+    %q6_11 = qssa.dyn_apply<%g> %q6_10
+    %q7_7 = qssa.dyn_apply<%g> %q7_6
 
     scf.yield %q1_6, %q2_10, %q3_14, %q4_10, %q5_7, %q6_11, %q7_7, %s1, %s2, %s3, %s4, %s5, %s6
       : !qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit, i1, i1, i1, i1, i1, i1

@@ -25,7 +25,7 @@ class XZCommutePattern(RewritePattern):
     """Commute an XZ gadget past a Hadamard/CX/CZ gate, or MeasureOp."""
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op1: qssa.DynGateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op1: qssa.DynApplyOp, rewriter: PatternRewriter):
         gate = op1.gate.owner
         if not isinstance(gate, XZOp):
             return
@@ -74,7 +74,7 @@ class XZCommutePattern(RewritePattern):
             rewriter.erase_op(op1)
             return
 
-        if not isinstance(op2, qssa.GateOp):
+        if not isinstance(op2, qssa.ApplyOp):
             return
 
         if isinstance(op2.gate, CliffordGateAttr):
@@ -86,7 +86,7 @@ class XZCommutePattern(RewritePattern):
             new_operands = list(op2.ins)
             new_operands[input_idx] = op1.ins[0]
 
-            new_op2 = qssa.GateOp(op2.gate, *new_operands)
+            new_op2 = qssa.ApplyOp(op2.gate, *new_operands)
             ops_to_insert: list[Operation] = []
 
             false_const = arith.ConstantOp.from_int_and_width(0, 1)
@@ -137,7 +137,7 @@ class XZCommutePattern(RewritePattern):
                         xz_gate = XZOp(apply_x, apply_z)
                         ops_to_insert.append(xz_gate)
 
-                    dyn_gate = qssa.DynGateOp(xz_gate, new_op2.outs[out_idx])
+                    dyn_gate = qssa.DynApplyOp(xz_gate, new_op2.outs[out_idx])
                     ops_to_insert.append(dyn_gate)
                     new_outputs.append(dyn_gate.outs[0])
                 else:

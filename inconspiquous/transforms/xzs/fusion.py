@@ -12,7 +12,7 @@ from xdsl.pattern_rewriter import (
 from xdsl.rewriter import InsertPoint
 
 from inconspiquous.dialects.gate import XZOp, XZSOp
-from inconspiquous.dialects.qssa import DynGateOp
+from inconspiquous.dialects.qssa import DynApplyOp
 
 
 class FuseXZGatesPattern(RewritePattern):
@@ -21,7 +21,7 @@ class FuseXZGatesPattern(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: DynApplyOp, rewriter: PatternRewriter):
         gate2 = op.gate.owner
         if not isinstance(gate2, XZOp):
             return
@@ -31,7 +31,7 @@ class FuseXZGatesPattern(RewritePattern):
 
         predecessor = op.ins[0].owner
 
-        if not isinstance(predecessor, DynGateOp):
+        if not isinstance(predecessor, DynApplyOp):
             return
 
         gate1 = predecessor.gate.owner
@@ -53,7 +53,7 @@ class FuseXZGatesPattern(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.ins))
+        rewriter.replace_matched_op(DynApplyOp(new_gate, *predecessor.ins))
         rewriter.erase_op(predecessor)
 
 
@@ -63,7 +63,7 @@ class FuseXZSGatesPattern(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: DynApplyOp, rewriter: PatternRewriter):
         gate2 = op.gate.owner
         if not isinstance(gate2, XZSOp | XZOp):
             return
@@ -73,7 +73,7 @@ class FuseXZSGatesPattern(RewritePattern):
 
         predecessor = op.ins[0].owner
 
-        if not isinstance(predecessor, DynGateOp):
+        if not isinstance(predecessor, DynApplyOp):
             return
 
         gate1 = predecessor.gate.owner
@@ -116,7 +116,7 @@ class FuseXZSGatesPattern(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.ins))
+        rewriter.replace_matched_op(DynApplyOp(new_gate, *predecessor.ins))
         rewriter.erase_op(predecessor)
 
 

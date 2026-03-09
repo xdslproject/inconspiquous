@@ -19,7 +19,7 @@ class ConvertQrefGateToQssaGate(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(
-        self, op: qref.GateOp | qref.DynGateOp, rewriter: PatternRewriter
+        self, op: qref.ApplyOp | qref.DynApplyOp, rewriter: PatternRewriter
     ):
         # Don't rewrite if uses live in different blocks
         if op.parent_block() is None:
@@ -29,10 +29,10 @@ class ConvertQrefGateToQssaGate(RewritePattern):
                 if use.operation.parent_block() != op.parent_block():
                     return
 
-        if isinstance(op, qref.GateOp):
-            new_op = qssa.GateOp(op.gate, *op.ins)
+        if isinstance(op, qref.ApplyOp):
+            new_op = qssa.ApplyOp(op.gate, *op.ins)
         else:
-            new_op = qssa.DynGateOp(op.gate, *op.ins)
+            new_op = qssa.DynApplyOp(op.gate, *op.ins)
 
         rewriter.replace_matched_op(new_op, ())
 

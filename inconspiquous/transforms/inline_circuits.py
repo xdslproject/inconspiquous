@@ -1,5 +1,5 @@
 """
-Transformation to inline subcircuits when a `qssa.dyn_gate` is called with a circuit value.
+Transformation to inline subcircuits when a `qssa.dyn_apply` is called with a circuit value.
 """
 
 from xdsl.dialects import builtin
@@ -12,44 +12,44 @@ from xdsl.pattern_rewriter import (
     op_type_rewrite_pattern,
 )
 
-from inconspiquous.dialects.qssa import CircuitOp, DynGateOp, ReturnOp
+from inconspiquous.dialects.qssa import CircuitOp, DynApplyOp, ReturnOp
 
 
 class InlineCircuitPattern(RewritePattern):
     """
-    Inline a circuit when used with `qssa.dyn_gate`.
+    Inline a circuit when used with `qssa.dyn_apply`.
 
     Transforms:
     ```
     %circuit = qssa.circuit() ({
     ^bb0(%arg0: !qu.bit, %arg1: !qu.bit):
-      %0 = qssa.gate<#gate.x> %arg0
-      %1 = qssa.gate<#gate.y> %arg1
+      %0 = qssa.apply<#gate.x> %arg0
+      %1 = qssa.apply<#gate.y> %arg1
       qssa.return %0, %1
     }) : () -> !instrument.type<2>
-    %result0, %result1 = qssa.dyn_gate<%circuit> %in0, %in1
+    %result0, %result1 = qssa.dyn_apply<%circuit> %in0, %in1
     ```
 
     Into:
     ```
     %circuit = qssa.circuit() ({
     ^bb0(%arg0: !qu.bit, %arg1: !qu.bit):
-      %0 = qssa.gate<#gate.x> %arg0
-      %1 = qssa.gate<#gate.y> %arg1
+      %0 = qssa.apply<#gate.x> %arg0
+      %1 = qssa.apply<#gate.y> %arg1
       qssa.return %0, %1
     }) : () -> !instrument.type<2>
-    %0 = qssa.gate<#gate.x> %in0
-    %1 = qssa.gate<#gate.y> %in1
+    %0 = qssa.apply<#gate.x> %in0
+    %1 = qssa.apply<#gate.y> %in1
     ```
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter, /) -> None:
+    def match_and_rewrite(self, op: DynApplyOp, rewriter: PatternRewriter, /) -> None:
         """
-        Inline a circuit when used with `qssa.dyn_gate`.
+        Inline a circuit when used with `qssa.dyn_apply`.
 
         This transforms:
-          %result = qssa.dyn_gate<%circuit>(%inputs...)
+          %result = qssa.dyn_apply<%circuit>(%inputs...)
 
         Into the inlined circuit body with proper SSA value mapping.
         """
@@ -79,7 +79,7 @@ class InlineCircuitPattern(RewritePattern):
 
 class InlineCircuitsPass(ModulePass):
     """
-    Pass that inlines all `qssa` circuit operations used with `qssa.dyn_gate`.
+    Pass that inlines all `qssa` circuit operations used with `qssa.dyn_apply`.
     """
 
     name = "inline-circuits"

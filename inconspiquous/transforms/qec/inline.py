@@ -21,7 +21,7 @@ from inconspiquous.dialects.gate import (
 )
 from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.qec import PerfectCode5QubitCorrectionAttr
-from inconspiquous.dialects.qssa import GateOp
+from inconspiquous.dialects.qssa import ApplyOp
 from inconspiquous.utils.qssa_builder import QSSABuilder, QubitRef
 
 
@@ -31,7 +31,7 @@ class PerfectCode5QubitInliner(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: ApplyOp, rewriter: PatternRewriter):
         if op.gate != PerfectCode5QubitCorrectionAttr():
             return
 

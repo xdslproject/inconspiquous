@@ -10,7 +10,7 @@ from inconspiquous.dialects.gate import (
 )
 from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.measurement import ConstantMeasurementOp
-from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, GateOp, MeasureOp
+from inconspiquous.dialects.qssa import ApplyOp, DynApplyOp, DynMeasureOp, MeasureOp
 
 
 class DynGateConst(RewritePattern):
@@ -19,9 +19,9 @@ class DynGateConst(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: DynApplyOp, rewriter: PatternRewriter):
         if isinstance(owner := op.gate.owner, ConstantInstrumentOp):
-            rewriter.replace_matched_op(GateOp(owner.instrument, *op.ins))
+            rewriter.replace_matched_op(ApplyOp(owner.instrument, *op.ins))
 
 
 class DynGateCompose(RewritePattern):
@@ -30,10 +30,10 @@ class DynGateCompose(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: DynApplyOp, rewriter: PatternRewriter):
         if isinstance(gate := op.gate.owner, ComposeGateOp):
-            dyn_gate_lhs = DynGateOp(gate.lhs, *op.ins)
-            dyn_gate_rhs = DynGateOp(gate.rhs, *dyn_gate_lhs.outs)
+            dyn_gate_lhs = DynApplyOp(gate.lhs, *op.ins)
+            dyn_gate_rhs = DynApplyOp(gate.rhs, *dyn_gate_lhs.outs)
             rewriter.replace_matched_op((dyn_gate_lhs, dyn_gate_rhs))
 
 
@@ -43,7 +43,7 @@ class GateIdentity(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: ApplyOp, rewriter: PatternRewriter):
         if isinstance(op.gate, IdentityGate):
             rewriter.replace_matched_op((), op.ins)
 

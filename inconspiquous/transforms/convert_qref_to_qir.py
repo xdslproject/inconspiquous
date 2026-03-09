@@ -99,7 +99,7 @@ class LowerAddAnglePattern(RewritePattern):
 
 class QRefGateToQIRPattern(RewritePattern):
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qref.GateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: qref.ApplyOp, rewriter: PatternRewriter):
         match op.gate:
             case CXGate():
                 rewriter.replace_matched_op(qir.CNotOp(op.ins[0], op.ins[1]))
@@ -192,7 +192,7 @@ class QRefGateToQIRPattern(RewritePattern):
 
 class QRefDynGateToQIRPattern(RewritePattern):
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qref.DynGateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: qref.DynApplyOp, rewriter: PatternRewriter):
         gate_op = op.gate.owner
 
         match gate_op:

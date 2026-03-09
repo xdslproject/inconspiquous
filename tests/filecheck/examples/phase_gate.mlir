@@ -5,7 +5,7 @@
 // CHECK-NEXT:   %id = instrument.constant #gate.id<1>
 // CHECK-NEXT:   %z = instrument.constant #gate.z
 // CHECK-NEXT:   %g = arith.select %p, %z, %id : !instrument.type<1>
-// CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q
+// CHECK-NEXT:   %q1 = qssa.dyn_apply<%g> %q
 // CHECK-NEXT:   func.return %q1 : !qu.bit
 // CHECK-NEXT: }
 func.func @phase_dyn(%q : !qu.bit) -> !qu.bit {
@@ -13,14 +13,14 @@ func.func @phase_dyn(%q : !qu.bit) -> !qu.bit {
   %id = instrument.constant #gate.id<1>
   %z = instrument.constant #gate.z
   %g = arith.select %p, %z, %id : !instrument.type<1>
-  %q1 = qssa.dyn_gate<%g> %q
+  %q1 = qssa.dyn_apply<%g> %q
   func.return %q1 : !qu.bit
 }
 
 // CHECK:      func.func @phase_scf(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   %q2 = scf.if %p -> (!qu.bit) {
-// CHECK-NEXT:     %q1 = qssa.gate<#gate.z> %q
+// CHECK-NEXT:     %q1 = qssa.apply<#gate.z> %q
 // CHECK-NEXT:     scf.yield %q1 : !qu.bit
 // CHECK-NEXT:   } else {
 // CHECK-NEXT:     scf.yield %q : !qu.bit
@@ -30,7 +30,7 @@ func.func @phase_dyn(%q : !qu.bit) -> !qu.bit {
 func.func @phase_scf(%q : !qu.bit) -> !qu.bit {
   %p = prob.bernoulli 0.1
   %q2 = scf.if %p -> (!qu.bit) {
-    %q1 = qssa.gate<#gate.z> %q
+    %q1 = qssa.apply<#gate.z> %q
     scf.yield %q1 : !qu.bit
   } else {
     scf.yield %q : !qu.bit
@@ -42,7 +42,7 @@ func.func @phase_scf(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   cf.cond_br %p, ^bb0, ^bb1(%q : !qu.bit)
 // CHECK-NEXT: ^bb0:
-// CHECK-NEXT:   %q1 = qssa.gate<#gate.z> %q
+// CHECK-NEXT:   %q1 = qssa.apply<#gate.z> %q
 // CHECK-NEXT:   cf.br ^bb1(%q1 : !qu.bit)
 // CHECK-NEXT: ^bb1(%q2 : !qu.bit):
 // CHECK-NEXT:   func.return %q2 : !qu.bit
@@ -51,7 +51,7 @@ func.func @phase_cf(%q : !qu.bit) -> !qu.bit {
   %p = prob.bernoulli 0.1
   cf.cond_br %p, ^bb0, ^bb1(%q: !qu.bit)
 ^bb0:
-  %q1 = qssa.gate<#gate.z> %q
+  %q1 = qssa.apply<#gate.z> %q
   cf.br ^bb1(%q1: !qu.bit)
 ^bb1(%q2 : !qu.bit):
   func.return %q2 : !qu.bit

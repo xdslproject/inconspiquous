@@ -3,7 +3,7 @@
 %q0 = qu.alloc
 
 // CHECK: integer 1 expected from int variable 'I', but got 2
-%q1, %q2 = "qssa.gate"(%q0) <{"gate" = #gate.cx}> : (!qu.bit) -> (!qu.bit, !qu.bit)
+%q1, %q2 = "qssa.apply"(%q0) <{"gate" = #gate.cx}> : (!qu.bit) -> (!qu.bit, !qu.bit)
 
 // -----
 
@@ -11,14 +11,14 @@
 %q1 = qu.alloc
 
 // CHECK: integer 2 expected from int variable 'I', but got 1
-%q2 = "qssa.gate"(%q0, %q1) <{"gate" = #gate.cx}> : (!qu.bit, !qu.bit) -> !qu.bit
+%q2 = "qssa.apply"(%q0, %q1) <{"gate" = #gate.cx}> : (!qu.bit, !qu.bit) -> !qu.bit
 
 // -----
 
 %q0 = qu.alloc
 
 // CHECK: integer 1 expected from int variable 'I', but got 2
-%q1 = "qssa.gate"(%q0) <{"gate" = #gate.cx}> : (!qu.bit) -> !qu.bit
+%q1 = "qssa.apply"(%q0) <{"gate" = #gate.cx}> : (!qu.bit) -> !qu.bit
 
 // -----
 
@@ -26,4 +26,4 @@
 %q0 = qu.alloc
 
 // CHECK: integer 1 expected from int variable 'I', but got 2
-%q1 = "qssa.dyn_gate"(%q0, %g) : (!qu.bit, !instrument.type<2>) -> !qu.bit
+%q1 = "qssa.dyn_apply"(%q0, %g) : (!qu.bit, !instrument.type<2>) -> !qu.bit

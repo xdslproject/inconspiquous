@@ -5,16 +5,16 @@
 func.func @cx(%ctrl: !qu.bit, %tgt: !qu.bit) -> (!qu.bit, !qu.bit) {
   %a1 = qu.alloc<#qu.plus>
   %a2 = qu.alloc<#qu.plus>
-  %tgt_1, %a1_1 = qssa.gate<#gate.cz> %tgt, %a1
-  %ctrl_1, %a1_2 = qssa.gate<#gate.cz> %ctrl, %a1_1
-  %a1_3, %a2_1 = qssa.gate<#gate.cz> %a1_2, %a2
+  %tgt_1, %a1_1 = qssa.apply<#gate.cz> %tgt, %a1
+  %ctrl_1, %a1_2 = qssa.apply<#gate.cz> %ctrl, %a1_1
+  %a1_3, %a2_1 = qssa.apply<#gate.cz> %a1_2, %a2
   %m1 = qssa.measure<#measurement.x_basis> %tgt_1
   %cFalse = arith.constant false
   %g1 = gate.xz %cFalse, %m1
   %m2 = qssa.measure<#measurement.x_basis> %a1_3
   %g2 = gate.xz %m2, %m1
-  %ctrl_2 = qssa.dyn_gate<%g1> %ctrl_1
-  %a2_2 = qssa.dyn_gate<%g2> %a2_1
+  %ctrl_2 = qssa.dyn_apply<%g1> %ctrl_1
+  %a2_2 = qssa.dyn_apply<%g2> %a2_1
   func.return %ctrl_2, %a2_2 : !qu.bit, !qu.bit
 }
 // CHECK-LABEL: cx

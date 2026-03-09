@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from xdsl.ir import Operation, SSAValue
 
 from inconspiquous.dialects.gate import GateAttr
-from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
+from inconspiquous.dialects.qssa import ApplyOp, DynApplyOp, MeasureOp
 from inconspiquous.dialects.qu import AllocOp
 
 
@@ -26,9 +26,9 @@ class QSSABuilder:
     @staticmethod
     def gate(gate: GateAttr | SSAValue | Operation, *qubit_refs: QubitRef):
         if isinstance(gate, GateAttr):
-            new_op = GateOp(gate, *(ref.get() for ref in qubit_refs))
+            new_op = ApplyOp(gate, *(ref.get() for ref in qubit_refs))
         else:
-            new_op = DynGateOp(gate, *(ref.get() for ref in qubit_refs))
+            new_op = DynApplyOp(gate, *(ref.get() for ref in qubit_refs))
         for ref, qubit in zip(qubit_refs, new_op.outs):
             qubit.name_hint = ref.get().name_hint
             ref.qubit = qubit

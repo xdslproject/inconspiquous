@@ -7,10 +7,10 @@ func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type
   %q3 = qu.alloc<#qu.plus>
   %q4 = qu.alloc<#qu.plus>
   %q5 = qu.alloc<#qu.plus>
-  %q1_1, %q2_1 = qssa.gate<#gate.cz> %q1, %q2
-  %q2_2, %q3_1 = qssa.gate<#gate.cz> %q2_1, %q3
-  %q3_2, %q4_1 = qssa.gate<#gate.cz> %q3_1, %q4
-  %q4_2, %q5_1 = qssa.gate<#gate.cz> %q4_1, %q5
+  %q1_1, %q2_1 = qssa.apply<#gate.cz> %q1, %q2
+  %q2_2, %q3_1 = qssa.apply<#gate.cz> %q2_1, %q3
+  %q3_2, %q4_1 = qssa.apply<#gate.cz> %q3_1, %q4
+  %q4_2, %q5_1 = qssa.apply<#gate.cz> %q4_1, %q5
   %0 = qssa.measure<#measurement.x_basis> %q1_1
   %a2 = angle.cond_negate %0, %lambda
   %m2 = measurement.dyn_xy<%a2>
@@ -24,7 +24,7 @@ func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type
   %3 = qssa.dyn_measure<%m4> %q4_2
   %x = arith.xori %1, %3 : i1
   %g = gate.xz %x, %z
-  %q5_2 = qssa.dyn_gate<%g> %q5_1
+  %q5_2 = qssa.dyn_apply<%g> %q5_1
   func.return %q5_2 : !qu.bit
 }
 // CHECK-LABEL: rotation

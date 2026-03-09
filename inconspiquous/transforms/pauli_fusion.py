@@ -18,12 +18,12 @@ class PauliFusionPattern(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qssa.GateOp, rewriter: PatternRewriter, /):
+    def match_and_rewrite(self, op: qssa.ApplyOp, rewriter: PatternRewriter, /):
         if not isinstance(op.gate, XGate | YGate | ZGate):
             return
 
         prev = op.ins[0].owner
-        if not isinstance(prev, qssa.GateOp):
+        if not isinstance(prev, qssa.ApplyOp):
             return
 
         if not isinstance(prev.gate, XGate | YGate | ZGate):
@@ -50,7 +50,7 @@ class PauliFusionPattern(RewritePattern):
             case _:
                 return
 
-        rewriter.replace_matched_op(qssa.GateOp(new_gate, *prev.ins))
+        rewriter.replace_matched_op(qssa.ApplyOp(new_gate, *prev.ins))
         rewriter.erase_op(prev)
 
 

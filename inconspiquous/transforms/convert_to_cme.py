@@ -38,13 +38,13 @@ class ToCMEPattern(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qssa.GateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: qssa.ApplyOp, rewriter: PatternRewriter):
         if not isinstance(op.gate, JGate):
             return
 
         q1 = op.ins[0]
         q2 = qu.AllocOp(qu.AllocPlusAttr())
-        cz = qssa.GateOp(CZGate(), q1, q2)
+        cz = qssa.ApplyOp(CZGate(), q1, q2)
 
         m = qssa.MeasureOp(
             cz.outs[0], measurement=measurement.XYMeasurementAttr(-op.gate.angle)
@@ -55,7 +55,7 @@ class ToCMEPattern(RewritePattern):
 
         x_sel = arith.SelectOp(m.outs[0], x, i)
 
-        x_gate = qssa.DynGateOp(x_sel, cz.outs[1])
+        x_gate = qssa.DynApplyOp(x_sel, cz.outs[1])
 
         rewriter.replace_matched_op((q2, cz, m, x, i, x_sel, x_gate))
 
@@ -66,13 +66,13 @@ class DynToCMEPattern(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qssa.DynGateOp, rewriter: PatternRewriter, /):
+    def match_and_rewrite(self, op: qssa.DynApplyOp, rewriter: PatternRewriter, /):
         if not isinstance(op.gate.owner, DynJGate):
             return
 
         q1 = op.ins[0]
         q2 = qu.AllocOp(qu.AllocPlusAttr())
-        cz = qssa.GateOp(CZGate(), q1, q2)
+        cz = qssa.ApplyOp(CZGate(), q1, q2)
         ctrue = arith.ConstantOp(BoolAttr.from_bool(True))
         a = angle.CondNegateAngleOp(ctrue, op.gate.owner.angle)
         dyn_measure = measurement.XYDynMeasurementOp(a)
@@ -84,7 +84,7 @@ class DynToCMEPattern(RewritePattern):
 
         x_sel = arith.SelectOp(m.outs[0], x, i)
 
-        x_gate = qssa.DynGateOp(x_sel, cz.outs[1])
+        x_gate = qssa.DynApplyOp(x_sel, cz.outs[1])
 
         rewriter.replace_matched_op(
             (q2, cz, ctrue, a, dyn_measure, m, x, i, x_sel, x_gate)

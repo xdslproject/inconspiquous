@@ -5,28 +5,28 @@
 
 %q1 = qu.alloc
 
-%q2 = "qssa.dyn_gate"(%g, %q1) : (!instrument.type<1>, !qu.bit) -> !qu.bit
+%q2 = "qssa.dyn_apply"(%g, %q1) : (!instrument.type<1>, !qu.bit) -> !qu.bit
 
 %0 = "qssa.dyn_measure"(%m, %q2) : (!measurement.type<1>, !qu.bit) -> i1
 
 %q3 = qu.alloc
-%q4 = "qssa.gate"(%q3) <{gate = #gate.id<1>}> : (!qu.bit) -> !qu.bit
+%q4 = "qssa.apply"(%q3) <{gate = #gate.id<1>}> : (!qu.bit) -> !qu.bit
 
 %g1, %g2 = "test.op"() : () -> (!instrument.type<2>, !instrument.type<2>)
 %g3 = "gate.compose"(%g1, %g2) : (!instrument.type<2>, !instrument.type<2>) -> !instrument.type<2>
 
 %q5 = qu.alloc
 
-"qssa.dyn_gate"(%g3, %q4, %q5) : (!instrument.type<2>, !qu.bit, !qu.bit) -> (!qu.bit, !qu.bit)
+"qssa.dyn_apply"(%g3, %q4, %q5) : (!instrument.type<2>, !qu.bit, !qu.bit) -> (!qu.bit, !qu.bit)
 
 // CHECK:       builtin.module {
 // CHECK-NEXT:    %q1 = qu.alloc
-// CHECK-NEXT:    %q2 = qssa.gate<#gate.h> %q1
+// CHECK-NEXT:    %q2 = qssa.apply<#gate.h> %q1
 // CHECK-NEXT:    %{{.*}} = qssa.measure %q2
 // CHECK-NEXT:    %q3 = qu.alloc
 // CHECK-NOT:     #gate.id
 // CHECK:    %g1, %g2 = "test.op"() : () -> (!instrument.type<2>, !instrument.type<2>)
 // CHECK-NEXT:    %q5 = qu.alloc
-// CHECK-NEXT:    %1, %2 = qssa.dyn_gate<%g1> %q3, %q5
-// CHECK-NEXT:    qssa.dyn_gate<%g2> %1, %2
+// CHECK-NEXT:    %1, %2 = qssa.dyn_apply<%g1> %q3, %q5
+// CHECK-NEXT:    qssa.dyn_apply<%g2> %1, %2
 // CHECK-NEXT:  }

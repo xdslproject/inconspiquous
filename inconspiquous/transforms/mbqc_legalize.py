@@ -22,7 +22,7 @@ from inconspiquous.dialects.gate import (
 )
 from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.measurement import XYDynMeasurementOp, XYMeasurementAttr
-from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, GateOp, MeasureOp
+from inconspiquous.dialects.qssa import ApplyOp, DynApplyOp, DynMeasureOp, MeasureOp
 from inconspiquous.dialects.qu import AllocOp
 
 
@@ -66,14 +66,14 @@ class MBQCLegalize(ModulePass):
             match current_op:
                 case AllocOp():
                     alloc_ops.append(current_op)
-                case GateOp():
+                case ApplyOp():
                     match current_op.gate:
                         case CZGate():
                             for operand in current_op.ins:
                                 if not (
                                     isinstance(operand.owner, AllocOp)
                                     or (
-                                        isinstance(operand.owner, GateOp)
+                                        isinstance(operand.owner, ApplyOp)
                                         and isinstance(operand.owner.gate, CZGate)
                                     )
                                     or isinstance(operand.owner, Block)
@@ -88,7 +88,7 @@ class MBQCLegalize(ModulePass):
                             raise PassFailedException(
                                 f"Expected only CZ or Pauli gates, found {g}"
                             )
-                case DynGateOp():
+                case DynApplyOp():
                     correction_ops.append(current_op)
                 case MeasureOp():
                     if not isinstance(current_op.measurement, XYMeasurementAttr):
@@ -99,7 +99,7 @@ class MBQCLegalize(ModulePass):
                     if not (
                         isinstance(operand.owner, AllocOp)
                         or (
-                            isinstance(operand.owner, GateOp)
+                            isinstance(operand.owner, ApplyOp)
                             and isinstance(operand.owner.gate, CZGate)
                         )
                         or isinstance(operand.owner, Block)
@@ -112,7 +112,7 @@ class MBQCLegalize(ModulePass):
                     if not (
                         isinstance(operand.owner, AllocOp)
                         or (
-                            isinstance(operand.owner, GateOp)
+                            isinstance(operand.owner, ApplyOp)
                             and isinstance(operand.owner.gate, CZGate)
                         )
                         or isinstance(operand.owner, Block)

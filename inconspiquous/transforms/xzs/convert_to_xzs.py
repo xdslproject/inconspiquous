@@ -22,7 +22,7 @@ from inconspiquous.dialects.gate import (
     ZGate,
 )
 from inconspiquous.dialects.instrument import ConstantInstrumentOp
-from inconspiquous.dialects.qssa import DynGateOp, GateOp
+from inconspiquous.dialects.qssa import ApplyOp, DynApplyOp
 
 
 class ToDynGate(RewritePattern):
@@ -31,7 +31,7 @@ class ToDynGate(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
+    def match_and_rewrite(self, op: ApplyOp, rewriter: PatternRewriter):
         if not isinstance(
             op.gate, IdentityGate | XGate | YGate | ZGate | PhaseGate | PhaseDaggerGate
         ):
@@ -41,7 +41,7 @@ class ToDynGate(RewritePattern):
         constant.out.name_hint = "g"
         rewriter.insert_op(constant, InsertPoint.before(op))
 
-        rewriter.replace_matched_op(DynGateOp(constant, *op.ins))
+        rewriter.replace_matched_op(DynApplyOp(constant, *op.ins))
 
 
 class ToXZSGate(RewritePattern):

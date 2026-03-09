@@ -3,16 +3,16 @@
 %q0 = qu.alloc
 %q1 = qu.alloc
 
-%q0_1 = qssa.gate<#gate.x> %q0
+%q0_1 = qssa.apply<#gate.x> %q0
 // CHECK: A CZ gate can only follow allocations and CZ gates in a valid mbqc program
-%q0_2, %q1_1 = qssa.gate<#gate.cz> %q0_1, %q1
+%q0_2, %q1_1 = qssa.apply<#gate.cz> %q0_1, %q1
 
 // -----
 
 %q0 = qu.alloc
 %q1 = qu.alloc
 // CHECK: Expected only CZ or Pauli gates, found #gate.cx
-%q0_1, %q1_1 = qssa.gate<#gate.cx> %q0, %q1
+%q0_1, %q1_1 = qssa.apply<#gate.cx> %q0, %q1
 
 // -----
 
@@ -23,13 +23,13 @@
 // -----
 
 %q0 = qu.alloc
-%q0_1 = qssa.gate<#gate.x> %q0
+%q0_1 = qssa.apply<#gate.x> %q0
 // CHECK: A measurement can only follow allocations and CZ gates in a valid mbqc program.
 %0 = qssa.measure<#measurement.xy<0>> %q0_1
 
 // -----
 %q0 = qu.alloc
-%q0_1 = qssa.gate<#gate.x> %q0
+%q0_1 = qssa.apply<#gate.x> %q0
 %a = angle.constant<0>
 %m = measurement.dyn_xy<%a>
 // CHECK: A measurement can only follow allocations and CZ gates in a valid mbqc program.
@@ -43,5 +43,5 @@
 // -----
 
 %q0 = qu.alloc
-// CHECK: Unexpected operation qref.gate
-qref.gate<#gate.x> %q0
+// CHECK: Unexpected operation qref.apply
+qref.apply<#gate.x> %q0

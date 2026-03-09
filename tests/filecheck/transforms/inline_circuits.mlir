@@ -5,20 +5,20 @@
 // CHECK-NEXT:   %q0 = qu.alloc
 // CHECK-NEXT:   %circuit = qssa.circuit() ({
 // CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.x> %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.x> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !instrument.type<1>
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.x> %q0
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.x> %q0
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @basic_inline() {
   %q0 = qu.alloc
   %circuit = qssa.circuit() ({
   ^bb0(%arg0 : !qu.bit):
-    %q1 = qssa.gate<#gate.x> %arg0
+    %q1 = qssa.apply<#gate.x> %arg0
     qssa.return %q1
   }) : () -> !instrument.type<1>
-  %result = qssa.dyn_gate<%circuit> %q0
+  %result = qssa.dyn_apply<%circuit> %q0
   func.return
 }
 
@@ -37,7 +37,7 @@ func.func @identity_inline() {
   ^bb0(%arg0 : !qu.bit):
     qssa.return %arg0
   }) : () -> !instrument.type<1>
-  %result = qssa.dyn_gate<%circuit> %q0
+  %result = qssa.dyn_apply<%circuit> %q0
   func.return
 }
 
@@ -46,23 +46,23 @@ func.func @identity_inline() {
 // CHECK-NEXT:   %q0 = qu.alloc
 // CHECK-NEXT:   %circuit = qssa.circuit() ({
 // CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.x> %{{.*}}
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.z> %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.x> %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.z> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !instrument.type<1>
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.x> %q0
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.z> %{{.*}}
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.x> %q0
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.z> %{{.*}}
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @complex_single_qubit() {
   %q0 = qu.alloc
   %circuit = qssa.circuit() ({
   ^bb0(%arg0 : !qu.bit):
-    %q1 = qssa.gate<#gate.x> %arg0
-    %q2 = qssa.gate<#gate.z> %q1
+    %q1 = qssa.apply<#gate.x> %arg0
+    %q2 = qssa.apply<#gate.z> %q1
     qssa.return %q2
   }) : () -> !instrument.type<1>
-  %result = qssa.dyn_gate<%circuit> %q0
+  %result = qssa.dyn_apply<%circuit> %q0
   func.return
 }
 
@@ -72,12 +72,12 @@ func.func @complex_single_qubit() {
 // CHECK-NEXT:   %q1 = qu.alloc
 // CHECK-NEXT:   %circuit = qssa.circuit() ({
 // CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.x> %{{.*}}
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.y> %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.x> %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.y> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}, %{{.*}}
 // CHECK-NEXT:   }) : () -> !instrument.type<2>
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.x> %q0
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.y> %q1
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.x> %q0
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.y> %q1
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @two_qubit_inline() {
@@ -85,11 +85,11 @@ func.func @two_qubit_inline() {
   %q1 = qu.alloc
   %circuit = qssa.circuit() ({
   ^bb0(%arg0 : !qu.bit, %arg1 : !qu.bit):
-    %q2 = qssa.gate<#gate.x> %arg0
-    %q3 = qssa.gate<#gate.y> %arg1
+    %q2 = qssa.apply<#gate.x> %arg0
+    %q3 = qssa.apply<#gate.y> %arg1
     qssa.return %q2, %q3
   }) : () -> !instrument.type<2>
-  %result0, %result1 = qssa.dyn_gate<%circuit> %q0, %q1
+  %result0, %result1 = qssa.dyn_apply<%circuit> %q0, %q1
   func.return
 }
 
@@ -99,12 +99,12 @@ func.func @two_qubit_inline() {
 // CHECK-NEXT:   %q1 = qu.alloc
 // CHECK-NEXT:   %circuit = qssa.circuit() ({
 // CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.h> %{{.*}}
-// CHECK-NEXT:     %{{.*}}, %{{.*}} = qssa.gate<#gate.cx> %{{.*}}, %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.h> %{{.*}}
+// CHECK-NEXT:     %{{.*}}, %{{.*}} = qssa.apply<#gate.cx> %{{.*}}, %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}, %{{.*}}
 // CHECK-NEXT:   }) : () -> !instrument.type<2>
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.h> %q0
-// CHECK-NEXT:   %{{.*}}, %{{.*}} = qssa.gate<#gate.cx> %{{.*}}, %q1
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.h> %q0
+// CHECK-NEXT:   %{{.*}}, %{{.*}} = qssa.apply<#gate.cx> %{{.*}}, %q1
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @entangling_circuit() {
@@ -112,11 +112,11 @@ func.func @entangling_circuit() {
   %q1 = qu.alloc
   %circuit = qssa.circuit() ({
   ^bb0(%arg0 : !qu.bit, %arg1 : !qu.bit):
-    %q2 = qssa.gate<#gate.h> %arg0
-    %q3, %q4 = qssa.gate<#gate.cx> %q2, %arg1
+    %q2 = qssa.apply<#gate.h> %arg0
+    %q3, %q4 = qssa.apply<#gate.cx> %q2, %arg1
     qssa.return %q3, %q4
   }) : () -> !instrument.type<2>
-  %result0, %result1 = qssa.dyn_gate<%circuit> %q0, %q1
+  %result0, %result1 = qssa.dyn_apply<%circuit> %q0, %q1
   func.return
 }
 
@@ -125,22 +125,22 @@ func.func @entangling_circuit() {
 // CHECK-NEXT:   %q0 = qu.alloc
 // CHECK-NEXT:   %circuit = qssa.circuit() ({
 // CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.x> %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.x> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !instrument.type<1>
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.x> %q0
-// CHECK-NEXT:   %final = qssa.gate<#gate.z> %{{.*}}
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.x> %q0
+// CHECK-NEXT:   %final = qssa.apply<#gate.z> %{{.*}}
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @use_results() {
   %q0 = qu.alloc
   %circuit = qssa.circuit() ({
   ^bb0(%arg0 : !qu.bit):
-    %q1 = qssa.gate<#gate.x> %arg0
+    %q1 = qssa.apply<#gate.x> %arg0
     qssa.return %q1
   }) : () -> !instrument.type<1>
-  %result = qssa.dyn_gate<%circuit> %q0
-  %final = qssa.gate<#gate.z> %result
+  %result = qssa.dyn_apply<%circuit> %q0
+  %final = qssa.apply<#gate.z> %result
   func.return
 }
 
@@ -150,16 +150,16 @@ func.func @use_results() {
 // CHECK-NEXT:   %q1 = qu.alloc
 // CHECK-NEXT:   %circuit1 = qssa.circuit() ({
 // CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.x> %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.x> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !instrument.type<1>
 // CHECK-NEXT:   %circuit2 = qssa.circuit() ({
 // CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.y> %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.y> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !instrument.type<1>
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.x> %q0
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.y> %q1
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.x> %q0
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.y> %q1
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @multiple_circuits() {
@@ -168,18 +168,18 @@ func.func @multiple_circuits() {
 
   %circuit1 = qssa.circuit() ({
   ^bb0(%arg0 : !qu.bit):
-    %q2 = qssa.gate<#gate.x> %arg0
+    %q2 = qssa.apply<#gate.x> %arg0
     qssa.return %q2
   }) : () -> !instrument.type<1>
 
   %circuit2 = qssa.circuit() ({
   ^bb0(%arg0 : !qu.bit):
-    %q3 = qssa.gate<#gate.y> %arg0
+    %q3 = qssa.apply<#gate.y> %arg0
     qssa.return %q3
   }) : () -> !instrument.type<1>
 
-  %result1 = qssa.dyn_gate<%circuit1> %q0
-  %result2 = qssa.dyn_gate<%circuit2> %q1
+  %result1 = qssa.dyn_apply<%circuit1> %q0
+  %result2 = qssa.dyn_apply<%circuit2> %q1
   func.return
 }
 
@@ -187,13 +187,13 @@ func.func @multiple_circuits() {
 // CHECK:      func.func @non_circuit_dyn_gate() {
 // CHECK-NEXT:   %q0 = qu.alloc
 // CHECK-NEXT:   %g = instrument.constant #gate.h
-// CHECK-NEXT:   %result = qssa.dyn_gate<%g> %q0
+// CHECK-NEXT:   %result = qssa.dyn_apply<%g> %q0
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @non_circuit_dyn_gate() {
   %q0 = qu.alloc
   %g = instrument.constant #gate.h
-  %result = qssa.dyn_gate<%g> %q0
+  %result = qssa.dyn_apply<%g> %q0
   func.return
 }
 
@@ -203,14 +203,14 @@ func.func @non_circuit_dyn_gate() {
 // CHECK-NEXT:   %q1 = qu.alloc
 // CHECK-NEXT:   %reusable_circuit = qssa.circuit() ({
 // CHECK-NEXT:   ^{{.*}}(%{{.*}} : !qu.bit):
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.h> %{{.*}}
-// CHECK-NEXT:     %{{.*}} = qssa.gate<#gate.z> %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.h> %{{.*}}
+// CHECK-NEXT:     %{{.*}} = qssa.apply<#gate.z> %{{.*}}
 // CHECK-NEXT:     qssa.return %{{.*}}
 // CHECK-NEXT:   }) : () -> !instrument.type<1>
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.h> %q0
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.z> %{{.*}}
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.h> %q1
-// CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.z> %{{.*}}
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.h> %q0
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.z> %{{.*}}
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.h> %q1
+// CHECK-NEXT:   %{{.*}} = qssa.apply<#gate.z> %{{.*}}
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
 func.func @circuit_reuse() {
@@ -219,13 +219,13 @@ func.func @circuit_reuse() {
 
   %reusable_circuit = qssa.circuit() ({
   ^bb0(%arg0 : !qu.bit):
-    %q2 = qssa.gate<#gate.h> %arg0
-    %q3 = qssa.gate<#gate.z> %q2
+    %q2 = qssa.apply<#gate.h> %arg0
+    %q3 = qssa.apply<#gate.z> %q2
     qssa.return %q3
   }) : () -> !instrument.type<1>
 
   // Use the same circuit on two different qubits
-  %result1 = qssa.dyn_gate<%reusable_circuit> %q0
-  %result2 = qssa.dyn_gate<%reusable_circuit> %q1
+  %result1 = qssa.dyn_apply<%reusable_circuit> %q0
+  %result2 = qssa.dyn_apply<%reusable_circuit> %q1
   func.return
 }
