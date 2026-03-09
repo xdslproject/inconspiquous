@@ -36,6 +36,11 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return Gate
 
+    def get_instrument():
+        from inconspiquous.dialects.instrument import Instrument
+
+        return Instrument
+
     def get_linalg():
         from xdsl.dialects.linalg import Linalg
 
@@ -118,6 +123,7 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "cf": get_cf,
         "func": get_func,
         "gate": get_gate,
+        "instrument": get_instrument,
         "linalg": get_linalg,
         "llvm": get_llvm,
         "math": get_math,
