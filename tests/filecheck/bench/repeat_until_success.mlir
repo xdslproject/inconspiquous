@@ -72,9 +72,9 @@ func.func @b(%q : !qu.bit) -> !qu.bit {
     %a3_4, %m3 = qssa.measure<#measurement.x_basis> %a3_3
     qu.release %a3_4
 
-    %cz = gate.constant #gate.cz
-    %id = gate.constant #gate.id<2>
-    %g = arith.select %m3, %cz, %id : !gate.type<2>
+    %cz = instrument.constant #gate.cz
+    %id = instrument.constant #gate.id<2>
+    %g = arith.select %m3, %cz, %id : !instrument.type<2>
 
     %a1_2, %a2_2 = qssa.dyn_gate<%g> %a1_1, %a2_1
 

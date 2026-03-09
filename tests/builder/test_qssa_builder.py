@@ -1,6 +1,6 @@
 import pytest
 
-from inconspiquous.dialects import gate, qssa, qu
+from inconspiquous.dialects import instrument, qssa, qu
 from inconspiquous.dialects.gate import HadamardGate
 from inconspiquous.utils.qssa_builder import QSSABuilder
 
@@ -30,7 +30,7 @@ def test_qssa_gate():
 
 def test_qssa_dyn_gate():
     no_hint = QSSABuilder.alloc()
-    gate_val = gate.ConstantGateOp(HadamardGate())
+    gate_val = instrument.ConstantInstrumentOp(HadamardGate())
 
     QSSABuilder.gate(gate_val, no_hint)
     assert isinstance(no_hint.get().owner, qssa.DynGateOp)

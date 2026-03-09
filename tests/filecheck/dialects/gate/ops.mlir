@@ -58,65 +58,59 @@
 // CHECK-NEXT: "test.op"() {gate = #gate.toffoli} : () -> ()
 "test.op"() {gate = #gate.toffoli} : () -> ()
 
-// CHECK: "test.op"() {gate = #gate.id<2>} : () -> ()
+// CHECK-NEXT: "test.op"() {gate = #gate.id<2>} : () -> ()
 "test.op"() {gate = #gate.id<2>} : () -> ()
 
-// CHECK-NEXT: %{{.*}} = gate.constant #gate.h
-// CHECK-GENERIC: %{{.*}} = "gate.constant"() <{gate = #gate.h}> : () -> !gate.type<1>
-%0 = gate.constant #gate.h
+%0 = "test.op"() : () -> !instrument.type<2>
 
-// CHECK-NEXT: %{{.*}} = gate.constant #gate.cz
-// CHECK-GENERIC-NEXT: %{{.*}} = "gate.constant"() <{gate = #gate.cz}> : () -> !gate.type<2>
-%1 = gate.constant #gate.cz
-
-// CHECK-NEXT: %{{.*}} = gate.compose %{{.*}}, %{{.*}} : !gate.type<2>
-// CHECK-GENERIC-NEXT: %{{.*}} = "gate.compose"(%{{.*}}, %{{.*}}) : (!gate.type<2>, !gate.type<2>) -> !gate.type<2>
-%2 = gate.compose %1, %1 : !gate.type<2>
+// CHECK: %{{.*}} = gate.compose %{{.*}}, %{{.*}} : !instrument.type<2>
+// CHECK-GENERIC: %{{.*}} = "gate.compose"(%{{.*}}, %{{.*}}) : (!instrument.type<2>, !instrument.type<2>) -> !instrument.type<2>
+%1 = gate.compose %0, %0 : !instrument.type<2>
 
 %zero = arith.constant 0 : i64
 %one = arith.constant 1 : i64
 
 // CHECK: %{{.*}} = gate.quaternion<i64> %zero + %one i + %zero j + %zero k
-// CHECK-GENERIC: %{{.*}} = "gate.quaternion"(%zero, %one, %zero, %zero) : (i64, i64, i64, i64) -> !gate.type<1>
-%3 = gate.quaternion<i64> %zero + %one i + %zero j + %zero k
+// CHECK-GENERIC: %{{.*}} = "gate.quaternion"(%zero, %one, %zero, %zero) : (i64, i64, i64, i64) -> !instrument.type<1>
+%2 = gate.quaternion<i64> %zero + %one i + %zero j + %zero k
 
 %cTrue = arith.constant true
 %cFalse = arith.constant false
 
 // CHECK: %{{.*}} = gate.xzs %cTrue, %cFalse, %cTrue
-// CHECK-GENERIC: %{{.*}} = "gate.xzs"(%cTrue, %cFalse, %cTrue) : (i1, i1, i1) -> !gate.type<1>
-%4 = gate.xzs %cTrue, %cFalse, %cTrue
+// CHECK-GENERIC: %{{.*}} = "gate.xzs"(%cTrue, %cFalse, %cTrue) : (i1, i1, i1) -> !instrument.type<1>
+%3 = gate.xzs %cTrue, %cFalse, %cTrue
 
 %phi = "test.op"() : () -> !angle.type
 
 // CHECK: %{{.*}} = gate.dyn_rx<%phi>
-// CHECK-GENERIC: %{{.*}} = "gate.dyn_rx"(%phi) : (!angle.type) -> !gate.type<1>
-%5 = gate.dyn_rx<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_rx"(%phi) : (!angle.type) -> !instrument.type<1>
+%4 = gate.dyn_rx<%phi>
 
 // CHECK: %{{.*}} = gate.dyn_ry<%phi>
-// CHECK-GENERIC: %{{.*}} = "gate.dyn_ry"(%phi) : (!angle.type) -> !gate.type<1>
-%6 = gate.dyn_ry<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_ry"(%phi) : (!angle.type) -> !instrument.type<1>
+%5 = gate.dyn_ry<%phi>
 
 // CHECK: %{{.*}} = gate.dyn_rz<%phi>
-// CHECK-GENERIC: %{{.*}} = "gate.dyn_rz"(%phi) : (!angle.type) -> !gate.type<1>
-%7 = gate.dyn_rz<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_rz"(%phi) : (!angle.type) -> !instrument.type<1>
+%6 = gate.dyn_rz<%phi>
 
 // CHECK: %{{.*}} = gate.dyn_j<%phi>
-// CHECK-GENERIC: %{{.*}} = "gate.dyn_j"(%phi) : (!angle.type) -> !gate.type<1>
-%8 = gate.dyn_j<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_j"(%phi) : (!angle.type) -> !instrument.type<1>
+%7 = gate.dyn_j<%phi>
 
 // CHECK: %{{.*}} = gate.dyn_crx<%phi>
-// CHECK-GENERIC: %{{.*}} = "gate.dyn_crx"(%phi) : (!angle.type) -> !gate.type<2>
-%9 = gate.dyn_crx<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_crx"(%phi) : (!angle.type) -> !instrument.type<2>
+%8 = gate.dyn_crx<%phi>
 
 // CHECK: %{{.*}} = gate.dyn_cry<%phi>
-// CHECK-GENERIC: %{{.*}} = "gate.dyn_cry"(%phi) : (!angle.type) -> !gate.type<2>
-%10 = gate.dyn_cry<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_cry"(%phi) : (!angle.type) -> !instrument.type<2>
+%9 = gate.dyn_cry<%phi>
 
 // CHECK: %{{.*}} = gate.dyn_crz<%phi>
-// CHECK-GENERIC: %{{.*}} = "gate.dyn_crz"(%phi) : (!angle.type) -> !gate.type<2>
-%11 = gate.dyn_crz<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_crz"(%phi) : (!angle.type) -> !instrument.type<2>
+%10 = gate.dyn_crz<%phi>
 
 // CHECK: %{{.*}} = gate.dyn_rzz<%phi>
-// CHECK-GENERIC: %{{.*}} = "gate.dyn_rzz"(%phi) : (!angle.type) -> !gate.type<2>
-%12 = gate.dyn_rzz<%phi>
+// CHECK-GENERIC: %{{.*}} = "gate.dyn_rzz"(%phi) : (!angle.type) -> !instrument.type<2>
+%11 = gate.dyn_rzz<%phi>
