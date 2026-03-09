@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 from xdsl.ir import Operation, SSAValue
 
+from inconspiquous.dialects.gate import GateAttr
 from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
 from inconspiquous.dialects.qu import AllocOp
-from inconspiquous.gates.core import GateAttr
 
 
 @dataclass

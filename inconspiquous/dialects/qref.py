@@ -22,10 +22,9 @@ from xdsl.pattern_rewriter import RewritePattern
 from xdsl.traits import HasParent, IsTerminator
 
 from inconspiquous.constraints import SizedAttributeConstraint
-from inconspiquous.dialects.gate import GateType
+from inconspiquous.dialects.gate import GateAttr, GateType
 from inconspiquous.dialects.measurement import CompBasisMeasurementAttr, MeasurementType
 from inconspiquous.dialects.qu import BitType
-from inconspiquous.gates import GateAttr
 from inconspiquous.measurement import MeasurementAttr
 
 

@@ -11,13 +11,12 @@ from xdsl.pattern_rewriter import (
 
 from inconspiquous.dialects import qssa
 from inconspiquous.dialects.angle import AngleAttr, CondNegateAngleOp, ConstantAngleOp
-from inconspiquous.dialects.gate import XZOp
+from inconspiquous.dialects.gate import CliffordGateAttr, XZOp
 from inconspiquous.dialects.measurement import (
     CompBasisMeasurementAttr,
     XYDynMeasurementOp,
     XYMeasurementAttr,
 )
-from inconspiquous.gates import CliffordGateAttr
 from inconspiquous.transforms.xzs.fusion import FuseXZGatesPattern
 from inconspiquous.utils.linear_walker import LinearWalker
 
