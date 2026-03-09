@@ -14,9 +14,14 @@ from xdsl.pattern_rewriter import (
 from xdsl.transforms.dead_code_elimination import DeadCodeElimination
 from inconspiquous.dialects import qref, qir, angle
 from inconspiquous.dialects.gate import (
+    CRXGate,
+    CRYGate,
+    CRZGate,
     CXGate,
     CZGate,
-    ControlOp,
+    DynCRXGate,
+    DynCRYGate,
+    DynCRZGate,
     DynRXGate,
     DynRYGate,
     DynRZGate,
@@ -145,6 +150,33 @@ class QRefGateToQIRPattern(RewritePattern):
                         qir.RZOp(const, op.ins[0]),
                     )
                 )
+            case CRXGate():
+                rewriter.replace_matched_op(
+                    (
+                        const := arith.ConstantOp(
+                            FloatAttr(op.gate.angle.as_float(), type=Float64Type())
+                        ),
+                        qir.CRXOp(const, op.ins[0], op.ins[1]),
+                    )
+                )
+            case CRYGate():
+                rewriter.replace_matched_op(
+                    (
+                        const := arith.ConstantOp(
+                            FloatAttr(op.gate.angle.as_float(), type=Float64Type())
+                        ),
+                        qir.CRYOp(const, op.ins[0], op.ins[1]),
+                    )
+                )
+            case CRZGate():
+                rewriter.replace_matched_op(
+                    (
+                        const := arith.ConstantOp(
+                            FloatAttr(op.gate.angle.as_float(), type=Float64Type())
+                        ),
+                        qir.CRZOp(const, op.ins[0], op.ins[1]),
+                    )
+                )
             case RZZGate():
                 rewriter.replace_matched_op(
                     (
@@ -162,28 +194,22 @@ class QRefDynGateToQIRPattern(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qref.DynGateOp, rewriter: PatternRewriter):
         gate_op = op.gate.owner
-        control = False
-        if isinstance(gate_op, ControlOp):
-            control = True
-            gate_op = gate_op.gate.owner
 
         match gate_op:
             case DynRXGate():
-                rewriter.replace_matched_op(
-                    (qir.CRXOp if control else qir.RXOp)(gate_op.angle, *op.ins)
-                )
+                rewriter.replace_matched_op(qir.RXOp(gate_op.angle, *op.ins))
             case DynRYGate():
-                rewriter.replace_matched_op(
-                    (qir.CRYOp if control else qir.RYOp)(gate_op.angle, *op.ins)
-                )
+                rewriter.replace_matched_op(qir.RYOp(gate_op.angle, *op.ins))
             case DynRZGate():
-                rewriter.replace_matched_op(
-                    (qir.CRZOp if control else qir.RZOp)(gate_op.angle, *op.ins)
-                )
+                rewriter.replace_matched_op(qir.RZOp(gate_op.angle, *op.ins))
+            case DynCRXGate():
+                rewriter.replace_matched_op(qir.CRXOp(gate_op.angle, *op.ins))
+            case DynCRYGate():
+                rewriter.replace_matched_op(qir.CRYOp(gate_op.angle, *op.ins))
+            case DynCRZGate():
+                rewriter.replace_matched_op(qir.CRZOp(gate_op.angle, *op.ins))
             case DynRZZGate():
-                if control:
-                    return
-                rewriter.replace_matched_op((qir.RZZOp)(gate_op.angle, *op.ins))
+                rewriter.replace_matched_op(qir.RZZOp(gate_op.angle, *op.ins))
             case _:
                 return
 

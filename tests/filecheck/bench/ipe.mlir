@@ -22,7 +22,7 @@ func.func @ipe(%theta: !angle.type, %m: i64) -> !angle.type {
 
     %angle = angle.scale %theta, %factor
     %rx = gate.dyn_rx<%angle>
-    %crx = gate.control %rx : !gate.type<1>
+    %crx = gate.dyn_crx<%angle>
     %a_2, %q_2 = qssa.dyn_gate<%crx> %a_1, %q_1
 
     %z = gate.dyn_rz<%phi>

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import ClassVar, Literal
 
 from xdsl.dialects.builtin import (
@@ -47,7 +47,7 @@ from inconspiquous.gates import (
     TwoQubitCliffordGate,
     SingleQubitGate,
 )
-from inconspiquous.constraints import IncrementConstraint, SizedAttributeConstraint
+from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.gates.core import (
     CliffordGateAttr,
     PauliGate,
@@ -244,6 +244,30 @@ class JGate(RotationGate, SingleQubitGate):
 
 
 @irdl_attr_definition
+class CRXGate(RotationGate, TwoQubitGate):
+    name = "gate.crx"
+
+    def __init__(self, angle: float | AngleAttr):
+        super().__init__(angle)
+
+
+@irdl_attr_definition
+class CRYGate(RotationGate, TwoQubitGate):
+    name = "gate.cry"
+
+    def __init__(self, angle: float | AngleAttr):
+        super().__init__(angle)
+
+
+@irdl_attr_definition
+class CRZGate(RotationGate, TwoQubitGate):
+    name = "gate.crz"
+
+    def __init__(self, angle: float | AngleAttr):
+        super().__init__(angle)
+
+
+@irdl_attr_definition
 class RZZGate(RotationGate, TwoQubitGate):
     name = "gate.rzz"
 
@@ -258,6 +282,18 @@ class DynRotationGate(IRDLOperation, HasCanonicalizationPatternsInterface, ABC):
 
     assembly_format = "`` `<` $angle `>` attr-dict"
 
+    @classmethod
+    @abstractmethod
+    def static_gate(cls) -> type[RotationGate]:
+        """Type of the corresponding static gate attribute"""
+        ...
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization import gate
+
+        return (gate.DynRotationGateToRotationPattern(cls.static_gate()),)
+
 
 class SingleQubitDynRotationGate(DynRotationGate, ABC):
     out = result_def(GateType(1))
@@ -266,15 +302,20 @@ class SingleQubitDynRotationGate(DynRotationGate, ABC):
         super().__init__(operands=(angle,), result_types=(GateType(1),))
 
 
+class TwoQubitDynRotationGate(DynRotationGate, ABC):
+    out = result_def(GateType(2))
+
+    def __init__(self, angle: SSAValue | Operation):
+        super().__init__(operands=(angle,), result_types=(GateType(2),))
+
+
 @irdl_op_definition
 class DynRXGate(SingleQubitDynRotationGate):
     name = "gate.dyn_rx"
 
     @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization import gate
-
-        return (gate.DynRotationGateToRotationPattern(RXGate),)
+    def static_gate(cls) -> type[RotationGate]:
+        return RXGate
 
 
 @irdl_op_definition
@@ -282,10 +323,8 @@ class DynRYGate(SingleQubitDynRotationGate):
     name = "gate.dyn_ry"
 
     @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization import gate
-
-        return (gate.DynRotationGateToRotationPattern(RYGate),)
+    def static_gate(cls) -> type[RotationGate]:
+        return RYGate
 
 
 @irdl_op_definition
@@ -293,26 +332,8 @@ class DynRZGate(SingleQubitDynRotationGate):
     name = "gate.dyn_rz"
 
     @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization import gate
-
-        return (gate.DynRotationGateToRotationPattern(RZGate),)
-
-
-@irdl_op_definition
-class DynRZZGate(DynRotationGate):
-    name = "gate.dyn_rzz"
-
-    out = result_def(GateType(2))
-
-    def __init__(self, angle: SSAValue | Operation):
-        super().__init__(operands=(angle,), result_types=(GateType(2),))
-
-    @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization import gate
-
-        return (gate.DynRotationGateToRotationPattern(RZZGate),)
+    def static_gate(cls) -> type[RotationGate]:
+        return RZGate
 
 
 @irdl_op_definition
@@ -320,10 +341,44 @@ class DynJGate(SingleQubitDynRotationGate):
     name = "gate.dyn_j"
 
     @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization import gate
+    def static_gate(cls) -> type[RotationGate]:
+        return JGate
 
-        return (gate.DynRotationGateToRotationPattern(JGate),)
+
+@irdl_op_definition
+class DynCRXGate(TwoQubitDynRotationGate):
+    name = "gate.dyn_crx"
+
+    @classmethod
+    def static_gate(cls) -> type[RotationGate]:
+        return CRXGate
+
+
+@irdl_op_definition
+class DynCRYGate(TwoQubitDynRotationGate):
+    name = "gate.dyn_cry"
+
+    @classmethod
+    def static_gate(cls) -> type[RotationGate]:
+        return CRYGate
+
+
+@irdl_op_definition
+class DynCRZGate(TwoQubitDynRotationGate):
+    name = "gate.dyn_crz"
+
+    @classmethod
+    def static_gate(cls) -> type[RotationGate]:
+        return CRZGate
+
+
+@irdl_op_definition
+class DynRZZGate(TwoQubitDynRotationGate):
+    name = "gate.dyn_rzz"
+
+    @classmethod
+    def static_gate(cls) -> type[RotationGate]:
+        return RZZGate
 
 
 @irdl_attr_definition
@@ -533,36 +588,6 @@ class XZOp(IRDLOperation):
         super().__init__(operands=(x, z), result_types=(GateType(1),))
 
 
-@irdl_op_definition
-class ControlOp(IRDLOperation, HasCanonicalizationPatternsInterface):
-    """
-    Adds a control qubit to an input gate.
-    """
-
-    name = "gate.control"
-
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
-
-    gate = operand_def(GateType.constr(_I))
-
-    out = result_def(GateType.constr(IncrementConstraint(_I)))
-
-    traits = traits_def(Pure())
-
-    assembly_format = "$gate `:` type($gate) attr-dict"
-
-    def __init__(self, gate: SSAValue[GateType]):
-        super().__init__(
-            operands=(gate,), result_types=(GateType(gate.type.num_qubits.data + 1),)
-        )
-
-    @classmethod
-    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
-        from inconspiquous.transforms.canonicalization.gate import ControlOpFoldPattern
-
-        return (ControlOpFoldPattern(),)
-
-
 Gate = Dialect(
     "gate",
     [
@@ -575,8 +600,10 @@ Gate = Dialect(
         DynRYGate,
         DynRZGate,
         DynJGate,
+        DynCRXGate,
+        DynCRYGate,
+        DynCRZGate,
         DynRZZGate,
-        ControlOp,
     ],
     [
         HadamardGate,
@@ -591,6 +618,9 @@ Gate = Dialect(
         RYGate,
         RZGate,
         JGate,
+        CRXGate,
+        CRYGate,
+        CRZGate,
         RZZGate,
         CXGate,
         CZGate,

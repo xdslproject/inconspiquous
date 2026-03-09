@@ -7,14 +7,14 @@ func.func @qml(%ql: !qu.bit, %qo: !qu.bit, %w: !angle.type, %b: !angle.type) -> 
   %bn = angle.negate %b
 
   %rxw = gate.dyn_rx<%w>
-  %crxw = gate.control %rxw : !gate.type<1>
+  %crxw = gate.dyn_crx<%w>
 
   %rxb = gate.dyn_rx<%b>
 
   %rxbn = gate.dyn_rx<%bn>
 
   %rxwn = gate.dyn_rx<%wn>
-  %crxwn = gate.control %rxwn : !gate.type<1>
+  %crxwn = gate.dyn_crx<%wn>
 
   %ql_res, %qo_res = scf.while(%ql_1 = %ql, %qo_1 = %qo)
     : (!qu.bit, !qu.bit) -> (!qu.bit, !qu.bit) {
