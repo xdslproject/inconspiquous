@@ -23,9 +23,12 @@ from xdsl.traits import HasParent, IsTerminator
 
 from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.dialects.gate import GateAttr, GateType
-from inconspiquous.dialects.measurement import CompBasisMeasurementAttr, MeasurementType
+from inconspiquous.dialects.measurement import (
+    CompBasisMeasurementAttr,
+    MeasurementAttr,
+    MeasurementType,
+)
 from inconspiquous.dialects.qu import BitType
-from inconspiquous.measurement import MeasurementAttr
 
 
 @irdl_op_definition

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from typing import ClassVar
 
 from xdsl.dialects.builtin import IntAttr, IntAttrConstraint
@@ -25,9 +26,18 @@ from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
 from xdsl.traits import ConstantLike, Pure
 
-from inconspiquous.constraints import SizedAttributeConstraint
+from inconspiquous.constraints import SizedAttribute, SizedAttributeConstraint
 from inconspiquous.dialects.angle import AngleAttr, AngleType
-from inconspiquous.measurement import MeasurementAttr
+
+
+class MeasurementAttr(ParametrizedAttribute, SizedAttribute, ABC):
+    @property
+    @abstractmethod
+    def num_qubits(self) -> int: ...
+
+    @property
+    def size(self) -> int:
+        return self.num_qubits
 
 
 @irdl_attr_definition
