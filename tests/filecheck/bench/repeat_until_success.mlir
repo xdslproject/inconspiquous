@@ -13,8 +13,10 @@ func.func @a(%q : !qu.bit) -> !qu.bit {
 
     %q_5 = qssa.gate<#gate.z> %q_4
 
-    %m1 = qssa.measure<#measurement.x_basis> %a1_2
-    %m2 = qssa.measure<#measurement.x_basis> %a2_2
+    %a1_3, %m1 = qssa.measure<#measurement.x_basis> %a1_2
+    qu.release %a1_3
+    %a2_3, %m2 = qssa.measure<#measurement.x_basis> %a2_2
+    qu.release %a2_3
 
     %m = arith.ori %m1, %m2 : i1
 
@@ -67,7 +69,8 @@ func.func @b(%q : !qu.bit) -> !qu.bit {
     %a3_3, %q_4 = qssa.gate<#gate.cx> %a3_2, %q_3
     %q_5 = qssa.gate<#gate.z> %q_4
 
-    %m3 = qssa.measure<#measurement.x_basis> %a3_3
+    %a3_4, %m3 = qssa.measure<#measurement.x_basis> %a3_3
+    qu.release %a3_4
 
     %cz = gate.constant #gate.cz
     %id = gate.constant #gate.id<2>
@@ -75,8 +78,10 @@ func.func @b(%q : !qu.bit) -> !qu.bit {
 
     %a1_2, %a2_2 = qssa.dyn_gate<%g> %a1_1, %a2_1
 
-    %m1 = qssa.measure<#measurement.x_basis> %a1_2
-    %m2 = qssa.measure<#measurement.x_basis> %a2_2
+    %a1_3, %m1 = qssa.measure<#measurement.x_basis> %a1_2
+    qu.release %a1_3
+    %a2_3, %m2 = qssa.measure<#measurement.x_basis> %a2_2
+    qu.release %a2_3
 
     %m = arith.ori %m1, %m2 : i1
 
@@ -145,8 +150,10 @@ func.func @c(%q : !qu.bit) -> !qu.bit {
     %a1_3 = qssa.gate<#gate.t> %a1_2
     %a2_3 = qssa.gate<#gate.t> %a2_2
 
-    %m1 = qssa.measure<#measurement.x_basis> %a1_3
-    %m2 = qssa.measure<#measurement.x_basis> %a2_3
+    %a1_4, %m1 = qssa.measure<#measurement.x_basis> %a1_3
+    qu.release %a1_4
+    %a2_4, %m2 = qssa.measure<#measurement.x_basis> %a2_3
+    qu.release %a2_4
 
     %m = arith.ori %m1, %m2 : i1
 

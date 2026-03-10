@@ -39,13 +39,16 @@ func.func @adaptive_qec_cycle(
   %q2_2, %a2_5 = qssa.gate<#gate.cx> %q2_1, %a2_4
   %a1_8 = qssa.gate<#gate.h> %a1_7
 
-  %f1 = qssa.measure %a1_8
+  %a1_9, %f1 = qssa.measure %a1_8
+  qu.release %a1_9
   %fd1 = arith.xori %f1, %prev_s1 : i1
 
-  %f5 = qssa.measure %a2_5
+  %a2_6, %f5 = qssa.measure %a2_5
+  qu.release %a2_6
   %fd5 = arith.xori %f5, %prev_s5 : i1
 
-  %f6 = qssa.measure %a3_5
+  %a3_6, %f6 = qssa.measure %a3_5
+  qu.release %a3_6
   %fd6 = arith.xori %f6, %prev_s6 : i1
 
   %0 = arith.ori %fd1, %fd5 : i1
@@ -77,13 +80,16 @@ func.func @adaptive_qec_cycle(
     %a5_7 = qssa.gate<#gate.h> %a5_6
     %a6_7 = qssa.gate<#gate.h> %a6_6
 
-    %f2 = qssa.measure %a4_6
+    %a4_7, %f2 = qssa.measure %a4_6
+    qu.release %a4_7
     %fd2_1 = arith.xori %f2, %prev_s2 : i1
 
-    %f3 = qssa.measure %a5_7
+    %a5_8, %f3 = qssa.measure %a5_7
+    qu.release %a5_8
     %fd3_1 = arith.xori %f3, %prev_s3 : i1
 
-    %f4 = qssa.measure %a6_7
+    %a6_8, %f4 = qssa.measure %a6_7
+    qu.release %a6_8
     %fd4_1 = arith.xori %f4, %prev_s4 : i1
 
     scf.yield %q1_3, %q2_5, %q3_7, %q4_5, %q5_3, %q6_5, %q7_3, %fd2_1, %fd3_1, %fd4_1
@@ -107,7 +113,8 @@ func.func @adaptive_qec_cycle(
     %q2_7, %as1_2 = qssa.gate<#gate.cx> %q2_3, %as1_1
     %q3_9, %as1_3 = qssa.gate<#gate.cx> %q3_4, %as1_2
     %q4_7, %as1_4 = qssa.gate<#gate.cx> %q4_3, %as1_3
-    %s1 = qssa.measure %as1_4
+    %as1_5, %s1 = qssa.measure %as1_4
+    qu.release %as1_5
 
     %s1_diff = arith.xori %prev_s1, %s1 : i1
 
@@ -117,7 +124,8 @@ func.func @adaptive_qec_cycle(
     %q3_10, %as2_2 = qssa.gate<#gate.cx> %q3_9, %as2_1
     %q5_5, %as2_3 = qssa.gate<#gate.cx> %q5_2, %as2_2
     %q6_7, %as2_4 = qssa.gate<#gate.cx> %q6_3, %as2_3
-    %s2 = qssa.measure %as2_4
+    %as2_5, %s2 = qssa.measure %as2_4
+    qu.release %as2_5
 
     %s2_diff = arith.xori %prev_s2, %s2 : i1
 
@@ -127,7 +135,8 @@ func.func @adaptive_qec_cycle(
     %q4_8, %as3_2 = qssa.gate<#gate.cx> %q4_7, %as3_1
     %q6_8, %as3_3 = qssa.gate<#gate.cx> %q6_7, %as3_2
     %q7_5, %as3_4 = qssa.gate<#gate.cx> %q7_2, %as3_3
-    %s3 = qssa.measure %as3_4
+    %as3_5, %s3 = qssa.measure %as3_4
+    qu.release %as3_5
 
     %s3_diff = arith.xori %prev_s3, %s3 : i1
 
@@ -139,7 +148,8 @@ func.func @adaptive_qec_cycle(
     %as4_4, %q3_12 = qssa.gate<#gate.cx> %as4_3, %q3_11
     %as4_5, %q4_9 = qssa.gate<#gate.cx> %as4_4, %q4_8
     %as4_6 = qssa.gate<#gate.h> %as4_5
-    %s4 = qssa.measure %as4_6
+    %as4_7, %s4 = qssa.measure %as4_6
+    qu.release %as4_7
 
     %s4_diff = arith.xori %prev_s4, %s4 : i1
 
@@ -151,7 +161,8 @@ func.func @adaptive_qec_cycle(
     %as5_4, %q5_6 = qssa.gate<#gate.cx> %as5_3, %q5_5
     %as5_5, %q6_9 = qssa.gate<#gate.cx> %as5_4, %q6_8
     %as5_6 = qssa.gate<#gate.h> %as5_5
-    %s5 = qssa.measure %as5_6
+    %as5_7, %s5 = qssa.measure %as5_6
+    qu.release %as5_7
 
     %s5_diff = arith.xori %prev_s5, %s5 : i1
 
@@ -163,7 +174,8 @@ func.func @adaptive_qec_cycle(
     %as6_4, %q6_10 = qssa.gate<#gate.cx> %as6_3, %q6_9
     %as6_5, %q7_6 = qssa.gate<#gate.cx> %as6_4, %q7_5
     %as6_6 = qssa.gate<#gate.h> %as6_5
-    %s6 = qssa.measure %as6_6
+    %as6_7, %s6 = qssa.measure %as6_6
+    qu.release %as6_7
 
     %s6_diff = arith.xori %prev_s6, %s6 : i1
 

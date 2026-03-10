@@ -48,6 +48,7 @@ class PerfectCode5QubitInliner(RewritePattern):
             QSSABuilder.gate(CXGate(), a1, q4)
             QSSABuilder.gate(HadamardGate(), a1)
             s1 = QSSABuilder.measure(a1, name_hint="s1")
+            QSSABuilder.release(a1)
 
             a2 = QSSABuilder.alloc(name_hint="a2")
             QSSABuilder.gate(HadamardGate(), a2)
@@ -57,6 +58,7 @@ class PerfectCode5QubitInliner(RewritePattern):
             QSSABuilder.gate(CXGate(), a2, q5)
             QSSABuilder.gate(HadamardGate(), a2)
             s2 = QSSABuilder.measure(a2, name_hint="s2")
+            QSSABuilder.release(a2)
 
             a3 = QSSABuilder.alloc(name_hint="a3")
             QSSABuilder.gate(HadamardGate(), a3)
@@ -66,6 +68,7 @@ class PerfectCode5QubitInliner(RewritePattern):
             QSSABuilder.gate(CZGate(), a3, q5)
             QSSABuilder.gate(HadamardGate(), a3)
             s3 = QSSABuilder.measure(a3, name_hint="s3")
+            QSSABuilder.release(a3)
 
             a4 = QSSABuilder.alloc(name_hint="a4")
             QSSABuilder.gate(HadamardGate(), a4)
@@ -75,6 +78,7 @@ class PerfectCode5QubitInliner(RewritePattern):
             QSSABuilder.gate(CZGate(), a4, q5)
             QSSABuilder.gate(HadamardGate(), a4)
             s4 = QSSABuilder.measure(a4, name_hint="s4")
+            QSSABuilder.release(a4)
 
             x = ConstantGateOp(XGate()).out
             x.name_hint = "x"

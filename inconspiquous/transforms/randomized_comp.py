@@ -278,6 +278,7 @@ class PadMeasure(RewritePattern):
 
         new_measure = MeasureOp(pre_z)
 
+        corrected_qubit = DynGateOp(pre_x_sel, new_measure.out_qubits[0])
         corrected_measure = XOrIOp(x_rand, new_measure.outs[0])
 
         rewriter.insert_op(
@@ -296,7 +297,8 @@ class PadMeasure(RewritePattern):
         )
 
         rewriter.replace_matched_op(
-            (new_measure, corrected_measure),
+            (new_measure, corrected_qubit, corrected_measure),
+            (corrected_qubit.out_qubits[0], corrected_measure.result),
         )
 
 

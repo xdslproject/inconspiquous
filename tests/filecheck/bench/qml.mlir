@@ -26,7 +26,8 @@ func.func @qml(%ql: !qu.bit, %qo: !qu.bit, %w: !angle.type, %b: !angle.type) -> 
     %qa_5 = qssa.dyn_gate<%rxbn> %qa_4
     %ql_3, %qa_6 = qssa.dyn_gate<%crxwn> %ql_2, %qa_5
 
-    %m = qssa.measure %qa_6
+    %qa_7, %m = qssa.measure %qa_6
+    qu.release %qa_7
 
     scf.condition(%m) %ql_3, %qo_2 : !qu.bit, !qu.bit
   } do {

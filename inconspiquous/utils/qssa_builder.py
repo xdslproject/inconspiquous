@@ -43,7 +43,9 @@ class QSSABuilder:
     @staticmethod
     def measure(ref: QubitRef, *, name_hint: str | None = None) -> SSAValue:
         new_op = MeasureOp(ref.get())
-        ref.qubit = None
+        qubit = new_op.out_qubits[0]
+        qubit.name_hint = ref.get().name_hint
+        ref.qubit = qubit
         out = new_op.outs[0]
         out.name_hint = name_hint
         return out
