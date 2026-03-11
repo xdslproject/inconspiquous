@@ -35,10 +35,10 @@
 // CHECK-GENERIC: %q8, %{{.*}} = "qssa.measure"(%q7) <{measurement = #measurement.xy<0.5pi>}> : (!qu.bit) -> (!qu.bit, i1)
 %q8, %1 = qssa.measure<#measurement.xy<0.5pi>> %q7
 
-%m = "test.op"() : () -> !measurement.type<1>
+%m = "test.op"() : () -> !instrument.type<1, i1>
 
 // CHECK: %q9, %{{.*}} = qssa.dyn_measure<%m> %q8
-// CHECK-GENERIC: %q9, %{{.*}} = "qssa.dyn_measure"(%m, %q8) : (!measurement.type<1>, !qu.bit) -> (!qu.bit, i1)
+// CHECK-GENERIC: %q9, %{{.*}} = "qssa.dyn_measure"(%m, %q8) : (!instrument.type<1, i1>, !qu.bit) -> (!qu.bit, i1)
 %q9, %2 = qssa.dyn_measure<%m> %q8
 
 // CHECK: %{{.*}} = qssa.circuit() ({

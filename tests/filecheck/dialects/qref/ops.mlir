@@ -37,10 +37,10 @@ qref.dyn_gate<%g1> %q1
 
 %q2 = qu.alloc
 
-%m = "test.op"() : () -> !measurement.type<1>
+%m = "test.op"() : () -> !instrument.type<1, i1>
 
 // CHECK: %{{.*}} = qref.dyn_measure<%m> %q2
-// CHECK-GENERIC: %{{.*}} = "qref.dyn_measure"(%m, %q2) : (!measurement.type<1>, !qu.bit) -> i1
+// CHECK-GENERIC: %{{.*}} = "qref.dyn_measure"(%m, %q2) : (!instrument.type<1, i1>, !qu.bit) -> i1
 %2 = qref.dyn_measure<%m> %q2
 
 // CHECK: %{{.*}} = qref.circuit() ({

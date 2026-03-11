@@ -21,7 +21,6 @@ from xdsl.irdl import (
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.traits import HasParent, IsTerminator
 
-from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.dialects.instrument import (
     InstrumentAttr,
     InstrumentConstraint,
@@ -29,8 +28,6 @@ from inconspiquous.dialects.instrument import (
 )
 from inconspiquous.dialects.measurement import (
     CompBasisMeasurementAttr,
-    MeasurementAttr,
-    MeasurementType,
 )
 from inconspiquous.dialects.qu import BitType
 
@@ -96,7 +93,7 @@ class MeasureOp(IRDLOperation):
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
     measurement = prop_def(
-        SizedAttributeConstraint(MeasurementAttr, _I),
+        InstrumentConstraint(_I, RangeOf(i1).of_length(_I)),
         default_value=CompBasisMeasurementAttr(),
     )
 
@@ -109,7 +106,7 @@ class MeasureOp(IRDLOperation):
     def __init__(
         self,
         *in_qubits: SSAValue | Operation,
-        measurement: MeasurementAttr = CompBasisMeasurementAttr(),
+        measurement: InstrumentAttr = CompBasisMeasurementAttr(),
     ):
         super().__init__(
             properties={
@@ -126,7 +123,7 @@ class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    measurement = operand_def(MeasurementType.constr(_I))
+    measurement = operand_def(InstrumentType.constr(_I, RangeOf(i1).of_length(_I)))
 
     in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 

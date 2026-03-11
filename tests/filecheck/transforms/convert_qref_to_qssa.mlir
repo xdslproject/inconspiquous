@@ -9,7 +9,7 @@ qref.gate<#gate.cx> %q0, %q1
 %0 = qref.measure %q0
 %g = instrument.constant #gate.h
 qref.dyn_gate<%g> %q0
-%m = measurement.constant #measurement.comp_basis
+%m = instrument.constant #measurement.comp_basis
 %1 = qref.dyn_measure<%m> %q1
 
 // CHECK:      %q0 = qu.alloc
@@ -20,7 +20,7 @@ qref.dyn_gate<%g> %q0
 // CHECK-NEXT: %q0_3, %{{.*}} = qssa.measure %q0_2
 // CHECK-NEXT: %g = instrument.constant #gate.h
 // CHECK-NEXT: %q0_4 = qssa.dyn_gate<%g> %q0_3
-// CHECK-NEXT: %m = measurement.constant #measurement.comp_basis
+// CHECK-NEXT: %m = instrument.constant #measurement.comp_basis
 // CHECK-NEXT: %q1_3, %1 = qssa.dyn_measure<%m> %q1_2
 
 // CHECK-ROUNDTRIP:      %q0 = qu.alloc
@@ -31,7 +31,7 @@ qref.dyn_gate<%g> %q0
 // CHECK-ROUNDTRIP-NEXT: %{{.*}} = qref.measure %q0
 // CHECK-ROUNDTRIP-NEXT: %g = instrument.constant #gate.h
 // CHECK-ROUNDTRIP-NEXT: qref.dyn_gate<%g> %q0
-// CHECK-ROUNDTRIP-NEXT: %m = measurement.constant #measurement.comp_basis
+// CHECK-ROUNDTRIP-NEXT: %m = instrument.constant #measurement.comp_basis
 // CHECK-ROUNDTRIP-NEXT: %{{.*}} = qref.dyn_measure<%m> %q1
 
 func.func @qref_in_region(%q : !qu.bit, %p: i1) -> !qu.bit {

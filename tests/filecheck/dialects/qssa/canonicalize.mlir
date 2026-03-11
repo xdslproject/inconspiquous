@@ -10,14 +10,14 @@
 // CHECK-NEXT: %1, %2 = qssa.dyn_gate<%g1> %q4, %q6
 // CHECK-NEXT: qssa.dyn_gate<%g2> %1, %2
 
-%g = "instrument.constant"() <{"instrument" = #gate.h}> : () -> !instrument.type<1>
-%m = "measurement.constant"() <{"measurement" = #measurement.comp_basis}> : () -> !measurement.type<1>
+%g = "instrument.constant"() <{instrument = #gate.h}> : () -> !instrument.type<1>
+%m = "instrument.constant"() <{instrument = #measurement.comp_basis}> : () -> !instrument.type<1, i1>
 
 %q1 = qu.alloc
 
 %q2 = "qssa.dyn_gate"(%g, %q1) : (!instrument.type<1>, !qu.bit) -> !qu.bit
 
-%q3, %0 = "qssa.dyn_measure"(%m, %q2) : (!measurement.type<1>, !qu.bit) -> (!qu.bit, i1)
+%q3, %0 = "qssa.dyn_measure"(%m, %q2) : (!instrument.type<1, i1>, !qu.bit) -> (!qu.bit, i1)
 
 %q4 = qu.alloc
 %q5 = "qssa.gate"(%q4) <{gate = #gate.id<1>}> : (!qu.bit) -> !qu.bit

@@ -1,13 +1,13 @@
 // RUN: quopt -p canonicalize %s | filecheck %s
 
 %g = "instrument.constant"() <{instrument = #gate.h}> : () -> !instrument.type<1>
-%m = "measurement.constant"() <{"measurement" = #measurement.comp_basis}> : () -> !measurement.type<1>
+%m = "instrument.constant"() <{instrument = #measurement.comp_basis}> : () -> !instrument.type<1, i1>
 
 %q1 = qu.alloc
 
 "qref.dyn_gate"(%g, %q1) : (!instrument.type<1>, !qu.bit) -> ()
 
-%0 = "qref.dyn_measure"(%m, %q1) : (!measurement.type<1>, !qu.bit) -> i1
+%0 = "qref.dyn_measure"(%m, %q1) : (!instrument.type<1, i1>, !qu.bit) -> i1
 
 %q2 = qu.alloc
 "qref.gate"(%q2) <{gate = #gate.id<1>}> : (!qu.bit) -> ()
