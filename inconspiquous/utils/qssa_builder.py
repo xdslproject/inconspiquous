@@ -4,7 +4,7 @@ from xdsl.ir import Operation, SSAValue
 
 from inconspiquous.dialects.gate import GateAttr
 from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
-from inconspiquous.dialects.qu import AllocOp
+from inconspiquous.dialects.qu import AllocOp, ReleaseOp
 
 
 @dataclass
@@ -47,3 +47,8 @@ class QSSABuilder:
         out = new_op.outs[0]
         out.name_hint = name_hint
         return out
+
+    @staticmethod
+    def release(ref: QubitRef):
+        ReleaseOp(ref.get())
+        ref.qubit = None
