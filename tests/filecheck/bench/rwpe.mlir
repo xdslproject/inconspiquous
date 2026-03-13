@@ -80,9 +80,9 @@ func.func @rwpe(%mu0 : !angle.type, %sigma0 : f64, %theta : !angle.type, %iter: 
 // CHECK-NEXT:    call void @__quantum__qis__rz__ctl(double %21, ptr %18, ptr %11)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %18)
 // CHECK-NEXT:    %22 = call ptr @__quantum__qis__m__body(ptr %18)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %18)
 // CHECK-NEXT:    %23 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %24 = call i1 @__quantum__rt__result_equal(ptr %22, ptr %23)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %18)
 // CHECK-NEXT:    %25 = fdiv double %10, 0x3FFA61298E1E045B
 // CHECK-NEXT:    %26 = fmul double %25, 0x400921FB54442D18
 // CHECK-NEXT:    %27 = fneg double %26

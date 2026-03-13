@@ -40,14 +40,14 @@ func.func @a(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %3)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %4)
 // CHECK-NEXT:    %6 = call ptr @__quantum__qis__m__body(ptr %4)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %4)
 // CHECK-NEXT:    %7 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %8 = call i1 @__quantum__rt__result_equal(ptr %6, ptr %7)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %4)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %5)
 // CHECK-NEXT:    %9 = call ptr @__quantum__qis__m__body(ptr %5)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %5)
 // CHECK-NEXT:    %10 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %11 = call i1 @__quantum__rt__result_equal(ptr %9, ptr %10)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %5)
 // CHECK-NEXT:    %12 = or i1 %8, %11
 // CHECK-NEXT:    br i1 %12, label %2, label %13
 // CHECK-EMPTY:
@@ -104,9 +104,9 @@ func.func @b(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %3)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %6)
 // CHECK-NEXT:    %7 = call ptr @__quantum__qis__m__body(ptr %6)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %6)
 // CHECK-NEXT:    %8 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %9 = call i1 @__quantum__rt__result_equal(ptr %7, ptr %8)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %6)
 // CHECK-NEXT:    br i1 %9, label %10, label %11
 // CHECK-EMPTY:
 // CHECK-NEXT:  10:                                               ; preds = %2
@@ -116,14 +116,14 @@ func.func @b(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:  11:                                               ; preds = %10, %2
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %4)
 // CHECK-NEXT:    %12 = call ptr @__quantum__qis__m__body(ptr %4)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %4)
 // CHECK-NEXT:    %13 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %14 = call i1 @__quantum__rt__result_equal(ptr %12, ptr %13)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %4)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %5)
 // CHECK-NEXT:    %15 = call ptr @__quantum__qis__m__body(ptr %5)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %5)
 // CHECK-NEXT:    %16 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %17 = call i1 @__quantum__rt__result_equal(ptr %15, ptr %16)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %5)
 // CHECK-NEXT:    %18 = or i1 %14, %17
 // CHECK-NEXT:    br i1 %18, label %2, label %19
 // CHECK-EMPTY:
@@ -175,14 +175,14 @@ func.func @c(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:    call void @__quantum__qis__t__body(ptr %5)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %4)
 // CHECK-NEXT:    %6 = call ptr @__quantum__qis__m__body(ptr %4)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %4)
 // CHECK-NEXT:    %7 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %8 = call i1 @__quantum__rt__result_equal(ptr %6, ptr %7)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %4)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %5)
 // CHECK-NEXT:    %9 = call ptr @__quantum__qis__m__body(ptr %5)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %5)
 // CHECK-NEXT:    %10 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %11 = call i1 @__quantum__rt__result_equal(ptr %9, ptr %10)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %5)
 // CHECK-NEXT:    %12 = or i1 %8, %11
 // CHECK-NEXT:    br i1 %12, label %2, label %13
 // CHECK-EMPTY:

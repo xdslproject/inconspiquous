@@ -27,14 +27,14 @@ func.func @cx(%ctrl: !qu.bit, %tgt: !qu.bit) -> (!qu.bit, !qu.bit) {
 // CHECK-NEXT:    call void @__quantum__qis__cz__body(ptr %3, ptr %4)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %1)
 // CHECK-NEXT:    %5 = call ptr @__quantum__qis__m__body(ptr %1)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %1)
 // CHECK-NEXT:    %6 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %7 = call i1 @__quantum__rt__result_equal(ptr %5, ptr %6)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %1)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %3)
 // CHECK-NEXT:    %8 = call ptr @__quantum__qis__m__body(ptr %3)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %3)
 // CHECK-NEXT:    %9 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %10 = call i1 @__quantum__rt__result_equal(ptr %8, ptr %9)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %3)
 // CHECK-NEXT:    br i1 %7, label %11, label %12
 // CHECK-EMPTY:
 // CHECK-NEXT:  11:                                               ; preds = %2

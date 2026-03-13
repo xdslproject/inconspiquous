@@ -52,9 +52,9 @@ func.func @qml(%ql: !qu.bit, %qo: !qu.bit, %w: !angle.type, %b: !angle.type) -> 
 // CHECK-NEXT:    call void @__quantum__qis__rx__body(double %6, ptr %10)
 // CHECK-NEXT:    call void @__quantum__qis__rx__ctl(double %5, ptr %8, ptr %10)
 // CHECK-NEXT:    %11 = call ptr @__quantum__qis__m__body(ptr %10)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %10)
 // CHECK-NEXT:    %12 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %13 = call i1 @__quantum__rt__result_equal(ptr %11, ptr %12)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %10)
 // CHECK-NEXT:    br i1 %13, label %14, label %17
 // CHECK-EMPTY:
 // CHECK-NEXT:  14:                                               ; preds = %7
