@@ -116,6 +116,9 @@ qref.dyn_gate<%rzz> %q0, %q1
 // CHECK-NEXT: [[meas3:%.+]] = qir.result_equal [[lhs3]], [[rhs3]]
 %2 = qref.measure<#measurement.xy<0.1pi>> %q2
 
+// CHECK-NEXT: qir.qubit_release %q2
+qu.release %q2
+
 // CHECK-NEXT "test.op"([[meas]], [[meas2]], [[meas3]])
 "test.op"(%0, %1, %2) : (i1, i1, i1) -> ()
 

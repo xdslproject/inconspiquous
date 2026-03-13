@@ -228,6 +228,12 @@ class QRefAllocToQIRPattern(RewritePattern):
                 return
 
 
+class QRefReleaseToQIRPattern(RewritePattern):
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: qu.ReleaseOp, rewriter: PatternRewriter, /):
+        rewriter.replace_matched_op(qir.ReleaseOp(op.in_qubit))
+
+
 class QRefMeasureToQIRPattern(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qref.MeasureOp, rewriter: PatternRewriter, /):
@@ -292,6 +298,7 @@ class ConvertQRefToQIRPass(ModulePass):
                     LowerScaleAnglePattern(),
                     LowerAddAnglePattern(),
                     QRefAllocToQIRPattern(),
+                    QRefReleaseToQIRPattern(),
                     QRefGateToQIRPattern(),
                     QRefDynGateToQIRPattern(),
                     QRefMeasureToQIRPattern(),
