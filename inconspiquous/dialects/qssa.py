@@ -141,10 +141,7 @@ class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
         measurement: SSAValue | Operation,
     ):
         super().__init__(
-            operands=(
-                measurement,
-                in_qubits,
-            ),
+            operands=(measurement, in_qubits),
             result_types=(i1,) * len(in_qubits),
         )
 
