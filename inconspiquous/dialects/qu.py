@@ -14,7 +14,6 @@ from xdsl.irdl import (
     IRDLOperation,
     ParamAttrConstraint,
     RangeOf,
-    eq,
     irdl_attr_definition,
     irdl_op_definition,
     operand_def,
@@ -98,7 +97,7 @@ class AllocOp(IRDLOperation):
         SizedAttributeConstraint(AllocAttr, _I), default_value=AllocZeroAttr()
     )
 
-    outs = var_result_def(RangeOf(eq(BitType())).of_length(_I))
+    outs = var_result_def(RangeOf(BitType()).of_length(_I))
 
     assembly_format = "(`` `<` $alloc^ `>`)? attr-dict"
 
@@ -129,7 +128,7 @@ class FromBitsOp(IRDLOperation):
 
     name = "qu.from_bits"
     _I: ClassVar = IntVarConstraint("I", AnyInt())
-    qubits = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
+    qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
     reg = result_def(RegisterType.constr(_I))
 
     assembly_format = "$qubits attr-dict `:` type($reg)"
@@ -147,7 +146,7 @@ class ToBitsOp(IRDLOperation):
     name = "qu.to_bits"
     _I: ClassVar = IntVarConstraint("I", AnyInt())
     reg = operand_def(RegisterType.constr(_I))
-    qubits = var_result_def(RangeOf(eq(BitType())).of_length(_I))
+    qubits = var_result_def(RangeOf(BitType()).of_length(_I))
 
     assembly_format = "$reg attr-dict `:` type($reg)"
 
