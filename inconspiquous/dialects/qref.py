@@ -42,9 +42,9 @@ class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
-    def __init__(self, gate: GateAttr, *ins: SSAValue | Operation):
+    def __init__(self, gate: GateAttr, *in_qubits: SSAValue | Operation):
         super().__init__(
-            operands=[ins],
+            operands=(in_qubits,),
             properties={
                 "gate": gate,
             },
@@ -69,9 +69,9 @@ class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
-    def __init__(self, gate: SSAValue | Operation, *ins: SSAValue | Operation):
+    def __init__(self, gate: SSAValue | Operation, *in_qubits: SSAValue | Operation):
         super().__init__(
-            operands=[gate, ins],
+            operands=(gate, in_qubits),
         )
 
     @classmethod
@@ -111,7 +111,7 @@ class MeasureOp(IRDLOperation):
                 "measurement": measurement,
             },
             operands=(in_qubits,),
-            result_types=((i1,) * len(in_qubits)),
+            result_types=(i1,) * len(in_qubits),
         )
 
 
@@ -133,8 +133,8 @@ class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
         self, *in_qubits: SSAValue | Operation, measurement: SSAValue | Operation
     ):
         super().__init__(
-            operands=[measurement, in_qubits],
-            result_types=(tuple(i1 for _ in in_qubits),),
+            operands=(measurement, in_qubits),
+            result_types=(i1,) * len(in_qubits),
         )
 
     @classmethod
