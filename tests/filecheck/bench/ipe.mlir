@@ -66,9 +66,9 @@ func.func @ipe(%theta: !angle.type, %m: i64) -> !angle.type {
 // CHECK-NEXT:    call void @__quantum__qis__rz__body(double %6, ptr %15)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %15)
 // CHECK-NEXT:    %17 = call ptr @__quantum__qis__m__body(ptr %15)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %15)
 // CHECK-NEXT:    %18 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %19 = call i1 @__quantum__rt__result_equal(ptr %17, ptr %18)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %15)
 // CHECK-NEXT:    %20 = fmul double %14, 0x400921FB54442D18
 // CHECK-NEXT:    %21 = select i1 %19, double %20, double 0.000000e+00
 // CHECK-NEXT:    %22 = fadd double %6, %21

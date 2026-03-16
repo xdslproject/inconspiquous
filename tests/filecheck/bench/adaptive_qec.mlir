@@ -210,19 +210,19 @@ func.func @adaptive_qec_cycle(
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %1, ptr %15)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %14)
 // CHECK-NEXT:    %17 = call ptr @__quantum__qis__m__body(ptr %14)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %14)
 // CHECK-NEXT:    %18 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %19 = call i1 @__quantum__rt__result_equal(ptr %17, ptr %18)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %14)
 // CHECK-NEXT:    %20 = xor i1 %19, %7
 // CHECK-NEXT:    %21 = call ptr @__quantum__qis__m__body(ptr %15)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %15)
 // CHECK-NEXT:    %22 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %23 = call i1 @__quantum__rt__result_equal(ptr %21, ptr %22)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %15)
 // CHECK-NEXT:    %24 = xor i1 %23, %11
 // CHECK-NEXT:    %25 = call ptr @__quantum__qis__m__body(ptr %16)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %16)
 // CHECK-NEXT:    %26 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %27 = call i1 @__quantum__rt__result_equal(ptr %25, ptr %26)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %16)
 // CHECK-NEXT:    %28 = xor i1 %27, %12
 // CHECK-NEXT:    %29 = or i1 %20, %24
 // CHECK-NEXT:    %30 = or i1 %29, %28
@@ -251,19 +251,19 @@ func.func @adaptive_qec_cycle(
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %33)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %34)
 // CHECK-NEXT:    %35 = call ptr @__quantum__qis__m__body(ptr %32)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %32)
 // CHECK-NEXT:    %36 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %37 = call i1 @__quantum__rt__result_equal(ptr %35, ptr %36)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %32)
 // CHECK-NEXT:    %38 = xor i1 %37, %8
 // CHECK-NEXT:    %39 = call ptr @__quantum__qis__m__body(ptr %33)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %33)
 // CHECK-NEXT:    %40 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %41 = call i1 @__quantum__rt__result_equal(ptr %39, ptr %40)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %33)
 // CHECK-NEXT:    %42 = xor i1 %41, %9
 // CHECK-NEXT:    %43 = call ptr @__quantum__qis__m__body(ptr %34)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %34)
 // CHECK-NEXT:    %44 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %45 = call i1 @__quantum__rt__result_equal(ptr %43, ptr %44)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %34)
 // CHECK-NEXT:    %46 = xor i1 %45, %10
 // CHECK-NEXT:    br label %47
 // CHECK-EMPTY:
@@ -290,9 +290,9 @@ func.func @adaptive_qec_cycle(
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %50, ptr %62)
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %51, ptr %62)
 // CHECK-NEXT:    %63 = call ptr @__quantum__qis__m__body(ptr %62)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %62)
 // CHECK-NEXT:    %64 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %65 = call i1 @__quantum__rt__result_equal(ptr %63, ptr %64)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %62)
 // CHECK-NEXT:    %66 = xor i1 %7, %65
 // CHECK-NEXT:    %67 = call ptr @__quantum__rt__qubit_allocate()
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %49, ptr %67)
@@ -300,9 +300,9 @@ func.func @adaptive_qec_cycle(
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %52, ptr %67)
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %53, ptr %67)
 // CHECK-NEXT:    %68 = call ptr @__quantum__qis__m__body(ptr %67)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %67)
 // CHECK-NEXT:    %69 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %70 = call i1 @__quantum__rt__result_equal(ptr %68, ptr %69)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %67)
 // CHECK-NEXT:    %71 = xor i1 %8, %70
 // CHECK-NEXT:    %72 = call ptr @__quantum__rt__qubit_allocate()
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %50, ptr %72)
@@ -310,9 +310,9 @@ func.func @adaptive_qec_cycle(
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %53, ptr %72)
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %54, ptr %72)
 // CHECK-NEXT:    %73 = call ptr @__quantum__qis__m__body(ptr %72)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %72)
 // CHECK-NEXT:    %74 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %75 = call i1 @__quantum__rt__result_equal(ptr %73, ptr %74)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %72)
 // CHECK-NEXT:    %76 = xor i1 %9, %75
 // CHECK-NEXT:    %77 = call ptr @__quantum__rt__qubit_allocate()
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %77)
@@ -322,9 +322,9 @@ func.func @adaptive_qec_cycle(
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %77, ptr %51)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %77)
 // CHECK-NEXT:    %78 = call ptr @__quantum__qis__m__body(ptr %77)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %77)
 // CHECK-NEXT:    %79 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %80 = call i1 @__quantum__rt__result_equal(ptr %78, ptr %79)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %77)
 // CHECK-NEXT:    %81 = xor i1 %10, %80
 // CHECK-NEXT:    %82 = call ptr @__quantum__rt__qubit_allocate()
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %82)
@@ -334,9 +334,9 @@ func.func @adaptive_qec_cycle(
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %82, ptr %53)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %82)
 // CHECK-NEXT:    %83 = call ptr @__quantum__qis__m__body(ptr %82)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %82)
 // CHECK-NEXT:    %84 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %85 = call i1 @__quantum__rt__result_equal(ptr %83, ptr %84)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %82)
 // CHECK-NEXT:    %86 = xor i1 %11, %85
 // CHECK-NEXT:    %87 = call ptr @__quantum__rt__qubit_allocate()
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %87)
@@ -346,9 +346,9 @@ func.func @adaptive_qec_cycle(
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %87, ptr %54)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %87)
 // CHECK-NEXT:    %88 = call ptr @__quantum__qis__m__body(ptr %87)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %87)
 // CHECK-NEXT:    %89 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %90 = call i1 @__quantum__rt__result_equal(ptr %88, ptr %89)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %87)
 // CHECK-NEXT:    %91 = xor i1 %12, %90
 // CHECK-NEXT:    %92 = call i1 @decode(i1 %20, i1 %55, i1 %56, i1 %66, i1 %71, i1 %76)
 // CHECK-NEXT:    %93 = call i1 @decode(i1 %57, i1 %24, i1 %28, i1 %81, i1 %86, i1 %91)
