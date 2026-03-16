@@ -50,7 +50,7 @@ class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
             properties={
                 "gate": gate,
             },
-            result_types=(BitType(),) * len(in_qubits),
+            result_types=((BitType(),) * len(in_qubits),),
         )
 
     @classmethod
@@ -77,7 +77,7 @@ class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     def __init__(self, gate: SSAValue | Operation, *in_qubits: SSAValue | Operation):
         super().__init__(
             operands=(gate, in_qubits),
-            result_types=(BitType(),) * len(in_qubits),
+            result_types=((BitType(),) * len(in_qubits),),
         )
 
     @classmethod
@@ -117,7 +117,7 @@ class MeasureOp(IRDLOperation):
                 "measurement": measurement,
             },
             operands=(in_qubits,),
-            result_types=(i1,) * len(in_qubits),
+            result_types=((i1,) * len(in_qubits)),
         )
 
 
@@ -142,7 +142,7 @@ class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     ):
         super().__init__(
             operands=(measurement, in_qubits),
-            result_types=(i1,) * len(in_qubits),
+            result_types=((i1,) * len(in_qubits),),
         )
 
     @classmethod
