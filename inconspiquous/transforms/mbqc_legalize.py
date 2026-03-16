@@ -69,7 +69,7 @@ class MBQCLegalize(ModulePass):
                 case GateOp():
                     match current_op.gate:
                         case CZGate():
-                            for operand in current_op.ins:
+                            for operand in current_op.in_qubits:
                                 if not (
                                     isinstance(operand.owner, AllocOp)
                                     or (

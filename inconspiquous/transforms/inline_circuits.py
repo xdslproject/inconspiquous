@@ -67,7 +67,7 @@ class InlineCircuitPattern(RewritePattern):
 
         # Inline the entire circuit block before the dyn_gate operation
         # This automatically handles SSA value mapping from circuit args to dyn_gate inputs
-        rewriter.inline_block(circuit_block, rewriter.insertion_point, op.ins)
+        rewriter.inline_block(circuit_block, rewriter.insertion_point, op.in_qubits)
 
         # Replace the dyn_gate with the values being returned by the circuit
         return_values = list(circuit_return.operands)

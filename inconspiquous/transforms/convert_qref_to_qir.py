@@ -102,34 +102,38 @@ class QRefGateToQIRPattern(RewritePattern):
     def match_and_rewrite(self, op: qref.GateOp, rewriter: PatternRewriter):
         match op.gate:
             case CXGate():
-                rewriter.replace_matched_op(qir.CNotOp(op.ins[0], op.ins[1]))
+                rewriter.replace_matched_op(
+                    qir.CNotOp(op.in_qubits[0], op.in_qubits[1])
+                )
             case CZGate():
-                rewriter.replace_matched_op(qir.CZOp(op.ins[0], op.ins[1]))
+                rewriter.replace_matched_op(qir.CZOp(op.in_qubits[0], op.in_qubits[1]))
             case HadamardGate():
-                rewriter.replace_matched_op(qir.HOp(op.ins[0]))
+                rewriter.replace_matched_op(qir.HOp(op.in_qubits[0]))
             case PhaseGate():
-                rewriter.replace_matched_op(qir.SOp(op.ins[0]))
+                rewriter.replace_matched_op(qir.SOp(op.in_qubits[0]))
             case PhaseDaggerGate():
-                rewriter.replace_matched_op(qir.SAdjOp(op.ins[0]))
+                rewriter.replace_matched_op(qir.SAdjOp(op.in_qubits[0]))
             case TGate():
-                rewriter.replace_matched_op(qir.TOp(op.ins[0]))
+                rewriter.replace_matched_op(qir.TOp(op.in_qubits[0]))
             case TDaggerGate():
-                rewriter.replace_matched_op(qir.TAdjOp(op.ins[0]))
+                rewriter.replace_matched_op(qir.TAdjOp(op.in_qubits[0]))
             case XGate():
-                rewriter.replace_matched_op(qir.XOp(op.ins[0]))
+                rewriter.replace_matched_op(qir.XOp(op.in_qubits[0]))
             case YGate():
-                rewriter.replace_matched_op(qir.YOp(op.ins[0]))
+                rewriter.replace_matched_op(qir.YOp(op.in_qubits[0]))
             case ZGate():
-                rewriter.replace_matched_op(qir.ZOp(op.ins[0]))
+                rewriter.replace_matched_op(qir.ZOp(op.in_qubits[0]))
             case ToffoliGate():
-                rewriter.replace_matched_op(qir.CCXOp(op.ins[0], op.ins[1], op.ins[2]))
+                rewriter.replace_matched_op(
+                    qir.CCXOp(op.in_qubits[0], op.in_qubits[1], op.in_qubits[2])
+                )
             case RXGate():
                 rewriter.replace_matched_op(
                     (
                         const := arith.ConstantOp(
                             FloatAttr(op.gate.angle.as_float(), type=Float64Type())
                         ),
-                        qir.RXOp(const, op.ins[0]),
+                        qir.RXOp(const, op.in_qubits[0]),
                     )
                 )
             case RYGate():
@@ -138,7 +142,7 @@ class QRefGateToQIRPattern(RewritePattern):
                         const := arith.ConstantOp(
                             FloatAttr(op.gate.angle.as_float(), type=Float64Type())
                         ),
-                        qir.RYOp(const, op.ins[0]),
+                        qir.RYOp(const, op.in_qubits[0]),
                     )
                 )
             case RZGate():
@@ -147,7 +151,7 @@ class QRefGateToQIRPattern(RewritePattern):
                         const := arith.ConstantOp(
                             FloatAttr(op.gate.angle.as_float(), type=Float64Type())
                         ),
-                        qir.RZOp(const, op.ins[0]),
+                        qir.RZOp(const, op.in_qubits[0]),
                     )
                 )
             case CRXGate():
@@ -156,7 +160,7 @@ class QRefGateToQIRPattern(RewritePattern):
                         const := arith.ConstantOp(
                             FloatAttr(op.gate.angle.as_float(), type=Float64Type())
                         ),
-                        qir.CRXOp(const, op.ins[0], op.ins[1]),
+                        qir.CRXOp(const, op.in_qubits[0], op.in_qubits[1]),
                     )
                 )
             case CRYGate():
@@ -165,7 +169,7 @@ class QRefGateToQIRPattern(RewritePattern):
                         const := arith.ConstantOp(
                             FloatAttr(op.gate.angle.as_float(), type=Float64Type())
                         ),
-                        qir.CRYOp(const, op.ins[0], op.ins[1]),
+                        qir.CRYOp(const, op.in_qubits[0], op.in_qubits[1]),
                     )
                 )
             case CRZGate():
@@ -174,7 +178,7 @@ class QRefGateToQIRPattern(RewritePattern):
                         const := arith.ConstantOp(
                             FloatAttr(op.gate.angle.as_float(), type=Float64Type())
                         ),
-                        qir.CRZOp(const, op.ins[0], op.ins[1]),
+                        qir.CRZOp(const, op.in_qubits[0], op.in_qubits[1]),
                     )
                 )
             case RZZGate():
@@ -183,7 +187,7 @@ class QRefGateToQIRPattern(RewritePattern):
                         const := arith.ConstantOp(
                             FloatAttr(op.gate.angle.as_float(), type=Float64Type())
                         ),
-                        qir.RZZOp(const, op.ins[0], op.ins[1]),
+                        qir.RZZOp(const, op.in_qubits[0], op.in_qubits[1]),
                     )
                 )
             case _:
@@ -197,19 +201,19 @@ class QRefDynGateToQIRPattern(RewritePattern):
 
         match gate_op:
             case DynRXGate():
-                rewriter.replace_matched_op(qir.RXOp(gate_op.angle, *op.ins))
+                rewriter.replace_matched_op(qir.RXOp(gate_op.angle, *op.in_qubits))
             case DynRYGate():
-                rewriter.replace_matched_op(qir.RYOp(gate_op.angle, *op.ins))
+                rewriter.replace_matched_op(qir.RYOp(gate_op.angle, *op.in_qubits))
             case DynRZGate():
-                rewriter.replace_matched_op(qir.RZOp(gate_op.angle, *op.ins))
+                rewriter.replace_matched_op(qir.RZOp(gate_op.angle, *op.in_qubits))
             case DynCRXGate():
-                rewriter.replace_matched_op(qir.CRXOp(gate_op.angle, *op.ins))
+                rewriter.replace_matched_op(qir.CRXOp(gate_op.angle, *op.in_qubits))
             case DynCRYGate():
-                rewriter.replace_matched_op(qir.CRYOp(gate_op.angle, *op.ins))
+                rewriter.replace_matched_op(qir.CRYOp(gate_op.angle, *op.in_qubits))
             case DynCRZGate():
-                rewriter.replace_matched_op(qir.CRZOp(gate_op.angle, *op.ins))
+                rewriter.replace_matched_op(qir.CRZOp(gate_op.angle, *op.in_qubits))
             case DynRZZGate():
-                rewriter.replace_matched_op(qir.RZZOp(gate_op.angle, *op.ins))
+                rewriter.replace_matched_op(qir.RZZOp(gate_op.angle, *op.in_qubits))
             case _:
                 return
 

@@ -28,7 +28,7 @@ class LowerQSSADynGateToScfPattern(RewritePattern):
     def make_region_from_arg(op: qssa.DynGateOp, gate: SSAValue) -> Region:
         region = Region(Block())
         with ImplicitBuilder(region):
-            dyn_gate = qssa.DynGateOp(gate, *op.ins)
+            dyn_gate = qssa.DynGateOp(gate, *op.in_qubits)
             scf.YieldOp(dyn_gate)
         return region
 
@@ -72,7 +72,7 @@ class LowerQRefDynGateToScfPattern(RewritePattern):
     def make_region_from_arg(op: qref.DynGateOp, gate: SSAValue) -> Region:
         region = Region(Block())
         with ImplicitBuilder(region):
-            qref.DynGateOp(gate, *op.ins)
+            qref.DynGateOp(gate, *op.in_qubits)
             scf.YieldOp()
         return region
 

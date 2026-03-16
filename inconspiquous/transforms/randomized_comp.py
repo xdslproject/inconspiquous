@@ -45,7 +45,7 @@ class PadTGate(RewritePattern):
         z_gate = ConstantGateOp(ZGate())
         phase_gate = ConstantGateOp(PhaseGate())
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
-        pre_x = DynGateOp(pre_x_sel, *op.ins)
+        pre_x = DynGateOp(pre_x_sel, *op.in_qubits)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
         pre_z = DynGateOp(pre_z_sel, pre_x)
 
@@ -98,7 +98,7 @@ class PadTDaggerGate(RewritePattern):
         z_gate = ConstantGateOp(ZGate())
         phase_dagger_gate = ConstantGateOp(PhaseDaggerGate())
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
-        pre_x = DynGateOp(pre_x_sel, *op.ins)
+        pre_x = DynGateOp(pre_x_sel, *op.in_qubits)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
         pre_z = DynGateOp(pre_z_sel, pre_x)
 
@@ -150,7 +150,7 @@ class PadHadamardGate(RewritePattern):
         x_gate = ConstantGateOp(XGate())
         z_gate = ConstantGateOp(ZGate())
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
-        pre_x = DynGateOp(pre_x_sel, *op.ins)
+        pre_x = DynGateOp(pre_x_sel, *op.in_qubits)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
         pre_z = DynGateOp(pre_z_sel, pre_x)
 
@@ -207,18 +207,18 @@ class PadCXGate(RewritePattern):
         z_sel_q1 = SelectOp(z_rand_q1, z_gate, id_gate)
         z_sel_q2 = SelectOp(z_rand_q2, z_gate, id_gate)
 
-        pre_x_q1 = DynGateOp(x_sel_q1, op.ins[0])
+        pre_x_q1 = DynGateOp(x_sel_q1, op.in_qubits[0])
         pre_z_q1 = DynGateOp(z_sel_q1, pre_x_q1)
-        pre_x_q2 = DynGateOp(x_sel_q2, op.ins[1])
+        pre_x_q2 = DynGateOp(x_sel_q2, op.in_qubits[1])
         pre_z_q2 = DynGateOp(z_sel_q2, pre_x_q2)
 
         new_cx = GateOp(CXGate(), pre_z_q1, pre_z_q2)
 
-        post_z_q1_1 = DynGateOp(z_sel_q1, new_cx.outs[0])
+        post_z_q1_1 = DynGateOp(z_sel_q1, new_cx.out_qubits[0])
         post_z_q1_2 = DynGateOp(z_sel_q2, post_z_q1_1)
         post_x_q1 = DynGateOp(x_sel_q1, post_z_q1_2)
 
-        post_z_q2 = DynGateOp(z_sel_q2, new_cx.outs[1])
+        post_z_q2 = DynGateOp(z_sel_q2, new_cx.out_qubits[1])
         post_x_q2_1 = DynGateOp(x_sel_q1, post_z_q2)
         post_x_q2_2 = DynGateOp(x_sel_q2, post_x_q2_1)
 
@@ -249,7 +249,8 @@ class PadCXGate(RewritePattern):
         )
 
         rewriter.replace_matched_op(
-            (post_x_q1, post_x_q2_2), (post_x_q1.outs[0], post_x_q2_2.outs[0])
+            (post_x_q1, post_x_q2_2),
+            (post_x_q1.out_qubits[0], post_x_q2_2.out_qubits[0]),
         )
 
 

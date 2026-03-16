@@ -24,19 +24,19 @@ class ConvertQrefGateToQssaGate(RewritePattern):
         # Don't rewrite if uses live in different blocks
         if op.parent_block() is None:
             return
-        for operand in op.ins:
+        for operand in op.in_qubits:
             for use in operand.uses:
                 if use.operation.parent_block() != op.parent_block():
                     return
 
         if isinstance(op, qref.GateOp):
-            new_op = qssa.GateOp(op.gate, *op.ins)
+            new_op = qssa.GateOp(op.gate, *op.in_qubits)
         else:
-            new_op = qssa.DynGateOp(op.gate, *op.ins)
+            new_op = qssa.DynGateOp(op.gate, *op.in_qubits)
 
         rewriter.replace_matched_op(new_op, ())
 
-        for operand, result in zip(op.ins, new_op.results):
+        for operand, result in zip(op.in_qubits, new_op.results):
             operand.replace_uses_with_if(
                 result, lambda use: use.operation is not new_op
             )

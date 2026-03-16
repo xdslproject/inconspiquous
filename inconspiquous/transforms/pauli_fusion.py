@@ -22,7 +22,7 @@ class PauliFusionPattern(RewritePattern):
         if not isinstance(op.gate, XGate | YGate | ZGate):
             return
 
-        prev = op.ins[0].owner
+        prev = op.in_qubits[0].owner
         if not isinstance(prev, qssa.GateOp):
             return
 
@@ -30,7 +30,7 @@ class PauliFusionPattern(RewritePattern):
             return
 
         if op.gate == prev.gate:
-            rewriter.replace_matched_op((), prev.ins)
+            rewriter.replace_matched_op((), prev.in_qubits)
             rewriter.erase_op(prev)
             return
 
@@ -50,7 +50,7 @@ class PauliFusionPattern(RewritePattern):
             case _:
                 return
 
-        rewriter.replace_matched_op(qssa.GateOp(new_gate, *prev.ins))
+        rewriter.replace_matched_op(qssa.GateOp(new_gate, *prev.in_qubits))
         rewriter.erase_op(prev)
 
 

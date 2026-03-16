@@ -35,7 +35,7 @@ class PerfectCode5QubitInliner(RewritePattern):
         if op.gate != PerfectCode5QubitCorrectionAttr():
             return
 
-        (q1, q2, q3, q4, q5) = tuple(QubitRef(qubit) for qubit in op.ins)
+        (q1, q2, q3, q4, q5) = tuple(QubitRef(qubit) for qubit in op.in_qubits)
 
         builder = Builder(InsertPoint.before(op))
 

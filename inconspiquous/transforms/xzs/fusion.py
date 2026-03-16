@@ -26,10 +26,10 @@ class FuseXZGatesPattern(RewritePattern):
         if not isinstance(gate2, XZOp):
             return
 
-        if not op.ins[0].has_one_use():
+        if not op.in_qubits[0].has_one_use():
             return
 
-        predecessor = op.ins[0].owner
+        predecessor = op.in_qubits[0].owner
 
         if not isinstance(predecessor, DynGateOp):
             return
@@ -53,7 +53,7 @@ class FuseXZGatesPattern(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.ins))
+        rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.in_qubits))
         rewriter.erase_op(predecessor)
 
 
@@ -68,10 +68,10 @@ class FuseXZSGatesPattern(RewritePattern):
         if not isinstance(gate2, XZSOp | XZOp):
             return
 
-        if not op.ins[0].has_one_use():
+        if not op.in_qubits[0].has_one_use():
             return
 
-        predecessor = op.ins[0].owner
+        predecessor = op.in_qubits[0].owner
 
         if not isinstance(predecessor, DynGateOp):
             return
@@ -116,7 +116,7 @@ class FuseXZSGatesPattern(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.ins))
+        rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.in_qubits))
         rewriter.erase_op(predecessor)
 
 
