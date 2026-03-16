@@ -8,7 +8,6 @@ from xdsl.irdl import (
     IntVarConstraint,
     IRDLOperation,
     RangeOf,
-    eq,
     irdl_op_definition,
     operand_def,
     prop_def,
@@ -39,7 +38,7 @@ class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     gate = prop_def(SizedAttributeConstraint(GateAttr, _I))
 
-    in_qubits = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
+    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
     assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
@@ -66,7 +65,7 @@ class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     gate = operand_def(GateType.constr(_I))
 
-    in_qubits = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
+    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
     assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
@@ -96,9 +95,9 @@ class MeasureOp(IRDLOperation):
         default_value=CompBasisMeasurementAttr(),
     )
 
-    in_qubits = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
+    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
-    outs = var_result_def(RangeOf(eq(i1)).of_length(_I))
+    outs = var_result_def(RangeOf(i1).of_length(_I))
 
     assembly_format = "(`` `<` $measurement^ `>`)? $in_qubits attr-dict"
 
@@ -124,9 +123,9 @@ class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     measurement = operand_def(MeasurementType.constr(_I))
 
-    in_qubits = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
+    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
-    outs = var_result_def(RangeOf(eq(i1)).of_length(_I))
+    outs = var_result_def(RangeOf(i1).of_length(_I))
 
     assembly_format = "`<` $measurement `>` $in_qubits attr-dict"
 
@@ -153,7 +152,7 @@ class CircuitOp(IRDLOperation):
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    body = region_def("single_block", entry_args=RangeOf(eq(BitType())).of_length(_I))
+    body = region_def("single_block", entry_args=RangeOf(BitType()).of_length(_I))
     result = result_def(GateType.constr(_I))
 
     assembly_format = "`(` `)` `(` $body `)` `:` `(` `)` `->` type($result) attr-dict"
