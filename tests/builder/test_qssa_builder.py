@@ -54,9 +54,9 @@ def test_qssa_measure():
     assert c1.name_hint == "test"
 
 
-def test_double_measure():
+def test_double_release():
     q = QSSABuilder.alloc()
-    QSSABuilder.measure(q)
+    QSSABuilder.release(q)
 
     with pytest.raises(ValueError, match="Consumed qubit was used"):
-        QSSABuilder.measure(q)
+        QSSABuilder.release(q)

@@ -97,24 +97,27 @@ qref.dyn_gate<%crz> %q0, %q1
 qref.dyn_gate<%rzz> %q0, %q1
 
 // CHECK-NEXT: [[lhs:%.*]] = qir.m %q0
-// CHECK-NEXT: qir.qubit_release %q0
 // CHECK-NEXT: [[rhs:%.*]] = qir.result_get_one
 // CHECK-NEXT: [[meas:%.+]] = qir.result_equal [[lhs]], [[rhs]]
+// CHECK-NEXT: qir.qubit_release %q0
 %0 = qref.measure %q0
 // CHECK-NEXT: qir.h %q1
 // CHECK-NEXT: [[lhs2:%.*]] = qir.m %q1
-// CHECK-NEXT: qir.qubit_release %q1
 // CHECK-NEXT: [[rhs2:%.*]] = qir.result_get_one
 // CHECK-NEXT: [[meas2:%.+]] = qir.result_equal [[lhs2]], [[rhs2]]
+// CHECK-NEXT: qir.qubit_release %q1
 %1 = qref.measure<#measurement.x_basis> %q1
 // CHECK-NEXT: [[angle10:%.*]] = arith.constant
 // CHECK-NEXT: qir.rz<[[angle10]]> %q2
 // CHECK-NEXT: qir.h %q2
 // CHECK-NEXT: [[lhs3:%.*]] = qir.m %q2
-// CHECK-NEXT: qir.qubit_release %q2
 // CHECK-NEXT: [[rhs3:%.*]] = qir.result_get_one
 // CHECK-NEXT: [[meas3:%.+]] = qir.result_equal [[lhs3]], [[rhs3]]
+// CHECK-NEXT: qir.qubit_release %q2
 %2 = qref.measure<#measurement.xy<0.1pi>> %q2
+
+// CHECK-NEXT: qir.qubit_release %q2
+qu.release %q2
 
 // CHECK-NEXT "test.op"([[meas]], [[meas2]], [[meas3]])
 "test.op"(%0, %1, %2) : (i1, i1, i1) -> ()
@@ -133,9 +136,9 @@ func.func @xy_measurement(%a : !angle.type) -> i1 {
 // CHECK-NEXT: qir.rz<[[negation]]> %q
 // CHECK-NEXT: qir.h %q
 // CHECK-NEXT: [[lhs4:%.*]] = qir.m %q
-// CHECK-NEXT: qir.qubit_release %q
 // CHECK-NEXT: [[rhs4:%.*]] = qir.result_get_one
 // CHECK-NEXT: [[meas4:%.+]] = qir.result_equal [[lhs4]], [[rhs4]]
+// CHECK-NEXT: qir.qubit_release %q
 // CHECK-NEXT: func.return [[meas4]]
 
 // -----

@@ -228,6 +228,12 @@ class QRefAllocToQIRPattern(RewritePattern):
                 return
 
 
+class QRefReleaseToQIRPattern(RewritePattern):
+    @op_type_rewrite_pattern
+    def match_and_rewrite(self, op: qu.ReleaseOp, rewriter: PatternRewriter, /):
+        rewriter.replace_matched_op(qir.ReleaseOp(op.in_qubit))
+
+
 class QRefMeasureToQIRPattern(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: qref.MeasureOp, rewriter: PatternRewriter, /):
@@ -251,10 +257,11 @@ class QRefMeasureToQIRPattern(RewritePattern):
             correction
             + (
                 m := qir.MeasureOp(op.in_qubits[0]),
-                qir.ReleaseOp(op.in_qubits[0]),
                 one := qir.ResultGetOneOp(),
-                qir.ResultEqualOp(m, one),
-            )
+                r := qir.ResultEqualOp(m, one),
+                qir.ReleaseOp(op.in_qubits[0]),
+            ),
+            (r.out,),
         )
 
 
@@ -270,10 +277,11 @@ class QRefDynMeasureToQIRPattern(RewritePattern):
                 qir.RZOp(a, op.in_qubits[0]),
                 qir.HOp(op.in_qubits[0]),
                 m := qir.MeasureOp(op.in_qubits[0]),
-                qir.ReleaseOp(op.in_qubits[0]),
                 one := qir.ResultGetOneOp(),
-                qir.ResultEqualOp(m, one),
-            )
+                r := qir.ResultEqualOp(m, one),
+                qir.ReleaseOp(op.in_qubits[0]),
+            ),
+            (r.out,),
         )
 
 
@@ -292,6 +300,7 @@ class ConvertQRefToQIRPass(ModulePass):
                     LowerScaleAnglePattern(),
                     LowerAddAnglePattern(),
                     QRefAllocToQIRPattern(),
+                    QRefReleaseToQIRPattern(),
                     QRefGateToQIRPattern(),
                     QRefDynGateToQIRPattern(),
                     QRefMeasureToQIRPattern(),

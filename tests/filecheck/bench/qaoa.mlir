@@ -148,25 +148,25 @@ func.func @qaoa_ansatz(
 // CHECK-NEXT:    %32 = extractvalue { ptr, ptr, ptr, ptr, ptr } %28, 3
 // CHECK-NEXT:    %33 = extractvalue { ptr, ptr, ptr, ptr, ptr } %28, 4
 // CHECK-NEXT:    %34 = call ptr @__quantum__qis__m__body(ptr %29)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %29)
 // CHECK-NEXT:    %35 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %36 = call i1 @__quantum__rt__result_equal(ptr %34, ptr %35)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %29)
 // CHECK-NEXT:    %37 = call ptr @__quantum__qis__m__body(ptr %30)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %30)
 // CHECK-NEXT:    %38 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %39 = call i1 @__quantum__rt__result_equal(ptr %37, ptr %38)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %30)
 // CHECK-NEXT:    %40 = call ptr @__quantum__qis__m__body(ptr %31)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %31)
 // CHECK-NEXT:    %41 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %42 = call i1 @__quantum__rt__result_equal(ptr %40, ptr %41)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %31)
 // CHECK-NEXT:    %43 = call ptr @__quantum__qis__m__body(ptr %32)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %32)
 // CHECK-NEXT:    %44 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %45 = call i1 @__quantum__rt__result_equal(ptr %43, ptr %44)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %32)
 // CHECK-NEXT:    %46 = call ptr @__quantum__qis__m__body(ptr %33)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %33)
 // CHECK-NEXT:    %47 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %48 = call i1 @__quantum__rt__result_equal(ptr %46, ptr %47)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %33)
 // CHECK-NEXT:    %49 = insertvalue { i1, i1, i1, i1, i1 } undef, i1 %36, 0
 // CHECK-NEXT:    %50 = insertvalue { i1, i1, i1, i1, i1 } %49, i1 %39, 1
 // CHECK-NEXT:    %51 = insertvalue { i1, i1, i1, i1, i1 } %50, i1 %42, 2
