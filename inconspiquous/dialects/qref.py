@@ -111,7 +111,7 @@ class MeasureOp(IRDLOperation):
                 "measurement": measurement,
             },
             operands=(in_qubits,),
-            result_types=(i1,) * len(in_qubits),
+            result_types=((i1,) * len(in_qubits),),
         )
 
 
@@ -134,7 +134,7 @@ class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     ):
         super().__init__(
             operands=(measurement, in_qubits),
-            result_types=(i1,) * len(in_qubits),
+            result_types=((i1,) * len(in_qubits),),
         )
 
     @classmethod
