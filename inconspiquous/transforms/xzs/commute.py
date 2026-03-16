@@ -29,7 +29,7 @@ class XZCommutePattern(RewritePattern):
         gate = op1.gate.owner
         if not isinstance(gate, XZOp):
             return
-        if (use := op1.outs[0].get_unique_use()) is None:
+        if (use := op1.out_qubits[0].get_unique_use()) is None:
             return
 
         op2 = use.operation
@@ -55,7 +55,7 @@ class XZCommutePattern(RewritePattern):
 
             negate = CondNegateAngleOp(gate.x, angle)
             new_measurement = XYDynMeasurementOp(negate)
-            new_op2 = qssa.DynMeasureOp(op1.ins[0], measurement=new_measurement)
+            new_op2 = qssa.DynMeasureOp(op1.in_qubits[0], measurement=new_measurement)
             new_op1 = arith.XOrIOp(new_op2.outs[0], gate.z)
 
             rewriter.replace_op(
@@ -67,7 +67,7 @@ class XZCommutePattern(RewritePattern):
         if isinstance(op2, qssa.MeasureOp):
             if not isinstance(op2.measurement, CompBasisMeasurementAttr):
                 return
-            new_op2 = qssa.MeasureOp(op1.ins[0])
+            new_op2 = qssa.MeasureOp(op1.in_qubits[0])
             new_op1 = arith.XOrIOp(new_op2.outs[0], gate.x)
 
             rewriter.replace_op(op2, (new_op2, new_op1))
@@ -83,8 +83,8 @@ class XZCommutePattern(RewritePattern):
             x_prop = op2.gate.pauli_prop(input_idx, "X")
             z_prop = op2.gate.pauli_prop(input_idx, "Z")
 
-            new_operands = list(op2.ins)
-            new_operands[input_idx] = op1.ins[0]
+            new_operands = list(op2.in_qubits)
+            new_operands[input_idx] = op1.in_qubits[0]
 
             new_op2 = qssa.GateOp(op2.gate, *new_operands)
             ops_to_insert: list[Operation] = []
@@ -137,11 +137,11 @@ class XZCommutePattern(RewritePattern):
                         xz_gate = XZOp(apply_x, apply_z)
                         ops_to_insert.append(xz_gate)
 
-                    dyn_gate = qssa.DynGateOp(xz_gate, new_op2.outs[out_idx])
+                    dyn_gate = qssa.DynGateOp(xz_gate, new_op2.out_qubits[out_idx])
                     ops_to_insert.append(dyn_gate)
-                    new_outputs.append(dyn_gate.outs[0])
+                    new_outputs.append(dyn_gate.out_qubits[0])
                 else:
-                    new_outputs.append(new_op2.outs[out_idx])
+                    new_outputs.append(new_op2.out_qubits[out_idx])
 
             final_ops = (
                 (false_const, new_op2, *ops_to_insert)

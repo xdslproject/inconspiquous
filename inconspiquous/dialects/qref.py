@@ -39,9 +39,9 @@ class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     gate = prop_def(SizedAttributeConstraint(GateAttr, _I))
 
-    ins = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
+    in_qubits = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
 
-    assembly_format = "`<` $gate `>` $ins attr-dict"
+    assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
     def __init__(self, gate: GateAttr, *ins: SSAValue | Operation):
         super().__init__(
@@ -66,9 +66,9 @@ class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     gate = operand_def(GateType.constr(_I))
 
-    ins = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
+    in_qubits = var_operand_def(RangeOf(eq(BitType())).of_length(_I))
 
-    assembly_format = "`<` $gate `>` $ins attr-dict"
+    assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
     def __init__(self, gate: SSAValue | Operation, *ins: SSAValue | Operation):
         super().__init__(

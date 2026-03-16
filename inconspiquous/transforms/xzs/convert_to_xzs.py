@@ -41,7 +41,7 @@ class ToDynGate(RewritePattern):
         constant.out.name_hint = "g"
         rewriter.insert_op(constant, InsertPoint.before(op))
 
-        rewriter.replace_matched_op(DynGateOp(constant, *op.ins))
+        rewriter.replace_matched_op(DynGateOp(constant, *op.in_qubits))
 
 
 class ToXZSGate(RewritePattern):

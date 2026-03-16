@@ -29,7 +29,7 @@ class QSSABuilder:
             new_op = GateOp(gate, *(ref.get() for ref in qubit_refs))
         else:
             new_op = DynGateOp(gate, *(ref.get() for ref in qubit_refs))
-        for ref, qubit in zip(qubit_refs, new_op.outs):
+        for ref, qubit in zip(qubit_refs, new_op.out_qubits):
             qubit.name_hint = ref.get().name_hint
             ref.qubit = qubit
 
