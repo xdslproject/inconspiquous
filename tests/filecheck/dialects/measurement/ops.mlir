@@ -10,12 +10,8 @@
 // CHECK: "test.op"() {measurement = #measurement.xy<pi>} : () -> ()
 "test.op"() {measurement = #measurement.xy<pi>} : () -> ()
 
-// CHECK: %m = measurement.constant #measurement.comp_basis
-// CHECK-GENERIC: %m = "measurement.constant"() <{measurement = #measurement.comp_basis}> : () -> !measurement.type<1>
-%m = measurement.constant #measurement.comp_basis
-
 %a = "test.op"() : () -> !angle.type
 
 // CHECK: %m2 = measurement.dyn_xy<%a>
-// CHECK-GENERIC: %m2 = "measurement.dyn_xy"(%a) : (!angle.type) -> !measurement.type<1>
+// CHECK-GENERIC: %m2 = "measurement.dyn_xy"(%a) : (!angle.type) -> !instrument.type<1, i1>
 %m2 = measurement.dyn_xy<%a>

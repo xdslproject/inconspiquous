@@ -9,7 +9,6 @@ from inconspiquous.dialects.gate import (
     IdentityGate,
 )
 from inconspiquous.dialects.instrument import ConstantInstrumentOp
-from inconspiquous.dialects.measurement import ConstantMeasurementOp
 from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, GateOp, MeasureOp
 
 
@@ -55,7 +54,7 @@ class DynMeasureConst(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: DynMeasureOp, rewriter: PatternRewriter):
-        if isinstance(owner := op.measurement.owner, ConstantMeasurementOp):
+        if isinstance(owner := op.measurement.owner, ConstantInstrumentOp):
             rewriter.replace_matched_op(
-                MeasureOp(*op.in_qubits, measurement=owner.measurement)
+                MeasureOp(*op.in_qubits, measurement=owner.instrument)
             )

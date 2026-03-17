@@ -1,43 +1,36 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from typing import ClassVar
+from abc import ABC
 
-from xdsl.dialects.builtin import IntAttr, IntAttrConstraint
-from xdsl.interfaces import HasCanonicalizationPatternsInterface, HasFolderInterface
-from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
+from xdsl.dialects.builtin import i1
+from xdsl.interfaces import HasCanonicalizationPatternsInterface
+from xdsl.ir import Dialect, Operation, SSAValue, TypeAttribute
 from xdsl.irdl import (
-    AnyInt,
-    AttrConstraint,
-    BaseAttr,
-    IntConstraint,
-    IntVarConstraint,
     IRDLOperation,
-    ParamAttrConstraint,
     irdl_attr_definition,
     irdl_op_definition,
     operand_def,
-    prop_def,
     result_def,
     traits_def,
 )
 from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
-from xdsl.traits import ConstantLike, Pure
+from xdsl.traits import Pure
 
-from inconspiquous.constraints import SizedAttribute, SizedAttributeConstraint
 from inconspiquous.dialects.angle import AngleAttr, AngleType
+from inconspiquous.dialects.instrument import InstrumentAttr, InstrumentType
 
 
-class MeasurementAttr(ParametrizedAttribute, SizedAttribute, ABC):
+class MeasurementAttr(InstrumentAttr, ABC):
+    """
+    Helper for instruments which act as traditional "measurements", i.e. have one
+    boolean output for each qubit.
+    """
+
     @property
-    @abstractmethod
-    def num_qubits(self) -> int: ...
-
-    @property
-    def size(self) -> int:
-        return self.num_qubits
+    def classical_results(self) -> tuple[TypeAttribute, ...]:
+        return (i1,) * self.num_qubits
 
 
 @irdl_attr_definition
@@ -94,73 +87,6 @@ class XYMeasurementAttr(MeasurementAttr):
         return 1
 
 
-@irdl_attr_definition
-class MeasurementType(ParametrizedAttribute, TypeAttribute):
-    """
-    A type for dynamic measurements.
-    """
-
-    name = "measurement.type"
-
-    num_qubits: IntAttr
-
-    def __init__(self, num_qubits: int | IntAttr):
-        if isinstance(num_qubits, int):
-            num_qubits = IntAttr(num_qubits)
-        super().__init__(num_qubits)
-
-    @classmethod
-    def parse_parameters(cls, parser: AttrParser) -> tuple[IntAttr]:
-        with parser.in_angle_brackets():
-            i = parser.parse_integer(allow_boolean=False, allow_negative=False)
-            return (IntAttr(i),)
-
-    def print_parameters(self, printer: Printer) -> None:
-        with printer.in_angle_brackets():
-            printer.print_int(self.num_qubits.data)
-
-    @classmethod
-    def constr(
-        cls, int_constraint: IntConstraint | None = None
-    ) -> AttrConstraint[MeasurementType]:
-        if int_constraint is None:
-            return BaseAttr(MeasurementType)
-        return ParamAttrConstraint(
-            MeasurementType,
-            (IntAttrConstraint(int_constraint),),
-        )
-
-
-@irdl_op_definition
-class ConstantMeasurementOp(IRDLOperation, HasFolderInterface):
-    """
-    Constant-like operation for producing measurement types from measurement attributes.
-    """
-
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
-
-    name = "measurement.constant"
-
-    measurement = prop_def(SizedAttributeConstraint(MeasurementAttr, _I))
-
-    out = result_def(MeasurementType.constr(_I))
-
-    assembly_format = "$measurement attr-dict"
-
-    traits = traits_def(Pure(), ConstantLike())
-
-    def __init__(self, measurement: MeasurementAttr):
-        super().__init__(
-            properties={
-                "measurement": measurement,
-            },
-            result_types=(MeasurementType(measurement.num_qubits),),
-        )
-
-    def fold(self) -> tuple[MeasurementAttr]:
-        return (self.measurement,)
-
-
 @irdl_op_definition
 class XYDynMeasurementOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     """
@@ -171,14 +97,14 @@ class XYDynMeasurementOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     angle = operand_def(AngleType)
 
-    out = result_def(MeasurementType(1))
+    out = result_def(InstrumentType(1, i1))
 
     assembly_format = "`<` $angle `>` attr-dict"
 
     traits = traits_def(Pure())
 
     def __init__(self, angle: SSAValue | Operation):
-        super().__init__(operands=(angle,), result_types=(MeasurementType(1),))
+        super().__init__(operands=(angle,), result_types=(InstrumentType(1, i1),))
 
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
@@ -190,13 +116,11 @@ class XYDynMeasurementOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 Measurement = Dialect(
     "measurement",
     [
-        ConstantMeasurementOp,
         XYDynMeasurementOp,
     ],
     [
         CompBasisMeasurementAttr,
         XBasisMeasurementAttr,
         XYMeasurementAttr,
-        MeasurementType,
     ],
 )

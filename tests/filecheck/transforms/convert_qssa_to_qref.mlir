@@ -9,7 +9,7 @@
 %q6, %0 = qssa.measure %q4
 %g = instrument.constant #gate.h
 %q7 = qssa.dyn_gate<%g> %q6
-%m = measurement.constant #measurement.comp_basis
+%m = instrument.constant #measurement.comp_basis
 %q8, %1 = qssa.dyn_measure<%m> %q5
 
 // CHECK:      %q0 = qu.alloc
@@ -20,7 +20,7 @@
 // CHECK-NEXT: %{{.*}} = qref.measure %q0
 // CHECK-NEXT: %g = instrument.constant #gate.h
 // CHECK-NEXT: qref.dyn_gate<%g> %q0
-// CHECK-NEXT: %m = measurement.constant #measurement.comp_basis
+// CHECK-NEXT: %m = instrument.constant #measurement.comp_basis
 // CHECK-NEXT: %{{.*}} = qref.dyn_measure<%m> %q1
 
 // CHECK-ROUNDTRIP:      %q0 = qu.alloc
@@ -31,5 +31,5 @@
 // CHECK-ROUNDTRIP-NEXT: %q0_3, %{{.*}} = qssa.measure %q0_2
 // CHECK-ROUNDTRIP-NEXT: %g = instrument.constant #gate.h
 // CHECK-ROUNDTRIP-NEXT: %q0_4 = qssa.dyn_gate<%g> %q0_3
-// CHECK-ROUNDTRIP-NEXT: %m = measurement.constant #measurement.comp_basis
+// CHECK-ROUNDTRIP-NEXT: %m = instrument.constant #measurement.comp_basis
 // CHECK-ROUNDTRIP-NEXT: %{{.*}} = qssa.dyn_measure<%m> %q1_2
