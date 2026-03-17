@@ -50,6 +50,8 @@ class ToCMEPattern(RewritePattern):
             cz.out_qubits[0], measurement=measurement.XYMeasurementAttr(-op.gate.angle)
         )
 
+        qu.ReleaseOp(m.out_qubits[0])
+
         x = ConstantGateOp(XGate())
         i = ConstantGateOp(IdentityGate(1))
 
@@ -78,6 +80,8 @@ class DynToCMEPattern(RewritePattern):
         dyn_measure = measurement.XYDynMeasurementOp(a)
 
         m = qssa.DynMeasureOp(cz.out_qubits[0], measurement=dyn_measure)
+
+        qu.ReleaseOp(m.out_qubits[0])
 
         x = ConstantGateOp(XGate())
         i = ConstantGateOp(IdentityGate(1))

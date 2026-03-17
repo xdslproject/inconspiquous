@@ -38,7 +38,8 @@ func.func @rwpe(%mu0 : !angle.type, %sigma0 : f64, %theta : !angle.type, %iter: 
     %a_3, %q_2 = qssa.dyn_gate<%crz> %a_2, %q_1
 
     %a_4 = qssa.gate<#gate.h> %a_3
-    %m = qssa.measure %a_4
+    %a_5, %m = qssa.measure %a_4
+    qu.release %a_5
 
     %sigma_over_root_e = arith.divf %sigma, %root_e : f64
     %adjust = angle.scale %a_pi, %sigma_over_root_e

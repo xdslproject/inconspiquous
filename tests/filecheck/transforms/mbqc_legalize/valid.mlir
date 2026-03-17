@@ -3,7 +3,8 @@
 // CHECK:      func.func @already_correct(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %q1 = qu.alloc<#qu.plus>
 // CHECK-NEXT:   %q_1, %q1_1 = qssa.gate<#gate.cz> %q, %q1
-// CHECK-NEXT:   %0 = qssa.measure<#measurement.xy<pi>> %q
+// CHECK-NEXT:   %q_2, %0 = qssa.measure<#measurement.xy<pi>> %q_1
+// CHECK-NEXT:   qu.release %q_2
 // CHECK-NEXT:   %c0 = arith.constant false
 // CHECK-NEXT:   %g = gate.xz %0, %c0
 // CHECK-NEXT:   %q1_2 = qssa.dyn_gate<%g> %q1_1
@@ -12,8 +13,8 @@
 func.func @already_correct(%q : !qu.bit) -> !qu.bit {
   %q1 = qu.alloc<#qu.plus>
   %q_1, %q1_1 = qssa.gate<#gate.cz> %q, %q1
-
-  %0 = qssa.measure<#measurement.xy<pi>> %q
+  %q_2, %0 = qssa.measure<#measurement.xy<pi>> %q_1
+  qu.release %q_2
   %c0 = arith.constant false
   %g = gate.xz %0, %c0
   %q1_2 = qssa.dyn_gate<%g> %q1_1
@@ -44,9 +45,9 @@ func.func @late_cz(%q1 : !qu.bit) -> !qu.bit {
   %q2 = qu.alloc<#qu.plus>
   %q3 = qu.alloc<#qu.plus>
   %q1_1, %q2_1 = qssa.gate<#gate.cz> %q1, %q2
-  %0 = qssa.measure<#measurement.xy<0>> %q1_1
+  %q1_2, %0 = qssa.measure<#measurement.xy<0>> %q1_1
   %q2_2, %q3_1 = qssa.gate<#gate.cz> %q2_1, %q3
-  %1 = qssa.measure<#measurement.xy<0>> %q2_2
+  %q2_3, %1 = qssa.measure<#measurement.xy<0>> %q2_2
   func.return %q3_1 : !qu.bit
 }
 
@@ -78,6 +79,6 @@ func.func @correction_before_measure(%q1 : !qu.bit) -> !qu.bit {
   %q2 = qu.alloc<#qu.plus>
   %q1_1, %q2_1 = qssa.gate<#gate.cz> %q1, %q2
   %q2_2 = qssa.gate<#gate.x> %q2_1
-  %0 = qssa.measure<#measurement.xy<0>> %q1_1
+  %q1_2, %0 = qssa.measure<#measurement.xy<0>> %q1_1
   func.return %q2_2 : !qu.bit
 }

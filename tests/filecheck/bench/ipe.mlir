@@ -28,7 +28,8 @@ func.func @ipe(%theta: !angle.type, %m: i64) -> !angle.type {
     %z = gate.dyn_rz<%phi>
     %a_3 = qssa.dyn_gate<%z> %a_2
     %a_4 = qssa.gate<#gate.h> %a_3
-    %measured = qssa.measure %a_4
+    %a_5, %measured = qssa.measure %a_4
+    qu.release %a_5
 
     // Update phi
     %unscaled = angle.constant<pi>

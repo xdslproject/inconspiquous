@@ -9,25 +9,25 @@
 // CHECK-NEXT:   %0, %1 = qssa.gate<#gate.cz> %q1_6, %q1_2
 // CHECK-NEXT:   %2, %3 = qssa.gate<#gate.cz> %1, %q1_3
 // CHECK-NEXT:   %4, %5 = qssa.gate<#gate.cz> %3, %q1_4
-// CHECK-NEXT:   %q1_7 = qssa.measure<#measurement.xy<0>> %q1_5
+// CHECK-NEXT:   %q1_7, %q1_8 = qssa.measure<#measurement.xy<0>> %q1_5
 // CHECK-NEXT:   %cTrue = arith.constant true
-// CHECK-NEXT:   %q1_8 = arith.xori %q1_7, %cTrue : i1
-// CHECK-NEXT:   %q1_9 = angle.cond_negate %q1_8, %lambda
-// CHECK-NEXT:   %q1_10 = measurement.dyn_xy<%q1_9>
-// CHECK-NEXT:   %q1_11 = qssa.dyn_measure<%q1_10> %0
-// CHECK-NEXT:   %q1_12 = arith.xori %q1_11, %cTrue : i1
-// CHECK-NEXT:   %q1_13 = angle.cond_negate %q1_12, %theta
-// CHECK-NEXT:   %q1_14 = measurement.dyn_xy<%q1_13>
-// CHECK-NEXT:   %q1_15 = qssa.dyn_measure<%q1_14> %2
-// CHECK-NEXT:   %q1_16 = arith.xori %q1_15, %q1_7 : i1
-// CHECK-NEXT:   %q1_17 = arith.xori %q1_16, %cTrue : i1
-// CHECK-NEXT:   %q1_18 = angle.cond_negate %q1_17, %phi
-// CHECK-NEXT:   %q1_19 = measurement.dyn_xy<%q1_18>
-// CHECK-NEXT:   %q1_20 = qssa.dyn_measure<%q1_19> %4
-// CHECK-NEXT:   %q1_21 = arith.xori %q1_20, %q1_11 : i1
-// CHECK-NEXT:   %6 = gate.xz %q1_21, %q1_16
-// CHECK-NEXT:   %q1_22 = qssa.dyn_gate<%6> %5
-// CHECK-NEXT:   func.return %q1_22 : !qu.bit
+// CHECK-NEXT:   %6 = arith.xori %q1_8, %cTrue : i1
+// CHECK-NEXT:   %7 = angle.cond_negate %6, %lambda
+// CHECK-NEXT:   %8 = measurement.dyn_xy<%7>
+// CHECK-NEXT:   %q1_9, %q1_10 = qssa.dyn_measure<%8> %0
+// CHECK-NEXT:   %9 = arith.xori %q1_10, %cTrue : i1
+// CHECK-NEXT:   %10 = angle.cond_negate %9, %theta
+// CHECK-NEXT:   %11 = measurement.dyn_xy<%10>
+// CHECK-NEXT:   %q1_11, %12 = qssa.dyn_measure<%11> %2
+// CHECK-NEXT:   %q1_12 = arith.xori %12, %q1_8 : i1
+// CHECK-NEXT:   %13 = arith.xori %q1_12, %cTrue : i1
+// CHECK-NEXT:   %14 = angle.cond_negate %13, %phi
+// CHECK-NEXT:   %15 = measurement.dyn_xy<%14>
+// CHECK-NEXT:   %q1_13, %16 = qssa.dyn_measure<%15> %4
+// CHECK-NEXT:   %q1_14 = arith.xori %16, %q1_10 : i1
+// CHECK-NEXT:   %17 = gate.xz %q1_14, %q1_12
+// CHECK-NEXT:   %q1_15 = qssa.dyn_gate<%17> %5
+// CHECK-NEXT:   func.return %q1_15 : !qu.bit
 // CHECK-NEXT: }
 func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type, %q1: !qu.bit) -> !qu.bit {
   %q1_1 = qssa.gate<#gate.j<0>> %q1

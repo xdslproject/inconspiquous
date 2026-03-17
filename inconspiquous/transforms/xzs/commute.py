@@ -17,6 +17,7 @@ from inconspiquous.dialects.measurement import (
     XYDynMeasurementOp,
     XYMeasurementAttr,
 )
+from inconspiquous.dialects.qu import ReleaseOp
 from inconspiquous.transforms.xzs.fusion import FuseXZGatesPattern
 from inconspiquous.utils.linear_walker import LinearWalker
 
@@ -39,12 +40,14 @@ class XZCommutePattern(RewritePattern):
         if isinstance(op2, qssa.DynMeasureOp) and isinstance(
             op2.measurement.owner, XYDynMeasurementOp
         ):
-            angle = op2.measurement.owner.angle
+            if isinstance(op2.out_qubits[0].get_user_of_unique_use(), ReleaseOp):
+                angle = op2.measurement.owner.angle
 
         if isinstance(op2, qssa.MeasureOp) and isinstance(
             op2.measurement, XYMeasurementAttr
         ):
-            angle = op2.measurement.angle
+            if isinstance(op2.out_qubits[0].get_user_of_unique_use(), ReleaseOp):
+                angle = op2.measurement.angle
 
         if angle is not None:
             if isinstance(angle, AngleAttr):
@@ -59,7 +62,9 @@ class XZCommutePattern(RewritePattern):
             new_op1 = arith.XOrIOp(new_op2.outs[0], gate.z)
 
             rewriter.replace_op(
-                op2, (*angle_op, negate, new_measurement, new_op2, new_op1)
+                op2,
+                (*angle_op, negate, new_measurement, new_op2, new_op1),
+                (new_op2.out_qubits[0], new_op1.result),
             )
             rewriter.erase_op(op1)
             return
@@ -68,11 +73,22 @@ class XZCommutePattern(RewritePattern):
             if not isinstance(op2.measurement, CompBasisMeasurementAttr):
                 return
             new_op2 = qssa.MeasureOp(op1.in_qubits[0])
-            new_op1 = arith.XOrIOp(new_op2.outs[0], gate.x)
+            new_op1_c = arith.XOrIOp(new_op2.outs[0], gate.x)
+            false_const = arith.ConstantOp.from_int_and_width(0, 1)
+            new_xz = XZOp(gate.x, false_const)
+            new_op1_q = qssa.DynGateOp(new_xz, new_op2.out_qubits[0])
 
-            rewriter.replace_op(op2, (new_op2, new_op1))
+            rewriter.replace_op(
+                op2,
+                (new_op2, false_const, new_xz, new_op1_q, new_op1_c),
+                (new_op1_q.out_qubits[0], new_op1_c.result),
+            )
             rewriter.erase_op(op1)
             return
+
+        if isinstance(op2, ReleaseOp):
+            rewriter.replace_op(op2, ReleaseOp(op1.in_qubits[0]))
+            rewriter.erase_op(op1)
 
         if not isinstance(op2, qssa.GateOp):
             return
