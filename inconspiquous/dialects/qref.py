@@ -9,6 +9,7 @@ from xdsl.irdl import (
     IntVarConstraint,
     IRDLOperation,
     RangeOf,
+    RangeVarConstraint,
     irdl_op_definition,
     operand_def,
     prop_def,
@@ -30,6 +31,58 @@ from inconspiquous.dialects.measurement import (
     CompBasisMeasurementAttr,
 )
 from inconspiquous.dialects.qu import BitType
+
+
+@irdl_op_definition
+class ApplyOp(IRDLOperation):
+    name = "qref.apply"
+
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
+    _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
+
+    instrument = prop_def(InstrumentConstraint(_I, _T))
+
+    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+
+    outs = var_result_def(_T)
+
+    assembly_format = "`<` $instrument `>` $in_qubits (`:` type($outs)^)? attr-dict"
+
+    def __init__(self, instrument: InstrumentAttr, *in_qubits: SSAValue | Operation):
+        super().__init__(
+            operands=(in_qubits,),
+            properties={
+                "instrument": instrument,
+            },
+            result_types=(instrument.classical_results,),
+        )
+
+
+@irdl_op_definition
+class DynApplyOp(IRDLOperation):
+    name = "qref.dyn_apply"
+
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
+    _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
+
+    instrument = operand_def(InstrumentType.constr(_I, _T))
+
+    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+
+    outs = var_result_def(_T)
+
+    assembly_format = "`<` $instrument `>` $in_qubits (`:` type($outs)^)? attr-dict"
+
+    def __init__(
+        self, instrument: SSAValue[InstrumentType], *in_qubits: SSAValue | Operation
+    ):
+        super().__init__(
+            operands=(
+                instrument,
+                in_qubits,
+            ),
+            result_types=(instrument.type.classical_results,),
+        )
 
 
 @irdl_op_definition
@@ -192,6 +245,8 @@ class ReturnOp(IRDLOperation):
 Qref = Dialect(
     "qref",
     [
+        ApplyOp,
+        DynApplyOp,
         GateOp,
         DynGateOp,
         MeasureOp,
