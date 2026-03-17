@@ -13,7 +13,6 @@ from inconspiquous.dialects.angle import (
     NegateAngleOp,
 )
 from inconspiquous.dialects.gate import (
-    ConstantGateOp,
     CZGate,
     IdentityGate,
     XGate,
@@ -21,6 +20,7 @@ from inconspiquous.dialects.gate import (
     YGate,
     ZGate,
 )
+from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.measurement import XYDynMeasurementOp, XYMeasurementAttr
 from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, GateOp, MeasureOp
 from inconspiquous.dialects.qu import AllocOp, ReleaseOp
@@ -124,14 +124,14 @@ class MBQCLegalize(ModulePass):
                             f"A measurement can only follow allocations and CZ gates in a valid mbqc program, "
                             f"found {operand.owner.name}"
                         )
-                case ConstantGateOp():
+                case ConstantInstrumentOp():
                     if not (
                         isinstance(
-                            current_op.gate, XGate | YGate | ZGate | IdentityGate
+                            current_op.instrument, XGate | YGate | ZGate | IdentityGate
                         )
                     ):
                         raise PassFailedException(
-                            f"Only expected dynamic Pauli gates, found {current_op.gate}"
+                            f"Only expected dynamic Pauli gates, found {current_op.instrument}"
                         )
                 case (
                     ConstantAngleOp()

@@ -6,7 +6,7 @@ from xdsl.pattern_rewriter import (
 )
 from xdsl.transforms.canonicalization_patterns.utils import const_evaluate_operand
 
-from inconspiquous.dialects import gate
+from inconspiquous.dialects import gate, instrument
 from inconspiquous.dialects.angle import ConstantAngleOp
 
 
@@ -33,5 +33,5 @@ class DynRotationGateToRotationPattern(RewritePattern):
     def match_and_rewrite(self, op: gate.DynRotationGate, rewriter: PatternRewriter):
         if isinstance(op.angle.owner, ConstantAngleOp):
             rewriter.replace_matched_op(
-                gate.ConstantGateOp(self.rot_gate(op.angle.owner.angle))
+                instrument.ConstantInstrumentOp(self.rot_gate(op.angle.owner.angle))
             )

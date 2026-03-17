@@ -9,7 +9,7 @@
 // CHECK-NEXT: }
 func.func @id(%q: !qu.bit) -> !qu.bit {
   %q_1 = qssa.gate<#gate.id<1>> %q
-  %g = gate.constant #gate.id<1>
+  %g = instrument.constant #gate.id<1>
   %q_2 = qssa.dyn_gate<%g> %q_1
   func.return %q_2 : !qu.bit
 }
@@ -24,7 +24,7 @@ func.func @id(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT: }
 func.func @x(%q: !qu.bit) -> !qu.bit {
   %q_1 = qssa.gate<#gate.x> %q
-  %g = gate.constant #gate.x
+  %g = instrument.constant #gate.x
   %q_2 = qssa.dyn_gate<%g> %q_1
   func.return %q_2 : !qu.bit
 }
@@ -38,7 +38,7 @@ func.func @x(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT: }
 func.func @y(%q: !qu.bit) -> !qu.bit {
   %q_1 = qssa.gate<#gate.y> %q
-  %g = gate.constant #gate.y
+  %g = instrument.constant #gate.y
   %q_2 = qssa.dyn_gate<%g> %q_1
   func.return %q_2 : !qu.bit
 }
@@ -53,7 +53,7 @@ func.func @y(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT: }
 func.func @z(%q: !qu.bit) -> !qu.bit {
   %q_1 = qssa.gate<#gate.z> %q
-  %g = gate.constant #gate.z
+  %g = instrument.constant #gate.z
   %q_2 = qssa.dyn_gate<%g> %q_1
   func.return %q_2 : !qu.bit
 }
@@ -68,7 +68,7 @@ func.func @z(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT: }
 func.func @phase(%q: !qu.bit) -> !qu.bit {
   %q_1 = qssa.gate<#gate.s> %q
-  %g = gate.constant #gate.s
+  %g = instrument.constant #gate.s
   %q_2 = qssa.dyn_gate<%g> %q_1
   func.return %q_2 : !qu.bit
 }
@@ -83,7 +83,7 @@ func.func @phase(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT: }
 func.func @phase_dagger(%q: !qu.bit) -> !qu.bit {
   %q_1 = qssa.gate<#gate.s_dagger> %q
-  %g = gate.constant #gate.s_dagger
+  %g = instrument.constant #gate.s_dagger
   %q_2 = qssa.dyn_gate<%g> %q_1
   func.return %q_2 : !qu.bit
 }

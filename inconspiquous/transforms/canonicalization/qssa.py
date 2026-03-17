@@ -4,7 +4,11 @@ from xdsl.pattern_rewriter import (
     op_type_rewrite_pattern,
 )
 
-from inconspiquous.dialects.gate import ComposeGateOp, ConstantGateOp, IdentityGate
+from inconspiquous.dialects.gate import (
+    ComposeGateOp,
+    IdentityGate,
+)
+from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.measurement import ConstantMeasurementOp
 from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, GateOp, MeasureOp
 
@@ -16,8 +20,8 @@ class DynGateConst(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter):
-        if isinstance(owner := op.gate.owner, ConstantGateOp):
-            rewriter.replace_matched_op(GateOp(owner.gate, *op.in_qubits))
+        if isinstance(owner := op.gate.owner, ConstantInstrumentOp):
+            rewriter.replace_matched_op(GateOp(owner.instrument, *op.in_qubits))
 
 
 class DynGateCompose(RewritePattern):
