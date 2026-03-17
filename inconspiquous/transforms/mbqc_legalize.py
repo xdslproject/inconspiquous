@@ -23,7 +23,7 @@ from inconspiquous.dialects.gate import (
 )
 from inconspiquous.dialects.measurement import XYDynMeasurementOp, XYMeasurementAttr
 from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, GateOp, MeasureOp
-from inconspiquous.dialects.qu import AllocOp
+from inconspiquous.dialects.qu import AllocOp, ReleaseOp
 
 
 class MBQCLegalize(ModulePass):
@@ -35,9 +35,10 @@ class MBQCLegalize(ModulePass):
     - CZ and Pauli gates
     - XZ gadgets
     - measurement in XY plane
+    - qubit releases
 
     Also moves allocations and CZ gates to the start of the program,
-    and any dynamic gates to the end, leaving measurements in the middle.
+    and any dynamic gates to the end, leaving measurements and releases in the middle.
 
     This pass only reorders operations, leaving dataflow unchanged.
 
@@ -79,7 +80,8 @@ class MBQCLegalize(ModulePass):
                                     or isinstance(operand.owner, Block)
                                 ):
                                     raise PassFailedException(
-                                        "A CZ gate can only follow allocations and CZ gates in a valid mbqc program."
+                                        "A CZ gate can only follow allocations and CZ gates in a valid mbqc program, "
+                                        f"found {operand.owner.name}"
                                     )
                             cz_ops.append(current_op)
                         case XGate() | YGate() | ZGate():
@@ -105,7 +107,8 @@ class MBQCLegalize(ModulePass):
                         or isinstance(operand.owner, Block)
                     ):
                         raise PassFailedException(
-                            "A measurement can only follow allocations and CZ gates in a valid mbqc program."
+                            "A measurement can only follow allocations and CZ gates in a valid mbqc program, "
+                            f"found {operand.owner.name}"
                         )
                 case DynMeasureOp():
                     operand = current_op.in_qubits[0]
@@ -118,7 +121,8 @@ class MBQCLegalize(ModulePass):
                         or isinstance(operand.owner, Block)
                     ):
                         raise PassFailedException(
-                            "A measurement can only follow allocations and CZ gates in a valid mbqc program."
+                            f"A measurement can only follow allocations and CZ gates in a valid mbqc program, "
+                            f"found {operand.owner.name}"
                         )
                 case ConstantGateOp():
                     if not (
@@ -135,6 +139,7 @@ class MBQCLegalize(ModulePass):
                     | NegateAngleOp()
                     | CondNegateAngleOp()
                     | XYDynMeasurementOp()
+                    | ReleaseOp()
                 ):
                     pass
                 case o:

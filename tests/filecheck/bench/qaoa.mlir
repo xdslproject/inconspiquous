@@ -104,11 +104,16 @@ func.func @qaoa_ansatz(
     : (!angle.type, !qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit)
     -> (!qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit)
 
-  %m1 = qssa.measure %q1_4
-  %m2 = qssa.measure %q2_4
-  %m3 = qssa.measure %q3_4
-  %m4 = qssa.measure %q4_4
-  %m5 = qssa.measure %q5_4
+  %q1_5, %m1 = qssa.measure %q1_4
+  qu.release %q1_5
+  %q2_5, %m2 = qssa.measure %q2_4
+  qu.release %q2_5
+  %q3_5, %m3 = qssa.measure %q3_4
+  qu.release %q3_5
+  %q4_5, %m4 = qssa.measure %q4_4
+  qu.release %q4_5
+  %q5_5, %m5 = qssa.measure %q5_4
+  qu.release %q5_5
 
   func.return %m1, %m2, %m3, %m4, %m5 : i1, i1, i1, i1, i1
 }
