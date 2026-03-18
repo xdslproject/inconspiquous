@@ -2,7 +2,7 @@
 
 // CHECK:      %q1 = qu.alloc
 // CHECK-NEXT: %q2 = qssa.gate<#gate.h> %q1
-// CHECK-NEXT: %q3, %{{.*}} = qssa.measure %q2
+// CHECK-NEXT: %{{.*}}, %q3 = qssa.measure %q2
 // CHECK-NEXT: %q4 = qu.alloc
 // CHECK-NOT:  #gate.id
 // CHECK:      %g1, %g2 = "test.op"() : () -> (!instrument.type<2>, !instrument.type<2>)
@@ -17,7 +17,7 @@
 
 %q2 = "qssa.dyn_gate"(%g, %q1) : (!instrument.type<1>, !qu.bit) -> !qu.bit
 
-%q3, %0 = "qssa.dyn_measure"(%m, %q2) : (!instrument.type<1, i1>, !qu.bit) -> (!qu.bit, i1)
+%0, %q3 = "qssa.dyn_measure"(%m, %q2) : (!instrument.type<1, i1>, !qu.bit) -> (i1, !qu.bit)
 
 %q4 = qu.alloc
 %q5 = "qssa.gate"(%q4) <{gate = #gate.id<1>}> : (!qu.bit) -> !qu.bit

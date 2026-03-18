@@ -61,19 +61,19 @@ func.func @logical_plus() {
   %q04_2, %a6_2 = qssa.gate<#gate.cx> %q04_1, %a6_1
   %q11_2, %a7_4 = qssa.gate<#gate.cx> %q11_1, %a7_3
 
-  %a1_5, %s1 = qssa.measure %a1_4
+  %s1, %a1_5 = qssa.measure %a1_4
   qu.release %a1_5
-  %a2_3, %s2 = qssa.measure %a2_2
+  %s2, %a2_3 = qssa.measure %a2_2
   qu.release %a2_3
-  %a3_3, %s3 = qssa.measure %a3_2
+  %s3, %a3_3 = qssa.measure %a3_2
   qu.release %a3_3
-  %a4_5, %s4 = qssa.measure %a4_4
+  %s4, %a4_5 = qssa.measure %a4_4
   qu.release %a4_5
-  %a5_3, %s5 = qssa.measure %a5_2
+  %s5, %a5_3 = qssa.measure %a5_2
   qu.release %a5_3
-  %a6_3, %s6 = qssa.measure %a6_2
+  %s6, %a6_3 = qssa.measure %a6_2
   qu.release %a6_3
-  %a7_5, %s7 = qssa.measure %a7_4
+  %s7, %a7_5 = qssa.measure %a7_4
   qu.release %a7_5
 
   // Correct along chain q02 -> q09 -> q03 -> q04 -> q11 -> q05 -> q06

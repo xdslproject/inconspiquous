@@ -11,20 +11,20 @@ func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type
   %q2_2, %q3_1 = qssa.gate<#gate.cz> %q2_1, %q3
   %q3_2, %q4_1 = qssa.gate<#gate.cz> %q3_1, %q4
   %q4_2, %q5_1 = qssa.gate<#gate.cz> %q4_1, %q5
-  %q1_2, %0 = qssa.measure<#measurement.x_basis> %q1_1
+  %0, %q1_2 = qssa.measure<#measurement.x_basis> %q1_1
   qu.release %q1_2
   %a2 = angle.cond_negate %0, %lambda
   %m2 = measurement.dyn_xy<%a2>
-  %q2_3, %1 = qssa.dyn_measure<%m2> %q2_2
+  %1, %q2_3 = qssa.dyn_measure<%m2> %q2_2
   qu.release %q2_3
   %a3 = angle.cond_negate %1, %theta
   %m3 = measurement.dyn_xy<%a3>
-  %q3_3, %2 = qssa.dyn_measure<%m3> %q3_2
+  %2, %q3_3 = qssa.dyn_measure<%m3> %q3_2
   qu.release %q3_2
   %z = arith.xori %0, %2 : i1
   %a4 = angle.cond_negate %z, %phi
   %m4 = measurement.dyn_xy<%a4>
-  %q4_3, %3 = qssa.dyn_measure<%m4> %q4_2
+  %3, %q4_3 = qssa.dyn_measure<%m4> %q4_2
   qu.release %q4_3
   %x = arith.xori %1, %3 : i1
   %g = gate.xz %x, %z

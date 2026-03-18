@@ -6,11 +6,11 @@
 %q2 = qssa.gate<#gate.h> %q0
 %q3 = qssa.gate<#gate.rz<0.5pi>> %q1
 %q4, %q5 = qssa.gate<#gate.cx> %q2, %q3
-%q6, %0 = qssa.measure %q4
+%0, %q6 = qssa.measure %q4
 %g = instrument.constant #gate.h
 %q7 = qssa.dyn_gate<%g> %q6
 %m = instrument.constant #measurement.comp_basis
-%q8, %1 = qssa.dyn_measure<%m> %q5
+%1, %q8 = qssa.dyn_measure<%m> %q5
 
 // CHECK:      %q0 = qu.alloc
 // CHECK-NEXT: %q1 = qu.alloc
@@ -28,8 +28,8 @@
 // CHECK-ROUNDTRIP-NEXT: %q0_1 = qssa.gate<#gate.h> %q0
 // CHECK-ROUNDTRIP-NEXT: %q1_1 = qssa.gate<#gate.rz<0.5pi>> %q1
 // CHECK-ROUNDTRIP-NEXT: %q0_2, %q1_2 = qssa.gate<#gate.cx> %q0_1, %q1_1
-// CHECK-ROUNDTRIP-NEXT: %q0_3, %{{.*}} = qssa.measure %q0_2
+// CHECK-ROUNDTRIP-NEXT: %{{.*}}, %q0_3 = qssa.measure %q0_2
 // CHECK-ROUNDTRIP-NEXT: %g = instrument.constant #gate.h
 // CHECK-ROUNDTRIP-NEXT: %q0_4 = qssa.dyn_gate<%g> %q0_3
 // CHECK-ROUNDTRIP-NEXT: %m = instrument.constant #measurement.comp_basis
-// CHECK-ROUNDTRIP-NEXT: %{{.*}} = qssa.dyn_measure<%m> %q1_2
+// CHECK-ROUNDTRIP-NEXT: %{{.*}}, %q1_3 = qssa.dyn_measure<%m> %q1_2

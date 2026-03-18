@@ -17,11 +17,11 @@ qref.dyn_gate<%g> %q0
 // CHECK-NEXT: %q0_1 = qssa.gate<#gate.h> %q0
 // CHECK-NEXT: %q1_1 = qssa.gate<#gate.rz<0.5pi>> %q1
 // CHECK-NEXT: %q0_2, %q1_2 = qssa.gate<#gate.cx> %q0_1, %q1_1
-// CHECK-NEXT: %q0_3, %{{.*}} = qssa.measure %q0_2
+// CHECK-NEXT: %{{.*}}, %q0_3 = qssa.measure %q0_2
 // CHECK-NEXT: %g = instrument.constant #gate.h
 // CHECK-NEXT: %q0_4 = qssa.dyn_gate<%g> %q0_3
 // CHECK-NEXT: %m = instrument.constant #measurement.comp_basis
-// CHECK-NEXT: %q1_3, %1 = qssa.dyn_measure<%m> %q1_2
+// CHECK-NEXT: %1, %q1_3 = qssa.dyn_measure<%m> %q1_2
 
 // CHECK-ROUNDTRIP:      %q0 = qu.alloc
 // CHECK-ROUNDTRIP-NEXT: %q1 = qu.alloc
