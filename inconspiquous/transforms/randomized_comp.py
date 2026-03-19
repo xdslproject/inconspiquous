@@ -26,7 +26,12 @@ from inconspiquous.dialects.gate import (
 from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
 from inconspiquous.dialects.prob import UniformOp
-from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
+from inconspiquous.dialects.qssa import (
+    DynGateOp,
+    GateOp,
+    MeasureOp,
+    QssaStaticApplyInterface,
+)
 
 
 class PadTGate(RewritePattern):
@@ -35,8 +40,11 @@ class PadTGate(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
-        if not isinstance(op.gate, TGate):
+    def match_and_rewrite(
+        self, op: QssaStaticApplyInterface, rewriter: PatternRewriter
+    ):
+        inst = op.get_instrument()
+        if not isinstance(inst, TGate):
             return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
@@ -49,7 +57,7 @@ class PadTGate(RewritePattern):
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
         pre_z = DynGateOp(pre_z_sel, pre_x)
 
-        new_t = GateOp(op.gate, pre_z)
+        new_t = GateOp(inst, pre_z)
 
         post_z_sel = SelectOp(z_rand, z_gate, id_gate)
         post_z = DynGateOp(post_z_sel, new_t)
@@ -88,8 +96,11 @@ class PadTDaggerGate(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
-        if not isinstance(op.gate, TDaggerGate):
+    def match_and_rewrite(
+        self, op: QssaStaticApplyInterface, rewriter: PatternRewriter
+    ):
+        inst = op.get_instrument()
+        if not isinstance(inst, TDaggerGate):
             return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
@@ -102,7 +113,7 @@ class PadTDaggerGate(RewritePattern):
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
         pre_z = DynGateOp(pre_z_sel, pre_x)
 
-        new_t = GateOp(op.gate, pre_z)
+        new_t = GateOp(inst, pre_z)
 
         post_z_sel = SelectOp(z_rand, z_gate, id_gate)
         post_z = DynGateOp(post_z_sel, new_t)
@@ -141,8 +152,11 @@ class PadHadamardGate(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
-        if not isinstance(op.gate, HadamardGate):
+    def match_and_rewrite(
+        self, op: QssaStaticApplyInterface, rewriter: PatternRewriter
+    ):
+        inst = op.get_instrument()
+        if not isinstance(inst, HadamardGate):
             return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
@@ -189,8 +203,11 @@ class PadCXGate(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
-        if not isinstance(op.gate, CXGate):
+    def match_and_rewrite(
+        self, op: QssaStaticApplyInterface, rewriter: PatternRewriter
+    ):
+        inst = op.get_instrument()
+        if not isinstance(inst, CXGate):
             return
         x_rand_q1 = UniformOp(i1)
         x_rand_q2 = UniformOp(i1)
@@ -260,9 +277,11 @@ class PadMeasure(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: MeasureOp, rewriter: PatternRewriter):
-        if op.measurement != CompBasisMeasurementAttr():
-            # Only try to pad computation basis measurements
+    def match_and_rewrite(
+        self, op: QssaStaticApplyInterface, rewriter: PatternRewriter
+    ):
+        inst = op.get_instrument()
+        if not isinstance(inst, CompBasisMeasurementAttr):
             return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
