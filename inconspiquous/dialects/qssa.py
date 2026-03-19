@@ -6,9 +6,11 @@ from xdsl.ir import Block, Dialect, Operation, Region, SSAValue
 from xdsl.irdl import (
     AnyAttr,
     AnyInt,
+    AttrSizedResultSegments,
     IntVarConstraint,
     IRDLOperation,
     RangeOf,
+    RangeVarConstraint,
     SameVariadicResultSize,
     irdl_op_definition,
     operand_def,
@@ -31,6 +33,69 @@ from inconspiquous.dialects.measurement import (
     CompBasisMeasurementAttr,
 )
 from inconspiquous.dialects.qu import BitType
+
+
+@irdl_op_definition
+class ApplyOp(IRDLOperation):
+    name = "qssa.apply"
+
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
+    _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
+
+    instrument = prop_def(InstrumentConstraint(_I, _T))
+
+    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+
+    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
+
+    outs = var_result_def(_T)
+
+    assembly_format = "`<` $instrument `>` $in_qubits (`:` type($outs)^)? attr-dict"
+
+    irdl_options = (AttrSizedResultSegments(as_property=True),)
+
+    def __init__(self, instrument: InstrumentAttr, *in_qubits: SSAValue | Operation):
+        super().__init__(
+            operands=(in_qubits,),
+            properties={
+                "instrument": instrument,
+            },
+            result_types=((BitType(),) * len(in_qubits), instrument.classical_results),
+        )
+
+
+@irdl_op_definition
+class DynApplyOp(IRDLOperation):
+    name = "qssa.dyn_apply"
+
+    _I: ClassVar = IntVarConstraint("I", AnyInt())
+    _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
+
+    instrument = operand_def(InstrumentType.constr(_I, _T))
+
+    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+
+    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
+
+    outs = var_result_def(_T)
+
+    assembly_format = "`<` $instrument `>` $in_qubits (`:` type($outs)^)? attr-dict"
+
+    irdl_options = (AttrSizedResultSegments(as_property=True),)
+
+    def __init__(
+        self, instrument: SSAValue[InstrumentType], *in_qubits: SSAValue | Operation
+    ):
+        super().__init__(
+            operands=(
+                instrument,
+                in_qubits,
+            ),
+            result_types=(
+                (BitType(),) * len(in_qubits),
+                instrument.type.classical_results,
+            ),
+        )
 
 
 @irdl_op_definition
@@ -220,6 +285,8 @@ class ReturnOp(IRDLOperation):
 Qssa = Dialect(
     "qssa",
     [
+        ApplyOp,
+        DynApplyOp,
         GateOp,
         DynGateOp,
         MeasureOp,

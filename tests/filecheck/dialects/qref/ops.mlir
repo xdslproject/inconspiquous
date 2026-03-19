@@ -43,6 +43,24 @@ qref.dyn_gate<%g1> %q1
 // CHECK-GENERIC: %{{.*}} = "qref.dyn_measure"(%m, %q2) : (!instrument.type<1, i1>, !qu.bit) -> i1
 %2 = qref.dyn_measure<%m> %q2
 
+// CHECK: qref.apply<#gate.h> %q0
+// CHECK-GENERIC: "qref.apply"(%q0) <{instrument = #gate.h}> : (!qu.bit) -> ()
+qref.apply<#gate.h> %q0
+
+// CHECK: %3 = qref.apply<#measurement.comp_basis> %q0 : i1
+// CHECK-GENERIC: %3 = "qref.apply"(%q0) <{instrument = #measurement.comp_basis}> : (!qu.bit) -> i1
+%3 = qref.apply<#measurement.comp_basis> %q0 : i1
+
+// CHECK: %4 = qref.apply<#qec.stabilizer<XX>> %q0, %q1 : i1
+// CHECK-GENERIC: %4 = "qref.apply"(%q0, %q1) <{instrument = #qec.stabilizer<XX>}> : (!qu.bit, !qu.bit) -> i1
+%4 = qref.apply<#qec.stabilizer<XX>> %q0, %q1 : i1
+
+%i = "test.op"() : () -> !instrument.type<0, i1, i32>
+
+// CHECK: %5, %6 = qref.dyn_apply<%i> : i1, i32
+// CHECK-GENERIC: %5, %6 = "qref.dyn_apply"(%i) : (!instrument.type<0, i1, i32>) -> (i1, i32)
+%5, %6 = qref.dyn_apply<%i> : i1, i32
+
 // CHECK: %{{.*}} = qref.circuit() ({
 // CHECK-NEXT: ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:   qref.return
