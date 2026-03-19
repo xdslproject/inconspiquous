@@ -2,7 +2,6 @@ from xdsl.context import Context
 from xdsl.dialects import builtin
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
-    GreedyRewritePatternApplier,
     PatternRewriter,
     PatternRewriteWalker,
     RewritePattern,
@@ -12,48 +11,17 @@ from xdsl.pattern_rewriter import (
 from inconspiquous.dialects import qref, qssa
 
 
-class ConvertQssaGateToQrefGate(RewritePattern):
+class ConvertQssaToQrefPattern(RewritePattern):
     """
-    Replaces a qssa gate operation by its qref counterpart.
-    """
-
-    @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qssa.GateOp, rewriter: PatternRewriter):
-        rewriter.replace_matched_op(qref.GateOp(op.gate, *op.in_qubits), op.in_qubits)
-
-
-class ConvertQssaDynGateToQrefDynGate(RewritePattern):
-    """
-    Replaces a qssa dyn_gate operation by its qref counterpart.
+    Replace a qssa operation by its qref counterpart.
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qssa.DynGateOp, rewriter: PatternRewriter):
-        rewriter.replace_matched_op(
-            qref.DynGateOp(op.gate, *op.in_qubits), op.in_qubits
-        )
-
-
-class ConvertQssaMeasureToQrefMeasure(RewritePattern):
-    """
-    Replaces a qssa measurement by its qref counterpart.
-    """
-
-    @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qssa.MeasureOp, rewriter: PatternRewriter):
-        new_measure = qref.MeasureOp(*op.in_qubits, measurement=op.measurement)
-        rewriter.replace_matched_op(new_measure, new_measure.outs + op.in_qubits)
-
-
-class ConvertQssaDynMeasureToQrefDynMeasure(RewritePattern):
-    """
-    Replaces a qssa dynamic measurement by its qref counterpart.
-    """
-
-    @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: qssa.DynMeasureOp, rewriter: PatternRewriter):
-        new_measure = qref.DynMeasureOp(*op.in_qubits, measurement=op.measurement)
-        rewriter.replace_matched_op(new_measure, new_measure.outs + op.in_qubits)
+    def match_and_rewrite(
+        self, op: qssa.QssaApplyInterface, rewriter: PatternRewriter, /
+    ):
+        new_op = qref.QrefApplyInterface.create_op(op.get_instrument(), *op.in_qubits)
+        rewriter.replace_matched_op(new_op, new_op.get_outs() + op.in_qubits)
 
 
 class ConvertQssaToQref(ModulePass):
@@ -66,13 +34,6 @@ class ConvertQssaToQref(ModulePass):
 
     def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
-            GreedyRewritePatternApplier(
-                [
-                    ConvertQssaGateToQrefGate(),
-                    ConvertQssaDynGateToQrefDynGate(),
-                    ConvertQssaMeasureToQrefMeasure(),
-                    ConvertQssaDynMeasureToQrefDynMeasure(),
-                ]
-            ),
+            ConvertQssaToQrefPattern(),
             apply_recursively=False,
         ).rewrite_module(op)

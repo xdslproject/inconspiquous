@@ -2,7 +2,6 @@ from xdsl.dialects import builtin
 from xdsl.parser import Context
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
-    GreedyRewritePatternApplier,
     PatternRewriter,
     PatternRewriteWalker,
     RewritePattern,
@@ -12,14 +11,14 @@ from xdsl.pattern_rewriter import (
 from inconspiquous.dialects import qref, qssa
 
 
-class ConvertQrefGateToQssaGate(RewritePattern):
+class ConvertQrefToQssaPattern(RewritePattern):
     """
-    Replaces a qssa gate operation by its qref counterpart.
+    Replace a qref operation by its qssa counterpart.
     """
 
     @op_type_rewrite_pattern
     def match_and_rewrite(
-        self, op: qref.GateOp | qref.DynGateOp, rewriter: PatternRewriter
+        self, op: qref.QrefApplyInterface, rewriter: PatternRewriter, /
     ):
         # Don't rewrite if uses live in different blocks
         if op.parent_block() is None:
@@ -29,44 +28,11 @@ class ConvertQrefGateToQssaGate(RewritePattern):
                 if use.operation.parent_block() != op.parent_block():
                     return
 
-        if isinstance(op, qref.GateOp):
-            new_op = qssa.GateOp(op.gate, *op.in_qubits)
-        else:
-            new_op = qssa.DynGateOp(op.gate, *op.in_qubits)
+        new_op = qssa.QssaApplyInterface.create_op(op.get_instrument(), *op.in_qubits)
 
-        rewriter.replace_matched_op(new_op, ())
+        rewriter.replace_matched_op(new_op, new_op.get_outs())
 
-        for operand, result in zip(op.in_qubits, new_op.results):
-            operand.replace_uses_with_if(
-                result, lambda use: use.operation is not new_op
-            )
-
-
-class ConvertQrefMeasureToQssaMeasure(RewritePattern):
-    """
-    Replaces a qssa measurement by its qref counterpart.
-    """
-
-    @op_type_rewrite_pattern
-    def match_and_rewrite(
-        self, op: qref.MeasureOp | qref.DynMeasureOp, rewriter: PatternRewriter
-    ):
-        # Don't rewrite if uses live in different blocks
-        if op.parent_block() is None:
-            return
-        for operand in op.in_qubits:
-            for use in operand.uses:
-                if use.operation.parent_block() != op.parent_block():
-                    return
-
-        if isinstance(op, qref.MeasureOp):
-            new_op = qssa.MeasureOp(*op.in_qubits, measurement=op.measurement)
-        else:
-            new_op = qssa.DynMeasureOp(*op.in_qubits, measurement=op.measurement)
-
-        rewriter.replace_matched_op(new_op, new_op.outs)
-
-        for operand, result in zip(op.in_qubits, new_op.out_qubits):
+        for operand, result in zip(op.in_qubits, new_op.out_qubits, strict=True):
             operand.replace_uses_with_if(
                 result, lambda use: use.operation is not new_op
             )
@@ -82,11 +48,6 @@ class ConvertQrefToQssa(ModulePass):
 
     def apply(self, ctx: Context, op: builtin.ModuleOp) -> None:
         PatternRewriteWalker(
-            GreedyRewritePatternApplier(
-                [
-                    ConvertQrefGateToQssaGate(),
-                    ConvertQrefMeasureToQssaMeasure(),
-                ]
-            ),
+            ConvertQrefToQssaPattern(),
             apply_recursively=False,
         ).rewrite_module(op)
