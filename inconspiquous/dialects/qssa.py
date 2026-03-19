@@ -98,7 +98,7 @@ class QssaDynamicApplyInterface(QssaApplyInterface):
 
 
 @irdl_op_definition
-class ApplyOp(QssaStaticApplyInterface):
+class ApplyOp(QssaStaticApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qssa.apply"
 
     _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
@@ -129,9 +129,15 @@ class ApplyOp(QssaStaticApplyInterface):
             ),
         )
 
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.qssa import GateIdentity
+
+        return (GateIdentity(),)
+
 
 @irdl_op_definition
-class DynApplyOp(QssaDynamicApplyInterface):
+class DynApplyOp(QssaDynamicApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qssa.dyn_apply"
 
     _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
@@ -163,6 +169,15 @@ class DynApplyOp(QssaDynamicApplyInterface):
                 (BitType(),) * len(in_qubits),
             ),
         )
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.qssa import (
+            DynApplyConst,
+            DynGateCompose,
+        )
+
+        return (DynApplyConst(), DynGateCompose())
 
 
 @irdl_op_definition
@@ -222,11 +237,11 @@ class DynGateOp(QssaDynamicApplyInterface, HasCanonicalizationPatternsInterface)
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
         from inconspiquous.transforms.canonicalization.qssa import (
+            DynApplyConst,
             DynGateCompose,
-            DynGateConst,
         )
 
-        return (DynGateConst(), DynGateCompose())
+        return (DynApplyConst(), DynGateCompose())
 
 
 @irdl_op_definition
@@ -307,10 +322,10 @@ class DynMeasureOp(QssaDynamicApplyInterface, HasCanonicalizationPatternsInterfa
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
         from inconspiquous.transforms.canonicalization.qssa import (
-            DynMeasureConst,
+            DynApplyConst,
         )
 
-        return (DynMeasureConst(),)
+        return (DynApplyConst(),)
 
 
 @irdl_op_definition

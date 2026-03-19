@@ -9,18 +9,26 @@ from inconspiquous.dialects.gate import (
     IdentityGate,
 )
 from inconspiquous.dialects.instrument import ConstantInstrumentOp
-from inconspiquous.dialects.qssa import DynGateOp, DynMeasureOp, GateOp, MeasureOp
+from inconspiquous.dialects.qssa import (
+    DynGateOp,
+    QssaApplyInterface,
+    QssaDynamicApplyInterface,
+)
 
 
-class DynGateConst(RewritePattern):
+class DynApplyConst(RewritePattern):
     """
-    Simplifies a dynamic gate with constant input to a regular gate
+    Simplifies a dynamic application with constant input to a regular application
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter):
-        if isinstance(owner := op.gate.owner, ConstantInstrumentOp):
-            rewriter.replace_matched_op(GateOp(owner.instrument, *op.in_qubits))
+    def match_and_rewrite(
+        self, op: QssaDynamicApplyInterface, rewriter: PatternRewriter, /
+    ):
+        if isinstance(owner := op.get_instrument().owner, ConstantInstrumentOp):
+            rewriter.replace_matched_op(
+                QssaApplyInterface.create_op(owner.instrument, *op.in_qubits)
+            )
 
 
 class DynGateCompose(RewritePattern):
@@ -29,10 +37,12 @@ class DynGateCompose(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter):
-        if isinstance(gate := op.gate.owner, ComposeGateOp):
-            dyn_gate_lhs = DynGateOp(gate.lhs, *op.in_qubits)
-            dyn_gate_rhs = DynGateOp(gate.rhs, *dyn_gate_lhs.out_qubits)
+    def match_and_rewrite(
+        self, op: QssaDynamicApplyInterface, rewriter: PatternRewriter
+    ):
+        if isinstance(owner := op.get_instrument().owner, ComposeGateOp):
+            dyn_gate_lhs = DynGateOp(owner.lhs, *op.in_qubits)
+            dyn_gate_rhs = DynGateOp(owner.rhs, *dyn_gate_lhs.out_qubits)
             rewriter.replace_matched_op((dyn_gate_lhs, dyn_gate_rhs))
 
 
@@ -42,19 +52,6 @@ class GateIdentity(RewritePattern):
     """
 
     @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
-        if isinstance(op.gate, IdentityGate):
+    def match_and_rewrite(self, op: QssaApplyInterface, rewriter: PatternRewriter):
+        if isinstance(op.get_instrument(), IdentityGate):
             rewriter.replace_matched_op((), op.in_qubits)
-
-
-class DynMeasureConst(RewritePattern):
-    """
-    Simplifies a dynamic measurement with constant measurement to a regular measurement
-    """
-
-    @op_type_rewrite_pattern
-    def match_and_rewrite(self, op: DynMeasureOp, rewriter: PatternRewriter):
-        if isinstance(owner := op.measurement.owner, ConstantInstrumentOp):
-            rewriter.replace_matched_op(
-                MeasureOp(*op.in_qubits, measurement=owner.instrument)
-            )
