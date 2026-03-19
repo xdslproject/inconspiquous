@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
 from typing import ClassVar
 
 from xdsl.dialects.builtin import i1
@@ -35,20 +38,62 @@ from inconspiquous.dialects.measurement import (
 from inconspiquous.dialects.qu import BitType
 
 
-@irdl_op_definition
-class ApplyOp(IRDLOperation):
-    name = "qssa.apply"
+class QssaApplyInterface(IRDLOperation, ABC):
+    """
+    Operations inheriting this interface can be seen as instances of `qssa.apply`
+    """
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
-    _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
-
-    instrument = prop_def(InstrumentConstraint(_I, _T))
 
     in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
+    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
+
+    @abstractmethod
+    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr: ...
+
+    @abstractmethod
+    def get_outs(self) -> tuple[SSAValue, ...]: ...
+
+    @staticmethod
+    def create_op(
+        instrument: SSAValue[InstrumentType] | InstrumentAttr,
+        *in_qubits: SSAValue | Operation,
+    ) -> QssaApplyInterface:
+        if isinstance(instrument, InstrumentAttr):
+            if not instrument.classical_results:
+                return GateOp(instrument, *in_qubits)
+            if len(instrument.classical_results) == instrument.num_qubits and all(
+                x == i1 for x in instrument.classical_results
+            ):
+                return MeasureOp(*in_qubits, measurement=instrument)
+            return ApplyOp(instrument, *in_qubits)
+        if not instrument.type.classical_results:
+            return DynGateOp(instrument, *in_qubits)
+        if len(
+            instrument.type.classical_results
+        ) == instrument.type.num_qubits.data and all(
+            x == i1 for x in instrument.type.classical_results
+        ):
+            return DynMeasureOp(*in_qubits, measurement=instrument)
+        return DynApplyOp(instrument, *in_qubits)
+
+
+@irdl_op_definition
+class ApplyOp(QssaApplyInterface):
+    name = "qssa.apply"
+
+    _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
+
+    instrument = prop_def(InstrumentConstraint(QssaApplyInterface._I, _T))
+
+    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+        return self.instrument
+
     outs = var_result_def(_T)
 
-    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return self.outs
 
     assembly_format = "`<` $instrument `>` $in_qubits (`:` type($outs)^)? attr-dict"
 
@@ -68,19 +113,20 @@ class ApplyOp(IRDLOperation):
 
 
 @irdl_op_definition
-class DynApplyOp(IRDLOperation):
+class DynApplyOp(QssaApplyInterface):
     name = "qssa.dyn_apply"
 
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
     _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
 
-    instrument = operand_def(InstrumentType.constr(_I, _T))
+    instrument = operand_def(InstrumentType.constr(QssaApplyInterface._I, _T))
 
-    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+        return self.instrument  # pyright: ignore[reportReturnType]
 
     outs = var_result_def(_T)
 
-    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return self.outs
 
     assembly_format = "`<` $instrument `>` $in_qubits (`:` type($outs)^)? attr-dict"
 
@@ -95,23 +141,25 @@ class DynApplyOp(IRDLOperation):
                 in_qubits,
             ),
             result_types=(
-                instrument.type.classical_results,
+                tuple(instrument.type.classical_results),
                 (BitType(),) * len(in_qubits),
             ),
         )
 
 
 @irdl_op_definition
-class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+class GateOp(QssaApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qssa.gate"
 
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
+    gate = prop_def(
+        InstrumentConstraint(QssaApplyInterface._I, RangeOf(AnyAttr()).of_length(0))
+    )
 
-    gate = prop_def(InstrumentConstraint(_I, RangeOf(AnyAttr()).of_length(0)))
+    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+        return self.gate
 
-    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
-
-    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return ()
 
     assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
@@ -132,16 +180,18 @@ class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
 
 @irdl_op_definition
-class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+class DynGateOp(QssaApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qssa.dyn_gate"
 
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
+    gate = operand_def(
+        InstrumentType.constr(QssaApplyInterface._I, RangeOf(AnyAttr()).of_length(0))
+    )
 
-    gate = operand_def(InstrumentType.constr(_I, RangeOf(AnyAttr()).of_length(0)))
+    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+        return self.gate  # pyright: ignore[reportReturnType]
 
-    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
-
-    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return ()
 
     assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
@@ -162,21 +212,23 @@ class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
 
 @irdl_op_definition
-class MeasureOp(IRDLOperation):
+class MeasureOp(QssaApplyInterface):
     name = "qssa.measure"
 
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
-
     measurement = prop_def(
-        InstrumentConstraint(_I, RangeOf(i1).of_length(_I)),
+        InstrumentConstraint(
+            QssaApplyInterface._I, RangeOf(i1).of_length(QssaApplyInterface._I)
+        ),
         default_value=CompBasisMeasurementAttr(),
     )
 
-    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+        return self.measurement
 
-    outs = var_result_def(RangeOf(i1).of_length(_I))
+    outs = var_result_def(RangeOf(i1).of_length(QssaApplyInterface._I))
 
-    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return self.outs
 
     assembly_format = "(`` `<` $measurement^ `>`)? $in_qubits attr-dict"
 
@@ -200,18 +252,22 @@ class MeasureOp(IRDLOperation):
 
 
 @irdl_op_definition
-class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+class DynMeasureOp(QssaApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qssa.dyn_measure"
 
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
+    measurement = operand_def(
+        InstrumentType.constr(
+            QssaApplyInterface._I, RangeOf(i1).of_length(QssaApplyInterface._I)
+        )
+    )
 
-    measurement = operand_def(InstrumentType.constr(_I, RangeOf(i1).of_length(_I)))
+    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+        return self.measurement  # pyright: ignore[reportReturnType]
 
-    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+    outs = var_result_def(RangeOf(i1).of_length(QssaApplyInterface._I))
 
-    outs = var_result_def(RangeOf(i1).of_length(_I))
-
-    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return self.outs
 
     assembly_format = "`<` $measurement `>` $in_qubits attr-dict"
 
