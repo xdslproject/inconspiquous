@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
 from typing import ClassVar
 
 from xdsl.dialects.builtin import i1
@@ -33,18 +36,78 @@ from inconspiquous.dialects.measurement import (
 from inconspiquous.dialects.qu import BitType
 
 
-@irdl_op_definition
-class ApplyOp(IRDLOperation):
-    name = "qref.apply"
+class QrefApplyInterface(IRDLOperation, ABC):
+    """
+    Operations inheriting this interface can be seen as instances of `qref.apply`
+    """
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
-    _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
-
-    instrument = prop_def(InstrumentConstraint(_I, _T))
 
     in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
+    @abstractmethod
+    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr: ...
+
+    @abstractmethod
+    def get_outs(self) -> tuple[SSAValue, ...]: ...
+
+    @staticmethod
+    def create_op(
+        instrument: SSAValue[InstrumentType] | InstrumentAttr,
+        *in_qubits: SSAValue | Operation,
+    ) -> QrefApplyInterface:
+        if isinstance(instrument, InstrumentAttr):
+            if not instrument.classical_results:
+                return GateOp(instrument, *in_qubits)
+            if len(instrument.classical_results) == instrument.num_qubits and all(
+                x == i1 for x in instrument.classical_results
+            ):
+                return MeasureOp(*in_qubits, measurement=instrument)
+            return ApplyOp(instrument, *in_qubits)
+        if not instrument.type.classical_results:
+            return DynGateOp(instrument, *in_qubits)
+        if len(
+            instrument.type.classical_results
+        ) == instrument.type.num_qubits.data and all(
+            x == i1 for x in instrument.type.classical_results
+        ):
+            return DynMeasureOp(*in_qubits, measurement=instrument)
+        return DynApplyOp(instrument, *in_qubits)
+
+
+class QrefStaticApplyInterface(QrefApplyInterface):
+    """
+    Static version of QrefApplyInterface
+    """
+
+    @abstractmethod
+    def get_instrument(self) -> InstrumentAttr: ...
+
+
+class QrefDynamicApplyInterface(QrefApplyInterface):
+    """
+    Dynamic version of QrefApplyInterface
+    """
+
+    @abstractmethod
+    def get_instrument(self) -> SSAValue[InstrumentType]: ...
+
+
+@irdl_op_definition
+class ApplyOp(QrefStaticApplyInterface):
+    name = "qref.apply"
+
+    _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
+
+    instrument = prop_def(InstrumentConstraint(QrefApplyInterface._I, _T))
+
+    def get_instrument(self) -> InstrumentAttr:
+        return self.instrument
+
     outs = var_result_def(_T)
+
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return self.outs
 
     assembly_format = "`<` $instrument `>` $in_qubits (`:` type($outs)^)? attr-dict"
 
@@ -59,17 +122,20 @@ class ApplyOp(IRDLOperation):
 
 
 @irdl_op_definition
-class DynApplyOp(IRDLOperation):
+class DynApplyOp(QrefDynamicApplyInterface):
     name = "qref.dyn_apply"
 
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
     _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
 
-    instrument = operand_def(InstrumentType.constr(_I, _T))
+    instrument = operand_def(InstrumentType.constr(QrefApplyInterface._I, _T))
 
-    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+    def get_instrument(self) -> SSAValue[InstrumentType]:
+        return SSAValue.get(self.instrument, type=InstrumentType)
 
     outs = var_result_def(_T)
+
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return self.outs
 
     assembly_format = "`<` $instrument `>` $in_qubits (`:` type($outs)^)? attr-dict"
 
@@ -86,14 +152,18 @@ class DynApplyOp(IRDLOperation):
 
 
 @irdl_op_definition
-class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+class GateOp(QrefStaticApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qref.gate"
 
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
+    gate = prop_def(
+        InstrumentConstraint(QrefApplyInterface._I, RangeOf(AnyAttr()).of_length(0))
+    )
 
-    gate = prop_def(InstrumentConstraint(_I, RangeOf(AnyAttr()).of_length(0)))
+    def get_instrument(self) -> InstrumentAttr:
+        return self.gate
 
-    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return ()
 
     assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
@@ -113,14 +183,20 @@ class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
 
 @irdl_op_definition
-class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+class DynGateOp(QrefDynamicApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qref.dyn_gate"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    gate = operand_def(InstrumentType.constr(_I, RangeOf(AnyAttr()).of_length(0)))
+    gate = operand_def(
+        InstrumentType.constr(QrefApplyInterface._I, RangeOf(AnyAttr()).of_length(0))
+    )
 
-    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+    def get_instrument(self) -> SSAValue[InstrumentType]:
+        return SSAValue.get(self.gate, type=InstrumentType)
+
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return ()
 
     assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
@@ -140,19 +216,25 @@ class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
 
 @irdl_op_definition
-class MeasureOp(IRDLOperation):
+class MeasureOp(QrefStaticApplyInterface):
     name = "qref.measure"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
     measurement = prop_def(
-        InstrumentConstraint(_I, RangeOf(i1).of_length(_I)),
+        InstrumentConstraint(
+            QrefApplyInterface._I, RangeOf(i1).of_length(QrefApplyInterface._I)
+        ),
         default_value=CompBasisMeasurementAttr(),
     )
 
-    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+    def get_instrument(self) -> InstrumentAttr:
+        return self.measurement
 
-    outs = var_result_def(RangeOf(i1).of_length(_I))
+    outs = var_result_def(RangeOf(i1).of_length(QrefApplyInterface._I))
+
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return self.outs
 
     assembly_format = "(`` `<` $measurement^ `>`)? $in_qubits attr-dict"
 
@@ -171,16 +253,22 @@ class MeasureOp(IRDLOperation):
 
 
 @irdl_op_definition
-class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
+class DynMeasureOp(QrefDynamicApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qref.dyn_measure"
 
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
+    measurement = operand_def(
+        InstrumentType.constr(
+            QrefApplyInterface._I, RangeOf(i1).of_length(QrefApplyInterface._I)
+        )
+    )
 
-    measurement = operand_def(InstrumentType.constr(_I, RangeOf(i1).of_length(_I)))
+    def get_instrument(self) -> SSAValue[InstrumentType]:
+        return SSAValue.get(self.measurement, type=InstrumentType)
 
-    in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
+    outs = var_result_def(RangeOf(i1).of_length(QrefApplyInterface._I))
 
-    outs = var_result_def(RangeOf(i1).of_length(_I))
+    def get_outs(self) -> tuple[SSAValue, ...]:
+        return self.outs
 
     assembly_format = "`<` $measurement `>` $in_qubits attr-dict"
 
