@@ -79,15 +79,33 @@ class QssaApplyInterface(IRDLOperation, ABC):
         return DynApplyOp(instrument, *in_qubits)
 
 
+class QssaStaticApplyInterface(QssaApplyInterface):
+    """
+    Static version of QssaApplyInterface
+    """
+
+    @abstractmethod
+    def get_instrument(self) -> InstrumentAttr: ...
+
+
+class QssaDynamicApplyInterface(QssaApplyInterface):
+    """
+    Dynamic version of QssaApplyInterface
+    """
+
+    @abstractmethod
+    def get_instrument(self) -> SSAValue[InstrumentType]: ...
+
+
 @irdl_op_definition
-class ApplyOp(QssaApplyInterface):
+class ApplyOp(QssaStaticApplyInterface):
     name = "qssa.apply"
 
     _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
 
     instrument = prop_def(InstrumentConstraint(QssaApplyInterface._I, _T))
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+    def get_instrument(self) -> InstrumentAttr:
         return self.instrument
 
     outs = var_result_def(_T)
@@ -113,15 +131,15 @@ class ApplyOp(QssaApplyInterface):
 
 
 @irdl_op_definition
-class DynApplyOp(QssaApplyInterface):
+class DynApplyOp(QssaDynamicApplyInterface):
     name = "qssa.dyn_apply"
 
     _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
 
     instrument = operand_def(InstrumentType.constr(QssaApplyInterface._I, _T))
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
-        return self.instrument  # pyright: ignore[reportReturnType]
+    def get_instrument(self) -> SSAValue[InstrumentType]:
+        return SSAValue.get(self.instrument, type=InstrumentType)
 
     outs = var_result_def(_T)
 
@@ -148,14 +166,14 @@ class DynApplyOp(QssaApplyInterface):
 
 
 @irdl_op_definition
-class GateOp(QssaApplyInterface, HasCanonicalizationPatternsInterface):
+class GateOp(QssaStaticApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qssa.gate"
 
     gate = prop_def(
         InstrumentConstraint(QssaApplyInterface._I, RangeOf(AnyAttr()).of_length(0))
     )
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+    def get_instrument(self) -> InstrumentAttr:
         return self.gate
 
     def get_outs(self) -> tuple[SSAValue, ...]:
@@ -180,15 +198,15 @@ class GateOp(QssaApplyInterface, HasCanonicalizationPatternsInterface):
 
 
 @irdl_op_definition
-class DynGateOp(QssaApplyInterface, HasCanonicalizationPatternsInterface):
+class DynGateOp(QssaDynamicApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qssa.dyn_gate"
 
     gate = operand_def(
         InstrumentType.constr(QssaApplyInterface._I, RangeOf(AnyAttr()).of_length(0))
     )
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
-        return self.gate  # pyright: ignore[reportReturnType]
+    def get_instrument(self) -> SSAValue[InstrumentType]:
+        return SSAValue.get(self.gate, type=InstrumentType)
 
     def get_outs(self) -> tuple[SSAValue, ...]:
         return ()
@@ -212,7 +230,7 @@ class DynGateOp(QssaApplyInterface, HasCanonicalizationPatternsInterface):
 
 
 @irdl_op_definition
-class MeasureOp(QssaApplyInterface):
+class MeasureOp(QssaStaticApplyInterface):
     name = "qssa.measure"
 
     measurement = prop_def(
@@ -222,7 +240,7 @@ class MeasureOp(QssaApplyInterface):
         default_value=CompBasisMeasurementAttr(),
     )
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+    def get_instrument(self) -> InstrumentAttr:
         return self.measurement
 
     outs = var_result_def(RangeOf(i1).of_length(QssaApplyInterface._I))
@@ -252,7 +270,7 @@ class MeasureOp(QssaApplyInterface):
 
 
 @irdl_op_definition
-class DynMeasureOp(QssaApplyInterface, HasCanonicalizationPatternsInterface):
+class DynMeasureOp(QssaDynamicApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qssa.dyn_measure"
 
     measurement = operand_def(
@@ -261,8 +279,8 @@ class DynMeasureOp(QssaApplyInterface, HasCanonicalizationPatternsInterface):
         )
     )
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
-        return self.measurement  # pyright: ignore[reportReturnType]
+    def get_instrument(self) -> SSAValue[InstrumentType]:
+        return SSAValue.get(self.measurement, type=InstrumentType)
 
     outs = var_result_def(RangeOf(i1).of_length(QssaApplyInterface._I))
 

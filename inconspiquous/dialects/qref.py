@@ -75,15 +75,33 @@ class QrefApplyInterface(IRDLOperation, ABC):
         return DynApplyOp(instrument, *in_qubits)
 
 
+class QrefStaticApplyInterface(QrefApplyInterface):
+    """
+    Static version of QrefApplyInterface
+    """
+
+    @abstractmethod
+    def get_instrument(self) -> InstrumentAttr: ...
+
+
+class QrefDynamicApplyInterface(QrefApplyInterface):
+    """
+    Dynamic version of QrefApplyInterface
+    """
+
+    @abstractmethod
+    def get_instrument(self) -> SSAValue[InstrumentType]: ...
+
+
 @irdl_op_definition
-class ApplyOp(QrefApplyInterface):
+class ApplyOp(QrefStaticApplyInterface):
     name = "qref.apply"
 
     _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
 
     instrument = prop_def(InstrumentConstraint(QrefApplyInterface._I, _T))
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+    def get_instrument(self) -> InstrumentAttr:
         return self.instrument
 
     outs = var_result_def(_T)
@@ -104,15 +122,15 @@ class ApplyOp(QrefApplyInterface):
 
 
 @irdl_op_definition
-class DynApplyOp(QrefApplyInterface):
+class DynApplyOp(QrefDynamicApplyInterface):
     name = "qref.dyn_apply"
 
     _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
 
     instrument = operand_def(InstrumentType.constr(QrefApplyInterface._I, _T))
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
-        return self.instrument  # pyright: ignore[reportReturnType]
+    def get_instrument(self) -> SSAValue[InstrumentType]:
+        return SSAValue.get(self.instrument, type=InstrumentType)
 
     outs = var_result_def(_T)
 
@@ -134,14 +152,14 @@ class DynApplyOp(QrefApplyInterface):
 
 
 @irdl_op_definition
-class GateOp(QrefApplyInterface, HasCanonicalizationPatternsInterface):
+class GateOp(QrefStaticApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qref.gate"
 
     gate = prop_def(
         InstrumentConstraint(QrefApplyInterface._I, RangeOf(AnyAttr()).of_length(0))
     )
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+    def get_instrument(self) -> InstrumentAttr:
         return self.gate
 
     def get_outs(self) -> tuple[SSAValue, ...]:
@@ -165,7 +183,7 @@ class GateOp(QrefApplyInterface, HasCanonicalizationPatternsInterface):
 
 
 @irdl_op_definition
-class DynGateOp(QrefApplyInterface, HasCanonicalizationPatternsInterface):
+class DynGateOp(QrefDynamicApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qref.dyn_gate"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
@@ -174,8 +192,8 @@ class DynGateOp(QrefApplyInterface, HasCanonicalizationPatternsInterface):
         InstrumentType.constr(QrefApplyInterface._I, RangeOf(AnyAttr()).of_length(0))
     )
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
-        return self.gate  # pyright: ignore[reportReturnType]
+    def get_instrument(self) -> SSAValue[InstrumentType]:
+        return SSAValue.get(self.gate, type=InstrumentType)
 
     def get_outs(self) -> tuple[SSAValue, ...]:
         return ()
@@ -198,7 +216,7 @@ class DynGateOp(QrefApplyInterface, HasCanonicalizationPatternsInterface):
 
 
 @irdl_op_definition
-class MeasureOp(QrefApplyInterface):
+class MeasureOp(QrefStaticApplyInterface):
     name = "qref.measure"
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
@@ -210,7 +228,7 @@ class MeasureOp(QrefApplyInterface):
         default_value=CompBasisMeasurementAttr(),
     )
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
+    def get_instrument(self) -> InstrumentAttr:
         return self.measurement
 
     outs = var_result_def(RangeOf(i1).of_length(QrefApplyInterface._I))
@@ -235,7 +253,7 @@ class MeasureOp(QrefApplyInterface):
 
 
 @irdl_op_definition
-class DynMeasureOp(QrefApplyInterface, HasCanonicalizationPatternsInterface):
+class DynMeasureOp(QrefDynamicApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qref.dyn_measure"
 
     measurement = operand_def(
@@ -244,8 +262,8 @@ class DynMeasureOp(QrefApplyInterface, HasCanonicalizationPatternsInterface):
         )
     )
 
-    def get_instrument(self) -> SSAValue[InstrumentType] | InstrumentAttr:
-        return self.measurement  # pyright: ignore[reportReturnType]
+    def get_instrument(self) -> SSAValue[InstrumentType]:
+        return SSAValue.get(self.measurement, type=InstrumentType)
 
     outs = var_result_def(RangeOf(i1).of_length(QrefApplyInterface._I))
 
