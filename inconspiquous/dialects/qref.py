@@ -94,7 +94,7 @@ class QrefDynamicApplyInterface(QrefApplyInterface):
 
 
 @irdl_op_definition
-class ApplyOp(QrefStaticApplyInterface):
+class ApplyOp(QrefStaticApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qref.apply"
 
     _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
@@ -120,9 +120,15 @@ class ApplyOp(QrefStaticApplyInterface):
             result_types=(instrument.classical_results,),
         )
 
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.qref import GateIdentity
+
+        return (GateIdentity(),)
+
 
 @irdl_op_definition
-class DynApplyOp(QrefDynamicApplyInterface):
+class DynApplyOp(QrefDynamicApplyInterface, HasCanonicalizationPatternsInterface):
     name = "qref.dyn_apply"
 
     _T: ClassVar = RangeVarConstraint("T", RangeOf(AnyAttr()))
@@ -149,6 +155,15 @@ class DynApplyOp(QrefDynamicApplyInterface):
             ),
             result_types=(instrument.type.classical_results,),
         )
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.qref import (
+            DynApplyConst,
+            DynGateCompose,
+        )
+
+        return (DynApplyConst(), DynGateCompose())
 
 
 @irdl_op_definition
@@ -208,11 +223,11 @@ class DynGateOp(QrefDynamicApplyInterface, HasCanonicalizationPatternsInterface)
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
         from inconspiquous.transforms.canonicalization.qref import (
+            DynApplyConst,
             DynGateCompose,
-            DynGateConst,
         )
 
-        return (DynGateConst(), DynGateCompose())
+        return (DynApplyConst(), DynGateCompose())
 
 
 @irdl_op_definition
@@ -283,10 +298,10 @@ class DynMeasureOp(QrefDynamicApplyInterface, HasCanonicalizationPatternsInterfa
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
         from inconspiquous.transforms.canonicalization.qref import (
-            DynMeasureConst,
+            DynApplyConst,
         )
 
-        return (DynMeasureConst(),)
+        return (DynApplyConst(),)
 
 
 @irdl_op_definition
