@@ -8,11 +8,11 @@ func.func @cx(%ctrl: !qu.bit, %tgt: !qu.bit) -> (!qu.bit, !qu.bit) {
   %tgt_1, %a1_1 = qssa.gate<#gate.cz> %tgt, %a1
   %ctrl_1, %a1_2 = qssa.gate<#gate.cz> %ctrl, %a1_1
   %a1_3, %a2_1 = qssa.gate<#gate.cz> %a1_2, %a2
-  %tgt_2, %m1 = qssa.measure<#measurement.x_basis> %tgt_1
+  %m1, %tgt_2 = qssa.measure<#measurement.x_basis> %tgt_1
   qu.release %tgt_2
   %cFalse = arith.constant false
   %g1 = gate.xz %cFalse, %m1
-  %a1_4, %m2 = qssa.measure<#measurement.x_basis> %a1_3
+  %m2, %a1_4 = qssa.measure<#measurement.x_basis> %a1_3
   qu.release %a1_4
   %g2 = gate.xz %m2, %m1
   %ctrl_2 = qssa.dyn_gate<%g1> %ctrl_1

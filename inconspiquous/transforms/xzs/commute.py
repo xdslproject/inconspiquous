@@ -64,7 +64,7 @@ class XZCommutePattern(RewritePattern):
             rewriter.replace_op(
                 op2,
                 (*angle_op, negate, new_measurement, new_op2, new_op1),
-                (new_op2.out_qubits[0], new_op1.result),
+                (new_op1.result, new_op2.out_qubits[0]),
             )
             rewriter.erase_op(op1)
             return
@@ -81,7 +81,7 @@ class XZCommutePattern(RewritePattern):
             rewriter.replace_op(
                 op2,
                 (new_op2, false_const, new_xz, new_op1_q, new_op1_c),
-                (new_op1_q.out_qubits[0], new_op1_c.result),
+                (new_op1_c.result, new_op1_q.out_qubits[0]),
             )
             rewriter.erase_op(op1)
             return

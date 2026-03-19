@@ -27,36 +27,36 @@
 // CHECK-GENERIC: %q6 = "qssa.dyn_gate"(%g1, %q4) : (!instrument.type<1>, !qu.bit) -> !qu.bit
 %q6 = qssa.dyn_gate<%g1> %q4
 
-// CHECK: %q7, %{{.*}} = qssa.measure %q6
-// CHECK-GENERIC: %q7, %{{.*}} = "qssa.measure"(%q6) <{measurement = #measurement.comp_basis}> : (!qu.bit) -> (!qu.bit, i1)
-%q7, %0 = qssa.measure %q6
+// CHECK: %{{.*}}, %q7 = qssa.measure %q6
+// CHECK-GENERIC: %{{.*}}, %q7 = "qssa.measure"(%q6) <{measurement = #measurement.comp_basis}> : (!qu.bit) -> (i1, !qu.bit)
+%0, %q7 = qssa.measure %q6
 
-// CHECK: %q8, %{{.*}} = qssa.measure<#measurement.xy<0.5pi>> %q7
-// CHECK-GENERIC: %q8, %{{.*}} = "qssa.measure"(%q7) <{measurement = #measurement.xy<0.5pi>}> : (!qu.bit) -> (!qu.bit, i1)
-%q8, %1 = qssa.measure<#measurement.xy<0.5pi>> %q7
+// CHECK: %{{.*}}, %q8 = qssa.measure<#measurement.xy<0.5pi>> %q7
+// CHECK-GENERIC: %{{.*}}, %q8 = "qssa.measure"(%q7) <{measurement = #measurement.xy<0.5pi>}> : (!qu.bit) -> (i1, !qu.bit)
+%1, %q8 = qssa.measure<#measurement.xy<0.5pi>> %q7
 
 %m = "test.op"() : () -> !instrument.type<1, i1>
 
-// CHECK: %q9, %{{.*}} = qssa.dyn_measure<%m> %q8
-// CHECK-GENERIC: %q9, %{{.*}} = "qssa.dyn_measure"(%m, %q8) : (!instrument.type<1, i1>, !qu.bit) -> (!qu.bit, i1)
-%q9, %2 = qssa.dyn_measure<%m> %q8
+// CHECK: %{{.*}}, %q9 = qssa.dyn_measure<%m> %q8
+// CHECK-GENERIC: %{{.*}}, %q9 = "qssa.dyn_measure"(%m, %q8) : (!instrument.type<1, i1>, !qu.bit) -> (i1, !qu.bit)
+%2, %q9 = qssa.dyn_measure<%m> %q8
 
 // CHECK: %q10 = qssa.apply<#gate.h> %q9
-// CHECK-GENERIC: %q10 = "qssa.apply"(%q9) <{instrument = #gate.h, resultSegmentSizes = array<i32: 1, 0>}> : (!qu.bit) -> !qu.bit
+// CHECK-GENERIC: %q10 = "qssa.apply"(%q9) <{instrument = #gate.h, resultSegmentSizes = array<i32: 0, 1>}> : (!qu.bit) -> !qu.bit
 %q10 = qssa.apply<#gate.h> %q9
 
-// CHECK: %q11, %3 = qssa.apply<#measurement.comp_basis> %q10 : i1
-// CHECK-GENERIC: %q11, %3 = "qssa.apply"(%q10) <{instrument = #measurement.comp_basis, resultSegmentSizes = array<i32: 1, 1>}> : (!qu.bit) -> (!qu.bit, i1)
-%q11, %3 = qssa.apply<#measurement.comp_basis> %q10 : i1
+// CHECK: %3, %q11 = qssa.apply<#measurement.comp_basis> %q10 : i1
+// CHECK-GENERIC: %3, %q11 = "qssa.apply"(%q10) <{instrument = #measurement.comp_basis, resultSegmentSizes = array<i32: 1, 1>}> : (!qu.bit) -> (i1, !qu.bit)
+%3, %q11 = qssa.apply<#measurement.comp_basis> %q10 : i1
 
-// CHECK: %q12, %q13, %4 = qssa.apply<#qec.stabilizer<XX>> %q5, %q11 : i1
-// CHECK-GENERIC: %q12, %q13, %4 = "qssa.apply"(%q5, %q11) <{instrument = #qec.stabilizer<XX>, resultSegmentSizes = array<i32: 2, 1>}> : (!qu.bit, !qu.bit) -> (!qu.bit, !qu.bit, i1)
-%q12, %q13, %4 = qssa.apply<#qec.stabilizer<XX>> %q5, %q11 : i1
+// CHECK: %4, %q12, %q13 = qssa.apply<#qec.stabilizer<XX>> %q5, %q11 : i1
+// CHECK-GENERIC: %4, %q12, %q13 = "qssa.apply"(%q5, %q11) <{instrument = #qec.stabilizer<XX>, resultSegmentSizes = array<i32: 1, 2>}> : (!qu.bit, !qu.bit) -> (i1, !qu.bit, !qu.bit)
+%4, %q12, %q13 = qssa.apply<#qec.stabilizer<XX>> %q5, %q11 : i1
 
 %i = "test.op"() : () -> !instrument.type<0, i1, i32>
 
 // CHECK: %5, %6 = qssa.dyn_apply<%i> : i1, i32
-// CHECK-GENERIC: %5, %6 = "qssa.dyn_apply"(%i) <{resultSegmentSizes = array<i32: 0, 2>}> : (!instrument.type<0, i1, i32>) -> (i1, i32)
+// CHECK-GENERIC: %5, %6 = "qssa.dyn_apply"(%i) <{resultSegmentSizes = array<i32: 2, 0>}> : (!instrument.type<0, i1, i32>) -> (i1, i32)
 %5, %6 = qssa.dyn_apply<%i> : i1, i32
 
 // CHECK: %{{.*}} = qssa.circuit() ({

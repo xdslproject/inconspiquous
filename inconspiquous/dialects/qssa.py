@@ -46,9 +46,9 @@ class ApplyOp(IRDLOperation):
 
     in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
-    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
-
     outs = var_result_def(_T)
+
+    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
 
     assembly_format = "`<` $instrument `>` $in_qubits (`:` type($outs)^)? attr-dict"
 
@@ -60,7 +60,10 @@ class ApplyOp(IRDLOperation):
             properties={
                 "instrument": instrument,
             },
-            result_types=((BitType(),) * len(in_qubits), instrument.classical_results),
+            result_types=(
+                instrument.classical_results,
+                (BitType(),) * len(in_qubits),
+            ),
         )
 
 
@@ -75,9 +78,9 @@ class DynApplyOp(IRDLOperation):
 
     in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
-    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
-
     outs = var_result_def(_T)
+
+    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
 
     assembly_format = "`<` $instrument `>` $in_qubits (`:` type($outs)^)? attr-dict"
 
@@ -92,8 +95,8 @@ class DynApplyOp(IRDLOperation):
                 in_qubits,
             ),
             result_types=(
-                (BitType(),) * len(in_qubits),
                 instrument.type.classical_results,
+                (BitType(),) * len(in_qubits),
             ),
         )
 
@@ -171,9 +174,9 @@ class MeasureOp(IRDLOperation):
 
     in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
-    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
-
     outs = var_result_def(RangeOf(i1).of_length(_I))
+
+    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
 
     assembly_format = "(`` `<` $measurement^ `>`)? $in_qubits attr-dict"
 
@@ -189,7 +192,10 @@ class MeasureOp(IRDLOperation):
                 "measurement": measurement,
             },
             operands=(in_qubits,),
-            result_types=((BitType(),) * len(in_qubits), (i1,) * len(in_qubits)),
+            result_types=(
+                (i1,) * len(in_qubits),
+                (BitType(),) * len(in_qubits),
+            ),
         )
 
 
@@ -203,9 +209,9 @@ class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
-    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
-
     outs = var_result_def(RangeOf(i1).of_length(_I))
+
+    out_qubits = var_result_def(RangeOf(BitType()).of_length(_I))
 
     assembly_format = "`<` $measurement `>` $in_qubits attr-dict"
 
@@ -218,7 +224,10 @@ class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     ):
         super().__init__(
             operands=[measurement, in_qubits],
-            result_types=((BitType(),) * len(in_qubits), (i1,) * len(in_qubits)),
+            result_types=(
+                (i1,) * len(in_qubits),
+                (BitType(),) * len(in_qubits),
+            ),
         )
 
     @classmethod

@@ -8,7 +8,7 @@
 // CHECK-NEXT:   %a1_4, %q3_1 = qssa.gate<#gate.cz> %a1_3, %q3
 // CHECK-NEXT:   %a1_5, %q4_1 = qssa.gate<#gate.cx> %a1_4, %q4
 // CHECK-NEXT:   %a1_6 = qssa.gate<#gate.h> %a1_5
-// CHECK-NEXT:   %a1_7, %s1 = qssa.measure %a1_6
+// CHECK-NEXT:   %s1, %a1_7 = qssa.measure %a1_6
 // CHECK-NEXT:   qu.release %a1_7
 // CHECK-NEXT:   %a2 = qu.alloc
 // CHECK-NEXT:   %a2_1 = qssa.gate<#gate.h> %a2
@@ -17,7 +17,7 @@
 // CHECK-NEXT:   %a2_4, %q4_2 = qssa.gate<#gate.cz> %a2_3, %q4_1
 // CHECK-NEXT:   %a2_5, %q5_1 = qssa.gate<#gate.cx> %a2_4, %q5
 // CHECK-NEXT:   %a2_6 = qssa.gate<#gate.h> %a2_5
-// CHECK-NEXT:   %a2_7, %s2 = qssa.measure %a2_6
+// CHECK-NEXT:   %s2, %a2_7 = qssa.measure %a2_6
 // CHECK-NEXT:   qu.release %a2_7
 // CHECK-NEXT:   %a3 = qu.alloc
 // CHECK-NEXT:   %a3_1 = qssa.gate<#gate.h> %a3
@@ -26,7 +26,7 @@
 // CHECK-NEXT:   %a3_4, %q4_3 = qssa.gate<#gate.cz> %a3_3, %q4_2
 // CHECK-NEXT:   %a3_5, %q5_2 = qssa.gate<#gate.cz> %a3_4, %q5_1
 // CHECK-NEXT:   %a3_6 = qssa.gate<#gate.h> %a3_5
-// CHECK-NEXT:   %a3_7, %s3 = qssa.measure %a3_6
+// CHECK-NEXT:   %s3, %a3_7 = qssa.measure %a3_6
 // CHECK-NEXT:   qu.release %a3_7
 // CHECK-NEXT:   %a4 = qu.alloc
 // CHECK-NEXT:   %a4_1 = qssa.gate<#gate.h> %a4
@@ -35,7 +35,7 @@
 // CHECK-NEXT:   %a4_4, %q4_4 = qssa.gate<#gate.cx> %a4_3, %q4_3
 // CHECK-NEXT:   %a4_5, %q5_3 = qssa.gate<#gate.cz> %a4_4, %q5_2
 // CHECK-NEXT:   %a4_6 = qssa.gate<#gate.h> %a4_5
-// CHECK-NEXT:   %a4_7, %s4 = qssa.measure %a4_6
+// CHECK-NEXT:   %s4, %a4_7 = qssa.measure %a4_6
 // CHECK-NEXT:   qu.release %a4_7
 // CHECK-NEXT:   %x = instrument.constant #gate.x
 // CHECK-NEXT:   %z = instrument.constant #gate.z
@@ -94,7 +94,7 @@
 // CHECK-NEXT:   %a1_12, %q3_6 = qssa.gate<#gate.cz> %a1_11, %q3_5
 // CHECK-NEXT:   %a1_13, %q4_7 = qssa.gate<#gate.cx> %a1_12, %q4_6
 // CHECK-NEXT:   %a1_14 = qssa.gate<#gate.h> %a1_13
-// CHECK-NEXT:   %a1_15, %s1_1 = qssa.measure %a1_14
+// CHECK-NEXT:   %s1_1, %a1_15 = qssa.measure %a1_14
 // CHECK-NEXT:   qu.release %a1_15
 // CHECK-NEXT:   %a2_8 = qu.alloc
 // CHECK-NEXT:   %a2_9 = qssa.gate<#gate.h> %a2_8
@@ -103,7 +103,7 @@
 // CHECK-NEXT:   %a2_12, %q4_8 = qssa.gate<#gate.cz> %a2_11, %q4_7
 // CHECK-NEXT:   %a2_13, %q5_6 = qssa.gate<#gate.cx> %a2_12, %q5_5
 // CHECK-NEXT:   %a2_14 = qssa.gate<#gate.h> %a2_13
-// CHECK-NEXT:   %a2_15, %s2_1 = qssa.measure %a2_14
+// CHECK-NEXT:   %s2_1, %a2_15 = qssa.measure %a2_14
 // CHECK-NEXT:   qu.release %a2_15
 // CHECK-NEXT:   %a3_8 = qu.alloc
 // CHECK-NEXT:   %a3_9 = qssa.gate<#gate.h> %a3_8
@@ -112,7 +112,7 @@
 // CHECK-NEXT:   %a3_12, %q4_9 = qssa.gate<#gate.cz> %a3_11, %q4_8
 // CHECK-NEXT:   %a3_13, %q5_7 = qssa.gate<#gate.cz> %a3_12, %q5_6
 // CHECK-NEXT:   %a3_14 = qssa.gate<#gate.h> %a3_13
-// CHECK-NEXT:   %a3_15, %s3_1 = qssa.measure %a3_14
+// CHECK-NEXT:   %s3_1, %a3_15 = qssa.measure %a3_14
 // CHECK-NEXT:   qu.release %a3_15
 // CHECK-NEXT:   %a4_8 = qu.alloc
 // CHECK-NEXT:   %a4_9 = qssa.gate<#gate.h> %a4_8
@@ -121,7 +121,7 @@
 // CHECK-NEXT:   %a4_12, %q4_10 = qssa.gate<#gate.cx> %a4_11, %q4_9
 // CHECK-NEXT:   %a4_13, %q5_8 = qssa.gate<#gate.cz> %a4_12, %q5_7
 // CHECK-NEXT:   %a4_14 = qssa.gate<#gate.h> %a4_13
-// CHECK-NEXT:   %a4_15, %s4_1 = qssa.measure %a4_14
+// CHECK-NEXT:   %s4_1, %a4_15 = qssa.measure %a4_14
 // CHECK-NEXT:   qu.release %a4_15
 // CHECK-NEXT:   %x_1 = instrument.constant #gate.x
 // CHECK-NEXT:   %z_1 = instrument.constant #gate.z
