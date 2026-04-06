@@ -13,7 +13,6 @@ from xdsl.pattern_rewriter import (
 from xdsl.rewriter import InsertPoint
 
 from inconspiquous.dialects.gate import (
-    ConstantGateOp,
     CXGate,
     HadamardGate,
     IdentityGate,
@@ -24,6 +23,7 @@ from inconspiquous.dialects.gate import (
     XGate,
     ZGate,
 )
+from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.measurement import CompBasisMeasurementAttr
 from inconspiquous.dialects.prob import UniformOp
 from inconspiquous.dialects.qssa import DynGateOp, GateOp, MeasureOp
@@ -40,10 +40,10 @@ class PadTGate(RewritePattern):
             return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
-        id_gate = ConstantGateOp(IdentityGate(1))
-        x_gate = ConstantGateOp(XGate())
-        z_gate = ConstantGateOp(ZGate())
-        phase_gate = ConstantGateOp(PhaseGate())
+        id_gate = ConstantInstrumentOp(IdentityGate(1))
+        x_gate = ConstantInstrumentOp(XGate())
+        z_gate = ConstantInstrumentOp(ZGate())
+        phase_gate = ConstantInstrumentOp(PhaseGate())
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
         pre_x = DynGateOp(pre_x_sel, *op.in_qubits)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
@@ -93,10 +93,10 @@ class PadTDaggerGate(RewritePattern):
             return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
-        id_gate = ConstantGateOp(IdentityGate(1))
-        x_gate = ConstantGateOp(XGate())
-        z_gate = ConstantGateOp(ZGate())
-        phase_dagger_gate = ConstantGateOp(PhaseDaggerGate())
+        id_gate = ConstantInstrumentOp(IdentityGate(1))
+        x_gate = ConstantInstrumentOp(XGate())
+        z_gate = ConstantInstrumentOp(ZGate())
+        phase_dagger_gate = ConstantInstrumentOp(PhaseDaggerGate())
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
         pre_x = DynGateOp(pre_x_sel, *op.in_qubits)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
@@ -146,9 +146,9 @@ class PadHadamardGate(RewritePattern):
             return
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
-        id_gate = ConstantGateOp(IdentityGate(1))
-        x_gate = ConstantGateOp(XGate())
-        z_gate = ConstantGateOp(ZGate())
+        id_gate = ConstantInstrumentOp(IdentityGate(1))
+        x_gate = ConstantInstrumentOp(XGate())
+        z_gate = ConstantInstrumentOp(ZGate())
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
         pre_x = DynGateOp(pre_x_sel, *op.in_qubits)
         pre_z_sel = SelectOp(z_rand, z_gate, id_gate)
@@ -197,9 +197,9 @@ class PadCXGate(RewritePattern):
         z_rand_q1 = UniformOp(i1)
         z_rand_q2 = UniformOp(i1)
 
-        id_gate = ConstantGateOp(IdentityGate(1))
-        x_gate = ConstantGateOp(XGate())
-        z_gate = ConstantGateOp(ZGate())
+        id_gate = ConstantInstrumentOp(IdentityGate(1))
+        x_gate = ConstantInstrumentOp(XGate())
+        z_gate = ConstantInstrumentOp(ZGate())
 
         x_sel_q1 = SelectOp(x_rand_q1, x_gate, id_gate)
         x_sel_q2 = SelectOp(x_rand_q2, x_gate, id_gate)
@@ -267,9 +267,9 @@ class PadMeasure(RewritePattern):
         x_rand = UniformOp(i1)
         z_rand = UniformOp(i1)
 
-        id_gate = ConstantGateOp(IdentityGate(1))
-        x_gate = ConstantGateOp(XGate())
-        z_gate = ConstantGateOp(ZGate())
+        id_gate = ConstantInstrumentOp(IdentityGate(1))
+        x_gate = ConstantInstrumentOp(XGate())
+        z_gate = ConstantInstrumentOp(ZGate())
 
         pre_x_sel = SelectOp(x_rand, x_gate, id_gate)
         pre_x = DynGateOp(pre_x_sel, *op.in_qubits)
@@ -278,6 +278,7 @@ class PadMeasure(RewritePattern):
 
         new_measure = MeasureOp(pre_z)
 
+        corrected_qubit = DynGateOp(pre_x_sel, new_measure.out_qubits[0])
         corrected_measure = XOrIOp(x_rand, new_measure.outs[0])
 
         rewriter.insert_op(
@@ -296,7 +297,8 @@ class PadMeasure(RewritePattern):
         )
 
         rewriter.replace_matched_op(
-            (new_measure, corrected_measure),
+            (new_measure, corrected_qubit, corrected_measure),
+            (corrected_qubit.out_qubits[0], corrected_measure.result),
         )
 
 

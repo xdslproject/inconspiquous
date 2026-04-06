@@ -5,8 +5,8 @@ from xdsl.pattern_rewriter import (
 )
 
 from inconspiquous.dialects.angle import ConstantAngleOp
+from inconspiquous.dialects.instrument import ConstantInstrumentOp
 from inconspiquous.dialects.measurement import (
-    ConstantMeasurementOp,
     XYDynMeasurementOp,
     XYMeasurementAttr,
 )
@@ -23,5 +23,5 @@ class XYDynMeasurementConst(RewritePattern):
             return
 
         rewriter.replace_matched_op(
-            ConstantMeasurementOp(XYMeasurementAttr(owner.angle))
+            ConstantInstrumentOp(XYMeasurementAttr(owner.angle))
         )

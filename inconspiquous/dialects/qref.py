@@ -4,6 +4,7 @@ from xdsl.dialects.builtin import i1
 from xdsl.interfaces import HasCanonicalizationPatternsInterface
 from xdsl.ir import Block, Dialect, Operation, Region, SSAValue
 from xdsl.irdl import (
+    AnyAttr,
     AnyInt,
     IntVarConstraint,
     IRDLOperation,
@@ -20,12 +21,13 @@ from xdsl.irdl import (
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.traits import HasParent, IsTerminator
 
-from inconspiquous.constraints import SizedAttributeConstraint
-from inconspiquous.dialects.gate import GateAttr, GateType
+from inconspiquous.dialects.instrument import (
+    InstrumentAttr,
+    InstrumentConstraint,
+    InstrumentType,
+)
 from inconspiquous.dialects.measurement import (
     CompBasisMeasurementAttr,
-    MeasurementAttr,
-    MeasurementType,
 )
 from inconspiquous.dialects.qu import BitType
 
@@ -36,13 +38,13 @@ class GateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    gate = prop_def(SizedAttributeConstraint(GateAttr, _I))
+    gate = prop_def(InstrumentConstraint(_I, RangeOf(AnyAttr()).of_length(0)))
 
     in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
     assembly_format = "`<` $gate `>` $in_qubits attr-dict"
 
-    def __init__(self, gate: GateAttr, *in_qubits: SSAValue | Operation):
+    def __init__(self, gate: InstrumentAttr, *in_qubits: SSAValue | Operation):
         super().__init__(
             operands=(in_qubits,),
             properties={
@@ -63,7 +65,7 @@ class DynGateOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    gate = operand_def(GateType.constr(_I))
+    gate = operand_def(InstrumentType.constr(_I, RangeOf(AnyAttr()).of_length(0)))
 
     in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
@@ -91,7 +93,7 @@ class MeasureOp(IRDLOperation):
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
     measurement = prop_def(
-        SizedAttributeConstraint(MeasurementAttr, _I),
+        InstrumentConstraint(_I, RangeOf(i1).of_length(_I)),
         default_value=CompBasisMeasurementAttr(),
     )
 
@@ -104,7 +106,7 @@ class MeasureOp(IRDLOperation):
     def __init__(
         self,
         *in_qubits: SSAValue | Operation,
-        measurement: MeasurementAttr = CompBasisMeasurementAttr(),
+        measurement: InstrumentAttr = CompBasisMeasurementAttr(),
     ):
         super().__init__(
             properties={
@@ -121,7 +123,7 @@ class DynMeasureOp(IRDLOperation, HasCanonicalizationPatternsInterface):
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    measurement = operand_def(MeasurementType.constr(_I))
+    measurement = operand_def(InstrumentType.constr(_I, RangeOf(i1).of_length(_I)))
 
     in_qubits = var_operand_def(RangeOf(BitType()).of_length(_I))
 
@@ -153,7 +155,7 @@ class CircuitOp(IRDLOperation):
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
     body = region_def("single_block", entry_args=RangeOf(BitType()).of_length(_I))
-    result = result_def(GateType.constr(_I))
+    result = result_def(InstrumentType.constr(_I, RangeOf(AnyAttr()).of_length(0)))
 
     assembly_format = "`(` `)` `(` $body `)` `:` `(` `)` `->` type($result) attr-dict"
 
@@ -163,7 +165,7 @@ class CircuitOp(IRDLOperation):
 
         super().__init__(
             regions=(region,),
-            result_types=(GateType(num_qubits),),
+            result_types=(InstrumentType(num_qubits),),
         )
 
     def verify_(self):

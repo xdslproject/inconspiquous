@@ -26,12 +26,18 @@ func.func @teleport(%q : !qu.bit) -> !qu.bit {
   %a2_3 = qssa.gate<#gate.h> %a2_2
   %a4_3 = qssa.gate<#gate.h> %a4_2
 
-  %m0 = qssa.measure %q_2
-  %m1 = qssa.measure %a1_3
-  %m2 = qssa.measure %a2_3
-  %m3 = qssa.measure %a3_3
-  %m4 = qssa.measure %a4_3
-  %m5 = qssa.measure %a5_3
+  %q_3, %m0 = qssa.measure %q_2
+  qu.release %q_3
+  %a1_4, %m1 = qssa.measure %a1_3
+  qu.release %a1_4
+  %a2_4, %m2 = qssa.measure %a2_3
+  qu.release %a2_4
+  %a3_4, %m3 = qssa.measure %a3_3
+  qu.release %a3_4
+  %a4_4, %m4 = qssa.measure %a4_3
+  qu.release %a4_4
+  %a5_4, %m5 = qssa.measure %a5_3
+  qu.release %a5_4
 
   %x1 = arith.xori %m1, %m3 : i1
   %x = arith.xori %x1, %m5 : i1

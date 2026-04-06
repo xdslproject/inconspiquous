@@ -7,49 +7,49 @@
 // CHECK: gate.xz %a, %b
 %g = gate.xzs %a, %b, %false
 
-"test.op"(%g) : (!gate.type<1>) -> ()
+"test.op"(%g) : (!instrument.type<1>) -> ()
 
 // -----
 
 %phi = angle.constant<0.5pi>
 
-// CHECK: gate.constant #gate.rx<0.5pi>
+// CHECK: instrument.constant #gate.rx<0.5pi>
 %g = gate.dyn_rx<%phi>
 
-"test.op"(%g) : (!gate.type<1>) -> ()
+"test.op"(%g) : (!instrument.type<1>) -> ()
 
 // -----
 
 %phi = angle.constant<0.5pi>
 
-// CHECK: gate.constant #gate.ry<0.5pi>
+// CHECK: instrument.constant #gate.ry<0.5pi>
 %g = gate.dyn_ry<%phi>
 
-"test.op"(%g) : (!gate.type<1>) -> ()
+"test.op"(%g) : (!instrument.type<1>) -> ()
 
 // -----
 
 %phi = angle.constant<0.5pi>
 
-// CHECK: gate.constant #gate.rz<0.5pi>
+// CHECK: instrument.constant #gate.rz<0.5pi>
 %g = gate.dyn_rz<%phi>
 
-"test.op"(%g) : (!gate.type<1>) -> ()
+"test.op"(%g) : (!instrument.type<1>) -> ()
 
 // -----
 
 %phi = angle.constant<0.5pi>
 
-// CHECK: gate.constant #gate.j<0.5pi>
+// CHECK: instrument.constant #gate.j<0.5pi>
 %g = gate.dyn_j<%phi>
 
-"test.op"(%g) : (!gate.type<1>) -> ()
+"test.op"(%g) : (!instrument.type<1>) -> ()
 
 // -----
 
 %phi = angle.constant<0.5pi>
 
-// CHECK: gate.constant #gate.rzz<0.5pi>
+// CHECK: instrument.constant #gate.rzz<0.5pi>
 %g = gate.dyn_rzz<%phi>
 
-"test.op"(%g) : (!gate.type<2>) -> ()
+"test.op"(%g) : (!instrument.type<2>) -> ()

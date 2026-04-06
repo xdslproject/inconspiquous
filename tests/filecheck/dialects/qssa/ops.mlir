@@ -21,69 +21,67 @@
 // CHECK-GENERIC: %q4, %q5 = "qssa.gate"(%q2, %q3) <{gate = #gate.cx}> : (!qu.bit, !qu.bit) -> (!qu.bit, !qu.bit)
 %q4, %q5 = qssa.gate<#gate.cx> %q2, %q3
 
-%g1 = "test.op"() : () -> !gate.type<1>
+%g1 = "test.op"() : () -> !instrument.type<1>
 
-// CHECK: %q6 = qssa.dyn_gate<%g1> %q5
-// CHECK-GENERIC: %q6 = "qssa.dyn_gate"(%g1, %q5) : (!gate.type<1>, !qu.bit) -> !qu.bit
-%q6 = qssa.dyn_gate<%g1> %q5
+// CHECK: %q6 = qssa.dyn_gate<%g1> %q4
+// CHECK-GENERIC: %q6 = "qssa.dyn_gate"(%g1, %q4) : (!instrument.type<1>, !qu.bit) -> !qu.bit
+%q6 = qssa.dyn_gate<%g1> %q4
 
-// CHECK: %{{.*}} = qssa.measure %q4
-// CHECK-GENERIC: %{{.*}} = "qssa.measure"(%q4) <{measurement = #measurement.comp_basis}> : (!qu.bit) -> i1
-%0 = qssa.measure %q4
+// CHECK: %q7, %{{.*}} = qssa.measure %q6
+// CHECK-GENERIC: %q7, %{{.*}} = "qssa.measure"(%q6) <{measurement = #measurement.comp_basis}> : (!qu.bit) -> (!qu.bit, i1)
+%q7, %0 = qssa.measure %q6
 
-// CHECK: %{{.*}} = qssa.measure<#measurement.xy<0.5pi>> %q6
-// CHECK-GENERIC: %{{.*}} = "qssa.measure"(%q6) <{measurement = #measurement.xy<0.5pi>}> : (!qu.bit) -> i1
-%1 = qssa.measure<#measurement.xy<0.5pi>> %q6
+// CHECK: %q8, %{{.*}} = qssa.measure<#measurement.xy<0.5pi>> %q7
+// CHECK-GENERIC: %q8, %{{.*}} = "qssa.measure"(%q7) <{measurement = #measurement.xy<0.5pi>}> : (!qu.bit) -> (!qu.bit, i1)
+%q8, %1 = qssa.measure<#measurement.xy<0.5pi>> %q7
 
-%q7 = qu.alloc
+%m = "test.op"() : () -> !instrument.type<1, i1>
 
-%m = "test.op"() : () -> !measurement.type<1>
-
-// CHECK: %{{.*}} = qssa.dyn_measure<%m> %q7
-// CHECK-GENERIC: %{{.*}} = "qssa.dyn_measure"(%m, %q7) : (!measurement.type<1>, !qu.bit) -> i1
-%2 = qssa.dyn_measure<%m> %q7
+// CHECK: %q9, %{{.*}} = qssa.dyn_measure<%m> %q8
+// CHECK-GENERIC: %q9, %{{.*}} = "qssa.dyn_measure"(%m, %q8) : (!instrument.type<1, i1>, !qu.bit) -> (!qu.bit, i1)
+%q9, %2 = qssa.dyn_measure<%m> %q8
 
 // CHECK: %{{.*}} = qssa.circuit() ({
 // CHECK-NEXT: ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:   qssa.return %{{.*}}
-// CHECK-NEXT: }) : () -> !gate.type<1>
+// CHECK-NEXT: }) : () -> !instrument.type<1>
 // CHECK-GENERIC: %{{.*}} = "qssa.circuit"() ({
 // CHECK-GENERIC-NEXT: ^{{.+}}(%{{.*}} : !qu.bit):
 // CHECK-GENERIC-NEXT:   "qssa.return"(%{{.*}}) : (!qu.bit) -> ()
-// CHECK-GENERIC-NEXT: }) : () -> !gate.type<1>
+// CHECK-GENERIC-NEXT: }) : () -> !instrument.type<1>
 %circuit1 = qssa.circuit() ({
 ^bb0(%arg0 : !qu.bit):
   qssa.return %arg0
-}) : () -> !gate.type<1>
+}) : () -> !instrument.type<1>
 
 // CHECK: %{{.*}} = qssa.circuit() ({
 // CHECK-NEXT: ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:   %{{.*}} = qssa.gate<#gate.x> %{{.*}}
 // CHECK-NEXT:   qssa.return %{{.*}}
-// CHECK-NEXT: }) : () -> !gate.type<1>
+// CHECK-NEXT: }) : () -> !instrument.type<1>
 // CHECK-GENERIC: %{{.*}} = "qssa.circuit"() ({
 // CHECK-GENERIC-NEXT: ^{{.+}}(%{{.*}} : !qu.bit):
 // CHECK-GENERIC-NEXT:   %{{.*}} = "qssa.gate"(%{{.*}}) <{gate = #gate.x}> : (!qu.bit) -> !qu.bit
 // CHECK-GENERIC-NEXT:   "qssa.return"(%{{.*}}) : (!qu.bit) -> ()
-// CHECK-GENERIC-NEXT: }) : () -> !gate.type<1>
+// CHECK-GENERIC-NEXT: }) : () -> !instrument.type<1>
 %circuit2 = qssa.circuit() ({
 ^bb0(%arg0 : !qu.bit):
-  %q8 = qssa.gate<#gate.x> %arg0
-  qssa.return %q8
-}) : () -> !gate.type<1>
+  %q10 = qssa.gate<#gate.x> %arg0
+  qssa.return %q10
+}) : () -> !instrument.type<1>
 
 // CHECK: %{{.*}} = qssa.circuit() ({
 // CHECK-NEXT: ^{{.*}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
 // CHECK-NEXT:   %{{.*}}, %{{.*}} = qssa.gate<#gate.cx> %{{.*}}, %{{.*}}
 // CHECK-NEXT:   qssa.return %{{.*}}, %{{.*}}
-// CHECK-NEXT: }) : () -> !gate.type<2>
+// CHECK-NEXT: }) : () -> !instrument.type<2>
 // CHECK-GENERIC: %{{.*}} = "qssa.circuit"() ({
 // CHECK-GENERIC-NEXT: ^{{.+}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
 // CHECK-GENERIC-NEXT:   %{{.*}}, %{{.*}} = "qssa.gate"(%{{.*}}, %{{.*}}) <{gate = #gate.cx}> : (!qu.bit, !qu.bit) -> (!qu.bit, !qu.bit)
 // CHECK-GENERIC-NEXT:   "qssa.return"(%{{.*}}, %{{.*}}) : (!qu.bit, !qu.bit) -> ()
-// CHECK-GENERIC-NEXT: }) : () -> !gate.type<2>
+// CHECK-GENERIC-NEXT: }) : () -> !instrument.type<2>
 %circuit3 = qssa.circuit() ({
 ^bb0(%arg0 : !qu.bit, %arg1 : !qu.bit):
-  %q9, %q10 = qssa.gate<#gate.cx> %arg0, %arg1
-  qssa.return %q9, %q10
-}) : () -> !gate.type<2>
+  %q11, %q12 = qssa.gate<#gate.cx> %arg0, %arg1
+  qssa.return %q11, %q12
+}) : () -> !instrument.type<2>

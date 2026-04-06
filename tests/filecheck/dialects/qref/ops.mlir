@@ -21,10 +21,10 @@ qref.gate<#gate.rz<0.5pi>> %q1
 // CHECK-GENERIC: "qref.gate"(%q0, %q1) <{gate = #gate.cx}> : (!qu.bit, !qu.bit)
 qref.gate<#gate.cx> %q0, %q1
 
-%g1 = "test.op"() : () -> !gate.type<1>
+%g1 = "test.op"() : () -> !instrument.type<1>
 
 // CHECK: qref.dyn_gate<%g1> %q1
-// CHECK-GENERIC: "qref.dyn_gate"(%g1, %q1) : (!gate.type<1>, !qu.bit) -> ()
+// CHECK-GENERIC: "qref.dyn_gate"(%g1, %q1) : (!instrument.type<1>, !qu.bit) -> ()
 qref.dyn_gate<%g1> %q1
 
 // CHECK: %{{.*}} = qref.measure %q0
@@ -37,37 +37,37 @@ qref.dyn_gate<%g1> %q1
 
 %q2 = qu.alloc
 
-%m = "test.op"() : () -> !measurement.type<1>
+%m = "test.op"() : () -> !instrument.type<1, i1>
 
 // CHECK: %{{.*}} = qref.dyn_measure<%m> %q2
-// CHECK-GENERIC: %{{.*}} = "qref.dyn_measure"(%m, %q2) : (!measurement.type<1>, !qu.bit) -> i1
+// CHECK-GENERIC: %{{.*}} = "qref.dyn_measure"(%m, %q2) : (!instrument.type<1, i1>, !qu.bit) -> i1
 %2 = qref.dyn_measure<%m> %q2
 
 // CHECK: %{{.*}} = qref.circuit() ({
 // CHECK-NEXT: ^{{.*}}(%{{.*}} : !qu.bit):
 // CHECK-NEXT:   qref.return
-// CHECK-NEXT: }) : () -> !gate.type<1>
+// CHECK-NEXT: }) : () -> !instrument.type<1>
 // CHECK-GENERIC: %{{.*}} = "qref.circuit"() ({
 // CHECK-GENERIC-NEXT: ^{{.+}}(%{{.*}} : !qu.bit):
 // CHECK-GENERIC-NEXT:   "qref.return"() : () -> ()
-// CHECK-GENERIC-NEXT: }) : () -> !gate.type<1>
+// CHECK-GENERIC-NEXT: }) : () -> !instrument.type<1>
 %circuit1 = qref.circuit() ({
 ^bb0(%arg0 : !qu.bit):
   qref.return
-}) : () -> !gate.type<1>
+}) : () -> !instrument.type<1>
 
 // CHECK: %{{.*}} = qref.circuit() ({
 // CHECK-NEXT: ^{{.*}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
 // CHECK-NEXT:   qref.gate<#gate.cx> %{{.*}}, %{{.*}}
 // CHECK-NEXT:   qref.return
-// CHECK-NEXT: }) : () -> !gate.type<2>
+// CHECK-NEXT: }) : () -> !instrument.type<2>
 // CHECK-GENERIC: %{{.*}} = "qref.circuit"() ({
 // CHECK-GENERIC-NEXT: ^{{.+}}(%{{.*}} : !qu.bit, %{{.*}} : !qu.bit):
 // CHECK-GENERIC-NEXT:   "qref.gate"(%{{.*}}, %{{.*}}) <{gate = #gate.cx}> : (!qu.bit, !qu.bit) -> ()
 // CHECK-GENERIC-NEXT:   "qref.return"() : () -> ()
-// CHECK-GENERIC-NEXT: }) : () -> !gate.type<2>
+// CHECK-GENERIC-NEXT: }) : () -> !instrument.type<2>
 %circuit2 = qref.circuit() ({
 ^bb0(%arg0 : !qu.bit, %arg1 : !qu.bit):
   qref.gate<#gate.cx> %arg0, %arg1
   qref.return
-}) : () -> !gate.type<2>
+}) : () -> !instrument.type<2>

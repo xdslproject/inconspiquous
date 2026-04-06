@@ -1,7 +1,12 @@
+from abc import ABC, abstractmethod
+from collections.abc import Mapping
+from dataclasses import dataclass
 from typing import ClassVar
 
+from typing_extensions import TypeVar
 from xdsl.dialects.builtin import IntAttr, IntAttrConstraint
 from xdsl.ir import (
+    Attribute,
     Dialect,
     Operation,
     ParametrizedAttribute,
@@ -10,6 +15,9 @@ from xdsl.ir import (
 )
 from xdsl.irdl import (
     AnyInt,
+    AttrConstraint,
+    ConstraintContext,
+    IntConstraint,
     IntVarConstraint,
     IRDLOperation,
     ParamAttrConstraint,
@@ -26,9 +34,6 @@ from xdsl.parser import AttrParser
 from xdsl.printer import Printer
 from xdsl.utils.exceptions import VerifyException
 
-from inconspiquous.alloc import AllocAttr
-from inconspiquous.constraints import SizedAttributeConstraint
-
 
 @irdl_attr_definition
 class BitType(ParametrizedAttribute, TypeAttribute):
@@ -37,6 +42,36 @@ class BitType(ParametrizedAttribute, TypeAttribute):
     """
 
     name = "qu.bit"
+
+
+class AllocAttr(ParametrizedAttribute, ABC):
+    @property
+    @abstractmethod
+    def num_qubits(self) -> int: ...
+
+
+@dataclass(frozen=True)
+class AllocConstraint(AttrConstraint[AllocAttr]):
+    """
+    Constraints an attribute to be a gate type with size given by an integer constraint.
+    """
+
+    size_constraint: IntConstraint
+
+    def verify(self, attr: Attribute, constraint_context: ConstraintContext) -> None:
+        if not isinstance(attr, AllocAttr):
+            raise VerifyException(
+                f"attribute {attr} expected to be a allocation attribute"
+            )
+        self.size_constraint.verify(attr.num_qubits, constraint_context)
+
+    def variables(self) -> set[str]:
+        return self.size_constraint.variables()
+
+    def mapping_type_vars(
+        self, type_var_mapping: Mapping[TypeVar, AttrConstraint | IntConstraint]
+    ) -> AttrConstraint[AllocAttr]:
+        return AllocConstraint(self.size_constraint.mapping_type_vars(type_var_mapping))
 
 
 @irdl_attr_definition
@@ -93,9 +128,7 @@ class AllocOp(IRDLOperation):
 
     _I: ClassVar = IntVarConstraint("I", AnyInt())
 
-    alloc = prop_def(
-        SizedAttributeConstraint(AllocAttr, _I), default_value=AllocZeroAttr()
-    )
+    alloc = prop_def(AllocConstraint(_I), default_value=AllocZeroAttr())
 
     outs = var_result_def(RangeOf(BitType()).of_length(_I))
 

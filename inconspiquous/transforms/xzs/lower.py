@@ -11,7 +11,6 @@ from xdsl.pattern_rewriter import (
 
 from inconspiquous.dialects.gate import (
     ComposeGateOp,
-    ConstantGateOp,
     IdentityGate,
     PhaseGate,
     XGate,
@@ -20,6 +19,7 @@ from inconspiquous.dialects.gate import (
     YGate,
     ZGate,
 )
+from inconspiquous.dialects.instrument import ConstantInstrumentOp
 
 
 class LowerXZToSelectPattern(RewritePattern):
@@ -27,10 +27,10 @@ class LowerXZToSelectPattern(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: XZOp, rewriter: PatternRewriter):
-        identity = ConstantGateOp(IdentityGate(1))
-        z = ConstantGateOp(ZGate())
-        y = ConstantGateOp(YGate())
-        x = ConstantGateOp(XGate())
+        identity = ConstantInstrumentOp(IdentityGate(1))
+        z = ConstantInstrumentOp(ZGate())
+        y = ConstantInstrumentOp(YGate())
+        x = ConstantInstrumentOp(XGate())
 
         z_no_x_sel_op = arith.SelectOp(op.z, z, identity)
         z_x_sel_op = arith.SelectOp(op.z, y, x)
@@ -54,11 +54,11 @@ class LowerXZSToSelectPattern(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: XZSOp, rewriter: PatternRewriter):
-        identity = ConstantGateOp(IdentityGate(1))
-        s = ConstantGateOp(PhaseGate())
-        z = ConstantGateOp(ZGate())
-        y = ConstantGateOp(YGate())
-        x = ConstantGateOp(XGate())
+        identity = ConstantInstrumentOp(IdentityGate(1))
+        s = ConstantInstrumentOp(PhaseGate())
+        z = ConstantInstrumentOp(ZGate())
+        y = ConstantInstrumentOp(YGate())
+        x = ConstantInstrumentOp(XGate())
 
         z_no_x_sel_op = arith.SelectOp(op.z, z, identity)
         z_x_sel_op = arith.SelectOp(op.z, y, x)

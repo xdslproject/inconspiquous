@@ -6,125 +6,50 @@ from typing import ClassVar, Literal, NamedTuple
 from xdsl.dialects.builtin import (
     AnyFloatConstr,
     IntAttr,
-    IntAttrConstraint,
     IntegerType,
     i1,
 )
-from xdsl.interfaces import HasCanonicalizationPatternsInterface, HasFolderInterface
+from xdsl.interfaces import HasCanonicalizationPatternsInterface
 from xdsl.ir import (
     Dialect,
     Operation,
-    ParametrizedAttribute,
     SSAValue,
     TypeAttribute,
 )
 from xdsl.irdl import (
-    AnyInt,
-    AttrConstraint,
-    BaseAttr,
-    IntConstraint,
-    IntVarConstraint,
+    AnyAttr,
+    EqIntConstraint,
     IRDLOperation,
-    ParamAttrConstraint,
+    RangeOf,
     VarConstraint,
     base,
     irdl_attr_definition,
     irdl_op_definition,
     operand_def,
     param_def,
-    prop_def,
     result_def,
     traits_def,
 )
 from xdsl.parser import AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
-from xdsl.traits import ConstantLike, Pure
+from xdsl.traits import Pure
 
-from inconspiquous.constraints import SizedAttribute, SizedAttributeConstraint
 from inconspiquous.dialects.angle import AngleAttr, AngleType
+from inconspiquous.dialects.instrument import (
+    InstrumentAttr,
+    InstrumentType,
+)
 
 
-class GateAttr(ParametrizedAttribute, SizedAttribute, ABC):
+class GateAttr(InstrumentAttr, ABC):
     """
-    In general most gate operations are not operationally different, so differentiating between them
-    may actually be better done via an attribute that can be attached to a gate operation.
+    Helper for instruments that have no classical results, i.e. are quantum gates.
     """
 
     @property
-    @abstractmethod
-    def num_qubits(self) -> int: ...
-
-    @property
-    def size(self) -> int:
-        return self.num_qubits
-
-
-@irdl_attr_definition
-class GateType(ParametrizedAttribute, TypeAttribute):
-    """
-    Type for dynamic gate operations
-    """
-
-    name = "gate.type"
-
-    num_qubits: IntAttr
-
-    def __init__(self, num_qubits: int | IntAttr):
-        if isinstance(num_qubits, int):
-            num_qubits = IntAttr(num_qubits)
-        super().__init__(num_qubits)
-
-    @classmethod
-    def parse_parameters(cls, parser: AttrParser) -> tuple[IntAttr]:
-        with parser.in_angle_brackets():
-            i = parser.parse_integer(allow_boolean=False, allow_negative=False)
-            return (IntAttr(i),)
-
-    def print_parameters(self, printer: Printer) -> None:
-        with printer.in_angle_brackets():
-            printer.print_int(self.num_qubits.data)
-
-    @classmethod
-    def constr(
-        cls, int_constraint: IntConstraint | None = None
-    ) -> AttrConstraint[GateType]:
-        if int_constraint is None:
-            return BaseAttr(GateType)
-        return ParamAttrConstraint(
-            GateType,
-            (IntAttrConstraint(int_constraint),),
-        )
-
-
-@irdl_op_definition
-class ConstantGateOp(IRDLOperation, HasFolderInterface):
-    """
-    Constant-like operation for producing gates
-    """
-
-    _I: ClassVar = IntVarConstraint("I", AnyInt())
-
-    name = "gate.constant"
-
-    gate = prop_def(SizedAttributeConstraint(GateAttr, _I))
-
-    out = result_def(GateType.constr(_I))
-
-    assembly_format = "$gate attr-dict"
-
-    traits = traits_def(Pure(), ConstantLike())
-
-    def __init__(self, gate: GateAttr):
-        super().__init__(
-            properties={
-                "gate": gate,
-            },
-            result_types=(GateType(gate.num_qubits),),
-        )
-
-    def fold(self) -> tuple[GateAttr]:
-        return (self.gate,)
+    def classical_results(self) -> tuple[TypeAttribute, ...]:
+        return ()
 
 
 # Helper classes
@@ -388,17 +313,17 @@ class DynRotationGate(IRDLOperation, HasCanonicalizationPatternsInterface, ABC):
 
 
 class SingleQubitDynRotationGate(DynRotationGate, ABC):
-    out = result_def(GateType(1))
+    out = result_def(InstrumentType(1))
 
     def __init__(self, angle: SSAValue | Operation):
-        super().__init__(operands=(angle,), result_types=(GateType(1),))
+        super().__init__(operands=(angle,), result_types=(InstrumentType(1),))
 
 
 class TwoQubitDynRotationGate(DynRotationGate, ABC):
-    out = result_def(GateType(2))
+    out = result_def(InstrumentType(2))
 
     def __init__(self, angle: SSAValue | Operation):
-        super().__init__(operands=(angle,), result_types=(GateType(2),))
+        super().__init__(operands=(angle,), result_types=(InstrumentType(2),))
 
 
 @irdl_op_definition
@@ -580,7 +505,7 @@ class QuaternionGateOp(IRDLOperation):
     j = operand_def(_T)
     k = operand_def(_T)
 
-    out = result_def(GateType(1))
+    out = result_def(InstrumentType(1))
 
     assembly_format = (
         "`<` type($real) `>` $real `+` $i `i` `+` $j `j` `+` $k `k` attr-dict"
@@ -606,7 +531,12 @@ class QuaternionGateOp(IRDLOperation):
 class ComposeGateOp(IRDLOperation):
     name = "gate.compose"
 
-    _T: ClassVar = VarConstraint("T", base(GateType))
+    _T: ClassVar = VarConstraint(
+        "T",
+        InstrumentType.constr(
+            result_constraint=RangeOf(AnyAttr()).of_length(EqIntConstraint(0))
+        ),
+    )
 
     lhs = operand_def(_T)
     rhs = operand_def(_T)
@@ -634,7 +564,7 @@ class XZSOp(IRDLOperation, HasCanonicalizationPatternsInterface):
     z = operand_def(i1)
     phase = operand_def(i1)
 
-    out = result_def(GateType(1))
+    out = result_def(InstrumentType(1))
 
     assembly_format = "$x `,` $z `,` $phase attr-dict"
 
@@ -646,7 +576,7 @@ class XZSOp(IRDLOperation, HasCanonicalizationPatternsInterface):
         z: Operation | SSAValue,
         phase: Operation | SSAValue,
     ):
-        super().__init__(operands=(x, z, phase), result_types=(GateType(1),))
+        super().__init__(operands=(x, z, phase), result_types=(InstrumentType(1),))
 
     @classmethod
     def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
@@ -666,7 +596,7 @@ class XZOp(IRDLOperation):
     x = operand_def(i1)
     z = operand_def(i1)
 
-    out = result_def(GateType(1))
+    out = result_def(InstrumentType(1))
 
     assembly_format = "$x `,` $z attr-dict"
 
@@ -677,13 +607,12 @@ class XZOp(IRDLOperation):
         x: Operation | SSAValue,
         z: Operation | SSAValue,
     ):
-        super().__init__(operands=(x, z), result_types=(GateType(1),))
+        super().__init__(operands=(x, z), result_types=(InstrumentType(1),))
 
 
 Gate = Dialect(
     "gate",
     [
-        ConstantGateOp,
         QuaternionGateOp,
         ComposeGateOp,
         XZSOp,
@@ -718,6 +647,5 @@ Gate = Dialect(
         CZGate,
         ToffoliGate,
         IdentityGate,
-        GateType,
     ],
 )
