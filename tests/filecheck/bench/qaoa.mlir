@@ -36,7 +36,7 @@ func.func @qaoa_problem(
 // CHECK-NEXT:    call void @__quantum__qis__rzz__body(double %0, ptr %4, ptr %1)
 // CHECK-NEXT:    call void @__quantum__qis__rzz__body(double %0, ptr %1, ptr %5)
 // CHECK-NEXT:    call void @__quantum__qis__rzz__body(double %0, ptr %2, ptr %5)
-// CHECK-NEXT:    %7 = insertvalue { ptr, ptr, ptr, ptr, ptr } undef, ptr %1, 0
+// CHECK-NEXT:    %7 = insertvalue { ptr, ptr, ptr, ptr, ptr } poison, ptr %1, 0
 // CHECK-NEXT:    %8 = insertvalue { ptr, ptr, ptr, ptr, ptr } %7, ptr %2, 1
 // CHECK-NEXT:    %9 = insertvalue { ptr, ptr, ptr, ptr, ptr } %8, ptr %3, 2
 // CHECK-NEXT:    %10 = insertvalue { ptr, ptr, ptr, ptr, ptr } %9, ptr %4, 3
@@ -68,7 +68,7 @@ func.func @qaoa_mixer(
 // CHECK-NEXT:    call void @__quantum__qis__rx__body(double %0, ptr %3)
 // CHECK-NEXT:    call void @__quantum__qis__rx__body(double %0, ptr %4)
 // CHECK-NEXT:    call void @__quantum__qis__rx__body(double %0, ptr %5)
-// CHECK-NEXT:    %7 = insertvalue { ptr, ptr, ptr, ptr, ptr } undef, ptr %1, 0
+// CHECK-NEXT:    %7 = insertvalue { ptr, ptr, ptr, ptr, ptr } poison, ptr %1, 0
 // CHECK-NEXT:    %8 = insertvalue { ptr, ptr, ptr, ptr, ptr } %7, ptr %2, 1
 // CHECK-NEXT:    %9 = insertvalue { ptr, ptr, ptr, ptr, ptr } %8, ptr %3, 2
 // CHECK-NEXT:    %10 = insertvalue { ptr, ptr, ptr, ptr, ptr } %9, ptr %4, 3
@@ -167,7 +167,7 @@ func.func @qaoa_ansatz(
 // CHECK-NEXT:    %47 = call ptr @__quantum__rt__result_get_one()
 // CHECK-NEXT:    %48 = call i1 @__quantum__rt__result_equal(ptr %46, ptr %47)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %33)
-// CHECK-NEXT:    %49 = insertvalue { i1, i1, i1, i1, i1 } undef, i1 %36, 0
+// CHECK-NEXT:    %49 = insertvalue { i1, i1, i1, i1, i1 } poison, i1 %36, 0
 // CHECK-NEXT:    %50 = insertvalue { i1, i1, i1, i1, i1 } %49, i1 %39, 1
 // CHECK-NEXT:    %51 = insertvalue { i1, i1, i1, i1, i1 } %50, i1 %42, 2
 // CHECK-NEXT:    %52 = insertvalue { i1, i1, i1, i1, i1 } %51, i1 %45, 3
