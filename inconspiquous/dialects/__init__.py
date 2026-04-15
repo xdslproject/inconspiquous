@@ -91,6 +91,11 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return Scf
 
+    def get_staged():
+        from inconspiquous.dialects.staged import Staged
+
+        return Staged
+
     def get_stim():
         from xdsl.dialects.stim import Stim
 
@@ -130,6 +135,7 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "qssa": get_qssa,
         "scf": get_scf,
         "stim": get_stim,
+        "staged": get_staged,
         "tensor": get_tensor,
         "test": get_test,
         "varith": get_varith,
