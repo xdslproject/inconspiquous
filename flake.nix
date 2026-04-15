@@ -19,7 +19,7 @@
               LD_LIBRARY_PATH = "${stdenv.cc.cc.lib}/lib";
               buildInputs = [
                 uv
-                llvmPackages_20.mlir
+                llvmPackages_22.mlir
               ];
             };
           }
