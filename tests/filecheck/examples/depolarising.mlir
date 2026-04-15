@@ -1,6 +1,6 @@
 // RUN: QUOPT_ROUNDTRIP
 
-// CHECK:      func.func @depolarising_dyn(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @depolarising_dyn(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   %id = gate.constant #gate.id<1>
 // CHECK-NEXT:   %p2 = prob.uniform : i2
@@ -17,7 +17,7 @@
 // CHECK-NEXT:   %q1 = qssa.dyn_gate<%g> %q
 // CHECK-NEXT:   func.return %q1 : !qu.bit
 // CHECK-NEXT: }
-func.func @depolarising_dyn(%q : !qu.bit) -> !qu.bit {
+func.func @depolarising_dyn(%q: !qu.bit) -> !qu.bit {
   %p = prob.bernoulli 0.1
   %id = gate.constant #gate.id<1>
   %p2 = prob.uniform : i2
@@ -35,7 +35,7 @@ func.func @depolarising_dyn(%q : !qu.bit) -> !qu.bit {
   func.return %q1 : !qu.bit
 }
 
-// CHECK:      func.func @depolarising_scf(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @depolarising_scf(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   %q3 = scf.if %p -> (!qu.bit) {
 // CHECK-NEXT:     %p2 = prob.uniform : i4
@@ -62,7 +62,7 @@ func.func @depolarising_dyn(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   }
 // CHECK-NEXT:   func.return %q3 : !qu.bit
 // CHECK-NEXT: }
-func.func @depolarising_scf(%q : !qu.bit) -> !qu.bit {
+func.func @depolarising_scf(%q: !qu.bit) -> !qu.bit {
   %p = prob.bernoulli 0.1
   %q3 = scf.if %p -> (!qu.bit) {
     %p2 = prob.uniform : i4
@@ -90,7 +90,7 @@ func.func @depolarising_scf(%q : !qu.bit) -> !qu.bit {
   func.return %q3 : !qu.bit
 }
 
-// CHECK:      func.func @depolarising_cf(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @depolarising_cf(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
 // CHECK-NEXT:   cf.cond_br %p, ^bb0, ^bb1(%q : !qu.bit)
 // CHECK-NEXT: ^bb0:
@@ -110,29 +110,29 @@ func.func @depolarising_scf(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT: ^bb4:
 // CHECK-NEXT:   %q3 = qssa.gate<#gate.z> %q
 // CHECK-NEXT:   cf.br ^bb2(%q3 : !qu.bit)
-// CHECK-NEXT: ^bb2(%q4 : !qu.bit):
+// CHECK-NEXT: ^bb2(%q4: !qu.bit):
 // CHECK-NEXT:   func.return %q4 : !qu.bit
 // CHECK-NEXT: }
-func.func @depolarising_cf(%q : !qu.bit) -> !qu.bit {
+func.func @depolarising_cf(%q: !qu.bit) -> !qu.bit {
   %p = prob.bernoulli 0.1
-  cf.cond_br %p, ^bb0, ^bb1(%q: !qu.bit)
+  cf.cond_br %p, ^bb0, ^bb1(%q : !qu.bit)
 ^bb0:
   %p2 = prob.uniform : i4
-  cf.switch %p2 : i4, [
-    default: ^bb4(%q: !qu.bit),
+  cf.switch %p2: i4, [
+    default: ^bb4(%q : !qu.bit),
     1: ^bb1,
     2: ^bb2,
     3: ^bb3
   ]
 ^bb1:
   %q1 = qssa.gate<#gate.x> %q
-  cf.br ^bb4(%q1: !qu.bit)
+  cf.br ^bb4(%q1 : !qu.bit)
 ^bb2:
   %q2 = qssa.gate<#gate.y> %q
-  cf.br ^bb4(%q2: !qu.bit)
+  cf.br ^bb4(%q2 : !qu.bit)
 ^bb3:
   %q3 = qssa.gate<#gate.z> %q
-  cf.br ^bb4(%q3: !qu.bit)
-^bb4(%q4 : !qu.bit):
+  cf.br ^bb4(%q3 : !qu.bit)
+^bb4(%q4: !qu.bit):
   func.return %q4 : !qu.bit
 }

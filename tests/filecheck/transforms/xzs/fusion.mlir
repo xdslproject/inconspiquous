@@ -1,6 +1,6 @@
 // RUN: quopt %s -p xzs-fusion,dce | filecheck %s
 
-// CHECK:      func.func @fusion(%q : !qu.bit, %x1 : i1, %x2 : i1, %z1 : i1, %z2 : i1, %s1 : i1, %s2 : i1) -> !qu.bit {
+// CHECK:      func.func @fusion(%q: !qu.bit, %x1: i1, %x2: i1, %z1: i1, %z2: i1, %s1: i1, %s2: i1) -> !qu.bit {
 // CHECK-NEXT:   %0 = arith.xori %x1, %x2 : i1
 // CHECK-NEXT:   %1 = arith.andi %x2, %s1 : i1
 // CHECK-NEXT:   %2 = arith.xori %z1, %z2 : i1
@@ -18,7 +18,7 @@ func.func @fusion(%q: !qu.bit, %x1: i1, %x2: i1, %z1: i1, %z2: i1, %s1: i1, %s2:
   func.return %q_2 : !qu.bit
 }
 
-// CHECK:      func.func @fusion_backwards(%q : !qu.bit, %x1 : i1, %x2 : i1, %z1 : i1, %z2 : i1, %s1 : i1) -> !qu.bit {
+// CHECK:      func.func @fusion_backwards(%q: !qu.bit, %x1: i1, %x2: i1, %z1: i1, %z2: i1, %s1: i1) -> !qu.bit {
 // CHECK-NEXT:   %0 = arith.constant false
 // CHECK-NEXT:   %1 = arith.xori %x2, %x1 : i1
 // CHECK-NEXT:   %2 = arith.andi %x1, %0 : i1

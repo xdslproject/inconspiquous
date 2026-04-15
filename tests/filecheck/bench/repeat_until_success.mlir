@@ -2,7 +2,7 @@
 
 // From https://arxiv.org/pdf/1311.1074 figure 1
 
-func.func @a(%q : !qu.bit) -> !qu.bit {
+func.func @a(%q: !qu.bit) -> !qu.bit {
   %res = scf.while (%q_1 = %q) : (!qu.bit) -> !qu.bit {
     %a1 = qu.alloc<#qu.plus>
     %a2 = qu.alloc<#qu.plus>
@@ -55,7 +55,7 @@ func.func @a(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:    ret ptr %3
 // CHECK-NEXT:  }
 
-func.func @b(%q : !qu.bit) -> !qu.bit {
+func.func @b(%q: !qu.bit) -> !qu.bit {
   %res = scf.while (%q_1 = %q) : (!qu.bit) -> !qu.bit {
     %a1 = qu.alloc<#qu.plus>
     %a2 = qu.alloc<#qu.plus>
@@ -131,7 +131,7 @@ func.func @b(%q : !qu.bit) -> !qu.bit {
 // CHECK-NEXT:    ret ptr %3
 // CHECK-NEXT:  }
 
-func.func @c(%q : !qu.bit) -> !qu.bit {
+func.func @c(%q: !qu.bit) -> !qu.bit {
   %res = scf.while (%q_1 = %q) : (!qu.bit) -> !qu.bit {
     %q_2 = qssa.gate<#gate.t> %q_1
     %q_3 = qssa.gate<#gate.z> %q_2

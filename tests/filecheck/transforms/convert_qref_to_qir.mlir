@@ -124,7 +124,7 @@ qu.release %q2
 
 // -----
 
-func.func @xy_measurement(%a : !angle.type) -> i1 {
+func.func @xy_measurement(%a: !angle.type) -> i1 {
   %q = qu.alloc
   %m = measurement.dyn_xy<%a>
   %0 = qref.dyn_measure<%m> %q
@@ -143,7 +143,7 @@ func.func @xy_measurement(%a : !angle.type) -> i1 {
 
 // -----
 
-func.func @qref_in_region(%q : !qu.bit, %p: i1) -> !qu.bit {
+func.func @qref_in_region(%q: !qu.bit, %p: i1) -> !qu.bit {
   %q3 = scf.if %p -> (!qu.bit) {
     qref.gate<#gate.z> %q
     scf.yield %q : !qu.bit

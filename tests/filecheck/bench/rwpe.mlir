@@ -3,7 +3,7 @@
 // Random walk phase estimation with "unknown" unitary family U(t) = RZ(theta*t)
 // From https://arxiv.org/pdf/2208.04526
 
-func.func @rwpe(%mu0 : !angle.type, %sigma0 : f64, %theta : !angle.type, %iter: i64) -> !angle.type {
+func.func @rwpe(%mu0: !angle.type, %sigma0: f64, %theta: !angle.type, %iter: i64) -> !angle.type {
   %a_pi = angle.constant<pi>
   %minus_pi_by_2 = arith.constant -1.57079632679 : f64
   %root_e = arith.constant 1.6487212707 : f64

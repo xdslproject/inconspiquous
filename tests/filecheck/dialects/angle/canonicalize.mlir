@@ -14,7 +14,7 @@ func.func @negate_fold() -> !angle.type {
 // -----
 
 // CHECK-LABEL: negate_negate
-func.func @negate_negate(%a : !angle.type) -> !angle.type {
+func.func @negate_negate(%a: !angle.type) -> !angle.type {
   %b = angle.negate %a
   %c = angle.negate %b
 
@@ -24,7 +24,7 @@ func.func @negate_negate(%a : !angle.type) -> !angle.type {
 
 // -----
 
-func.func @negate_cond_negate(%a : !angle.type, %x: i1) -> !angle.type {
+func.func @negate_cond_negate(%a: !angle.type, %x: i1) -> !angle.type {
   // CHECK: [[true:%.*]] = arith.constant true
   // CHECK-NEXT: [[xor:%.*]] = arith.xori %x, [[true]]
   // CHECK-NEXT: [[res:%.*]] = angle.cond_negate [[xor]], %a
@@ -38,7 +38,7 @@ func.func @negate_cond_negate(%a : !angle.type, %x: i1) -> !angle.type {
 // -----
 
 // CHECK-LABEL: cond_negate_pi
-func.func @cond_negate_pi(%x : i1) -> !angle.type {
+func.func @cond_negate_pi(%x: i1) -> !angle.type {
   // CHECK: %a = angle.constant<pi>
   %a = angle.constant<pi>
   // CHECK-NOT: angle.cond_negate
@@ -51,7 +51,7 @@ func.func @cond_negate_pi(%x : i1) -> !angle.type {
 // -----
 
 // CHECK-LABEL: cond_negate_zero
-func.func @cond_negate_zero(%x : i1) -> !angle.type {
+func.func @cond_negate_zero(%x: i1) -> !angle.type {
   // CHECK: %a = angle.constant<0>
   %a = angle.constant<0>
   // CHECK-NOT: angle.cond_negate
@@ -64,7 +64,7 @@ func.func @cond_negate_zero(%x : i1) -> !angle.type {
 // -----
 
 // CHECK-LABEL: cond_false
-func.func @cond_false(%a : !angle.type) -> !angle.type {
+func.func @cond_false(%a: !angle.type) -> !angle.type {
   %cFalse = arith.constant false
 
   // CHECK-NOT: angle.cond_negate
@@ -77,7 +77,7 @@ func.func @cond_false(%a : !angle.type) -> !angle.type {
 // -----
 
 // CHECK-LABEL: cond_true
-func.func @cond_true(%a : !angle.type) -> !angle.type {
+func.func @cond_true(%a: !angle.type) -> !angle.type {
   %cTrue = arith.constant true
 
   // CHECK-NOT: angle.cond_negate
@@ -92,7 +92,7 @@ func.func @cond_true(%a : !angle.type) -> !angle.type {
 // -----
 
 // CHECK-LABEL: cond_negate_negate
-func.func @cond_negate_negate(%a : !angle.type, %x: i1) -> !angle.type {
+func.func @cond_negate_negate(%a: !angle.type, %x: i1) -> !angle.type {
   // CHECK: [[true:%.*]] = arith.constant true
   // CHECK-NEXT: [[xor:%.*]] = arith.xori %x, [[true]]
   // CHECK-NEXT: [[res:%.*]] = angle.cond_negate [[xor]], %a
@@ -106,7 +106,7 @@ func.func @cond_negate_negate(%a : !angle.type, %x: i1) -> !angle.type {
 // -----
 
 // CHECK-LABEL: cond_negate_cond_negate
-func.func @cond_negate_cond_negate(%a : !angle.type, %x: i1, %y: i1) -> !angle.type {
+func.func @cond_negate_cond_negate(%a: !angle.type, %x: i1, %y: i1) -> !angle.type {
   // CHECK: [[xor:%.*]] = arith.xori %y, %x
   // CHECK: [[res:%.*]] = angle.cond_negate [[xor]], %a
   %b = angle.cond_negate %x, %a

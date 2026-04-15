@@ -2,7 +2,7 @@
 
 // From https://arxiv.org/pdf/2204.04185
 
-func.func @teleport(%q : !qu.bit) -> !qu.bit {
+func.func @teleport(%q: !qu.bit) -> !qu.bit {
   %a1 = qu.alloc
   %a2 = qu.alloc
   %a3 = qu.alloc

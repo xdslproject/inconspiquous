@@ -1,6 +1,6 @@
 // RUN: quopt %s -p randomized-comp | filecheck %s
 
-// CHECK:      func.func @t_gate(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @t_gate(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = gate.constant #gate.id<1>
@@ -24,7 +24,7 @@ func.func @t_gate(%q: !qu.bit) -> !qu.bit {
   func.return %q_1 : !qu.bit
 }
 
-// CHECK:     func.func @t_dagger_gate(%q : !qu.bit) -> !qu.bit {
+// CHECK:     func.func @t_dagger_gate(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = gate.constant #gate.id<1>
@@ -48,7 +48,7 @@ func.func @t_dagger_gate(%q: !qu.bit) -> !qu.bit {
   func.return %q_1 : !qu.bit
 }
 
-// CHECK:      func.func @h_gate(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @h_gate(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = gate.constant #gate.id<1>
@@ -70,7 +70,7 @@ func.func @h_gate(%q: !qu.bit) -> !qu.bit {
   func.return %q_1 : !qu.bit
 }
 
-// CHECK:      func.func @cx_gate(%q1 : !qu.bit, %q2 : !qu.bit) -> (!qu.bit, !qu.bit) {
+// CHECK:      func.func @cx_gate(%q1: !qu.bit, %q2: !qu.bit) -> (!qu.bit, !qu.bit) {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = prob.uniform : i1
@@ -100,7 +100,7 @@ func.func @cx_gate(%q1: !qu.bit, %q2: !qu.bit) -> (!qu.bit, !qu.bit) {
   func.return %q1_1, %q2_1 : !qu.bit, !qu.bit
 }
 
-// CHECK:      func.func @measure(%q : !qu.bit) -> i1 {
+// CHECK:      func.func @measure(%q: !qu.bit) -> i1 {
 // CHECK-NEXT:   %0 = prob.uniform : i1
 // CHECK-NEXT:   %1 = prob.uniform : i1
 // CHECK-NEXT:   %2 = gate.constant #gate.id<1>

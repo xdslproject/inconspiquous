@@ -1,6 +1,6 @@
 // RUN: QUOPT_ROUNDTRIP
 
-// CHECK:      func.func @rotation(%phi : !angle.type, %theta : !angle.type, %lambda : !angle.type, %q1 : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type, %q1: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %q2 = qu.alloc<#qu.plus>
 // CHECK-NEXT:   %q3 = qu.alloc<#qu.plus>
 // CHECK-NEXT:   %q4 = qu.alloc<#qu.plus>

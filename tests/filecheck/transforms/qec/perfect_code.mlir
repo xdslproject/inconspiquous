@@ -1,6 +1,6 @@
 // RUN: quopt %s -p convert-qref-to-qssa,qec-inline | filecheck %s
 
-// CHECK:      func.func @perfect_code(%q1 : !qu.bit, %q2 : !qu.bit, %q3 : !qu.bit, %q4 : !qu.bit, %q5 : !qu.bit) {
+// CHECK:      func.func @perfect_code(%q1: !qu.bit, %q2: !qu.bit, %q3: !qu.bit, %q4: !qu.bit, %q5: !qu.bit) {
 // CHECK-NEXT:   %a1 = qu.alloc
 // CHECK-NEXT:   %a1_1 = qssa.gate<#gate.h> %a1
 // CHECK-NEXT:   %a1_2, %q1_1 = qssa.gate<#gate.cx> %a1_1, %q1

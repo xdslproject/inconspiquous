@@ -11,12 +11,12 @@
 // See https://arxiv.org/pdf/1411.4028
 
 func.func @qaoa_problem(
-  %theta : !angle.type,
-  %q1 : !qu.bit,
-  %q2 : !qu.bit,
-  %q3 : !qu.bit,
-  %q4 : !qu.bit,
-  %q5 : !qu.bit
+  %theta: !angle.type,
+  %q1: !qu.bit,
+  %q2: !qu.bit,
+  %q3: !qu.bit,
+  %q4: !qu.bit,
+  %q5: !qu.bit
 ) -> (!qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit) {
   %g = gate.dyn_rzz<%theta>
 
@@ -45,12 +45,12 @@ func.func @qaoa_problem(
 // CHECK-NEXT:  }
 
 func.func @qaoa_mixer(
-  %beta : !angle.type,
-  %q1 : !qu.bit,
-  %q2 : !qu.bit,
-  %q3 : !qu.bit,
-  %q4 : !qu.bit,
-  %q5 : !qu.bit
+  %beta: !angle.type,
+  %q1: !qu.bit,
+  %q2: !qu.bit,
+  %q3: !qu.bit,
+  %q4: !qu.bit,
+  %q5: !qu.bit
 ) -> (!qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit) {
   %g = gate.dyn_rx<%beta>
 
@@ -77,10 +77,10 @@ func.func @qaoa_mixer(
 // CHECK-NEXT:  }
 
 func.func @qaoa_ansatz(
-  %theta1 : !angle.type,
-  %theta2 : !angle.type,
-  %beta1 : !angle.type,
-  %beta2 : !angle.type
+  %theta1: !angle.type,
+  %theta2: !angle.type,
+  %beta1: !angle.type,
+  %beta2: !angle.type
 ) -> (i1, i1, i1, i1, i1) {
   %q1 = qu.alloc<#qu.plus>
   %q2 = qu.alloc<#qu.plus>
