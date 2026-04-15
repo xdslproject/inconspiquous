@@ -63,7 +63,7 @@ func.func @cx(%ctrl: !qu.bit, %tgt: !qu.bit) -> (!qu.bit, !qu.bit) {
 // CHECK-NEXT:    br label %18
 // CHECK-EMPTY:
 // CHECK-NEXT:  18:                                               ; preds = %14, %15, %17, %16
-// CHECK-NEXT:    %19 = insertvalue { ptr, ptr } undef, ptr %0, 0
+// CHECK-NEXT:    %19 = insertvalue { ptr, ptr } poison, ptr %0, 0
 // CHECK-NEXT:    %20 = insertvalue { ptr, ptr } %19, ptr %4, 1
 // CHECK-NEXT:    ret { ptr, ptr } %20
 // CHECK-NEXT:  }

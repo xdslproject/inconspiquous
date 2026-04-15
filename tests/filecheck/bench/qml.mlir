@@ -64,7 +64,7 @@ func.func @qml(%ql: !qu.bit, %qo: !qu.bit, %w: !angle.type, %b: !angle.type) -> 
 // CHECK-NEXT:    br label %7
 // CHECK-EMPTY:
 // CHECK-NEXT:  17:                                               ; preds = %7
-// CHECK-NEXT:    %18 = insertvalue { ptr, ptr } undef, ptr %8, 0
+// CHECK-NEXT:    %18 = insertvalue { ptr, ptr } poison, ptr %8, 0
 // CHECK-NEXT:    %19 = insertvalue { ptr, ptr } %18, ptr %9, 1
 // CHECK-NEXT:    ret { ptr, ptr } %19
 // CHECK-NEXT:  }

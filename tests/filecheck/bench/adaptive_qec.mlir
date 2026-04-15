@@ -428,7 +428,7 @@ func.func @adaptive_qec_cycle(
 // CHECK-NEXT:    %122 = phi i1 [ %80, %110 ], [ %80, %109 ], [ %80, %108 ], [ %80, %107 ], [ %10, %47 ]
 // CHECK-NEXT:    %123 = phi i1 [ %85, %110 ], [ %85, %109 ], [ %85, %108 ], [ %85, %107 ], [ %11, %47 ]
 // CHECK-NEXT:    %124 = phi i1 [ %90, %110 ], [ %90, %109 ], [ %90, %108 ], [ %90, %107 ], [ %12, %47 ]
-// CHECK-NEXT:    %125 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } undef, ptr %112, 0
+// CHECK-NEXT:    %125 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } poison, ptr %112, 0
 // CHECK-NEXT:    %126 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %125, ptr %113, 1
 // CHECK-NEXT:    %127 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %126, ptr %114, 2
 // CHECK-NEXT:    %128 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %127, ptr %115, 3
