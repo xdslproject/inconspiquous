@@ -17,12 +17,12 @@
 
 // -----
 
-func.func @test(%q : !qir.qubit) {
+func.func @test(%q: !qir.qubit) {
   qir.h %q
   func.return
 }
 // CHECK-COUNT-1: llvm.func
-// CHECK: func.func @test(%q : !llvm.ptr)
+// CHECK: func.func @test(%q: !llvm.ptr)
 // CHECK-NEXT: llvm.call
 // CHECK-SAME: @__quantum__qis__h__body
 

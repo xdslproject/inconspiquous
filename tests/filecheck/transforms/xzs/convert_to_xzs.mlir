@@ -1,6 +1,6 @@
 // RUN: quopt %s -p convert-to-xzs,cse | filecheck %s
 
-// CHECK:      func.func @id(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @id(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %cFalse = arith.constant false
 // CHECK-NEXT:   %g = gate.xz %cFalse, %cFalse
 // CHECK-NEXT:   %q_1 = qssa.dyn_gate<%g> %q
@@ -14,7 +14,7 @@ func.func @id(%q: !qu.bit) -> !qu.bit {
   func.return %q_2 : !qu.bit
 }
 
-// CHECK:      func.func @x(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @x(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %cFalse = arith.constant false
 // CHECK-NEXT:   %cTrue = arith.constant true
 // CHECK-NEXT:   %g = gate.xz %cTrue, %cFalse
@@ -29,7 +29,7 @@ func.func @x(%q: !qu.bit) -> !qu.bit {
   func.return %q_2 : !qu.bit
 }
 
-// CHECK:      func.func @y(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @y(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %cTrue = arith.constant true
 // CHECK-NEXT:   %g = gate.xz %cTrue, %cTrue
 // CHECK-NEXT:   %q_1 = qssa.dyn_gate<%g> %q
@@ -43,7 +43,7 @@ func.func @y(%q: !qu.bit) -> !qu.bit {
   func.return %q_2 : !qu.bit
 }
 
-// CHECK:      func.func @z(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @z(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %cFalse = arith.constant false
 // CHECK-NEXT:   %cTrue = arith.constant true
 // CHECK-NEXT:   %g = gate.xz %cFalse, %cTrue
@@ -58,7 +58,7 @@ func.func @z(%q: !qu.bit) -> !qu.bit {
   func.return %q_2 : !qu.bit
 }
 
-// CHECK:      func.func @phase(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @phase(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %cFalse = arith.constant false
 // CHECK-NEXT:   %cTrue = arith.constant true
 // CHECK-NEXT:   %g = gate.xzs %cFalse, %cFalse, %cTrue
@@ -73,7 +73,7 @@ func.func @phase(%q: !qu.bit) -> !qu.bit {
   func.return %q_2 : !qu.bit
 }
 
-// CHECK:      func.func @phase_dagger(%q : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @phase_dagger(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %cFalse = arith.constant false
 // CHECK-NEXT:   %cTrue = arith.constant true
 // CHECK-NEXT:   %g = gate.xzs %cFalse, %cTrue, %cTrue

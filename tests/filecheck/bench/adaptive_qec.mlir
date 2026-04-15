@@ -4,19 +4,19 @@
 // We perform the corrections instead of updating a pauli frame.
 
 func.func @adaptive_qec_cycle(
-  %q1 : !qu.bit,
-  %q2 : !qu.bit,
-  %q3 : !qu.bit,
-  %q4 : !qu.bit,
-  %q5 : !qu.bit,
-  %q6 : !qu.bit,
-  %q7 : !qu.bit,
-  %prev_s1 : i1,
-  %prev_s2 : i1,
-  %prev_s3 : i1,
-  %prev_s4 : i1,
-  %prev_s5 : i1,
-  %prev_s6 : i1
+  %q1: !qu.bit,
+  %q2: !qu.bit,
+  %q3: !qu.bit,
+  %q4: !qu.bit,
+  %q5: !qu.bit,
+  %q6: !qu.bit,
+  %q7: !qu.bit,
+  %prev_s1: i1,
+  %prev_s2: i1,
+  %prev_s3: i1,
+  %prev_s4: i1,
+  %prev_s5: i1,
+  %prev_s6: i1
 ) -> (!qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit, !qu.bit, i1, i1, i1, i1, i1, i1) {
   %a1 = qu.alloc
   %a2 = qu.alloc
@@ -446,7 +446,7 @@ func.func @adaptive_qec_cycle(
 // CHECK-EMPTY:
 
 
-func.func @decode(%fd1 : i1, %fd2 : i1, %fd3 : i1, %sd1 : i1, %sd2 : i1, %sd3 : i1) -> i1 {
+func.func @decode(%fd1: i1, %fd2: i1, %fd3: i1, %sd1: i1, %sd2: i1, %sd3: i1) -> i1 {
   %cTrue = arith.constant true
   %not_sd1 = arith.xori %sd1, %cTrue : i1
   %not_sd2 = arith.xori %sd2, %cTrue : i1

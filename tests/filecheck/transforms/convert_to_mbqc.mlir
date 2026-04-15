@@ -1,6 +1,6 @@
 // RUN: quopt %s -p convert-to-mbqc | filecheck %s
 
-// CHECK:      func.func @rotation(%phi : !angle.type, %theta : !angle.type, %lambda : !angle.type, %q1 : !qu.bit) -> !qu.bit {
+// CHECK:      func.func @rotation(%phi: !angle.type, %theta: !angle.type, %lambda: !angle.type, %q1: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %q1_1 = qu.alloc<#qu.plus>
 // CHECK-NEXT:   %q1_2 = qu.alloc<#qu.plus>
 // CHECK-NEXT:   %q1_3 = qu.alloc<#qu.plus>

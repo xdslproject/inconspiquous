@@ -1,6 +1,6 @@
 // RUN: QUOPT_ROUNDTRIP
 
-// CHECK:      func.func @perfect_code(%q1 : !qu.bit, %q2 : !qu.bit, %q3 : !qu.bit, %q4 : !qu.bit, %q5 : !qu.bit) {
+// CHECK:      func.func @perfect_code(%q1: !qu.bit, %q2: !qu.bit, %q3: !qu.bit, %q4: !qu.bit, %q5: !qu.bit) {
 // CHECK-NEXT:   %a1 = qu.alloc
 // CHECK-NEXT:   qref.gate<#gate.h> %a1
 // CHECK-NEXT:   qref.gate<#gate.cx> %a1, %q1

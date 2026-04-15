@@ -1,6 +1,6 @@
 // RUN: quopt %s -p convert-to-cz-j
 
-// CHECK:      func.func @cx(%q1 : !qu.bit, %q2 : !qu.bit) {
+// CHECK:      func.func @cx(%q1: !qu.bit, %q2: !qu.bit) {
 // CHECK-NEXT:   %0 = qssa.gate<#gate.j<0>> %q2
 // CHECK-NEXT:   %1, %2 = qssa.gate<#gate.cz> %q1, %0
 // CHECK-NEXT:   %3 = qssa.gate<#gate.j<0>> %2
@@ -11,7 +11,7 @@ func.func @cx(%q1: !qu.bit, %q2: !qu.bit) {
     func.return
 }
 
-// CHECK:      func.func @z(%q : !qu.bit) {
+// CHECK:      func.func @z(%q: !qu.bit) {
 // CHECK-NEXT:   %0 = qssa.gate<#gate.j<0>> %q
 // CHECK-NEXT:   %1 = qssa.gate<#gate.j<pi>> %0
 // CHECK-NEXT:   func.return
@@ -21,7 +21,7 @@ func.func @z(%q: !qu.bit) {
     func.return
 }
 
-// CHECK:      func.func @x(%q : !qu.bit) {
+// CHECK:      func.func @x(%q: !qu.bit) {
 // CHECK-NEXT:   %0 = qssa.gate<#gate.j<pi>> %q
 // CHECK-NEXT:   %1 = qssa.gate<#gate.j<0>> %0
 // CHECK-NEXT:   func.return
@@ -31,7 +31,7 @@ func.func @x(%q: !qu.bit) {
     func.return
 }
 
-// CHECK:      func.func @y(%q : !qu.bit) {
+// CHECK:      func.func @y(%q: !qu.bit) {
 // CHECK-NEXT:   %0 = qssa.gate<#gate.j<pi>> %q
 // CHECK-NEXT:   %1 = qssa.gate<#gate.j<pi>> %0
 // CHECK-NEXT:   func.return
@@ -41,7 +41,7 @@ func.func @y(%q: !qu.bit) {
     func.return
 }
 
-// CHECK:      func.func @h(%q : !qu.bit) {
+// CHECK:      func.func @h(%q: !qu.bit) {
 // CHECK-NEXT:   %0 = qssa.gate<#gate.j<0>> %q
 // CHECK-NEXT:   func.return
 // CHECK-NEXT: }
@@ -50,7 +50,7 @@ func.func @h(%q: !qu.bit) {
     func.return
 }
 
-// CHECK:      func.func @s(%q : !qu.bit) {
+// CHECK:      func.func @s(%q: !qu.bit) {
 // CHECK-NEXT:   %0 = qssa.gate<#gate.j<0>> %q
 // CHECK-NEXT:   %1 = qssa.gate<#gate.j<0.5pi>> %0
 // CHECK-NEXT:   func.return
@@ -60,7 +60,7 @@ func.func @s(%q: !qu.bit) {
     func.return
 }
 
-// CHECK:      func.func @t(%q : !qu.bit) {
+// CHECK:      func.func @t(%q: !qu.bit) {
 // CHECK-NEXT:   %0 = qssa.gate<#gate.j<0>> %q
 // CHECK-NEXT:   %1 = qssa.gate<#gate.j<0.25pi>> %0
 // CHECK-NEXT:   func.return
@@ -70,7 +70,7 @@ func.func @t(%q: !qu.bit) {
     func.return
 }
 
-// CHECK:      func.func @rz(%q : !qu.bit) {
+// CHECK:      func.func @rz(%q: !qu.bit) {
 // CHECK-NEXT:   %0 = qssa.gate<#gate.j<0>> %q
 // CHECK-NEXT:   %1 = qssa.gate<#gate.j<1.5pi>> %0
 // CHECK-NEXT:   func.return
