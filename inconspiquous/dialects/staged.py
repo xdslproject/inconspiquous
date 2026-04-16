@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import ClassVar
 
 from xdsl.dialects.builtin import i1
+from xdsl.interfaces import HasCanonicalizationPatternsInterface
 from xdsl.ir import (
     Block,
     BlockArgument,
@@ -34,6 +35,7 @@ from xdsl.irdl import (
     var_operand_def,
     var_result_def,
 )
+from xdsl.pattern_rewriter import RewritePattern
 
 from inconspiquous.constraints import SizedAttributeConstraint
 from inconspiquous.dialects.gate import GateAttr, GateType
@@ -85,7 +87,7 @@ class StagedOperation(IRDLOperation):
 
 
 @irdl_op_definition
-class GateOp(StagedOperation):
+class GateOp(StagedOperation, HasCanonicalizationPatternsInterface):
     name = "staged.gate"
 
     gate = prop_def(SizedAttributeConstraint(GateAttr, StagedOperation._I))
@@ -100,9 +102,15 @@ class GateOp(StagedOperation):
             },
         )
 
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.staged import GateIdentity
+
+        return (GateIdentity(),)
+
 
 @irdl_op_definition
-class DynGateOp(StagedOperation):
+class DynGateOp(StagedOperation, HasCanonicalizationPatternsInterface):
     name = "staged.dyn_gate"
 
     gate = operand_def(GateType.constr(StagedOperation._I))
@@ -113,6 +121,12 @@ class DynGateOp(StagedOperation):
         super().__init__(
             operands=(gate, in_qubits),
         )
+
+    @classmethod
+    def get_canonicalization_patterns(cls) -> tuple[RewritePattern, ...]:
+        from inconspiquous.transforms.canonicalization.staged import DynGateConst
+
+        return (DynGateConst(),)
 
 
 @irdl_op_definition
