@@ -811,14 +811,14 @@ requires-dist = [
     { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.380" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.3" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9.0" },
-    { name = "xdsl", extras = ["gui"], git = "https://github.com/xdslproject/xdsl" },
+    { name = "xdsl", extras = ["gui"], git = "https://github.com/xdslproject/xdsl?branch=alexarice%2Finline" },
 ]
 provides-extras = ["dev"]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "inconspiquous", extras = ["dev"] },
-    { name = "xdsl", extras = ["dev"], git = "https://github.com/xdslproject/xdsl" },
+    { name = "xdsl", extras = ["dev"], git = "https://github.com/xdslproject/xdsl?branch=alexarice%2Finline" },
 ]
 
 [[package]]
@@ -2974,8 +2974,8 @@ wheels = [
 
 [[package]]
 name = "xdsl"
-version = "0.66.1.dev16+g6bbcf31bf"
-source = { git = "https://github.com/xdslproject/xdsl#6bbcf31bf37c73d7e6ed7810a7b92db78e59be6c" }
+version = "0.66.1.dev23+g2a23f6f07"
+source = { git = "https://github.com/xdslproject/xdsl?branch=alexarice%2Finline#2a23f6f07d23ee91fb7d8009054ae06d4f69efc6" }
 dependencies = [
     { name = "immutabledict" },
     { name = "ordered-set" },
