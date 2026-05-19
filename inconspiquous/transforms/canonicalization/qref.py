@@ -18,7 +18,7 @@ class DynGateConst(RewritePattern):
     def match_and_rewrite(self, op: DynGateOp, rewriter: PatternRewriter):
         owner = op.gate.owner
         if isinstance(owner, ConstantGateOp):
-            rewriter.replace_matched_op(GateOp(owner.gate, *op.in_qubits))
+            rewriter.replace_op(op, GateOp(owner.gate, *op.in_qubits))
 
 
 class DynGateCompose(RewritePattern):
@@ -31,7 +31,7 @@ class DynGateCompose(RewritePattern):
         if isinstance(gate := op.gate.owner, ComposeGateOp):
             dyn_gate_lhs = DynGateOp(gate.lhs, *op.in_qubits)
             dyn_gate_rhs = DynGateOp(gate.rhs, *op.in_qubits)
-            rewriter.replace_matched_op((dyn_gate_lhs, dyn_gate_rhs))
+            rewriter.replace_op(op, (dyn_gate_lhs, dyn_gate_rhs))
 
 
 class GateIdentity(RewritePattern):
@@ -42,7 +42,7 @@ class GateIdentity(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: GateOp, rewriter: PatternRewriter):
         if isinstance(op.gate, IdentityGate):
-            rewriter.replace_matched_op(())
+            rewriter.replace_op(op, ())
 
 
 class DynMeasureConst(RewritePattern):
@@ -53,6 +53,6 @@ class DynMeasureConst(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: DynMeasureOp, rewriter: PatternRewriter):
         if isinstance(owner := op.measurement.owner, ConstantMeasurementOp):
-            rewriter.replace_matched_op(
-                MeasureOp(*op.in_qubits, measurement=owner.measurement)
+            rewriter.replace_op(
+                op, MeasureOp(*op.in_qubits, measurement=owner.measurement)
             )

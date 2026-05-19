@@ -23,9 +23,9 @@ class FlipCoinBernoulliPattern(RewritePattern):
     def match_and_rewrite(self, op: BernoulliOp, rewriter: PatternRewriter, /):
         r = self.rand.random()
         if r < op.prob.value.data:
-            rewriter.replace_matched_op(arith.ConstantOp.from_int_and_width(1, 1))
+            rewriter.replace_op(op, arith.ConstantOp.from_int_and_width(1, 1))
         else:
-            rewriter.replace_matched_op(arith.ConstantOp.from_int_and_width(0, 1))
+            rewriter.replace_op(op, arith.ConstantOp.from_int_and_width(0, 1))
 
 
 @dataclass
@@ -37,7 +37,7 @@ class FlipCoinUniformPattern(RewritePattern):
         assert isinstance(op.out.type, IntegerType)
         (a, b) = op.out.type.value_range()
         r = self.rand.randrange(a, b)
-        rewriter.replace_matched_op(arith.ConstantOp(IntegerAttr(r, op.out.type)))
+        rewriter.replace_op(op, arith.ConstantOp(IntegerAttr(r, op.out.type)))
 
 
 @dataclass(frozen=True)

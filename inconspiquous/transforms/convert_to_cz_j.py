@@ -31,35 +31,35 @@ class ToCZJPattern(RewritePattern):
                 j1 = qssa.GateOp(JGate(0), op.in_qubits[1])
                 cz = qssa.GateOp(CZGate(), op.in_qubits[0], j1)
                 j2 = qssa.GateOp(JGate(0), cz.out_qubits[1])
-                rewriter.replace_matched_op(
-                    (j1, cz, j2), (cz.out_qubits[0], j2.out_qubits[0])
+                rewriter.replace_op(
+                    op, (j1, cz, j2), (cz.out_qubits[0], j2.out_qubits[0])
                 )
             case ZGate():
                 j1 = qssa.GateOp(JGate(0), op.in_qubits[0])
                 j2 = qssa.GateOp(JGate(1), j1)
-                rewriter.replace_matched_op((j1, j2))
+                rewriter.replace_op(op, (j1, j2))
             case XGate():
                 j1 = qssa.GateOp(JGate(1), op.in_qubits[0])
                 j2 = qssa.GateOp(JGate(0), j1)
-                rewriter.replace_matched_op((j1, j2))
+                rewriter.replace_op(op, (j1, j2))
             case YGate():
                 j1 = qssa.GateOp(JGate(1), op.in_qubits[0])
                 j2 = qssa.GateOp(JGate(1), j1)
-                rewriter.replace_matched_op((j1, j2))
+                rewriter.replace_op(op, (j1, j2))
             case HadamardGate():
-                rewriter.replace_matched_op(qssa.GateOp(JGate(0), op.in_qubits[0]))
+                rewriter.replace_op(op, qssa.GateOp(JGate(0), op.in_qubits[0]))
             case PhaseGate():
                 j1 = qssa.GateOp(JGate(0), op.in_qubits[0])
                 j2 = qssa.GateOp(JGate(0.5), j1)
-                rewriter.replace_matched_op((j1, j2))
+                rewriter.replace_op(op, (j1, j2))
             case TGate():
                 j1 = qssa.GateOp(JGate(0), op.in_qubits[0])
                 j2 = qssa.GateOp(JGate(0.25), j1)
-                rewriter.replace_matched_op((j1, j2))
+                rewriter.replace_op(op, (j1, j2))
             case RZGate():
                 j1 = qssa.GateOp(JGate(0), op.in_qubits[0])
                 j2 = qssa.GateOp(JGate(op.gate.angle), j1)
-                rewriter.replace_matched_op((j1, j2))
+                rewriter.replace_op(op, (j1, j2))
             case _:
                 return
 

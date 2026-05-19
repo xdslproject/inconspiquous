@@ -47,12 +47,13 @@ class QIRToLLVMPattern(RewritePattern):
 
         output = func_type.output
 
-        rewriter.replace_matched_op(
+        rewriter.replace_op(
+            op,
             llvm.CallOp(
                 func_name,
                 *op.operands,
                 return_type=None if output == llvm.LLVMVoidType() else output,
-            )
+            ),
         )
 
 

@@ -30,7 +30,7 @@ class PauliFusionPattern(RewritePattern):
             return
 
         if op.gate == prev.gate:
-            rewriter.replace_matched_op((), prev.in_qubits)
+            rewriter.replace_op(op, (), prev.in_qubits)
             rewriter.erase_op(prev)
             return
 
@@ -50,7 +50,7 @@ class PauliFusionPattern(RewritePattern):
             case _:
                 return
 
-        rewriter.replace_matched_op(qssa.GateOp(new_gate, *prev.in_qubits))
+        rewriter.replace_op(op, qssa.GateOp(new_gate, *prev.in_qubits))
         rewriter.erase_op(prev)
 
 

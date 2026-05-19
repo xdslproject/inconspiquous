@@ -34,7 +34,7 @@ class ConvertQrefGateToQssaGate(RewritePattern):
         else:
             new_op = qssa.DynGateOp(op.gate, *op.in_qubits)
 
-        rewriter.replace_matched_op(new_op, ())
+        rewriter.replace_op(op, new_op, ())
 
         for operand, result in zip(op.in_qubits, new_op.results):
             operand.replace_uses_with_if(
@@ -68,7 +68,7 @@ class ConvertQrefMeasureToQssaMeasure(RewritePattern):
         else:
             new_op = qssa.DynMeasureOp(*op.in_qubits, measurement=op.measurement)
 
-        rewriter.replace_matched_op(new_op, new_op.outs)
+        rewriter.replace_op(op, new_op, new_op.outs)
 
 
 class ConvertQrefToQssa(ModulePass):

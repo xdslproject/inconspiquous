@@ -57,7 +57,7 @@ class ToCMEPattern(RewritePattern):
 
         x_gate = qssa.DynGateOp(x_sel, cz.out_qubits[1])
 
-        rewriter.replace_matched_op((q2, cz, m, x, i, x_sel, x_gate))
+        rewriter.replace_op(op, (q2, cz, m, x, i, x_sel, x_gate))
 
 
 class DynToCMEPattern(RewritePattern):
@@ -86,9 +86,7 @@ class DynToCMEPattern(RewritePattern):
 
         x_gate = qssa.DynGateOp(x_sel, cz.out_qubits[1])
 
-        rewriter.replace_matched_op(
-            (q2, cz, ctrue, a, dyn_measure, m, x, i, x_sel, x_gate)
-        )
+        rewriter.replace_op(op, (q2, cz, ctrue, a, dyn_measure, m, x, i, x_sel, x_gate))
 
 
 class ToCMEPass(ModulePass):
