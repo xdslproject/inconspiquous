@@ -147,9 +147,7 @@ class PerfectCode5QubitInliner(RewritePattern):
             corz_sel = SelectOp(corz, z, i)
             QSSABuilder.gate(corz_sel, q5)
 
-        rewriter.replace_matched_op(
-            (), (q1.qubit, q2.qubit, q3.qubit, q4.qubit, q5.qubit)
-        )
+        rewriter.replace_op(op, (), (q1.qubit, q2.qubit, q3.qubit, q4.qubit, q5.qubit))
 
 
 class QECInlinerPass(ModulePass):

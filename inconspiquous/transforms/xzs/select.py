@@ -28,7 +28,8 @@ class XZSelectPattern(RewritePattern):
         sel_x = SelectOp(op.cond, lhs.x, rhs.x)
         sel_z = SelectOp(op.cond, lhs.z, rhs.z)
 
-        rewriter.replace_matched_op(
+        rewriter.replace_op(
+            op,
             (
                 sel_x,
                 sel_z,
@@ -36,7 +37,7 @@ class XZSelectPattern(RewritePattern):
                     sel_x,
                     sel_z,
                 ),
-            )
+            ),
         )
 
 
@@ -69,7 +70,8 @@ class XZSSelectPattern(RewritePattern):
             rhs_phase = c0
         sel_phase = SelectOp(op.cond, lhs_phase, rhs_phase)
 
-        rewriter.replace_matched_op(
+        rewriter.replace_op(
+            op,
             (
                 sel_x,
                 sel_z,
@@ -80,7 +82,7 @@ class XZSSelectPattern(RewritePattern):
                     sel_z,
                     sel_phase,
                 ),
-            )
+            ),
         )
 
 

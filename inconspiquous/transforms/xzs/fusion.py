@@ -53,7 +53,7 @@ class FuseXZGatesPattern(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.in_qubits))
+        rewriter.replace_op(op, DynGateOp(new_gate, *predecessor.in_qubits))
         rewriter.erase_op(predecessor)
 
 
@@ -116,7 +116,7 @@ class FuseXZSGatesPattern(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(DynGateOp(new_gate, *predecessor.in_qubits))
+        rewriter.replace_op(op, DynGateOp(new_gate, *predecessor.in_qubits))
         rewriter.erase_op(predecessor)
 
 

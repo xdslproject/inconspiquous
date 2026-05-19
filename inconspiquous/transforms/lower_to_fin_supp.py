@@ -19,8 +19,8 @@ class LowerBernoulli(RewritePattern):
     def match_and_rewrite(self, op: BernoulliOp, rewriter: PatternRewriter):
         zero = arith.ConstantOp(BoolAttr.from_bool(False))
         one = arith.ConstantOp(BoolAttr.from_bool(True))
-        rewriter.replace_matched_op(
-            (zero, one, FinSuppOp((op.prob.value.data,), zero, one))
+        rewriter.replace_op(
+            op, (zero, one, FinSuppOp((op.prob.value.data,), zero, one))
         )
 
 
@@ -47,7 +47,7 @@ class LowerUniform(RewritePattern):
         ops.append(zero)
         ops.append(fin_supp)
 
-        rewriter.replace_matched_op(ops)
+        rewriter.replace_op(op, ops)
 
 
 @dataclass(frozen=True)

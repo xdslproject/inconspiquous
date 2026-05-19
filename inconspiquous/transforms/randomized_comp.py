@@ -79,7 +79,7 @@ class PadTGate(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(post_x_2)
+        rewriter.replace_op(op, post_x_2)
 
 
 class PadTDaggerGate(RewritePattern):
@@ -132,7 +132,7 @@ class PadTDaggerGate(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(post_x_2)
+        rewriter.replace_op(op, post_x_2)
 
 
 class PadHadamardGate(RewritePattern):
@@ -180,7 +180,7 @@ class PadHadamardGate(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(post_x)
+        rewriter.replace_op(op, post_x)
 
 
 class PadCXGate(RewritePattern):
@@ -248,7 +248,8 @@ class PadCXGate(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(
+        rewriter.replace_op(
+            op,
             (post_x_q1, post_x_q2_2),
             (post_x_q1.out_qubits[0], post_x_q2_2.out_qubits[0]),
         )
@@ -295,7 +296,8 @@ class PadMeasure(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_matched_op(
+        rewriter.replace_op(
+            op,
             (new_measure, corrected_measure),
         )
 

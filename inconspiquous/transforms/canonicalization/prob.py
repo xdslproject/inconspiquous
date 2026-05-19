@@ -20,10 +20,10 @@ class BernoulliConst(RewritePattern):
     def match_and_rewrite(self, op: BernoulliOp, rewriter: PatternRewriter):
         prob = op.prob.value.data
         if prob == 1.0:
-            rewriter.replace_matched_op(ConstantOp(BoolAttr.from_bool(True)))
+            rewriter.replace_op(op, ConstantOp(BoolAttr.from_bool(True)))
 
         if prob == 0.0:
-            rewriter.replace_matched_op(ConstantOp(BoolAttr.from_bool(False)))
+            rewriter.replace_op(op, ConstantOp(BoolAttr.from_bool(False)))
 
 
 class FinSuppTrivial(RewritePattern):
@@ -34,7 +34,7 @@ class FinSuppTrivial(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: FinSuppOp, rewriter: PatternRewriter):
         if not op.probabilities.data.data:
-            rewriter.replace_matched_op((), (op.default_value,))
+            rewriter.replace_op(op, (), (op.default_value,))
 
 
 class FinSuppRemoveCase(RewritePattern):
@@ -60,8 +60,8 @@ class FinSuppRemoveCase(RewritePattern):
             for p, c in zip(probs, op.ins, strict=True)
             if p != 0.0 and c != op.default_value
         )
-        rewriter.replace_matched_op(
-            FinSuppOp(new_probabilities, op.default_value, *new_ins)
+        rewriter.replace_op(
+            op, FinSuppOp(new_probabilities, op.default_value, *new_ins)
         )
 
 
@@ -87,4 +87,4 @@ class FinSuppDuplicate(RewritePattern):
             else:
                 new_probs[seen[c]] += p
 
-        rewriter.replace_matched_op(FinSuppOp(new_probs, op.default_value, *new_ins))
+        rewriter.replace_op(op, FinSuppOp(new_probs, op.default_value, *new_ins))
