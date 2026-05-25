@@ -47,11 +47,11 @@ func.func @ipe(%theta: !angle.type, %m: i64) -> !angle.type {
 // CHECK-NEXT:    br label %4
 // CHECK-EMPTY:
 // CHECK-NEXT:  4:                                                ; preds = %9, %2
-// CHECK-NEXT:    %5 = phi i64 [ %23, %9 ], [ 1, %2 ]
-// CHECK-NEXT:    %6 = phi double [ %22, %9 ], [ 0.000000e+00, %2 ]
+// CHECK-NEXT:    %5 = phi i64 [ %25, %9 ], [ 1, %2 ]
+// CHECK-NEXT:    %6 = phi double [ %24, %9 ], [ 0.000000e+00, %2 ]
 // CHECK-NEXT:    %7 = phi ptr [ %7, %9 ], [ %3, %2 ]
 // CHECK-NEXT:    %8 = icmp slt i64 %5, %1
-// CHECK-NEXT:    br i1 %8, label %9, label %24
+// CHECK-NEXT:    br i1 %8, label %9, label %26
 // CHECK-EMPTY:
 // CHECK-NEXT:  9:                                                ; preds = %4
 // CHECK-NEXT:    %10 = sub i64 %1, %5
@@ -62,19 +62,22 @@ func.func @ipe(%theta: !angle.type, %m: i64) -> !angle.type {
 // CHECK-NEXT:    %15 = call ptr @__quantum__rt__qubit_allocate()
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %15)
 // CHECK-NEXT:    %16 = fmul double %0, %12
-// CHECK-NEXT:    call void @__quantum__qis__rx__ctl(double %16, ptr %15, ptr %7)
+// CHECK-NEXT:    %17 = call ptr @__quantum__rt__array_create_1d(i32 8, i64 1)
+// CHECK-NEXT:    %18 = call ptr @__quantum__rt__array_get_element_ptr_1d(ptr %17, i64 0)
+// CHECK-NEXT:    store ptr %15, ptr %18, align 8
+// CHECK-NEXT:    call void @__quantum__qis__rx__ctl(double %16, ptr %17, ptr %7)
 // CHECK-NEXT:    call void @__quantum__qis__rz__body(double %6, ptr %15)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %15)
-// CHECK-NEXT:    %17 = call ptr @__quantum__qis__m__body(ptr %15)
-// CHECK-NEXT:    %18 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %19 = call i1 @__quantum__rt__result_equal(ptr %17, ptr %18)
+// CHECK-NEXT:    %19 = call ptr @__quantum__qis__m__body(ptr %15)
+// CHECK-NEXT:    %20 = call ptr @__quantum__rt__result_get_one()
+// CHECK-NEXT:    %21 = call i1 @__quantum__rt__result_equal(ptr %19, ptr %20)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %15)
-// CHECK-NEXT:    %20 = fmul double %14, 0x400921FB54442D18
-// CHECK-NEXT:    %21 = select i1 %19, double %20, double 0.000000e+00
-// CHECK-NEXT:    %22 = fadd double %6, %21
-// CHECK-NEXT:    %23 = add i64 %5, 1
+// CHECK-NEXT:    %22 = fmul double %14, 0x400921FB54442D18
+// CHECK-NEXT:    %23 = select i1 %21, double %22, double 0.000000e+00
+// CHECK-NEXT:    %24 = fadd double %6, %23
+// CHECK-NEXT:    %25 = add i64 %5, 1
 // CHECK-NEXT:    br label %4
 // CHECK-EMPTY:
-// CHECK-NEXT:  24:                                               ; preds = %4
+// CHECK-NEXT:  26:                                               ; preds = %4
 // CHECK-NEXT:    ret double %6
 // CHECK-NEXT:  }

@@ -53,18 +53,6 @@ qir.rz<%7> %4
 // CHECK-GENERIC-NEXT: "qir.rzz"(%{{.*}}, %{{.*}}, %{{.*}}) : (f64, !qir.qubit, !qir.qubit) -> ()
 qir.rzz<%7> %4, %5
 
-// CHECK: qir.crx<%{{.*}}> %{{.*}}, %{{.*}}
-// CHECK-GENERIC: "qir.crx"(%{{.*}}, %{{.*}}, %{{.*}}) : (f64, !qir.qubit, !qir.qubit) -> ()
-qir.crx<%7> %4, %5
-
-// CHECK-NEXT: qir.cry<%{{.*}}> %{{.*}}, %{{.*}}
-// CHECK-GENERIC-NEXT: "qir.cry"(%{{.*}}, %{{.*}}, %{{.*}}) : (f64, !qir.qubit, !qir.qubit) -> ()
-qir.cry<%7> %4, %5
-
-// CHECK-NEXT: qir.crz<%{{.*}}> %{{.*}}, %{{.*}}
-// CHECK-GENERIC-NEXT: "qir.crz"(%{{.*}}, %{{.*}}, %{{.*}}) : (f64, !qir.qubit, !qir.qubit) -> ()
-qir.crz<%7> %4, %5
-
 // CHECK-NEXT: qir.s %{{.*}}
 // CHECK-GENERIC-NEXT: "qir.s"(%{{.*}}) : (!qir.qubit) -> ()
 qir.s %4
@@ -108,3 +96,15 @@ qir.ccx %4, %5, %6
 // CHECK-NEXT: %9 = qir.get_element_ptr %8[%c0]
 // CHECK-GENERIC-NEXT: "qir.get_element_ptr"(%8, %c0) : (!qir.array, i64) -> !llvm.ptr
 %9 = qir.get_element_ptr %8[%c0]
+
+// CHECK: qir.crx<%{{.*}}> %{{.*}}, %{{.*}}
+// CHECK-GENERIC: "qir.crx"(%{{.*}}, %{{.*}}, %{{.*}}) : (f64, !qir.array, !qir.qubit) -> ()
+qir.crx<%7> %8, %5
+
+// CHECK-NEXT: qir.cry<%{{.*}}> %{{.*}}, %{{.*}}
+// CHECK-GENERIC-NEXT: "qir.cry"(%{{.*}}, %{{.*}}, %{{.*}}) : (f64, !qir.array, !qir.qubit) -> ()
+qir.cry<%7> %8, %5
+
+// CHECK-NEXT: qir.crz<%{{.*}}> %{{.*}}, %{{.*}}
+// CHECK-GENERIC-NEXT: "qir.crz"(%{{.*}}, %{{.*}}, %{{.*}}) : (f64, !qir.array, !qir.qubit) -> ()
+qir.crz<%7> %8, %5

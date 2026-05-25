@@ -40,13 +40,31 @@ qref.gate<#gate.ry<0.5pi>> %q1
 qref.gate<#gate.rz<0.5pi>> %q1
 
 // CHECK-NEXT: [[angle:%.*]] = arith.constant
-// CHECK-NEXT: qir.crx<[[angle]]> %q1, %q2
+// CHECK-NEXT: arith.constant
+// CHECK-NEXT: arith.constant
+// CHECK-NEXT: arith.constant
+// CHECK-NEXT: [[array:%.*]] = qir.array_create_1d
+// CHECK-NEXT: [[ptr:%.*]] = qir.get_element_ptr [[array]][{{.*}}]
+// CHECK-NEXT: llvm.store %q1, [[ptr]]
+// CHECK-NEXT: qir.crx<[[angle]]> [[array]], %q2
 qref.gate<#gate.crx<0.5pi>> %q1, %q2
 // CHECK-NEXT: [[angle2:%.*]] = arith.constant
-// CHECK-NEXT: qir.cry<[[angle2]]> %q1, %q2
+// CHECK-NEXT: arith.constant
+// CHECK-NEXT: arith.constant
+// CHECK-NEXT: arith.constant
+// CHECK-NEXT: [[array2:%.*]] = qir.array_create_1d
+// CHECK-NEXT: [[ptr2:%.*]] = qir.get_element_ptr [[array2]][{{.*}}]
+// CHECK-NEXT: llvm.store %q1, [[ptr2]]
+// CHECK-NEXT: qir.cry<[[angle2]]> [[array2]], %q2
 qref.gate<#gate.cry<0.5pi>> %q1, %q2
 // CHECK-NEXT: [[angle3:%.*]] = arith.constant
-// CHECK-NEXT: qir.crz<[[angle3]]> %q1, %q2
+// CHECK-NEXT: arith.constant
+// CHECK-NEXT: arith.constant
+// CHECK-NEXT: arith.constant
+// CHECK-NEXT: [[array3:%.*]] = qir.array_create_1d
+// CHECK-NEXT: [[ptr3:%.*]] = qir.get_element_ptr [[array3]][{{.*}}]
+// CHECK-NEXT: llvm.store %q1, [[ptr3]]
+// CHECK-NEXT: qir.crz<[[angle3]]> [[array3]], %q2
 qref.gate<#gate.crz<0.5pi>> %q1, %q2
 // CHECK-NEXT: [[angle3:%.*]] = arith.constant
 // CHECK-NEXT: qir.rzz<[[angle3]]> %q1, %q2
@@ -81,15 +99,24 @@ qref.dyn_gate<%ry> %q0
 qref.dyn_gate<%rz> %q0
 
 %crx = gate.dyn_crx<%a>
-// CHECK-NEXT: qir.crx<[[angle4]]> %q0, %q1
+// CHECK: [[array4:%.*]] = qir.array_create_1d
+// CHECK-NEXT: [[ptr4:%.*]] = qir.get_element_ptr [[array4]][{{.*}}]
+// CHECK-NEXT: llvm.store %q0, [[ptr4]]
+// CHECK-NEXT: qir.crx<[[angle4]]> [[array4]], %q1
 qref.dyn_gate<%crx> %q0, %q1
 
 %cry = gate.dyn_cry<%negate>
-// CHECK-NEXT: qir.cry<[[angle5]]> %q0, %q1
+// CHECK: [[array5:%.*]] = qir.array_create_1d
+// CHECK-NEXT: [[ptr5:%.*]] = qir.get_element_ptr [[array5]][{{.*}}]
+// CHECK-NEXT: llvm.store %q0, [[ptr5]]
+// CHECK-NEXT: qir.cry<[[angle5]]> [[array5]], %q1
 qref.dyn_gate<%cry> %q0, %q1
 
 %crz = gate.dyn_crz<%scale>
-// CHECK-NEXT: qir.crz<[[angle8]]> %q0, %q1
+// CHECK: [[array6:%.*]] = qir.array_create_1d
+// CHECK-NEXT: [[ptr6:%.*]] = qir.get_element_ptr [[array6]][{{.*}}]
+// CHECK-NEXT: llvm.store %q0, [[ptr6]]
+// CHECK-NEXT: qir.crz<[[angle8]]> [[array6]], %q1
 qref.dyn_gate<%crz> %q0, %q1
 
 %rzz = gate.dyn_rzz<%add>

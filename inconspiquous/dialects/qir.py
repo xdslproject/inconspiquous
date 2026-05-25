@@ -94,6 +94,9 @@ class ArrayCreate1D(QIROperation):
     def get_func_type(cls) -> llvm.LLVMFunctionType:
         return llvm.LLVMFunctionType((i32, i64), llvm.LLVMPointerType())
 
+    def __init__(self, elem_size: SSAValue | Operation, count: SSAValue | Operation):
+        super().__init__(operands=(elem_size, count), result_types=((ArrayType(),)))
+
 
 @irdl_op_definition
 class ArrayGetElementPtr(QIROperation):
@@ -119,6 +122,11 @@ class ArrayGetElementPtr(QIROperation):
     def get_func_type(cls) -> llvm.LLVMFunctionType:
         return llvm.LLVMFunctionType(
             (llvm.LLVMPointerType(), i64), llvm.LLVMPointerType()
+        )
+
+    def __init__(self, arr: SSAValue | Operation, index: SSAValue | Operation):
+        super().__init__(
+            operands=(arr, index), result_types=((llvm.LLVMPointerType(),))
         )
 
 
@@ -368,7 +376,7 @@ class ControlledRotationOperation(QIROperation, ABC):
     """
 
     angle = operand_def(Float64Type)
-    control = operand_def(QubitType)
+    control = operand_def(ArrayType)
     target = operand_def(QubitType)
 
     assembly_format = "`` `<` $angle `>` $control `,` $target attr-dict"

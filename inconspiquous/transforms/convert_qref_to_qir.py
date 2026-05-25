@@ -1,5 +1,5 @@
-from xdsl.dialects import arith
-from xdsl.dialects.builtin import Float64Type, FloatAttr
+from xdsl.dialects import arith, llvm
+from xdsl.dialects.builtin import Float64Type, FloatAttr, i32, i64
 from xdsl.parser import Context, ModuleOp
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
@@ -162,7 +162,13 @@ class QRefGateToQIRPattern(RewritePattern):
                         const := arith.ConstantOp(
                             FloatAttr(op.gate.angle.as_float(), type=Float64Type())
                         ),
-                        qir.CRXOp(const, op.in_qubits[0], op.in_qubits[1]),
+                        const8 := arith.ConstantOp.from_int_and_width(8, i32),
+                        const1 := arith.ConstantOp.from_int_and_width(1, i64),
+                        const0 := arith.ConstantOp.from_int_and_width(0, i64),
+                        array := qir.ArrayCreate1D(const8, const1),
+                        ptr := qir.ArrayGetElementPtr(array, const0),
+                        llvm.StoreOp(op.in_qubits[0], ptr),
+                        qir.CRXOp(const, array, op.in_qubits[1]),
                     ),
                 )
             case CRYGate():
@@ -172,7 +178,13 @@ class QRefGateToQIRPattern(RewritePattern):
                         const := arith.ConstantOp(
                             FloatAttr(op.gate.angle.as_float(), type=Float64Type())
                         ),
-                        qir.CRYOp(const, op.in_qubits[0], op.in_qubits[1]),
+                        const8 := arith.ConstantOp.from_int_and_width(8, i32),
+                        const1 := arith.ConstantOp.from_int_and_width(1, i64),
+                        const0 := arith.ConstantOp.from_int_and_width(0, i64),
+                        array := qir.ArrayCreate1D(const8, const1),
+                        ptr := qir.ArrayGetElementPtr(array, const0),
+                        llvm.StoreOp(op.in_qubits[0], ptr),
+                        qir.CRYOp(const, array, op.in_qubits[1]),
                     ),
                 )
             case CRZGate():
@@ -182,7 +194,13 @@ class QRefGateToQIRPattern(RewritePattern):
                         const := arith.ConstantOp(
                             FloatAttr(op.gate.angle.as_float(), type=Float64Type())
                         ),
-                        qir.CRZOp(const, op.in_qubits[0], op.in_qubits[1]),
+                        const8 := arith.ConstantOp.from_int_and_width(8, i32),
+                        const1 := arith.ConstantOp.from_int_and_width(1, i64),
+                        const0 := arith.ConstantOp.from_int_and_width(0, i64),
+                        array := qir.ArrayCreate1D(const8, const1),
+                        ptr := qir.ArrayGetElementPtr(array, const0),
+                        llvm.StoreOp(op.in_qubits[0], ptr),
+                        qir.CRZOp(const, array, op.in_qubits[1]),
                     ),
                 )
             case RZZGate():
@@ -212,11 +230,44 @@ class QRefDynGateToQIRPattern(RewritePattern):
             case DynRZGate():
                 rewriter.replace_op(op, qir.RZOp(gate_op.angle, *op.in_qubits))
             case DynCRXGate():
-                rewriter.replace_op(op, qir.CRXOp(gate_op.angle, *op.in_qubits))
+                rewriter.replace_op(
+                    op,
+                    (
+                        const8 := arith.ConstantOp.from_int_and_width(8, i32),
+                        const1 := arith.ConstantOp.from_int_and_width(1, i64),
+                        const0 := arith.ConstantOp.from_int_and_width(0, i64),
+                        array := qir.ArrayCreate1D(const8, const1),
+                        ptr := qir.ArrayGetElementPtr(array, const0),
+                        llvm.StoreOp(op.in_qubits[0], ptr),
+                        qir.CRXOp(gate_op.angle, array, op.in_qubits[1]),
+                    ),
+                )
             case DynCRYGate():
-                rewriter.replace_op(op, qir.CRYOp(gate_op.angle, *op.in_qubits))
+                rewriter.replace_op(
+                    op,
+                    (
+                        const8 := arith.ConstantOp.from_int_and_width(8, i32),
+                        const1 := arith.ConstantOp.from_int_and_width(1, i64),
+                        const0 := arith.ConstantOp.from_int_and_width(0, i64),
+                        array := qir.ArrayCreate1D(const8, const1),
+                        ptr := qir.ArrayGetElementPtr(array, const0),
+                        llvm.StoreOp(op.in_qubits[0], ptr),
+                        qir.CRYOp(gate_op.angle, array, op.in_qubits[1]),
+                    ),
+                )
             case DynCRZGate():
-                rewriter.replace_op(op, qir.CRZOp(gate_op.angle, *op.in_qubits))
+                rewriter.replace_op(
+                    op,
+                    (
+                        const8 := arith.ConstantOp.from_int_and_width(8, i32),
+                        const1 := arith.ConstantOp.from_int_and_width(1, i64),
+                        const0 := arith.ConstantOp.from_int_and_width(0, i64),
+                        array := qir.ArrayCreate1D(const8, const1),
+                        ptr := qir.ArrayGetElementPtr(array, const0),
+                        llvm.StoreOp(op.in_qubits[0], ptr),
+                        qir.CRZOp(gate_op.angle, array, op.in_qubits[1]),
+                    ),
+                )
             case DynRZZGate():
                 rewriter.replace_op(op, qir.RZZOp(gate_op.angle, *op.in_qubits))
             case _:
