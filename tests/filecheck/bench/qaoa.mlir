@@ -148,29 +148,24 @@ func.func @qaoa_ansatz(
 // CHECK-NEXT:    %32 = extractvalue { ptr, ptr, ptr, ptr, ptr } %28, 3
 // CHECK-NEXT:    %33 = extractvalue { ptr, ptr, ptr, ptr, ptr } %28, 4
 // CHECK-NEXT:    %34 = call ptr @__quantum__qis__m__body(ptr %29)
-// CHECK-NEXT:    %35 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %36 = call i1 @__quantum__rt__result_equal(ptr %34, ptr %35)
+// CHECK-NEXT:    %35 = call i1 @__quantum__rt__read_result__body(ptr %34)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %29)
-// CHECK-NEXT:    %37 = call ptr @__quantum__qis__m__body(ptr %30)
-// CHECK-NEXT:    %38 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %39 = call i1 @__quantum__rt__result_equal(ptr %37, ptr %38)
+// CHECK-NEXT:    %36 = call ptr @__quantum__qis__m__body(ptr %30)
+// CHECK-NEXT:    %37 = call i1 @__quantum__rt__read_result__body(ptr %36)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %30)
-// CHECK-NEXT:    %40 = call ptr @__quantum__qis__m__body(ptr %31)
-// CHECK-NEXT:    %41 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %42 = call i1 @__quantum__rt__result_equal(ptr %40, ptr %41)
+// CHECK-NEXT:    %38 = call ptr @__quantum__qis__m__body(ptr %31)
+// CHECK-NEXT:    %39 = call i1 @__quantum__rt__read_result__body(ptr %38)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %31)
-// CHECK-NEXT:    %43 = call ptr @__quantum__qis__m__body(ptr %32)
-// CHECK-NEXT:    %44 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %45 = call i1 @__quantum__rt__result_equal(ptr %43, ptr %44)
+// CHECK-NEXT:    %40 = call ptr @__quantum__qis__m__body(ptr %32)
+// CHECK-NEXT:    %41 = call i1 @__quantum__rt__read_result__body(ptr %40)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %32)
-// CHECK-NEXT:    %46 = call ptr @__quantum__qis__m__body(ptr %33)
-// CHECK-NEXT:    %47 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %48 = call i1 @__quantum__rt__result_equal(ptr %46, ptr %47)
+// CHECK-NEXT:    %42 = call ptr @__quantum__qis__m__body(ptr %33)
+// CHECK-NEXT:    %43 = call i1 @__quantum__rt__read_result__body(ptr %42)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %33)
-// CHECK-NEXT:    %49 = insertvalue { i1, i1, i1, i1, i1 } poison, i1 %36, 0
-// CHECK-NEXT:    %50 = insertvalue { i1, i1, i1, i1, i1 } %49, i1 %39, 1
-// CHECK-NEXT:    %51 = insertvalue { i1, i1, i1, i1, i1 } %50, i1 %42, 2
-// CHECK-NEXT:    %52 = insertvalue { i1, i1, i1, i1, i1 } %51, i1 %45, 3
-// CHECK-NEXT:    %53 = insertvalue { i1, i1, i1, i1, i1 } %52, i1 %48, 4
-// CHECK-NEXT:    ret { i1, i1, i1, i1, i1 } %53
+// CHECK-NEXT:    %44 = insertvalue { i1, i1, i1, i1, i1 } poison, i1 %35, 0
+// CHECK-NEXT:    %45 = insertvalue { i1, i1, i1, i1, i1 } %44, i1 %37, 1
+// CHECK-NEXT:    %46 = insertvalue { i1, i1, i1, i1, i1 } %45, i1 %39, 2
+// CHECK-NEXT:    %47 = insertvalue { i1, i1, i1, i1, i1 } %46, i1 %41, 3
+// CHECK-NEXT:    %48 = insertvalue { i1, i1, i1, i1, i1 } %47, i1 %43, 4
+// CHECK-NEXT:    ret { i1, i1, i1, i1, i1 } %48
 // CHECK-NEXT:  }

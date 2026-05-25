@@ -41,9 +41,9 @@ func.func @qml(%ql: !qu.bit, %qo: !qu.bit, %w: !angle.type, %b: !angle.type) -> 
 // CHECK-NEXT:    %6 = fneg double %3
 // CHECK-NEXT:    br label %7
 // CHECK-EMPTY:
-// CHECK-NEXT:  7:                                                ; preds = %18, %4
-// CHECK-NEXT:    %8 = phi ptr [ %19, %18 ], [ %0, %4 ]
-// CHECK-NEXT:    %9 = phi ptr [ %20, %18 ], [ %1, %4 ]
+// CHECK-NEXT:  7:                                                ; preds = %17, %4
+// CHECK-NEXT:    %8 = phi ptr [ %18, %17 ], [ %0, %4 ]
+// CHECK-NEXT:    %9 = phi ptr [ %19, %17 ], [ %1, %4 ]
 // CHECK-NEXT:    %10 = call ptr @__quantum__rt__qubit_allocate()
 // CHECK-NEXT:    %11 = call ptr @__quantum__rt__array_create_1d(i32 8, i64 1)
 // CHECK-NEXT:    %12 = call ptr @__quantum__rt__array_get_element_ptr_1d(ptr %11, i64 0)
@@ -58,19 +58,18 @@ func.func @qml(%ql: !qu.bit, %qo: !qu.bit, %w: !angle.type, %b: !angle.type) -> 
 // CHECK-NEXT:    store ptr %8, ptr %14, align 8
 // CHECK-NEXT:    call void @__quantum__qis__rx__ctl(double %5, ptr %13, ptr %10)
 // CHECK-NEXT:    %15 = call ptr @__quantum__qis__m__body(ptr %10)
-// CHECK-NEXT:    %16 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %17 = call i1 @__quantum__rt__result_equal(ptr %15, ptr %16)
+// CHECK-NEXT:    %16 = call i1 @__quantum__rt__read_result__body(ptr %15)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %10)
-// CHECK-NEXT:    br i1 %17, label %18, label %21
+// CHECK-NEXT:    br i1 %16, label %17, label %20
 // CHECK-EMPTY:
-// CHECK-NEXT:  18:                                               ; preds = %7
-// CHECK-NEXT:    %19 = phi ptr [ %8, %7 ]
-// CHECK-NEXT:    %20 = phi ptr [ %9, %7 ]
-// CHECK-NEXT:    call void @__quantum__qis__rx__body(double 0x3FF921FB54442D18, ptr %20)
+// CHECK-NEXT:  17:                                               ; preds = %7
+// CHECK-NEXT:    %18 = phi ptr [ %8, %7 ]
+// CHECK-NEXT:    %19 = phi ptr [ %9, %7 ]
+// CHECK-NEXT:    call void @__quantum__qis__rx__body(double 0x3FF921FB54442D18, ptr %19)
 // CHECK-NEXT:    br label %7
 // CHECK-EMPTY:
-// CHECK-NEXT:  21:                                               ; preds = %7
-// CHECK-NEXT:    %22 = insertvalue { ptr, ptr } poison, ptr %8, 0
-// CHECK-NEXT:    %23 = insertvalue { ptr, ptr } %22, ptr %9, 1
-// CHECK-NEXT:    ret { ptr, ptr } %23
+// CHECK-NEXT:  20:                                               ; preds = %7
+// CHECK-NEXT:    %21 = insertvalue { ptr, ptr } poison, ptr %8, 0
+// CHECK-NEXT:    %22 = insertvalue { ptr, ptr } %21, ptr %9, 1
+// CHECK-NEXT:    ret { ptr, ptr } %22
 // CHECK-NEXT:  }

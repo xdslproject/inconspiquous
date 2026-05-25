@@ -47,11 +47,11 @@ func.func @ipe(%theta: !angle.type, %m: i64) -> !angle.type {
 // CHECK-NEXT:    br label %4
 // CHECK-EMPTY:
 // CHECK-NEXT:  4:                                                ; preds = %9, %2
-// CHECK-NEXT:    %5 = phi i64 [ %25, %9 ], [ 1, %2 ]
-// CHECK-NEXT:    %6 = phi double [ %24, %9 ], [ 0.000000e+00, %2 ]
+// CHECK-NEXT:    %5 = phi i64 [ %24, %9 ], [ 1, %2 ]
+// CHECK-NEXT:    %6 = phi double [ %23, %9 ], [ 0.000000e+00, %2 ]
 // CHECK-NEXT:    %7 = phi ptr [ %7, %9 ], [ %3, %2 ]
 // CHECK-NEXT:    %8 = icmp slt i64 %5, %1
-// CHECK-NEXT:    br i1 %8, label %9, label %26
+// CHECK-NEXT:    br i1 %8, label %9, label %25
 // CHECK-EMPTY:
 // CHECK-NEXT:  9:                                                ; preds = %4
 // CHECK-NEXT:    %10 = sub i64 %1, %5
@@ -69,15 +69,14 @@ func.func @ipe(%theta: !angle.type, %m: i64) -> !angle.type {
 // CHECK-NEXT:    call void @__quantum__qis__rz__body(double %6, ptr %15)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %15)
 // CHECK-NEXT:    %19 = call ptr @__quantum__qis__m__body(ptr %15)
-// CHECK-NEXT:    %20 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %21 = call i1 @__quantum__rt__result_equal(ptr %19, ptr %20)
+// CHECK-NEXT:    %20 = call i1 @__quantum__rt__read_result__body(ptr %19)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %15)
-// CHECK-NEXT:    %22 = fmul double %14, 0x400921FB54442D18
-// CHECK-NEXT:    %23 = select i1 %21, double %22, double 0.000000e+00
-// CHECK-NEXT:    %24 = fadd double %6, %23
-// CHECK-NEXT:    %25 = add i64 %5, 1
+// CHECK-NEXT:    %21 = fmul double %14, 0x400921FB54442D18
+// CHECK-NEXT:    %22 = select i1 %20, double %21, double 0.000000e+00
+// CHECK-NEXT:    %23 = fadd double %6, %22
+// CHECK-NEXT:    %24 = add i64 %5, 1
 // CHECK-NEXT:    br label %4
 // CHECK-EMPTY:
-// CHECK-NEXT:  26:                                               ; preds = %4
+// CHECK-NEXT:  25:                                               ; preds = %4
 // CHECK-NEXT:    ret double %6
 // CHECK-NEXT:  }

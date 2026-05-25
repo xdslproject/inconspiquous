@@ -67,46 +67,40 @@ func.func @teleport(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %3)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %5)
 // CHECK-NEXT:    %8 = call ptr @__quantum__qis__m__body(ptr %0)
-// CHECK-NEXT:    %9 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %10 = call i1 @__quantum__rt__result_equal(ptr %8, ptr %9)
+// CHECK-NEXT:    %9 = call i1 @__quantum__rt__read_result__body(ptr %8)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %0)
-// CHECK-NEXT:    %11 = call ptr @__quantum__qis__m__body(ptr %2)
-// CHECK-NEXT:    %12 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %13 = call i1 @__quantum__rt__result_equal(ptr %11, ptr %12)
+// CHECK-NEXT:    %10 = call ptr @__quantum__qis__m__body(ptr %2)
+// CHECK-NEXT:    %11 = call i1 @__quantum__rt__read_result__body(ptr %10)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %2)
-// CHECK-NEXT:    %14 = call ptr @__quantum__qis__m__body(ptr %3)
-// CHECK-NEXT:    %15 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %16 = call i1 @__quantum__rt__result_equal(ptr %14, ptr %15)
+// CHECK-NEXT:    %12 = call ptr @__quantum__qis__m__body(ptr %3)
+// CHECK-NEXT:    %13 = call i1 @__quantum__rt__read_result__body(ptr %12)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %3)
-// CHECK-NEXT:    %17 = call ptr @__quantum__qis__m__body(ptr %4)
-// CHECK-NEXT:    %18 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %19 = call i1 @__quantum__rt__result_equal(ptr %17, ptr %18)
+// CHECK-NEXT:    %14 = call ptr @__quantum__qis__m__body(ptr %4)
+// CHECK-NEXT:    %15 = call i1 @__quantum__rt__read_result__body(ptr %14)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %4)
-// CHECK-NEXT:    %20 = call ptr @__quantum__qis__m__body(ptr %5)
-// CHECK-NEXT:    %21 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %22 = call i1 @__quantum__rt__result_equal(ptr %20, ptr %21)
+// CHECK-NEXT:    %16 = call ptr @__quantum__qis__m__body(ptr %5)
+// CHECK-NEXT:    %17 = call i1 @__quantum__rt__read_result__body(ptr %16)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %5)
-// CHECK-NEXT:    %23 = call ptr @__quantum__qis__m__body(ptr %6)
-// CHECK-NEXT:    %24 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %25 = call i1 @__quantum__rt__result_equal(ptr %23, ptr %24)
+// CHECK-NEXT:    %18 = call ptr @__quantum__qis__m__body(ptr %6)
+// CHECK-NEXT:    %19 = call i1 @__quantum__rt__read_result__body(ptr %18)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %6)
-// CHECK-NEXT:    %26 = xor i1 %13, %19
-// CHECK-NEXT:    %27 = xor i1 %26, %25
-// CHECK-NEXT:    %28 = xor i1 %10, %16
-// CHECK-NEXT:    %29 = xor i1 %28, %22
-// CHECK-NEXT:    br i1 %27, label %30, label %31
+// CHECK-NEXT:    %20 = xor i1 %11, %15
+// CHECK-NEXT:    %21 = xor i1 %20, %19
+// CHECK-NEXT:    %22 = xor i1 %9, %13
+// CHECK-NEXT:    %23 = xor i1 %22, %17
+// CHECK-NEXT:    br i1 %21, label %24, label %25
 // CHECK-EMPTY:
-// CHECK-NEXT:  30:                                               ; preds = %1
+// CHECK-NEXT:  24:                                               ; preds = %1
 // CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %7)
-// CHECK-NEXT:    br label %31
+// CHECK-NEXT:    br label %25
 // CHECK-EMPTY:
-// CHECK-NEXT:  31:                                               ; preds = %30, %1
-// CHECK-NEXT:    br i1 %29, label %32, label %33
+// CHECK-NEXT:  25:                                               ; preds = %24, %1
+// CHECK-NEXT:    br i1 %23, label %26, label %27
 // CHECK-EMPTY:
-// CHECK-NEXT:  32:                                               ; preds = %31
+// CHECK-NEXT:  26:                                               ; preds = %25
 // CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %7)
-// CHECK-NEXT:    br label %33
+// CHECK-NEXT:    br label %27
 // CHECK-EMPTY:
-// CHECK-NEXT:  33:                                               ; preds = %32, %31
+// CHECK-NEXT:  27:                                               ; preds = %26, %25
 // CHECK-NEXT:    ret ptr %7
 // CHECK-NEXT:  }

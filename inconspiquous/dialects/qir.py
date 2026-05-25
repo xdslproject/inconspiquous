@@ -201,6 +201,9 @@ class ReadResultOp(QIROperation):
     def get_func_type(cls) -> llvm.LLVMFunctionType:
         return llvm.LLVMFunctionType((llvm.LLVMPointerType(),), i1)
 
+    def __init__(self, result: SSAValue | Operation):
+        super().__init__(operands=(result,), result_types=(i1,))
+
 
 @irdl_op_definition
 class QubitAllocateOp(QIROperation):
