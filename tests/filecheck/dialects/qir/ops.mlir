@@ -96,3 +96,15 @@ qir.z %4
 // CHECK-NEXT: qir.ccx %{{.*}}, %{{.*}}, %{{.*}}
 // CHECK-GENERIC-NEXT: "qir.ccx"(%{{.*}}, %{{.*}}, %{{.*}}) : (!qir.qubit, !qir.qubit, !qir.qubit) -> ()
 qir.ccx %4, %5, %6
+
+%c8 = arith.constant 8 : i32
+%c1 = arith.constant 1 : i64
+%c0 = arith.constant 0 : i64
+
+// CHECK: %8 = qir.array_create_1d %c8, %c1
+// CHECK-GENERIC: %8 = "qir.array_create_1d"(%c8, %c1) : (i32, i64) -> !qir.array
+%8 = qir.array_create_1d %c8, %c1
+
+// CHECK-NEXT: %9 = qir.get_element_ptr %8[%c0]
+// CHECK-GENERIC-NEXT: "qir.get_element_ptr"(%8, %c0) : (!qir.array, i64) -> !llvm.ptr
+%9 = qir.get_element_ptr %8[%c0]
