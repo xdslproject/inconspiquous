@@ -108,7 +108,7 @@ class ArrayGetElementPtr(QIROperation):
 
     index = operand_def(I64)
 
-    out = result_def(ParamAttrConstraint.get(llvm.LLVMPointerType, NoneAttr))
+    out = result_def(llvm.LLVMPointerType())
 
     assembly_format = "$arr `[` $index `]` attr-dict"
 
