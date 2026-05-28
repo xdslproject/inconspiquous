@@ -210,240 +210,227 @@ func.func @adaptive_qec_cycle(
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %1, ptr %15)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %14)
 // CHECK-NEXT:    %17 = call ptr @__quantum__qis__m__body(ptr %14)
-// CHECK-NEXT:    %18 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %19 = call i1 @__quantum__rt__result_equal(ptr %17, ptr %18)
+// CHECK-NEXT:    %18 = call i1 @__quantum__rt__read_result__body(ptr %17)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %14)
-// CHECK-NEXT:    %20 = xor i1 %19, %7
-// CHECK-NEXT:    %21 = call ptr @__quantum__qis__m__body(ptr %15)
-// CHECK-NEXT:    %22 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %23 = call i1 @__quantum__rt__result_equal(ptr %21, ptr %22)
+// CHECK-NEXT:    %19 = xor i1 %18, %7
+// CHECK-NEXT:    %20 = call ptr @__quantum__qis__m__body(ptr %15)
+// CHECK-NEXT:    %21 = call i1 @__quantum__rt__read_result__body(ptr %20)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %15)
-// CHECK-NEXT:    %24 = xor i1 %23, %11
-// CHECK-NEXT:    %25 = call ptr @__quantum__qis__m__body(ptr %16)
-// CHECK-NEXT:    %26 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %27 = call i1 @__quantum__rt__result_equal(ptr %25, ptr %26)
+// CHECK-NEXT:    %22 = xor i1 %21, %11
+// CHECK-NEXT:    %23 = call ptr @__quantum__qis__m__body(ptr %16)
+// CHECK-NEXT:    %24 = call i1 @__quantum__rt__read_result__body(ptr %23)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %16)
-// CHECK-NEXT:    %28 = xor i1 %27, %12
-// CHECK-NEXT:    %29 = or i1 %20, %24
-// CHECK-NEXT:    %30 = or i1 %29, %28
-// CHECK-NEXT:    br i1 %30, label %31, label %47
+// CHECK-NEXT:    %25 = xor i1 %24, %12
+// CHECK-NEXT:    %26 = or i1 %19, %22
+// CHECK-NEXT:    %27 = or i1 %26, %25
+// CHECK-NEXT:    br i1 %27, label %28, label %41
 // CHECK-EMPTY:
-// CHECK-NEXT:  31:                                               ; preds = %13
-// CHECK-NEXT:    %32 = call ptr @__quantum__rt__qubit_allocate()
-// CHECK-NEXT:    %33 = call ptr @__quantum__rt__qubit_allocate()
-// CHECK-NEXT:    %34 = call ptr @__quantum__rt__qubit_allocate()
-// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %33)
-// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %34)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %3, ptr %32)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %34, ptr %2)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %33, ptr %5)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %33, ptr %32)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %0, ptr %32)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %34, ptr %3)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %33, ptr %4)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %1, ptr %32)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %34, ptr %6)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %33, ptr %2)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %34, ptr %32)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %2, ptr %32)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %34, ptr %5)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %33, ptr %1)
-// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %33)
-// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %34)
-// CHECK-NEXT:    %35 = call ptr @__quantum__qis__m__body(ptr %32)
-// CHECK-NEXT:    %36 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %37 = call i1 @__quantum__rt__result_equal(ptr %35, ptr %36)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %32)
-// CHECK-NEXT:    %38 = xor i1 %37, %8
-// CHECK-NEXT:    %39 = call ptr @__quantum__qis__m__body(ptr %33)
-// CHECK-NEXT:    %40 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %41 = call i1 @__quantum__rt__result_equal(ptr %39, ptr %40)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %33)
-// CHECK-NEXT:    %42 = xor i1 %41, %9
-// CHECK-NEXT:    %43 = call ptr @__quantum__qis__m__body(ptr %34)
-// CHECK-NEXT:    %44 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %45 = call i1 @__quantum__rt__result_equal(ptr %43, ptr %44)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %34)
-// CHECK-NEXT:    %46 = xor i1 %45, %10
-// CHECK-NEXT:    br label %47
+// CHECK-NEXT:  28:                                               ; preds = %13
+// CHECK-NEXT:    %29 = call ptr @__quantum__rt__qubit_allocate()
+// CHECK-NEXT:    %30 = call ptr @__quantum__rt__qubit_allocate()
+// CHECK-NEXT:    %31 = call ptr @__quantum__rt__qubit_allocate()
+// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %30)
+// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %31)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %3, ptr %29)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %31, ptr %2)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %30, ptr %5)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %30, ptr %29)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %0, ptr %29)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %31, ptr %3)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %30, ptr %4)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %1, ptr %29)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %31, ptr %6)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %30, ptr %2)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %31, ptr %29)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %2, ptr %29)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %31, ptr %5)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %30, ptr %1)
+// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %30)
+// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %31)
+// CHECK-NEXT:    %32 = call ptr @__quantum__qis__m__body(ptr %29)
+// CHECK-NEXT:    %33 = call i1 @__quantum__rt__read_result__body(ptr %32)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %29)
+// CHECK-NEXT:    %34 = xor i1 %33, %8
+// CHECK-NEXT:    %35 = call ptr @__quantum__qis__m__body(ptr %30)
+// CHECK-NEXT:    %36 = call i1 @__quantum__rt__read_result__body(ptr %35)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %30)
+// CHECK-NEXT:    %37 = xor i1 %36, %9
+// CHECK-NEXT:    %38 = call ptr @__quantum__qis__m__body(ptr %31)
+// CHECK-NEXT:    %39 = call i1 @__quantum__rt__read_result__body(ptr %38)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %31)
+// CHECK-NEXT:    %40 = xor i1 %39, %10
+// CHECK-NEXT:    br label %41
 // CHECK-EMPTY:
-// CHECK-NEXT:  47:                                               ; preds = %31, %13
-// CHECK-NEXT:    %48 = phi ptr [ %0, %31 ], [ %0, %13 ]
-// CHECK-NEXT:    %49 = phi ptr [ %1, %31 ], [ %1, %13 ]
-// CHECK-NEXT:    %50 = phi ptr [ %2, %31 ], [ %2, %13 ]
-// CHECK-NEXT:    %51 = phi ptr [ %3, %31 ], [ %3, %13 ]
-// CHECK-NEXT:    %52 = phi ptr [ %4, %31 ], [ %4, %13 ]
-// CHECK-NEXT:    %53 = phi ptr [ %5, %31 ], [ %5, %13 ]
-// CHECK-NEXT:    %54 = phi ptr [ %6, %31 ], [ %6, %13 ]
-// CHECK-NEXT:    %55 = phi i1 [ %38, %31 ], [ false, %13 ]
-// CHECK-NEXT:    %56 = phi i1 [ %42, %31 ], [ false, %13 ]
-// CHECK-NEXT:    %57 = phi i1 [ %46, %31 ], [ false, %13 ]
-// CHECK-NEXT:    %58 = or i1 %55, %56
-// CHECK-NEXT:    %59 = or i1 %58, %57
-// CHECK-NEXT:    %60 = or i1 %30, %59
-// CHECK-NEXT:    br i1 %60, label %61, label %111
+// CHECK-NEXT:  41:                                               ; preds = %28, %13
+// CHECK-NEXT:    %42 = phi ptr [ %0, %28 ], [ %0, %13 ]
+// CHECK-NEXT:    %43 = phi ptr [ %1, %28 ], [ %1, %13 ]
+// CHECK-NEXT:    %44 = phi ptr [ %2, %28 ], [ %2, %13 ]
+// CHECK-NEXT:    %45 = phi ptr [ %3, %28 ], [ %3, %13 ]
+// CHECK-NEXT:    %46 = phi ptr [ %4, %28 ], [ %4, %13 ]
+// CHECK-NEXT:    %47 = phi ptr [ %5, %28 ], [ %5, %13 ]
+// CHECK-NEXT:    %48 = phi ptr [ %6, %28 ], [ %6, %13 ]
+// CHECK-NEXT:    %49 = phi i1 [ %34, %28 ], [ false, %13 ]
+// CHECK-NEXT:    %50 = phi i1 [ %37, %28 ], [ false, %13 ]
+// CHECK-NEXT:    %51 = phi i1 [ %40, %28 ], [ false, %13 ]
+// CHECK-NEXT:    %52 = or i1 %49, %50
+// CHECK-NEXT:    %53 = or i1 %52, %51
+// CHECK-NEXT:    %54 = or i1 %27, %53
+// CHECK-NEXT:    br i1 %54, label %55, label %99
 // CHECK-EMPTY:
-// CHECK-NEXT:  61:                                               ; preds = %47
-// CHECK-NEXT:    %62 = call ptr @__quantum__rt__qubit_allocate()
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %48, ptr %62)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %49, ptr %62)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %50, ptr %62)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %51, ptr %62)
-// CHECK-NEXT:    %63 = call ptr @__quantum__qis__m__body(ptr %62)
-// CHECK-NEXT:    %64 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %65 = call i1 @__quantum__rt__result_equal(ptr %63, ptr %64)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %62)
-// CHECK-NEXT:    %66 = xor i1 %7, %65
-// CHECK-NEXT:    %67 = call ptr @__quantum__rt__qubit_allocate()
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %49, ptr %67)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %50, ptr %67)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %52, ptr %67)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %53, ptr %67)
-// CHECK-NEXT:    %68 = call ptr @__quantum__qis__m__body(ptr %67)
-// CHECK-NEXT:    %69 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %70 = call i1 @__quantum__rt__result_equal(ptr %68, ptr %69)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %67)
-// CHECK-NEXT:    %71 = xor i1 %8, %70
+// CHECK-NEXT:  55:                                               ; preds = %41
+// CHECK-NEXT:    %56 = call ptr @__quantum__rt__qubit_allocate()
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %42, ptr %56)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %43, ptr %56)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %44, ptr %56)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %45, ptr %56)
+// CHECK-NEXT:    %57 = call ptr @__quantum__qis__m__body(ptr %56)
+// CHECK-NEXT:    %58 = call i1 @__quantum__rt__read_result__body(ptr %57)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %56)
+// CHECK-NEXT:    %59 = xor i1 %7, %58
+// CHECK-NEXT:    %60 = call ptr @__quantum__rt__qubit_allocate()
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %43, ptr %60)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %44, ptr %60)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %46, ptr %60)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %47, ptr %60)
+// CHECK-NEXT:    %61 = call ptr @__quantum__qis__m__body(ptr %60)
+// CHECK-NEXT:    %62 = call i1 @__quantum__rt__read_result__body(ptr %61)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %60)
+// CHECK-NEXT:    %63 = xor i1 %8, %62
+// CHECK-NEXT:    %64 = call ptr @__quantum__rt__qubit_allocate()
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %44, ptr %64)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %45, ptr %64)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %47, ptr %64)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %48, ptr %64)
+// CHECK-NEXT:    %65 = call ptr @__quantum__qis__m__body(ptr %64)
+// CHECK-NEXT:    %66 = call i1 @__quantum__rt__read_result__body(ptr %65)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %64)
+// CHECK-NEXT:    %67 = xor i1 %9, %66
+// CHECK-NEXT:    %68 = call ptr @__quantum__rt__qubit_allocate()
+// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %68)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %68, ptr %42)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %68, ptr %43)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %68, ptr %44)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %68, ptr %45)
+// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %68)
+// CHECK-NEXT:    %69 = call ptr @__quantum__qis__m__body(ptr %68)
+// CHECK-NEXT:    %70 = call i1 @__quantum__rt__read_result__body(ptr %69)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %68)
+// CHECK-NEXT:    %71 = xor i1 %10, %70
 // CHECK-NEXT:    %72 = call ptr @__quantum__rt__qubit_allocate()
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %50, ptr %72)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %51, ptr %72)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %53, ptr %72)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %54, ptr %72)
+// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %72)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %72, ptr %43)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %72, ptr %44)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %72, ptr %46)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %72, ptr %47)
+// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %72)
 // CHECK-NEXT:    %73 = call ptr @__quantum__qis__m__body(ptr %72)
-// CHECK-NEXT:    %74 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %75 = call i1 @__quantum__rt__result_equal(ptr %73, ptr %74)
+// CHECK-NEXT:    %74 = call i1 @__quantum__rt__read_result__body(ptr %73)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %72)
-// CHECK-NEXT:    %76 = xor i1 %9, %75
-// CHECK-NEXT:    %77 = call ptr @__quantum__rt__qubit_allocate()
-// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %77)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %77, ptr %48)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %77, ptr %49)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %77, ptr %50)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %77, ptr %51)
-// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %77)
-// CHECK-NEXT:    %78 = call ptr @__quantum__qis__m__body(ptr %77)
-// CHECK-NEXT:    %79 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %80 = call i1 @__quantum__rt__result_equal(ptr %78, ptr %79)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %77)
-// CHECK-NEXT:    %81 = xor i1 %10, %80
-// CHECK-NEXT:    %82 = call ptr @__quantum__rt__qubit_allocate()
-// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %82)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %82, ptr %49)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %82, ptr %50)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %82, ptr %52)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %82, ptr %53)
-// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %82)
-// CHECK-NEXT:    %83 = call ptr @__quantum__qis__m__body(ptr %82)
-// CHECK-NEXT:    %84 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %85 = call i1 @__quantum__rt__result_equal(ptr %83, ptr %84)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %82)
-// CHECK-NEXT:    %86 = xor i1 %11, %85
-// CHECK-NEXT:    %87 = call ptr @__quantum__rt__qubit_allocate()
-// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %87)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %87, ptr %50)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %87, ptr %51)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %87, ptr %53)
-// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %87, ptr %54)
-// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %87)
-// CHECK-NEXT:    %88 = call ptr @__quantum__qis__m__body(ptr %87)
-// CHECK-NEXT:    %89 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %90 = call i1 @__quantum__rt__result_equal(ptr %88, ptr %89)
-// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %87)
-// CHECK-NEXT:    %91 = xor i1 %12, %90
-// CHECK-NEXT:    %92 = call i1 @decode(i1 %20, i1 %55, i1 %56, i1 %66, i1 %71, i1 %76)
-// CHECK-NEXT:    %93 = call i1 @decode(i1 %57, i1 %24, i1 %28, i1 %81, i1 %86, i1 %91)
-// CHECK-NEXT:    br i1 %92, label %94, label %97
+// CHECK-NEXT:    %75 = xor i1 %11, %74
+// CHECK-NEXT:    %76 = call ptr @__quantum__rt__qubit_allocate()
+// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %76)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %76, ptr %44)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %76, ptr %45)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %76, ptr %47)
+// CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %76, ptr %48)
+// CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %76)
+// CHECK-NEXT:    %77 = call ptr @__quantum__qis__m__body(ptr %76)
+// CHECK-NEXT:    %78 = call i1 @__quantum__rt__read_result__body(ptr %77)
+// CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %76)
+// CHECK-NEXT:    %79 = xor i1 %12, %78
+// CHECK-NEXT:    %80 = call i1 @decode(i1 %19, i1 %49, i1 %50, i1 %59, i1 %63, i1 %67)
+// CHECK-NEXT:    %81 = call i1 @decode(i1 %51, i1 %22, i1 %25, i1 %71, i1 %75, i1 %79)
+// CHECK-NEXT:    br i1 %80, label %82, label %85
 // CHECK-EMPTY:
-// CHECK-NEXT:  94:                                               ; preds = %61
-// CHECK-NEXT:    br i1 %93, label %95, label %96
+// CHECK-NEXT:  82:                                               ; preds = %55
+// CHECK-NEXT:    br i1 %81, label %83, label %84
+// CHECK-EMPTY:
+// CHECK-NEXT:  83:                                               ; preds = %82
+// CHECK-NEXT:    call void @__quantum__qis__y__body(ptr %46)
+// CHECK-NEXT:    br label %87
+// CHECK-EMPTY:
+// CHECK-NEXT:  84:                                               ; preds = %82
+// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %46)
+// CHECK-NEXT:    br label %87
+// CHECK-EMPTY:
+// CHECK-NEXT:  85:                                               ; preds = %55
+// CHECK-NEXT:    br i1 %81, label %86, label %87
+// CHECK-EMPTY:
+// CHECK-NEXT:  86:                                               ; preds = %85
+// CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %46)
+// CHECK-NEXT:    br label %87
+// CHECK-EMPTY:
+// CHECK-NEXT:  87:                                               ; preds = %83, %84, %86, %85
+// CHECK-NEXT:    br i1 %80, label %88, label %91
+// CHECK-EMPTY:
+// CHECK-NEXT:  88:                                               ; preds = %87
+// CHECK-NEXT:    br i1 %81, label %89, label %90
+// CHECK-EMPTY:
+// CHECK-NEXT:  89:                                               ; preds = %88
+// CHECK-NEXT:    call void @__quantum__qis__y__body(ptr %47)
+// CHECK-NEXT:    br label %93
+// CHECK-EMPTY:
+// CHECK-NEXT:  90:                                               ; preds = %88
+// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %47)
+// CHECK-NEXT:    br label %93
+// CHECK-EMPTY:
+// CHECK-NEXT:  91:                                               ; preds = %87
+// CHECK-NEXT:    br i1 %81, label %92, label %93
+// CHECK-EMPTY:
+// CHECK-NEXT:  92:                                               ; preds = %91
+// CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %47)
+// CHECK-NEXT:    br label %93
+// CHECK-EMPTY:
+// CHECK-NEXT:  93:                                               ; preds = %89, %90, %92, %91
+// CHECK-NEXT:    br i1 %80, label %94, label %97
+// CHECK-EMPTY:
+// CHECK-NEXT:  94:                                               ; preds = %93
+// CHECK-NEXT:    br i1 %81, label %95, label %96
 // CHECK-EMPTY:
 // CHECK-NEXT:  95:                                               ; preds = %94
-// CHECK-NEXT:    call void @__quantum__qis__y__body(ptr %52)
+// CHECK-NEXT:    call void @__quantum__qis__y__body(ptr %48)
 // CHECK-NEXT:    br label %99
 // CHECK-EMPTY:
 // CHECK-NEXT:  96:                                               ; preds = %94
-// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %52)
+// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %48)
 // CHECK-NEXT:    br label %99
 // CHECK-EMPTY:
-// CHECK-NEXT:  97:                                               ; preds = %61
-// CHECK-NEXT:    br i1 %93, label %98, label %99
+// CHECK-NEXT:  97:                                               ; preds = %93
+// CHECK-NEXT:    br i1 %81, label %98, label %99
 // CHECK-EMPTY:
 // CHECK-NEXT:  98:                                               ; preds = %97
-// CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %52)
+// CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %48)
 // CHECK-NEXT:    br label %99
 // CHECK-EMPTY:
-// CHECK-NEXT:  99:                                               ; preds = %95, %96, %98, %97
-// CHECK-NEXT:    br i1 %92, label %100, label %103
-// CHECK-EMPTY:
-// CHECK-NEXT:  100:                                              ; preds = %99
-// CHECK-NEXT:    br i1 %93, label %101, label %102
-// CHECK-EMPTY:
-// CHECK-NEXT:  101:                                              ; preds = %100
-// CHECK-NEXT:    call void @__quantum__qis__y__body(ptr %53)
-// CHECK-NEXT:    br label %105
-// CHECK-EMPTY:
-// CHECK-NEXT:  102:                                              ; preds = %100
-// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %53)
-// CHECK-NEXT:    br label %105
-// CHECK-EMPTY:
-// CHECK-NEXT:  103:                                              ; preds = %99
-// CHECK-NEXT:    br i1 %93, label %104, label %105
-// CHECK-EMPTY:
-// CHECK-NEXT:  104:                                              ; preds = %103
-// CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %53)
-// CHECK-NEXT:    br label %105
-// CHECK-EMPTY:
-// CHECK-NEXT:  105:                                              ; preds = %101, %102, %104, %103
-// CHECK-NEXT:    br i1 %92, label %106, label %109
-// CHECK-EMPTY:
-// CHECK-NEXT:  106:                                              ; preds = %105
-// CHECK-NEXT:    br i1 %93, label %107, label %108
-// CHECK-EMPTY:
-// CHECK-NEXT:  107:                                              ; preds = %106
-// CHECK-NEXT:    call void @__quantum__qis__y__body(ptr %54)
-// CHECK-NEXT:    br label %111
-// CHECK-EMPTY:
-// CHECK-NEXT:  108:                                              ; preds = %106
-// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %54)
-// CHECK-NEXT:    br label %111
-// CHECK-EMPTY:
-// CHECK-NEXT:  109:                                              ; preds = %105
-// CHECK-NEXT:    br i1 %93, label %110, label %111
-// CHECK-EMPTY:
-// CHECK-NEXT:  110:                                              ; preds = %109
-// CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %54)
-// CHECK-NEXT:    br label %111
-// CHECK-EMPTY:
-// CHECK-NEXT:  111:                                              ; preds = %107, %108, %110, %109, %47
-// CHECK-NEXT:    %112 = phi ptr [ %48, %110 ], [ %48, %109 ], [ %48, %108 ], [ %48, %107 ], [ %48, %47 ]
-// CHECK-NEXT:    %113 = phi ptr [ %49, %110 ], [ %49, %109 ], [ %49, %108 ], [ %49, %107 ], [ %49, %47 ]
-// CHECK-NEXT:    %114 = phi ptr [ %50, %110 ], [ %50, %109 ], [ %50, %108 ], [ %50, %107 ], [ %50, %47 ]
-// CHECK-NEXT:    %115 = phi ptr [ %51, %110 ], [ %51, %109 ], [ %51, %108 ], [ %51, %107 ], [ %51, %47 ]
-// CHECK-NEXT:    %116 = phi ptr [ %52, %110 ], [ %52, %109 ], [ %52, %108 ], [ %52, %107 ], [ %52, %47 ]
-// CHECK-NEXT:    %117 = phi ptr [ %53, %110 ], [ %53, %109 ], [ %53, %108 ], [ %53, %107 ], [ %53, %47 ]
-// CHECK-NEXT:    %118 = phi ptr [ %54, %110 ], [ %54, %109 ], [ %54, %108 ], [ %54, %107 ], [ %54, %47 ]
-// CHECK-NEXT:    %119 = phi i1 [ %65, %110 ], [ %65, %109 ], [ %65, %108 ], [ %65, %107 ], [ %7, %47 ]
-// CHECK-NEXT:    %120 = phi i1 [ %70, %110 ], [ %70, %109 ], [ %70, %108 ], [ %70, %107 ], [ %8, %47 ]
-// CHECK-NEXT:    %121 = phi i1 [ %75, %110 ], [ %75, %109 ], [ %75, %108 ], [ %75, %107 ], [ %9, %47 ]
-// CHECK-NEXT:    %122 = phi i1 [ %80, %110 ], [ %80, %109 ], [ %80, %108 ], [ %80, %107 ], [ %10, %47 ]
-// CHECK-NEXT:    %123 = phi i1 [ %85, %110 ], [ %85, %109 ], [ %85, %108 ], [ %85, %107 ], [ %11, %47 ]
-// CHECK-NEXT:    %124 = phi i1 [ %90, %110 ], [ %90, %109 ], [ %90, %108 ], [ %90, %107 ], [ %12, %47 ]
-// CHECK-NEXT:    %125 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } poison, ptr %112, 0
-// CHECK-NEXT:    %126 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %125, ptr %113, 1
-// CHECK-NEXT:    %127 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %126, ptr %114, 2
-// CHECK-NEXT:    %128 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %127, ptr %115, 3
-// CHECK-NEXT:    %129 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %128, ptr %116, 4
-// CHECK-NEXT:    %130 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %129, ptr %117, 5
-// CHECK-NEXT:    %131 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %130, ptr %118, 6
-// CHECK-NEXT:    %132 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %131, i1 %119, 7
-// CHECK-NEXT:    %133 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %132, i1 %120, 8
-// CHECK-NEXT:    %134 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %133, i1 %121, 9
-// CHECK-NEXT:    %135 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %134, i1 %122, 10
-// CHECK-NEXT:    %136 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %135, i1 %123, 11
-// CHECK-NEXT:    %137 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %136, i1 %124, 12
-// CHECK-NEXT:    ret { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %137
+// CHECK-NEXT:  99:                                               ; preds = %95, %96, %98, %97, %41
+// CHECK-NEXT:    %100 = phi ptr [ %42, %98 ], [ %42, %97 ], [ %42, %96 ], [ %42, %95 ], [ %42, %41 ]
+// CHECK-NEXT:    %101 = phi ptr [ %43, %98 ], [ %43, %97 ], [ %43, %96 ], [ %43, %95 ], [ %43, %41 ]
+// CHECK-NEXT:    %102 = phi ptr [ %44, %98 ], [ %44, %97 ], [ %44, %96 ], [ %44, %95 ], [ %44, %41 ]
+// CHECK-NEXT:    %103 = phi ptr [ %45, %98 ], [ %45, %97 ], [ %45, %96 ], [ %45, %95 ], [ %45, %41 ]
+// CHECK-NEXT:    %104 = phi ptr [ %46, %98 ], [ %46, %97 ], [ %46, %96 ], [ %46, %95 ], [ %46, %41 ]
+// CHECK-NEXT:    %105 = phi ptr [ %47, %98 ], [ %47, %97 ], [ %47, %96 ], [ %47, %95 ], [ %47, %41 ]
+// CHECK-NEXT:    %106 = phi ptr [ %48, %98 ], [ %48, %97 ], [ %48, %96 ], [ %48, %95 ], [ %48, %41 ]
+// CHECK-NEXT:    %107 = phi i1 [ %58, %98 ], [ %58, %97 ], [ %58, %96 ], [ %58, %95 ], [ %7, %41 ]
+// CHECK-NEXT:    %108 = phi i1 [ %62, %98 ], [ %62, %97 ], [ %62, %96 ], [ %62, %95 ], [ %8, %41 ]
+// CHECK-NEXT:    %109 = phi i1 [ %66, %98 ], [ %66, %97 ], [ %66, %96 ], [ %66, %95 ], [ %9, %41 ]
+// CHECK-NEXT:    %110 = phi i1 [ %70, %98 ], [ %70, %97 ], [ %70, %96 ], [ %70, %95 ], [ %10, %41 ]
+// CHECK-NEXT:    %111 = phi i1 [ %74, %98 ], [ %74, %97 ], [ %74, %96 ], [ %74, %95 ], [ %11, %41 ]
+// CHECK-NEXT:    %112 = phi i1 [ %78, %98 ], [ %78, %97 ], [ %78, %96 ], [ %78, %95 ], [ %12, %41 ]
+// CHECK-NEXT:    %113 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } poison, ptr %100, 0
+// CHECK-NEXT:    %114 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %113, ptr %101, 1
+// CHECK-NEXT:    %115 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %114, ptr %102, 2
+// CHECK-NEXT:    %116 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %115, ptr %103, 3
+// CHECK-NEXT:    %117 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %116, ptr %104, 4
+// CHECK-NEXT:    %118 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %117, ptr %105, 5
+// CHECK-NEXT:    %119 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %118, ptr %106, 6
+// CHECK-NEXT:    %120 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %119, i1 %107, 7
+// CHECK-NEXT:    %121 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %120, i1 %108, 8
+// CHECK-NEXT:    %122 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %121, i1 %109, 9
+// CHECK-NEXT:    %123 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %122, i1 %110, 10
+// CHECK-NEXT:    %124 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %123, i1 %111, 11
+// CHECK-NEXT:    %125 = insertvalue { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %124, i1 %112, 12
+// CHECK-NEXT:    ret { ptr, ptr, ptr, ptr, ptr, ptr, ptr, i1, i1, i1, i1, i1, i1 } %125
 // CHECK-NEXT:  }
-// CHECK-EMPTY:
 
 
 func.func @decode(%fd1: i1, %fd2: i1, %fd3: i1, %sd1: i1, %sd2: i1, %sd3: i1) -> i1 {

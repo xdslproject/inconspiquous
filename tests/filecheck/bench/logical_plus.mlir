@@ -154,87 +154,80 @@ func.func @logical_plus() {
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %4, ptr %18)
 // CHECK-NEXT:    call void @__quantum__qis__cnot__body(ptr %11, ptr %19)
 // CHECK-NEXT:    %20 = call ptr @__quantum__qis__m__body(ptr %13)
-// CHECK-NEXT:    %21 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %22 = call i1 @__quantum__rt__result_equal(ptr %20, ptr %21)
+// CHECK-NEXT:    %21 = call i1 @__quantum__rt__read_result__body(ptr %20)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %13)
-// CHECK-NEXT:    %23 = call ptr @__quantum__qis__m__body(ptr %14)
-// CHECK-NEXT:    %24 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %25 = call i1 @__quantum__rt__result_equal(ptr %23, ptr %24)
+// CHECK-NEXT:    %22 = call ptr @__quantum__qis__m__body(ptr %14)
+// CHECK-NEXT:    %23 = call i1 @__quantum__rt__read_result__body(ptr %22)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %14)
-// CHECK-NEXT:    %26 = call ptr @__quantum__qis__m__body(ptr %15)
-// CHECK-NEXT:    %27 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %28 = call i1 @__quantum__rt__result_equal(ptr %26, ptr %27)
+// CHECK-NEXT:    %24 = call ptr @__quantum__qis__m__body(ptr %15)
+// CHECK-NEXT:    %25 = call i1 @__quantum__rt__read_result__body(ptr %24)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %15)
-// CHECK-NEXT:    %29 = call ptr @__quantum__qis__m__body(ptr %16)
-// CHECK-NEXT:    %30 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %31 = call i1 @__quantum__rt__result_equal(ptr %29, ptr %30)
+// CHECK-NEXT:    %26 = call ptr @__quantum__qis__m__body(ptr %16)
+// CHECK-NEXT:    %27 = call i1 @__quantum__rt__read_result__body(ptr %26)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %16)
-// CHECK-NEXT:    %32 = call ptr @__quantum__qis__m__body(ptr %17)
-// CHECK-NEXT:    %33 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %34 = call i1 @__quantum__rt__result_equal(ptr %32, ptr %33)
+// CHECK-NEXT:    %28 = call ptr @__quantum__qis__m__body(ptr %17)
+// CHECK-NEXT:    %29 = call i1 @__quantum__rt__read_result__body(ptr %28)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %17)
-// CHECK-NEXT:    %35 = call ptr @__quantum__qis__m__body(ptr %18)
-// CHECK-NEXT:    %36 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %37 = call i1 @__quantum__rt__result_equal(ptr %35, ptr %36)
+// CHECK-NEXT:    %30 = call ptr @__quantum__qis__m__body(ptr %18)
+// CHECK-NEXT:    %31 = call i1 @__quantum__rt__read_result__body(ptr %30)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %18)
-// CHECK-NEXT:    %38 = call ptr @__quantum__qis__m__body(ptr %19)
-// CHECK-NEXT:    %39 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %40 = call i1 @__quantum__rt__result_equal(ptr %38, ptr %39)
+// CHECK-NEXT:    %32 = call ptr @__quantum__qis__m__body(ptr %19)
+// CHECK-NEXT:    %33 = call i1 @__quantum__rt__read_result__body(ptr %32)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %19)
-// CHECK-NEXT:    br i1 %22, label %41, label %42
+// CHECK-NEXT:    br i1 %21, label %34, label %35
 // CHECK-EMPTY:
-// CHECK-NEXT:  41:                                               ; preds = %0
+// CHECK-NEXT:  34:                                               ; preds = %0
 // CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %2)
-// CHECK-NEXT:    br label %42
+// CHECK-NEXT:    br label %35
 // CHECK-EMPTY:
-// CHECK-NEXT:  42:                                               ; preds = %41, %0
-// CHECK-NEXT:    br i1 %25, label %43, label %44
+// CHECK-NEXT:  35:                                               ; preds = %34, %0
+// CHECK-NEXT:    br i1 %23, label %36, label %37
 // CHECK-EMPTY:
-// CHECK-NEXT:  43:                                               ; preds = %42
+// CHECK-NEXT:  36:                                               ; preds = %35
 // CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %9)
+// CHECK-NEXT:    br label %37
+// CHECK-EMPTY:
+// CHECK-NEXT:  37:                                               ; preds = %36, %35
+// CHECK-NEXT:    %38 = xor i1 %21, %25
+// CHECK-NEXT:    br i1 %38, label %39, label %40
+// CHECK-EMPTY:
+// CHECK-NEXT:  39:                                               ; preds = %37
+// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %3)
+// CHECK-NEXT:    br label %40
+// CHECK-EMPTY:
+// CHECK-NEXT:  40:                                               ; preds = %39, %37
+// CHECK-NEXT:    %41 = xor i1 %23, %38
+// CHECK-NEXT:    %42 = xor i1 %41, %27
+// CHECK-NEXT:    br i1 %42, label %43, label %44
+// CHECK-EMPTY:
+// CHECK-NEXT:  43:                                               ; preds = %40
+// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %4)
 // CHECK-NEXT:    br label %44
 // CHECK-EMPTY:
-// CHECK-NEXT:  44:                                               ; preds = %43, %42
-// CHECK-NEXT:    %45 = xor i1 %22, %28
-// CHECK-NEXT:    br i1 %45, label %46, label %47
+// CHECK-NEXT:  44:                                               ; preds = %43, %40
+// CHECK-NEXT:    br i1 %29, label %45, label %46
 // CHECK-EMPTY:
-// CHECK-NEXT:  46:                                               ; preds = %44
-// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %3)
-// CHECK-NEXT:    br label %47
-// CHECK-EMPTY:
-// CHECK-NEXT:  47:                                               ; preds = %46, %44
-// CHECK-NEXT:    %48 = xor i1 %25, %45
-// CHECK-NEXT:    %49 = xor i1 %48, %31
-// CHECK-NEXT:    br i1 %49, label %50, label %51
-// CHECK-EMPTY:
-// CHECK-NEXT:  50:                                               ; preds = %47
-// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %4)
-// CHECK-NEXT:    br label %51
-// CHECK-EMPTY:
-// CHECK-NEXT:  51:                                               ; preds = %50, %47
-// CHECK-NEXT:    br i1 %34, label %52, label %53
-// CHECK-EMPTY:
-// CHECK-NEXT:  52:                                               ; preds = %51
+// CHECK-NEXT:  45:                                               ; preds = %44
 // CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %11)
+// CHECK-NEXT:    br label %46
+// CHECK-EMPTY:
+// CHECK-NEXT:  46:                                               ; preds = %45, %44
+// CHECK-NEXT:    %47 = xor i1 %42, %31
+// CHECK-NEXT:    br i1 %47, label %48, label %49
+// CHECK-EMPTY:
+// CHECK-NEXT:  48:                                               ; preds = %46
+// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %5)
+// CHECK-NEXT:    br label %49
+// CHECK-EMPTY:
+// CHECK-NEXT:  49:                                               ; preds = %48, %46
+// CHECK-NEXT:    %50 = xor i1 %29, %47
+// CHECK-NEXT:    %51 = xor i1 %50, %33
+// CHECK-NEXT:    br i1 %51, label %52, label %53
+// CHECK-EMPTY:
+// CHECK-NEXT:  52:                                               ; preds = %49
+// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %6)
 // CHECK-NEXT:    br label %53
 // CHECK-EMPTY:
-// CHECK-NEXT:  53:                                               ; preds = %52, %51
-// CHECK-NEXT:    %54 = xor i1 %49, %37
-// CHECK-NEXT:    br i1 %54, label %55, label %56
-// CHECK-EMPTY:
-// CHECK-NEXT:  55:                                               ; preds = %53
-// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %5)
-// CHECK-NEXT:    br label %56
-// CHECK-EMPTY:
-// CHECK-NEXT:  56:                                               ; preds = %55, %53
-// CHECK-NEXT:    %57 = xor i1 %34, %54
-// CHECK-NEXT:    %58 = xor i1 %57, %40
-// CHECK-NEXT:    br i1 %58, label %59, label %60
-// CHECK-EMPTY:
-// CHECK-NEXT:  59:                                               ; preds = %56
-// CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %6)
-// CHECK-NEXT:    br label %60
-// CHECK-EMPTY:
-// CHECK-NEXT:  60:                                               ; preds = %59, %56
+// CHECK-NEXT:  53:                                               ; preds = %52, %49
 // CHECK-NEXT:    ret void
 // CHECK-NEXT:  }

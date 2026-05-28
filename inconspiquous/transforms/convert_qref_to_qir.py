@@ -318,8 +318,7 @@ class QRefMeasureToQIRPattern(RewritePattern):
             correction
             + (
                 m := qir.MeasureOp(op.in_qubits[0]),
-                one := qir.ResultGetOneOp(),
-                r := qir.ResultEqualOp(m, one),
+                r := qir.ReadResultOp(m),
                 qir.ReleaseOp(op.in_qubits[0]),
             ),
             (r.out,),
@@ -339,8 +338,7 @@ class QRefDynMeasureToQIRPattern(RewritePattern):
                 qir.RZOp(a, op.in_qubits[0]),
                 qir.HOp(op.in_qubits[0]),
                 m := qir.MeasureOp(op.in_qubits[0]),
-                one := qir.ResultGetOneOp(),
-                r := qir.ResultEqualOp(m, one),
+                r := qir.ReadResultOp(m),
                 qir.ReleaseOp(op.in_qubits[0]),
             ),
             (r.out,),

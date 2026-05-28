@@ -27,43 +27,41 @@ func.func @cx(%ctrl: !qu.bit, %tgt: !qu.bit) -> (!qu.bit, !qu.bit) {
 // CHECK-NEXT:    call void @__quantum__qis__cz__body(ptr %3, ptr %4)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %1)
 // CHECK-NEXT:    %5 = call ptr @__quantum__qis__m__body(ptr %1)
-// CHECK-NEXT:    %6 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %7 = call i1 @__quantum__rt__result_equal(ptr %5, ptr %6)
+// CHECK-NEXT:    %6 = call i1 @__quantum__rt__read_result__body(ptr %5)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %1)
 // CHECK-NEXT:    call void @__quantum__qis__h__body(ptr %3)
-// CHECK-NEXT:    %8 = call ptr @__quantum__qis__m__body(ptr %3)
-// CHECK-NEXT:    %9 = call ptr @__quantum__rt__result_get_one()
-// CHECK-NEXT:    %10 = call i1 @__quantum__rt__result_equal(ptr %8, ptr %9)
+// CHECK-NEXT:    %7 = call ptr @__quantum__qis__m__body(ptr %3)
+// CHECK-NEXT:    %8 = call i1 @__quantum__rt__read_result__body(ptr %7)
 // CHECK-NEXT:    call void @__quantum__rt__qubit_release(ptr %3)
-// CHECK-NEXT:    br i1 %7, label %11, label %12
+// CHECK-NEXT:    br i1 %6, label %9, label %10
 // CHECK-EMPTY:
-// CHECK-NEXT:  11:                                               ; preds = %2
+// CHECK-NEXT:  9:                                                ; preds = %2
 // CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %0)
-// CHECK-NEXT:    br label %12
+// CHECK-NEXT:    br label %10
 // CHECK-EMPTY:
-// CHECK-NEXT:  12:                                               ; preds = %11, %2
-// CHECK-NEXT:    br i1 %10, label %13, label %16
+// CHECK-NEXT:  10:                                               ; preds = %9, %2
+// CHECK-NEXT:    br i1 %8, label %11, label %14
 // CHECK-EMPTY:
-// CHECK-NEXT:  13:                                               ; preds = %12
-// CHECK-NEXT:    br i1 %7, label %14, label %15
+// CHECK-NEXT:  11:                                               ; preds = %10
+// CHECK-NEXT:    br i1 %6, label %12, label %13
 // CHECK-EMPTY:
-// CHECK-NEXT:  14:                                               ; preds = %13
+// CHECK-NEXT:  12:                                               ; preds = %11
 // CHECK-NEXT:    call void @__quantum__qis__y__body(ptr %4)
-// CHECK-NEXT:    br label %18
+// CHECK-NEXT:    br label %16
 // CHECK-EMPTY:
-// CHECK-NEXT:  15:                                               ; preds = %13
+// CHECK-NEXT:  13:                                               ; preds = %11
 // CHECK-NEXT:    call void @__quantum__qis__x__body(ptr %4)
-// CHECK-NEXT:    br label %18
+// CHECK-NEXT:    br label %16
 // CHECK-EMPTY:
-// CHECK-NEXT:  16:                                               ; preds = %12
-// CHECK-NEXT:    br i1 %7, label %17, label %18
+// CHECK-NEXT:  14:                                               ; preds = %10
+// CHECK-NEXT:    br i1 %6, label %15, label %16
 // CHECK-EMPTY:
-// CHECK-NEXT:  17:                                               ; preds = %16
+// CHECK-NEXT:  15:                                               ; preds = %14
 // CHECK-NEXT:    call void @__quantum__qis__z__body(ptr %4)
-// CHECK-NEXT:    br label %18
+// CHECK-NEXT:    br label %16
 // CHECK-EMPTY:
-// CHECK-NEXT:  18:                                               ; preds = %14, %15, %17, %16
-// CHECK-NEXT:    %19 = insertvalue { ptr, ptr } poison, ptr %0, 0
-// CHECK-NEXT:    %20 = insertvalue { ptr, ptr } %19, ptr %4, 1
-// CHECK-NEXT:    ret { ptr, ptr } %20
+// CHECK-NEXT:  16:                                               ; preds = %12, %13, %15, %14
+// CHECK-NEXT:    %17 = insertvalue { ptr, ptr } poison, ptr %0, 0
+// CHECK-NEXT:    %18 = insertvalue { ptr, ptr } %17, ptr %4, 1
+// CHECK-NEXT:    ret { ptr, ptr } %18
 // CHECK-NEXT:  }
