@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from xdsl.dialects import llvm
-from xdsl.dialects.builtin import Float64Type, i1
+from xdsl.dialects.builtin import I32, I64, Float64Type, i1, i32, i64
 from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
@@ -66,6 +66,59 @@ class QIROperation(IRDLOperation, ABC):
         return llvm.LLVMFunctionType(
             (llvm.LLVMPointerType(),) * operands,
             llvm.LLVMPointerType() if results else None,
+        )
+
+
+@irdl_op_definition
+class ArrayCreate1D(QIROperation):
+    """
+    MLIR equivalent of __quantum__rt__array_create_1d
+    We restrict to arrays of qubits for now.
+    """
+
+    name = "qir.array_create_1d"
+
+    elem_size = operand_def(I32)
+
+    count = operand_def(I64)
+
+    out = result_def(ArrayType)
+
+    assembly_format = "$elem_size `,` $count attr-dict"
+
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__rt__array_create_1d"
+
+    @classmethod
+    def get_func_type(cls) -> llvm.LLVMFunctionType:
+        return llvm.LLVMFunctionType((i32, i64), llvm.LLVMPointerType())
+
+
+@irdl_op_definition
+class ArrayGetElementPtr(QIROperation):
+    """
+    MLIR equivalent of __quantum__rt__array_get_element_ptr_1d
+    """
+
+    name = "qir.get_element_ptr"
+
+    arr = operand_def(ArrayType)
+
+    index = operand_def(I64)
+
+    out = result_def(llvm.LLVMPointerType())
+
+    assembly_format = "$arr `[` $index `]` attr-dict"
+
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__rt__array_get_element_ptr_1d"
+
+    @classmethod
+    def get_func_type(cls) -> llvm.LLVMFunctionType:
+        return llvm.LLVMFunctionType(
+            (llvm.LLVMPointerType(), i64), llvm.LLVMPointerType()
         )
 
 
@@ -521,6 +574,8 @@ class CCXOp(QIROperation):
 QIR = Dialect(
     "qir",
     [
+        ArrayCreate1D,
+        ArrayGetElementPtr,
         ResultGetOneOp,
         ResultEqualOp,
         QubitAllocateOp,

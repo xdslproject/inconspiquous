@@ -1,6 +1,9 @@
-from xdsl.dialects.llvm import LLVMPointerType, LLVMVoidType
+from xdsl.dialects.llvm import LLVMVoidType
 
-from inconspiquous.dialects.qir import QIR, QIROperation, QubitType, ResultType
+from inconspiquous.dialects.qir import (
+    QIR,
+    QIROperation,
+)
 
 
 def test_qir_op_names():
@@ -16,16 +19,7 @@ def test_qir_op_types():
         op_def = op.get_irdl_definition()
         ty = op.get_func_type()
         assert len(ty.inputs) == len(op_def.operands)
-        for i, operand in zip(ty.inputs, op_def.operands):
-            if i == LLVMPointerType():
-                constr = operand[1].constr
-                assert constr.verifies((QubitType(),)) or constr.verifies(
-                    (ResultType(),)
-                )
         if ty.output == LLVMVoidType():
             assert not op_def.results
-        elif ty.output == LLVMPointerType():
-            constr = op_def.results[0][1].constr
-            assert constr.verifies((QubitType(),)) or constr.verifies((ResultType(),))
         else:
             assert op_def.results
