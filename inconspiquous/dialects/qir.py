@@ -30,6 +30,15 @@ class ResultType(ParametrizedAttribute, TypeAttribute):
     name = "qir.result"
 
 
+@irdl_attr_definition
+class ArrayType(ParametrizedAttribute, TypeAttribute):
+    """
+    QIR array
+    """
+
+    name = "qir.array"
+
+
 class QIROperation(IRDLOperation, ABC):
     """
     QIR operations are defined using opaque function.
@@ -539,5 +548,6 @@ QIR = Dialect(
     [
         QubitType,
         ResultType,
+        ArrayType,
     ],
 )
