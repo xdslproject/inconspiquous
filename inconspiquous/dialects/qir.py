@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
 
 from xdsl.dialects import llvm
-from xdsl.dialects.builtin import I32, I64, Float64Type, NoneAttr, i1, i32, i64
+from xdsl.dialects.builtin import I32, I64, Float64Type, i1, i32, i64
 from xdsl.ir import Dialect, Operation, ParametrizedAttribute, SSAValue, TypeAttribute
 from xdsl.irdl import (
     IRDLOperation,
-    ParamAttrConstraint,
     irdl_attr_definition,
     irdl_op_definition,
     operand_def,
