@@ -180,6 +180,29 @@ class ResultEqualOp(QIROperation):
 
 
 @irdl_op_definition
+class ReadResultOp(QIROperation):
+    """
+    MLIR equivalent of __quantum__rt__read_result__body
+    """
+
+    name = "qir.read_result"
+
+    result = operand_def(ResultType)
+
+    out = result_def(i1)
+
+    assembly_format = "$result attr-dict"
+
+    @staticmethod
+    def get_func_name() -> str:
+        return "__quantum__rt__read_result__body"
+
+    @classmethod
+    def get_func_type(cls) -> llvm.LLVMFunctionType:
+        return llvm.LLVMFunctionType((llvm.LLVMPointerType(),), i1)
+
+
+@irdl_op_definition
 class QubitAllocateOp(QIROperation):
     """
     MLIR equivalent of __quantum__rt__qubit_allocate
@@ -586,6 +609,7 @@ QIR = Dialect(
         ArrayGetElementPtr,
         ResultGetOneOp,
         ResultEqualOp,
+        ReadResultOp,
         QubitAllocateOp,
         MeasureOp,
         ReleaseOp,
