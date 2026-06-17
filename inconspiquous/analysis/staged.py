@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Set as AbstractSet
-from typing import Generic
+from typing import Generic, NamedTuple
 
 from typing_extensions import TypeVar
 from xdsl.dialects import cf
@@ -13,15 +13,30 @@ from inconspiquous.dialects import qref, qu
 WorklistItemInvT = TypeVar("WorklistItemInvT", bound=Block | Operation)
 
 
+class CFGEdge(NamedTuple):
+    from_block: Block
+    succ_index: int
+
+    def to_block(self) -> Block:
+        term = self.from_block.last_op
+        assert term is not None
+        return term.successors[self.succ_index]
+
+
 # Should use BranchOpInterface here
-def _get_branches(op: Operation | None) -> tuple[tuple[Block, SSAValues], ...]:
+def _get_branches(op: Operation | None) -> tuple[tuple[CFGEdge, SSAValues], ...]:
+    if op is None:
+        return ()
+    parent = op.parent_block()
+    if parent is None:
+        return ()
     match op:
         case cf.BranchOp():
-            return ((op.successor, op.arguments),)
+            return ((CFGEdge(parent, 0), op.arguments),)
         case cf.ConditionalBranchOp():
             return (
-                (op.then_block, op.then_arguments),
-                (op.else_block, op.else_arguments),
+                (CFGEdge(parent, 0), op.then_arguments),
+                (CFGEdge(parent, 1), op.else_arguments),
             )
         case _:
             return ()
@@ -126,7 +141,7 @@ class LiveVariableAnalysis:
 
 class CircuitAnalysis:
     _circuits: dict[Block, DisjointSet[SSAValue]]
-    _circuit_maps: dict[tuple[Block, Block], dict[SSAValue, SSAValue]]
+    _circuit_maps: dict[CFGEdge, dict[SSAValue, SSAValue]]
 
     def __init__(self, region: Region, *, liveness: LiveVariableAnalysis | None = None):
         if liveness is None:
@@ -164,7 +179,8 @@ class CircuitAnalysis:
             self._circuits[block] = ds
             term = block.last_op
             assert term is not None
-            for succ, operands in _get_branches(term):
+            for edge, operands in _get_branches(term):
+                succ = edge.to_block()
                 circuit_map = dict[SSAValue, SSAValue]()
                 for op, arg in zip(operands, succ.args, strict=True):
                     if op.type == qu.BitType():
@@ -172,7 +188,7 @@ class CircuitAnalysis:
                 for value in liveness.live_in(succ):
                     if value.type == qu.BitType():
                         circuit_map[value] = value
-                self._circuit_maps[(block, succ)] = circuit_map
+                self._circuit_maps[edge] = circuit_map
 
         worklist = Worklist[Block]()
 
@@ -185,7 +201,8 @@ class CircuitAnalysis:
             for use in block.uses:
                 pred = use.operation.parent_block()
                 assert pred is not None
-                circuit_map = self._circuit_maps[(pred, block)]
+                edge = CFGEdge(pred, use.index)
+                circuit_map = self._circuit_maps[edge]
                 root_dict = dict[SSAValue, SSAValue]()
                 new_circuit_map = dict[SSAValue, SSAValue]()
                 for src, tgt in circuit_map.items():
@@ -196,13 +213,14 @@ class CircuitAnalysis:
                     else:
                         new_circuit_map[src] = root
                         root_dict[root] = src
-                self._circuit_maps[(pred, block)] = new_circuit_map
+                self._circuit_maps[edge] = new_circuit_map
 
             # Check successors
             term = block.last_op
             assert term is not None
-            for succ in term.successors:
-                circuit_map = self._circuit_maps[(block, succ)]
+            for i, succ in enumerate(term.successors):
+                edge = CFGEdge(block, i)
+                circuit_map = self._circuit_maps[edge]
                 root_dict = dict[SSAValue, SSAValue]()
                 new_circuit_map = dict[SSAValue, SSAValue]()
                 for src, tgt in circuit_map.items():
@@ -213,13 +231,13 @@ class CircuitAnalysis:
                     else:
                         new_circuit_map[root] = tgt
                         root_dict[root] = tgt
-                self._circuit_maps[(block, succ)] = new_circuit_map
+                self._circuit_maps[edge] = new_circuit_map
 
     def circuits(self, block: Block) -> DisjointSet[SSAValue]:
         return self._circuits[block]
 
-    def circuit_map(self, src: Block, dest: Block) -> dict[SSAValue, SSAValue]:
-        return self._circuit_maps[(src, dest)]
+    def circuit_map(self, edge: CFGEdge) -> dict[SSAValue, SSAValue]:
+        return self._circuit_maps[edge]
 
 
 class MeasurementAnalysis:
@@ -258,9 +276,10 @@ class MeasurementAnalysis:
             # Calculate CFG edge dependencies
             term = block.last_op
             assert term is not None
-            for succ, operands in _get_branches(term):
+            for edge, operands in _get_branches(term):
+                succ = edge.to_block()
                 succ_deps = self._circuit_deps[succ]
-                circuit_map = circuits.circuit_map(block, succ)
+                circuit_map = circuits.circuit_map(edge)
                 for o, a in zip(operands, succ.args, strict=True):
                     new_deps = set(
                         circuit_map[dep] for dep in block_deps[o] if dep in circuit_map

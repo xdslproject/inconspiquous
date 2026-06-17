@@ -4,6 +4,7 @@ from xdsl.dialects.func import FuncOp
 from xdsl.parser import Parser
 
 from inconspiquous.analysis.staged import (
+    CFGEdge,
     CircuitAnalysis,
     LiveVariableAnalysis,
     MeasurementAnalysis,
@@ -57,5 +58,5 @@ print("Measurements: ", pprint.pformat(measurements.circuit_deps(block1)))
 
 print("---------------------")
 print("Circuit maps")
-print("0 -> 1: ", circuits.circuit_map(block0, block1))
-print("1 -> 1: ", circuits.circuit_map(block1, block1))
+print("0 -> 1: ", circuits.circuit_map(CFGEdge(block0, 0)))
+print("1 -> 1: ", circuits.circuit_map(CFGEdge(block1, 0)))
