@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 from collections.abc import Set as AbstractSet
 from typing import Generic
 
@@ -127,7 +126,7 @@ class LiveVariableAnalysis:
 
 class CircuitAnalysis:
     _circuits: dict[Block, DisjointSet[SSAValue]]
-    _circuit_maps: dict[tuple[Block, Block], list[tuple[SSAValue, SSAValue]]]
+    _circuit_maps: dict[tuple[Block, Block], dict[SSAValue, SSAValue]]
 
     def __init__(self, region: Region, *, liveness: LiveVariableAnalysis | None = None):
         if liveness is None:
@@ -153,7 +152,10 @@ class CircuitAnalysis:
                             for o in outs[1:]:
                                 ds.add(o)
                                 ds.union(outs[0], o)
-                    case qref.GateOp(in_qubits=in_qubits):
+                    case (
+                        qref.GateOp(in_qubits=in_qubits)
+                        | qref.DynGateOp(in_qubits=in_qubits)
+                    ):
                         # Unify inputs
                         for i in in_qubits[1:]:
                             ds.union(in_qubits[0], i)
@@ -163,11 +165,13 @@ class CircuitAnalysis:
             term = block.last_op
             assert term is not None
             for succ, operands in _get_branches(term):
-                circuit_map = list[tuple[SSAValue, SSAValue]]()
+                circuit_map = dict[SSAValue, SSAValue]()
                 for op, arg in zip(operands, succ.args, strict=True):
-                    circuit_map.append((op, arg))
+                    if op.type == qu.BitType():
+                        circuit_map[op] = arg
                 for value in liveness.live_in(succ):
-                    circuit_map.append((value, value))
+                    if value.type == qu.BitType():
+                        circuit_map[value] = value
                 self._circuit_maps[(block, succ)] = circuit_map
 
         worklist = Worklist[Block]()
@@ -183,14 +187,14 @@ class CircuitAnalysis:
                 assert pred is not None
                 circuit_map = self._circuit_maps[(pred, block)]
                 root_dict = dict[SSAValue, SSAValue]()
-                new_circuit_map = list[tuple[SSAValue, SSAValue]]()
-                for src, tgt in circuit_map:
+                new_circuit_map = dict[SSAValue, SSAValue]()
+                for src, tgt in circuit_map.items():
                     root = self._circuits[block].find(tgt)
                     if root in root_dict:
                         self._circuits[pred].union_left(root_dict[root], src)
                         worklist.push(pred)
                     else:
-                        new_circuit_map.append((src, root))
+                        new_circuit_map[src] = root
                         root_dict[root] = src
                 self._circuit_maps[(pred, block)] = new_circuit_map
 
@@ -200,61 +204,79 @@ class CircuitAnalysis:
             for succ in term.successors:
                 circuit_map = self._circuit_maps[(block, succ)]
                 root_dict = dict[SSAValue, SSAValue]()
-                new_circuit_map = list[tuple[SSAValue, SSAValue]]()
-                for src, tgt in circuit_map:
+                new_circuit_map = dict[SSAValue, SSAValue]()
+                for src, tgt in circuit_map.items():
                     root = self._circuits[block].find(src)
                     if root in root_dict:
                         self._circuits[succ].union_left(root_dict[root], tgt)
                         worklist.push(succ)
                     else:
-                        new_circuit_map.append((root, tgt))
+                        new_circuit_map[root] = tgt
                         root_dict[root] = tgt
                 self._circuit_maps[(block, succ)] = new_circuit_map
 
     def circuits(self, block: Block) -> DisjointSet[SSAValue]:
         return self._circuits[block]
 
-    def circuit_map(
-        self, src: Block, dest: Block
-    ) -> Sequence[tuple[SSAValue, SSAValue]]:
+    def circuit_map(self, src: Block, dest: Block) -> dict[SSAValue, SSAValue]:
         return self._circuit_maps[(src, dest)]
 
 
-# class MeasurementAnalysis:
-#     _circuit_deps: dict[Block, dict[SSAValue, set[SSAValue]]]
+class MeasurementAnalysis:
+    _circuit_deps: dict[Block, dict[SSAValue, set[SSAValue]]]
 
-#     def __init__(
-#             self,
-#             region: Region,
-#             *,
-#             liveness: LiveVariableAnalysis | None = None,
-#             circuits: CircuitAnalysis | None = None
-#     ):
-#         self._circuit_deps = {}
-#         if liveness is None:
-#             liveness = LiveVariableAnalysis(region)
-#         if circuits is None:
-#             circuits = CircuitAnalysis(region, liveness=liveness)
+    def __init__(
+        self,
+        region: Region,
+        *,
+        liveness: LiveVariableAnalysis | None = None,
+        circuits: CircuitAnalysis | None = None,
+    ):
+        self._circuit_deps = {}
+        if liveness is None:
+            liveness = LiveVariableAnalysis(region)
+        if circuits is None:
+            circuits = CircuitAnalysis(region, liveness=liveness)
 
-#         worklist = Worklist[Block]()
-#         for block in reversed(region.blocks):
-#             self._circuit_deps[block] = {}
-#             worklist.push(block)
+        worklist = Worklist[Block]()
+        for block in reversed(region.blocks):
+            self._circuit_deps[block] = {
+                x: set() for x in block.args + tuple(liveness.live_in(block))
+            }
+            worklist.push(block)
 
-#         while (block := worklist.pop()) is not None:
-#             # Regenerate local circuit dependencies
-#             block_deps = self._circuit_deps[block]
-#             for op in block.ops:
-#                 deps = set(x for operand in op.operands for x in block_deps[operand])
-#                 if isinstance(op, qref.MeasureOp):
-#                     deps.add(circuits.circuits(block).find(op.in_qubits[0]))
-#                 for res in op.results:
-#                     block_deps[res] = deps
+        while (block := worklist.pop()) is not None:
+            # Regenerate local circuit dependencies
+            block_deps = self._circuit_deps[block]
+            for op in block.ops:
+                deps = set(x for operand in op.operands for x in block_deps[operand])
+                if isinstance(op, qref.MeasureOp):
+                    deps.add(circuits.circuits(block).find(op.in_qubits[0]))
+                for res in op.results:
+                    block_deps[res] = deps
 
-#             # Calculate CFG edge dependencies
-#             term = block.last_op
-#             assert term is not None
-#             for succ, operands in _get_branches(term):
-#                 changed = False
-#                 succ_deps = self._circuit_deps[succ]
-#                 for o, a in zip(operands, succ.args, strict=True):
+            # Calculate CFG edge dependencies
+            term = block.last_op
+            assert term is not None
+            for succ, operands in _get_branches(term):
+                succ_deps = self._circuit_deps[succ]
+                circuit_map = circuits.circuit_map(block, succ)
+                for o, a in zip(operands, succ.args, strict=True):
+                    new_deps = set(
+                        circuit_map[dep] for dep in block_deps[o] if dep in circuit_map
+                    )
+                    if not new_deps.issubset(succ_deps[a]):
+                        succ_deps[a] = succ_deps[a].union(new_deps)
+                        worklist.push(succ)
+                for value in liveness.live_in(succ):
+                    new_deps = set(
+                        circuit_map[dep]
+                        for dep in block_deps[value]
+                        if dep in circuit_map
+                    )
+                    if not new_deps.issubset(succ_deps[value]):
+                        succ_deps[value] = succ_deps[value].union(new_deps)
+                        worklist.push(succ)
+
+    def circuit_deps(self, block: Block) -> dict[SSAValue, set[SSAValue]]:
+        return self._circuit_deps[block]
