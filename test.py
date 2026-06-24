@@ -1,15 +1,60 @@
 import pprint
 
+from networkx import recursive_simple_cycles
 from xdsl.dialects.func import FuncOp
 from xdsl.parser import Parser
 
 from inconspiquous.analysis.staged import (
-    CFGEdge,
     CircuitAnalysis,
+    DependencyAnalysis,
     LiveVariableAnalysis,
     MeasurementAnalysis,
 )
 from inconspiquous.tools.quopt_main import QuoptMain
+
+staged = """
+func.func @staged() {
+  %q0 = qu.alloc
+  %q1 = qu.alloc
+
+  %b = qref.measure %q0
+  cf.cond_br %b, ^bb0, ^bb1
+^bb0:
+  qref.gate<#gate.x> %q1
+  cf.br ^bb1
+^bb1:
+  func.return
+}
+"""
+
+not_staged = """
+func.func @not_staged() {
+  %q0 = qu.alloc
+  %q1 = qu.alloc
+  qref.gate<#gate.cx> %q0, %q1
+  %b = qref.measure %q0
+  cf.cond_br %b, ^bb0, ^bb1
+^bb0:
+  qref.gate<#gate.x> %q1
+  cf.br ^bb1
+^bb1:
+  func.return
+}
+"""
+
+is_it_staged = """
+func.func @is_it_staged() {
+  %q0 = qu.alloc
+  cf.br ^bb0(%q0 : !qu.bit)
+^bb0(%q1 : !qu.bit):
+  %b = qref.measure %q1
+  %q2 = qu.alloc
+  cf.cond_br %b, ^bb1, ^bb0(%q2 : !qu.bit)
+^bb1:
+  qref.gate<#gate.x> %q2
+  cf.br ^bb0(%q2 : !qu.bit)
+}
+"""
 
 prog = """
 builtin.module {
@@ -32,31 +77,27 @@ builtin.module {
 }
 """
 
-module = Parser(QuoptMain().ctx, prog).parse_module()
+for prog in (staged, not_staged, is_it_staged):
+    print(prog)
 
-assert module.body.first_block is not None
-func = module.body.first_block.first_op
-assert isinstance(func, FuncOp)
+    module = Parser(QuoptMain().ctx, prog).parse_module()
 
-liveness = LiveVariableAnalysis(func.body)
-circuits = CircuitAnalysis(func.body, liveness=liveness)
-measurements = MeasurementAnalysis(func.body, liveness=liveness, circuits=circuits)
+    assert module.body.first_block is not None
+    func = module.body.first_block.first_op
+    assert isinstance(func, FuncOp)
 
-print("---------------------")
-print("Block 0")
-block0 = func.body.blocks[0]
-print("Liveness: ", liveness.live_in(block0))
-print("Circuits: ", circuits.circuits(block0))
-print("Measurements: ", pprint.pformat(measurements.circuit_deps(block0)))
+    liveness = LiveVariableAnalysis(func.body)
+    circuits = CircuitAnalysis(func.body, liveness=liveness)
+    measurements = MeasurementAnalysis(func.body, liveness=liveness, circuits=circuits)
+    graph = DependencyAnalysis(
+        func.body, liveness=liveness, circuits=circuits, measurements=measurements
+    )
 
-print("---------------------")
-print("Block 1")
-block1 = func.body.blocks[1]
-print("Liveness: ", liveness.live_in(block1))
-print("Circuits: ", circuits.circuits(block1))
-print("Measurements: ", pprint.pformat(measurements.circuit_deps(block1)))
-
-print("---------------------")
-print("Circuit maps")
-print("0 -> 1: ", circuits.circuit_map(CFGEdge(block0, 0)))
-print("1 -> 1: ", circuits.circuit_map(CFGEdge(block1, 0)))
+    for i, block in enumerate(func.body.blocks):
+        print("---------------------")
+        print("Block ", i)
+        print("Liveness: ", liveness.live_in(block))
+        print("Circuits: ", circuits.circuits(block))
+        print("Measurements: ", pprint.pformat(measurements.circuit_deps(block)))
+        print("Dependencies: ", graph.circuit_graph(block))
+        print("Violations: ", recursive_simple_cycles(graph.circuit_graph(block)))
