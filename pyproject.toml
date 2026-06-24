@@ -26,7 +26,7 @@ dev = [
 dev = ["xdsl[dev]", "inconspiquous[dev]"]
 
 [tool.uv.sources]
-xdsl = { git = "https://github.com/xdslproject/xdsl", branch = "alexarice/disjoint-set-roots" }
+xdsl = { git = "https://github.com/xdslproject/xdsl" }
 
 [project.scripts]
 quopt = "inconspiquous.tools.quopt_main:main"

@@ -9,12 +9,11 @@ from bidict import BidirectionalMapping, bidict
 from networkx import DiGraph
 from typing_extensions import TypeVar
 from xdsl.dialects import cf
-from xdsl.ir import Block, Operation, Region, SSAValue, SSAValues, dataclass, field
+from xdsl.ir import Block, Operation, Region, SSAValue, SSAValues
 from xdsl.utils.disjoint_set import DisjointSet
+from xdsl.utils.worklist import Worklist
 
 from inconspiquous.dialects import qref, qu
-
-WorklistItemInvT = TypeVar("WorklistItemInvT", bound=Block | Operation)
 
 
 class CFGEdge(NamedTuple):
@@ -46,62 +45,6 @@ def _get_branches(op: Operation | None) -> tuple[tuple[CFGEdge, SSAValues], ...]
             return ()
 
 
-@dataclass(eq=False)
-class Worklist(Generic[WorklistItemInvT]):
-    _stack: list[WorklistItemInvT | None] = field(
-        default_factory=list[WorklistItemInvT | None]
-    )
-    """
-    The list of operations to iterate over, used as a last-in-first-out stack.
-    Operations are added and removed at the end of the list.
-    Operation that are `None` are meant to be discarded, and are used to
-    keep removal of operations O(1).
-    """
-
-    _map: dict[WorklistItemInvT, int] = field(
-        default_factory=dict[WorklistItemInvT, int]
-    )
-    """
-    The map of operations to their index in the stack.
-    It is used to check if an operation is already in the stack, and to
-    remove it in O(1).
-    """
-
-    def is_empty(self) -> bool:
-        """Check if the worklist is empty."""
-        while self._stack and self._stack[-1] is None:
-            self._stack.pop()
-        return not bool(self._stack)
-
-    def push(self, op: WorklistItemInvT):
-        """
-        Push an operation to the end of the worklist, if it is not already in it.
-        """
-        if op not in self._map:
-            self._map[op] = len(self._stack)
-            self._stack.append(op)
-
-    def pop(self) -> WorklistItemInvT | None:
-        """Pop the operation at the end of the worklist."""
-        # All `None` operations at the end of the stack are discarded,
-        # as they were removed previously.
-        # We either return `None` if the stack is empty, or the last operation
-        # that is not `None`.
-        while self._stack:
-            op = self._stack.pop()
-            if op is not None:
-                del self._map[op]
-                return op
-        return None
-
-    def remove(self, op: WorklistItemInvT):
-        """Remove an operation from the worklist."""
-        if op in self._map:
-            index = self._map[op]
-            self._stack[index] = None
-            del self._map[op]
-
-
 AnalysisT = TypeVar("AnalysisT")
 
 
@@ -117,8 +60,8 @@ class BlockAnalysis(ABC, Generic[AnalysisT]):
             self._initialise_block(block)
             self._worklist.push(block)
 
-        while (block := self._worklist.pop()) is not None:
-            self._update_block(block)
+        while self._worklist:
+            self._update_block(self._worklist.pop())
 
     @abstractmethod
     def _initialise_block(self, block: Block): ...
