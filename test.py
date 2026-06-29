@@ -27,6 +27,25 @@ func.func @staged() {
 }
 """
 
+weird_staged = """
+func.func @weird_staged() {
+  %q0 = qu.alloc
+  %a0 = qu.alloc
+  %q1 = qu.alloc
+
+  qref.gate<#gate.cz> %q0, %a0
+
+  %b = qref.measure %q0
+  %b2 = qref.measure %a0
+  cf.cond_br %b, ^bb0, ^bb1
+^bb0:
+  qref.gate<#gate.x> %q1
+  cf.br ^bb1
+^bb1:
+  func.return
+}
+"""
+
 not_staged = """
 func.func @not_staged() {
   %q0 = qu.alloc
@@ -77,7 +96,7 @@ builtin.module {
 }
 """
 
-for prog in (staged, not_staged, is_it_staged):
+for prog in (staged, weird_staged, not_staged, is_it_staged):
     print(prog)
 
     module = Parser(QuoptMain().ctx, prog).parse_module()
