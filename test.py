@@ -96,10 +96,54 @@ builtin.module {
 }
 """
 
-for prog in (staged, weird_staged, not_staged, is_it_staged):
-    print(prog)
+loopy = """
+builtin.module {
+  func.func @loopy() {
+    %q1 = qu.alloc
+    %q2 = qu.alloc
+    cf.br ^bb0(%q1, %q2 : !qu.bit, !qu.bit)
+  ^bb0(%q3 : !qu.bit, %q4 : !qu.bit):
+    %b = qref.measure %q3
+    %g1 = gate.constant #gate.h
+    %g2 = gate.constant #gate.id<1>
+    %g3 = arith.select %b, %g1, %g2 : !gate.type<1>
+    qref.dyn_gate<%g3> %q4
+    %q5 = qu.alloc
+    cf.br ^bb0(%q4, %q5 : !qu.bit, !qu.bit)
+  }
+}
+"""
 
-    module = Parser(QuoptMain().ctx, prog).parse_module()
+nastier_prog = """
+builtin.module {
+  func.func @nasty() {
+    %q1 = qu.alloc
+    cf.br ^bb0
+  ^bb0:
+    qref.gate<#gate.x> %q1
+    %q2 = qu.alloc
+    qref.gate<#gate.h> %q2
+    %b = qref.measure %q2
+    cf.cond_br %b, ^bb0, ^bb1
+  ^bb1:
+    %b1 = qref.measure %q1
+    func.return
+  }
+}
+"""
+
+for program in (
+    staged,
+    weird_staged,
+    not_staged,
+    is_it_staged,
+    prog,
+    loopy,
+    nastier_prog,
+):
+    print(program)
+
+    module = Parser(QuoptMain().ctx, program).parse_module()
 
     assert module.body.first_block is not None
     func = module.body.first_block.first_op
