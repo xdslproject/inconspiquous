@@ -22,4 +22,4 @@ class XYDynMeasurementConst(RewritePattern):
         if not isinstance(owner := op.angle.owner, ConstantAngleOp):
             return
 
-        rewriter.replace_op(op, ConstantMeasurementOp(XYMeasurementAttr(owner.angle)))
+        rewriter.replace(op, ConstantMeasurementOp(XYMeasurementAttr(owner.angle)))

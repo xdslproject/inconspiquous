@@ -58,10 +58,10 @@ class XZCommutePattern(RewritePattern):
             new_op2 = qssa.DynMeasureOp(op1.in_qubits[0], measurement=new_measurement)
             new_op1 = arith.XOrIOp(new_op2.outs[0], gate.z)
 
-            rewriter.replace_op(
+            rewriter.replace(
                 op2, (*angle_op, negate, new_measurement, new_op2, new_op1)
             )
-            rewriter.erase_op(op1)
+            rewriter.erase(op1)
             return
 
         if isinstance(op2, qssa.MeasureOp):
@@ -70,8 +70,8 @@ class XZCommutePattern(RewritePattern):
             new_op2 = qssa.MeasureOp(op1.in_qubits[0])
             new_op1 = arith.XOrIOp(new_op2.outs[0], gate.x)
 
-            rewriter.replace_op(op2, (new_op2, new_op1))
-            rewriter.erase_op(op1)
+            rewriter.replace(op2, (new_op2, new_op1))
+            rewriter.erase(op1)
             return
 
         if not isinstance(op2, qssa.GateOp):
@@ -149,8 +149,8 @@ class XZCommutePattern(RewritePattern):
                 else (new_op2, *ops_to_insert)
             )
 
-            rewriter.replace_op(op2, final_ops, new_outputs)
-            rewriter.erase_op(op1)
+            rewriter.replace(op2, final_ops, new_outputs)
+            rewriter.erase(op1)
             return
 
 

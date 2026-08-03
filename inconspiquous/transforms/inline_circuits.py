@@ -71,10 +71,10 @@ class InlineCircuitPattern(RewritePattern):
 
         # Replace the dyn_gate with the values being returned by the circuit
         return_values = list(circuit_return.operands)
-        rewriter.replace_op(op, (), return_values)
+        rewriter.replace(op, (), return_values)
 
         # Remove the inlined return operation (it's not needed in the parent function)
-        rewriter.erase_op(circuit_return)
+        rewriter.erase(circuit_return)
 
 
 class InlineCircuitsPass(ModulePass):

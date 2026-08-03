@@ -44,7 +44,7 @@ class FuseXZGatesPattern(RewritePattern):
 
         new_gate.out.name_hint = gate1.out.name_hint
 
-        rewriter.insert_op(
+        rewriter.insert(
             (
                 new_x,
                 new_z,
@@ -53,8 +53,8 @@ class FuseXZGatesPattern(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_op(op, DynGateOp(new_gate, *predecessor.in_qubits))
-        rewriter.erase_op(predecessor)
+        rewriter.replace(op, DynGateOp(new_gate, *predecessor.in_qubits))
+        rewriter.erase(predecessor)
 
 
 class FuseXZSGatesPattern(RewritePattern):
@@ -103,7 +103,7 @@ class FuseXZSGatesPattern(RewritePattern):
 
         new_gate.out.name_hint = gate1.out.name_hint
 
-        rewriter.insert_op(
+        rewriter.insert(
             (
                 *((c0,) if c0 is not None else ()),
                 new_x,
@@ -116,8 +116,8 @@ class FuseXZSGatesPattern(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_op(op, DynGateOp(new_gate, *predecessor.in_qubits))
-        rewriter.erase_op(predecessor)
+        rewriter.replace(op, DynGateOp(new_gate, *predecessor.in_qubits))
+        rewriter.erase(predecessor)
 
 
 class XZSFusion(ModulePass):

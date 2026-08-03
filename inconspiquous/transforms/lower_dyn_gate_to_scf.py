@@ -38,7 +38,7 @@ class LowerQSSADynGateToScfPattern(RewritePattern):
         if isinstance(gate, arith.SelectOp):
             then_region = self.make_region_from_arg(op, gate.lhs)
             else_region = self.make_region_from_arg(op, gate.rhs)
-            rewriter.replace_op(
+            rewriter.replace(
                 op, scf.IfOp(gate.cond, op.result_types, then_region, else_region)
             )
         elif isinstance(gate, varith.VarithSwitchOp):
@@ -51,7 +51,7 @@ class LowerQSSADynGateToScfPattern(RewritePattern):
             default_region = self.make_region_from_arg(op, gate.default_arg)
             case_regions = tuple(self.make_region_from_arg(op, x) for x in gate.args)
 
-            rewriter.replace_op(
+            rewriter.replace(
                 op,
                 (
                     flag,
@@ -83,7 +83,7 @@ class LowerQRefDynGateToScfPattern(RewritePattern):
         if isinstance(gate, arith.SelectOp):
             then_region = self.make_region_from_arg(op, gate.lhs)
             else_region = self.make_region_from_arg(op, gate.rhs)
-            rewriter.replace_op(op, scf.IfOp(gate.cond, (), then_region, else_region))
+            rewriter.replace(op, scf.IfOp(gate.cond, (), then_region, else_region))
         elif isinstance(gate, varith.VarithSwitchOp):
             flag = arith.IndexCastOp(gate.flag, IndexType())
             cases = DenseArrayBase.from_list(
@@ -94,7 +94,7 @@ class LowerQRefDynGateToScfPattern(RewritePattern):
             default_region = self.make_region_from_arg(op, gate.default_arg)
             case_regions = tuple(self.make_region_from_arg(op, x) for x in gate.args)
 
-            rewriter.replace_op(
+            rewriter.replace(
                 op,
                 (
                     flag,

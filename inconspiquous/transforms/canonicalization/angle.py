@@ -25,7 +25,7 @@ class NegateAngleOpFoldPattern(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: NegateAngleOp, rewriter: PatternRewriter):
         if isinstance(op.angle.owner, ConstantAngleOp):
-            rewriter.replace_op(op, ConstantAngleOp(-op.angle.owner.angle))
+            rewriter.replace(op, ConstantAngleOp(-op.angle.owner.angle))
 
 
 class NegateMergePattern(RewritePattern):
@@ -39,12 +39,12 @@ class NegateMergePattern(RewritePattern):
         arg = op.angle.owner
 
         if isinstance(arg, NegateAngleOp):
-            rewriter.replace_op(op, (), (arg.angle,))
+            rewriter.replace(op, (), (arg.angle,))
         elif isinstance(arg, CondNegateAngleOp):
             cTrue = ConstantOp(BoolAttr.from_bool(True))
             cTrue.result.name_hint = "cTrue"
             xor = XOrIOp(arg.cond, cTrue)
-            rewriter.replace_op(op, (cTrue, xor, CondNegateAngleOp(xor, arg.angle)))
+            rewriter.replace(op, (cTrue, xor, CondNegateAngleOp(xor, arg.angle)))
 
 
 class CondNegateAngleOpZeroPiPattern(RewritePattern):
@@ -58,7 +58,7 @@ class CondNegateAngleOpZeroPiPattern(RewritePattern):
             isinstance(op.angle.owner, ConstantAngleOp)
             and op.angle.owner.angle == -op.angle.owner.angle
         ):
-            rewriter.replace_op(op, (), (op.angle,))
+            rewriter.replace(op, (), (op.angle,))
 
 
 class CondNegateAngleOpFoldPattern(RewritePattern):
@@ -71,9 +71,9 @@ class CondNegateAngleOpFoldPattern(RewritePattern):
         if (cond := const_evaluate_operand(op.cond)) is None:
             return
         if not cond:
-            rewriter.replace_op(op, (), (op.angle,))
+            rewriter.replace(op, (), (op.angle,))
         else:
-            rewriter.replace_op(op, NegateAngleOp(op.angle))
+            rewriter.replace(op, NegateAngleOp(op.angle))
 
 
 class CondNegateMergePattern(RewritePattern):
@@ -90,12 +90,12 @@ class CondNegateMergePattern(RewritePattern):
         elif isinstance(arg, NegateAngleOp):
             cTrue = ConstantOp(BoolAttr.from_bool(True))
             cTrue.result.name_hint = "cTrue"
-            rewriter.insert_op(cTrue)
+            rewriter.insert(cTrue)
             xor = XOrIOp(op.cond, cTrue)
         else:
             return
 
-        rewriter.replace_op(op, (xor, CondNegateAngleOp(xor, arg.angle)))
+        rewriter.replace(op, (xor, CondNegateAngleOp(xor, arg.angle)))
 
 
 class ScaleAngleFoldPattern(RewritePattern):
@@ -113,9 +113,7 @@ class ScaleAngleFoldPattern(RewritePattern):
         scale = ConstantLike.get_constant_value(op.scale)
         if not isinstance(scale, FloatAttr):
             return
-        rewriter.replace_op(
-            op, ConstantAngleOp(op.angle.owner.angle * scale.value.data)
-        )
+        rewriter.replace(op, ConstantAngleOp(op.angle.owner.angle * scale.value.data))
 
 
 class AddAngleFoldPattern(RewritePattern):
@@ -130,6 +128,4 @@ class AddAngleFoldPattern(RewritePattern):
         if not isinstance(op.rhs.owner, ConstantAngleOp):
             return
 
-        rewriter.replace_op(
-            op, ConstantAngleOp(op.lhs.owner.angle + op.rhs.owner.angle)
-        )
+        rewriter.replace(op, ConstantAngleOp(op.lhs.owner.angle + op.rhs.owner.angle))
