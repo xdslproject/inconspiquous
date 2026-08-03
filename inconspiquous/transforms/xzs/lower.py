@@ -36,7 +36,7 @@ class LowerXZToSelectPattern(RewritePattern):
         z_x_sel_op = arith.SelectOp(op.z, y, x)
         x_sel_op = arith.SelectOp(op.x, z_x_sel_op, z_no_x_sel_op)
 
-        rewriter.replace_op(
+        rewriter.replace(
             op,
             (
                 identity,
@@ -67,7 +67,7 @@ class LowerXZSToSelectPattern(RewritePattern):
         phase_sel_op = arith.SelectOp(op.phase, s, identity)
         comp = ComposeGateOp(x_sel_op, phase_sel_op)
 
-        rewriter.replace_op(
+        rewriter.replace(
             op,
             (
                 identity,

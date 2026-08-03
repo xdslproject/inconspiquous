@@ -58,7 +58,7 @@ class PadTGate(RewritePattern):
         post_x_sel_2 = SelectOp(x_rand, phase_gate, id_gate)
         post_x_2 = DynGateOp(post_x_sel_2, post_x_1)
 
-        rewriter.insert_op(
+        rewriter.insert(
             (
                 x_rand,
                 z_rand,
@@ -79,7 +79,7 @@ class PadTGate(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_op(op, post_x_2)
+        rewriter.replace(op, post_x_2)
 
 
 class PadTDaggerGate(RewritePattern):
@@ -111,7 +111,7 @@ class PadTDaggerGate(RewritePattern):
         post_x_sel_2 = SelectOp(x_rand, phase_dagger_gate, id_gate)
         post_x_2 = DynGateOp(post_x_sel_2, post_x_1)
 
-        rewriter.insert_op(
+        rewriter.insert(
             (
                 x_rand,
                 z_rand,
@@ -132,7 +132,7 @@ class PadTDaggerGate(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_op(op, post_x_2)
+        rewriter.replace(op, post_x_2)
 
 
 class PadHadamardGate(RewritePattern):
@@ -161,7 +161,7 @@ class PadHadamardGate(RewritePattern):
         post_x_sel = SelectOp(x_rand, z_gate, id_gate)
         post_x = DynGateOp(post_x_sel, post_z)
 
-        rewriter.insert_op(
+        rewriter.insert(
             (
                 x_rand,
                 z_rand,
@@ -180,7 +180,7 @@ class PadHadamardGate(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_op(op, post_x)
+        rewriter.replace(op, post_x)
 
 
 class PadCXGate(RewritePattern):
@@ -222,7 +222,7 @@ class PadCXGate(RewritePattern):
         post_x_q2_1 = DynGateOp(x_sel_q1, post_z_q2)
         post_x_q2_2 = DynGateOp(x_sel_q2, post_x_q2_1)
 
-        rewriter.insert_op(
+        rewriter.insert(
             (
                 x_rand_q1,
                 x_rand_q2,
@@ -248,7 +248,7 @@ class PadCXGate(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_op(
+        rewriter.replace(
             op,
             (post_x_q1, post_x_q2_2),
             (post_x_q1.out_qubits[0], post_x_q2_2.out_qubits[0]),
@@ -281,7 +281,7 @@ class PadMeasure(RewritePattern):
 
         corrected_measure = XOrIOp(x_rand, new_measure.outs[0])
 
-        rewriter.insert_op(
+        rewriter.insert(
             (
                 x_rand,
                 z_rand,
@@ -296,7 +296,7 @@ class PadMeasure(RewritePattern):
             InsertPoint.before(op),
         )
 
-        rewriter.replace_op(
+        rewriter.replace(
             op,
             (new_measure, corrected_measure),
         )

@@ -39,7 +39,7 @@ class QIRToLLVMPattern(RewritePattern):
         func_type = op.get_func_type()
 
         if func_name not in self.declared_functions:
-            rewriter.insert_op(
+            rewriter.insert(
                 llvm.FuncOp(func_name, func_type, linkage=llvm.LinkageAttr("external")),
                 InsertPoint.at_start(self.module.body.block),
             )
@@ -47,7 +47,7 @@ class QIRToLLVMPattern(RewritePattern):
 
         output = func_type.output
 
-        rewriter.replace_op(
+        rewriter.replace(
             op,
             llvm.CallOp(
                 func_name,

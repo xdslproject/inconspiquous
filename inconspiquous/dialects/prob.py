@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from typing import ClassVar
 
 from typing_extensions import Self
-from xdsl.dialects.builtin import i1
+from xdsl.dialects.builtin import Float64Type, i1
 from xdsl.interfaces import HasCanonicalizationPatternsInterface
 from xdsl.ir import (
     Attribute,
@@ -23,7 +23,6 @@ from xdsl.irdl import (
 )
 from xdsl.parser import (
     DenseArrayBase,
-    Float64Type,
     FloatAttr,
     IntegerType,
     Parser,
