@@ -92,25 +92,25 @@ func.func @depolarising_scf(%q: !qu.bit) -> !qu.bit {
 
 // CHECK:      func.func @depolarising_cf(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
-// CHECK-NEXT:   cf.cond_br %p, ^bb0, ^bb1(%q : !qu.bit)
-// CHECK-NEXT: ^bb0:
+// CHECK-NEXT:   cf.cond_br %p, ^bb1, ^bb2(%q : !qu.bit)
+// CHECK-NEXT: ^bb1:
 // CHECK-NEXT:   %p2 = prob.uniform : i4
 // CHECK-NEXT:   cf.switch %p2 : i4, [
-// CHECK-NEXT:     default: ^bb2(%q : !qu.bit),
-// CHECK-NEXT:     1: ^bb1,
+// CHECK-NEXT:     default: ^bb5(%q : !qu.bit),
+// CHECK-NEXT:     1: ^bb2,
 // CHECK-NEXT:     2: ^bb3,
 // CHECK-NEXT:     3: ^bb4
 // CHECK-NEXT:   ]
-// CHECK-NEXT: ^bb1:
+// CHECK-NEXT: ^bb2:
 // CHECK-NEXT:   %q1 = qssa.gate<#gate.x> %q
-// CHECK-NEXT:   cf.br ^bb2(%q1 : !qu.bit)
+// CHECK-NEXT:   cf.br ^bb5(%q1 : !qu.bit)
 // CHECK-NEXT: ^bb3:
 // CHECK-NEXT:   %q2 = qssa.gate<#gate.y> %q
-// CHECK-NEXT:   cf.br ^bb2(%q2 : !qu.bit)
+// CHECK-NEXT:   cf.br ^bb5(%q2 : !qu.bit)
 // CHECK-NEXT: ^bb4:
 // CHECK-NEXT:   %q3 = qssa.gate<#gate.z> %q
-// CHECK-NEXT:   cf.br ^bb2(%q3 : !qu.bit)
-// CHECK-NEXT: ^bb2(%q4: !qu.bit):
+// CHECK-NEXT:   cf.br ^bb5(%q3 : !qu.bit)
+// CHECK-NEXT: ^bb5(%q4: !qu.bit):
 // CHECK-NEXT:   func.return %q4 : !qu.bit
 // CHECK-NEXT: }
 func.func @depolarising_cf(%q: !qu.bit) -> !qu.bit {
