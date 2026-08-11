@@ -40,11 +40,11 @@ func.func @phase_scf(%q: !qu.bit) -> !qu.bit {
 
 // CHECK:       func.func @phase_cf(%q: !qu.bit) -> !qu.bit {
 // CHECK-NEXT:   %p = prob.bernoulli 1.000000e-01
-// CHECK-NEXT:   cf.cond_br %p, ^bb0, ^bb1(%q : !qu.bit)
-// CHECK-NEXT: ^bb0:
+// CHECK-NEXT:   cf.cond_br %p, ^bb1, ^bb2(%q : !qu.bit)
+// CHECK-NEXT: ^bb1:
 // CHECK-NEXT:   %q1 = qssa.gate<#gate.z> %q
-// CHECK-NEXT:   cf.br ^bb1(%q1 : !qu.bit)
-// CHECK-NEXT: ^bb1(%q2: !qu.bit):
+// CHECK-NEXT:   cf.br ^bb2(%q1 : !qu.bit)
+// CHECK-NEXT: ^bb2(%q2: !qu.bit):
 // CHECK-NEXT:   func.return %q2 : !qu.bit
 // CHECK-NEXT: }
 func.func @phase_cf(%q: !qu.bit) -> !qu.bit {
