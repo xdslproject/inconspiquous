@@ -1,5 +1,6 @@
 from xdsl.dialects import builtin
 from xdsl.dialects.arith import ConstantOp
+from xdsl.ir import Operation
 from xdsl.parser import Context, IntAttr
 from xdsl.passes import ModulePass
 from xdsl.pattern_rewriter import (
@@ -50,36 +51,36 @@ class ToXZSGate(RewritePattern):
     """
 
     @staticmethod
-    def get_const(b: bool, rewriter: PatternRewriter) -> ConstantOp:
+    def get_const(b: bool, op: Operation, rewriter: PatternRewriter) -> ConstantOp:
         n = ConstantOp(builtin.BoolAttr.from_bool(b))
         n.result.name_hint = f"c{b}"
-        rewriter.insert(n, InsertPoint.before(rewriter.current_operation))
+        rewriter.insert(n, InsertPoint.before(op))
         return n
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: ConstantGateOp, rewriter: PatternRewriter):
         match op.gate:
             case IdentityGate(qubits=IntAttr(1)):
-                false = self.get_const(False, rewriter)
+                false = self.get_const(False, op, rewriter)
                 rewriter.replace(op, XZOp(false, false))
             case XGate():
-                false = self.get_const(False, rewriter)
-                true = self.get_const(True, rewriter)
+                false = self.get_const(False, op, rewriter)
+                true = self.get_const(True, op, rewriter)
                 rewriter.replace(op, XZOp(true, false))
             case YGate():
-                true = self.get_const(True, rewriter)
+                true = self.get_const(True, op, rewriter)
                 rewriter.replace(op, XZOp(true, true))
             case ZGate():
-                false = self.get_const(False, rewriter)
-                true = self.get_const(True, rewriter)
+                false = self.get_const(False, op, rewriter)
+                true = self.get_const(True, op, rewriter)
                 rewriter.replace(op, XZOp(false, true))
             case PhaseGate():
-                false = self.get_const(False, rewriter)
-                true = self.get_const(True, rewriter)
+                false = self.get_const(False, op, rewriter)
+                true = self.get_const(True, op, rewriter)
                 rewriter.replace(op, XZSOp(false, false, true))
             case PhaseDaggerGate():
-                false = self.get_const(False, rewriter)
-                true = self.get_const(True, rewriter)
+                false = self.get_const(False, op, rewriter)
+                true = self.get_const(True, op, rewriter)
                 rewriter.replace(op, XZSOp(false, true, true))
             case _:
                 return
