@@ -21,6 +21,7 @@
                 uv
                 llvmPackages_22.mlir
                 python314
+                fish
               ];
             };
           }
