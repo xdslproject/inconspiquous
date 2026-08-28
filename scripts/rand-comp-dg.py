@@ -1,5 +1,6 @@
 import argparse
 import os.path
+import time
 from pathlib import Path
 
 from xdsl.context import Context
@@ -36,6 +37,8 @@ for dialect_name, factory in get_all_dialects().items():
 
 mod = Parser(ctx, text, str(ghz_file)).parse_module()
 
+start_timer = time.perf_counter()
+
 for p in (
     ConvertQrefToQssa(),
     RandomizedComp(),
@@ -50,7 +53,6 @@ for p in (
     p.apply(ctx, mod)
 
 for i in range(0, iterations):
-    print(i)
     c = mod.clone()
 
     for p in (
@@ -58,3 +60,6 @@ for i in range(0, iterations):
         CanonicalizePass(),
     ):
         p.apply(ctx, c)
+
+end_timer = time.perf_counter()
+print(end_timer - start_timer)
