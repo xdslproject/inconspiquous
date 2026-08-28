@@ -5,6 +5,9 @@ for x in $iterations
   echo -n $x
   echo -n ,
   set t (uv run $this_folder/rand-comp-naive.py $x | string collect)
+  for i in (seq 4)
+    set t (math min $t , (uv run $this_folder/rand-comp-naive.py $x | string collect))
+  end
   echo -n $t
   echo -n ,
   echo Naive
@@ -12,6 +15,9 @@ for x in $iterations
   echo -n $x
   echo -n ,
   set t (uv run $this_folder/rand-comp-dg.py $x | string collect)
+  for i in (seq 4)
+    set t (math min $t , (uv run $this_folder/rand-comp-dg.py $x | string collect))
+  end
   echo -n $t
   echo -n ,
   echo Dynamic gates
