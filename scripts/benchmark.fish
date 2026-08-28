@@ -16,7 +16,7 @@ for x in $benches
     echo -n $name
     echo -n ,
     set file (dirname (status -f))/../tests/filecheck/bench/$file.mlir
-    set dg (quopt $file | string collect)
+    set dg (uv run quopt $file | string collect)
     # Line count
     echo $dg | grep -v '^\($\|!\|;\)' | wc -l | string collect
 
@@ -49,7 +49,7 @@ for x in $benches
 
     echo "Dynamic gate"
 
-    set qir (quopt $file -p convert-qssa-to-qref,lower-xzs-to-select,cse,canonicalize,lower-dyn-gate-to-scf,canonicalize,convert-qref-to-qir,convert-qir-to-llvm | mlir-opt -p 'builtin.module(convert-scf-to-cf,canonicalize,convert-math-to-llvm,convert-arith-to-llvm,convert-cf-to-llvm,convert-func-to-llvm)' | mlir-translate --mlir-to-llvmir | string collect)
+    set qir (uv run quopt $file -p convert-qssa-to-qref,lower-xzs-to-select,cse,canonicalize,lower-dyn-gate-to-scf,canonicalize,convert-qref-to-qir,convert-qir-to-llvm | mlir-opt -p 'builtin.module(convert-scf-to-cf,canonicalize,convert-math-to-llvm,convert-arith-to-llvm,convert-cf-to-llvm,convert-func-to-llvm)' | mlir-translate --mlir-to-llvmir | string collect)
 
     echo -n $name
 

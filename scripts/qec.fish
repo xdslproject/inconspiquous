@@ -16,7 +16,7 @@ for file in $files
     end
     for i in (seq 5)
     	echo iteration $i
-    	set output (quopt $file --time-passes -p convert-qref-to-qssa,qec-inline,convert-to-xzs,xzs-select,xz-commute,canonicalize,cse | grep 'Pass' | string collect)
+    	set output (uv run quopt $file --time-passes -p convert-qref-to-qssa,qec-inline,convert-to-xzs,xzs-select,xz-commute,canonicalize,cse | grep 'Pass' | string collect)
 	for j in (seq 5)
 	    set $pass_names[$j][-1] (math min $$pass_names[$j][-1] , (echo $output | grep "$passes[$j]" | grep -o '[[:digit:]][[:digit:]]*\.[[:digit:]][[:digit:]]*'))
 	end
