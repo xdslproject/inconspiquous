@@ -31,7 +31,7 @@ def test_flip_coins_independent():
     ctx.register_dialect("prob", lambda: Prob)
 
     def gen_uniform() -> ModuleOp:
-        parser = Parser(ctx, "%0 = prob.uniform i32")
+        parser = Parser(ctx, "%0 = prob.uniform : i32")
         return parser.parse_module()
 
     p1 = FlipCoinsPass(20)

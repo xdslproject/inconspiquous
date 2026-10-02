@@ -91,11 +91,6 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
 
         return Scf
 
-    def get_stim():
-        from xdsl.dialects.stim import Stim
-
-        return Stim
-
     def get_tensor():
         from xdsl.dialects.tensor import Tensor
 
@@ -129,7 +124,6 @@ def get_all_dialects() -> dict[str, Callable[[], Dialect]]:
         "qu": get_qu,
         "qssa": get_qssa,
         "scf": get_scf,
-        "stim": get_stim,
         "tensor": get_tensor,
         "test": get_test,
         "varith": get_varith,
