@@ -22,6 +22,12 @@ To run tests:
 make tests
 ```
 
+Running the tests associated to the benchmark suite (contained in the [bench directory](tests/filecheck/bench)) require an LLVM 22 installation with a functioning `mlir-opt` and `mlir-translate` executables in path. The repository comes with a nix flake which supplies the correct versions of these tools and can be activated with:
+```bash
+nix develop
+```
+if [nix](https://nixos.org) is installed on the system.
+
 ## Usage
 Inconspiquous is built on top of [xdsl](https://github.com/xdslproject/xdsl), which is itself based on (and broadly compatible with) the MLIR compiler framework. Tutorials for this framework can be found at these respective projects.
 
