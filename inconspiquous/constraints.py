@@ -6,8 +6,8 @@ from typing_extensions import TypeVar
 from xdsl.ir import Attribute, VerifyException
 from xdsl.irdl import (
     AttrConstraint,
-    ConstraintContext,
     IntConstraint,
+    VerificationContext,
 )
 
 
@@ -30,7 +30,7 @@ class SizedAttributeConstraint(AttrConstraint[SizedAttributeCovT]):
     base_class: type[SizedAttributeCovT]
     size_constraint: IntConstraint
 
-    def verify(self, attr: Attribute, constraint_context: ConstraintContext) -> None:
+    def verify(self, attr: Attribute, constraint_context: VerificationContext) -> None:
         if not isinstance(attr, self.base_class):
             raise VerifyException(
                 f"attribute {attr} expected to be a {self.base_class.name}"
