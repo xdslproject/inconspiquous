@@ -1,13 +1,12 @@
 set passes convert-to-xzs xzs-select xz-commute canonicalize cse
-set pass_names convert_to_xzs xzs_select xz_commute canonicalize cse
+set pass_names convert_to_xzs xzs_select xz_commute canonicalize
 
 set convert_to_xzs
 set xzs_select
 set xz_commute
 set canonicalize
-set cse
 
-set files (dirname (status -f))/qec/prog-*.mlir
+set files (dirname (status -f))/qec/prog-100.mlir (dirname (status -f))/qec/prog-200.mlir # (dirname (status -f))/qec/prog-*.mlir
 
 for file in $files
     echo $file
@@ -16,14 +15,14 @@ for file in $files
     end
     for i in (seq 5)
     	echo iteration $i
-    	set output (uv run quopt $file --time-passes -p convert-qref-to-qssa,qec-inline,convert-to-xzs,xzs-select,xz-commute,canonicalize,cse | grep 'Pass' | string collect)
-	for j in (seq 5)
+    	set output (uv run quopt $file --time-passes -p convert-qref-to-qssa,qec-inline,convert-to-xzs,xzs-select,xz-commute,canonicalize | grep 'Pass' | string collect)
+	for j in (seq 4)
 	    set $pass_names[$j][-1] (math min $$pass_names[$j][-1] , (echo $output | grep "$passes[$j]" | grep -o '[[:digit:]][[:digit:]]*\.[[:digit:]][[:digit:]]*'))
 	end
     end
 end
 
-for j in (seq 5)
+for j in (seq 4)
     for i in (seq (count $files))
     	echo -n (math 100 x $i)
     	echo -n ,
