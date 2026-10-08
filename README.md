@@ -4,7 +4,7 @@ A testing ground for quantum computing compilation ideas in [xdsl](https://xdsl.
 ## Installation
 This tool uses [uv](https://docs.astral.sh/uv/) to build. The tool can be installed by cloning and running:
 ```bash
-make sync
+make venv
 ```
 The cli tool can be run by `uv run quopt` or by entering the generated virtual environment.
 
