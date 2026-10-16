@@ -26,3 +26,4 @@ ax.set_ylim(ymin=0)
 # Save figure
 fig = ax.get_figure()
 fig.savefig("graph_rand_comp.pdf")
+print("Saving to graph_rand_comp.pdf")

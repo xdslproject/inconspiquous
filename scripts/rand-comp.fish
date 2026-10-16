@@ -1,7 +1,9 @@
 set iterations 1 2 4 8 16 32 64 100 200 300 400 500 600 700 800 900 1000
 set this_folder (dirname (status -f))
 
+echo "Instantiations,Runtime (s),Method"
 for x in $iterations
+  echo Testing $x iterations >&2
   echo -n $x
   echo -n ,
   set t (uv run $this_folder/rand-comp-naive.py $x | string collect)

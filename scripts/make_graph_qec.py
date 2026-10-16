@@ -16,11 +16,14 @@ sns.set_palette(("#1f78b4", "#d95f02", "#827b7b", "#a6cee3"))
 # Load data
 data = pd.read_csv(input_file)
 
+num_files = len(data) // 4
+print(f'Found {num_files} files')
+
 # Calculate cumulative values for each pass
-for i in range(10):
-    data.loc[i + 10, "Runtime (s)"] += data.loc[i, "Runtime (s)"]
-    data.loc[i + 20, "Runtime (s)"] += data.loc[i + 10, "Runtime (s)"]
-    data.loc[i + 30, "Runtime (s)"] += data.loc[i + 20, "Runtime (s)"]
+for i in range(num_files):
+    data.loc[i + num_files, "Runtime (s)"] += data.loc[i, "Runtime (s)"]
+    data.loc[i + 2 * num_files, "Runtime (s)"] += data.loc[i + num_files, "Runtime (s)"]
+    data.loc[i + 3 * num_files, "Runtime (s)"] += data.loc[i + 2 * num_files, "Runtime (s)"]
 
 line1 = data[data["Pass"] == "convert-to-xzs"]
 line2 = data[data["Pass"] == "xzs-select"]
@@ -40,3 +43,4 @@ ax.legend(title="Pass", prop={"family": "monospace"})
 # Save figure
 fig = ax.get_figure()
 fig.savefig("graph_qec.pdf")
+print('Saving to graph_qec.pdf')

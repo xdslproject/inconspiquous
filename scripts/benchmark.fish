@@ -13,6 +13,7 @@ set benches \
 echo Benchmark,Line count,Word count,Basic blocks,Cyclomatic complexity,Quantum gates,Halstead difficulty,IR
 for x in $benches
     echo $x | read -d , name file
+    echo Processing $name >&2
     echo -n $name
     echo -n ,
     set file (dirname (status -f))/../tests/filecheck/bench/$file.mlir
