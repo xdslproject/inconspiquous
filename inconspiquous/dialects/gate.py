@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 from typing import ClassVar, Literal, NamedTuple
 
 from xdsl.dialects.builtin import (
-    AnyFloatConstr,
     IntAttr,
     IntAttrConstraint,
     IntegerType,
@@ -27,7 +26,6 @@ from xdsl.irdl import (
     IRDLOperation,
     ParamAttrConstraint,
     VarConstraint,
-    base,
     irdl_attr_definition,
     irdl_op_definition,
     operand_def,
@@ -36,7 +34,7 @@ from xdsl.irdl import (
     result_def,
     traits_def,
 )
-from xdsl.parser import AttrParser
+from xdsl.parser import AnyFloat, AttrParser
 from xdsl.pattern_rewriter import RewritePattern
 from xdsl.printer import Printer
 from xdsl.traits import ConstantLike, Pure
@@ -571,7 +569,7 @@ class QuaternionGateOp(IRDLOperation):
     by conjugating by the quaternion.
     """
 
-    _T: ClassVar = VarConstraint("T", base(IntegerType) | AnyFloatConstr)
+    _T: ClassVar = VarConstraint.get("T", IntegerType | AnyFloat)
 
     name = "gate.quaternion"
 
@@ -606,7 +604,7 @@ class QuaternionGateOp(IRDLOperation):
 class ComposeGateOp(IRDLOperation):
     name = "gate.compose"
 
-    _T: ClassVar = VarConstraint("T", base(GateType))
+    _T: ClassVar = VarConstraint.get("T", GateType)
 
     lhs = operand_def(_T)
     rhs = operand_def(_T)
