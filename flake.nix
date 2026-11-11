@@ -20,7 +20,7 @@
               buildInputs = [
                 uv
                 llvmPackages_22.mlir
-                python314
+                python315
               ];
             };
           }
